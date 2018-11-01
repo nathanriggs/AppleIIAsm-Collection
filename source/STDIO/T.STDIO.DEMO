@@ -1,0 +1,188 @@
+*
+********************************
+*                              *
+*      -< STDIO DEMO >-        *
+*                              *
+*       VERSION 00.00.01       *
+*                              *
+*         03/04/1980           *
+*                              *
+********************************
+*                              *
+*       NATHAN D. RIGGS        *
+*   NATHAN.RIGGS@OUTLOOK.COM   *
+*                              *
+********************************
+*
+** ASSEMBLER DIRECTIVES
+*
+         CYC   AVE
+         EXP   ONLY
+         DSK   STDIO.DEMO
+*
+*``````````````````````````````*
+*  TOP INCLUDES (PUTS, MACROS) *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+         PUT   DECS
+         USE   STDIO.MAC
+*
+         PUT   STDIO.HOOKS
+         PUT   COMMON.HOOKS
+*
+         ORG   $6000
+*
+*``````````````````````````````*
+*      PROGRAM MAIN BODY       *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+*
+*
+** BIG LUMPS -- HIGH LEVEL CODE
+*
+*
+         JSR   HOME       ; CLEAR SCREEN
+*
+***
+*** USE XPRINT TO PRINT A STRING OF CHARACTERS
+*** TO THE SCREEN. THE STRING COMES AFTER
+*** THE JSR STATEMENT IN AN ASC/HEX.
+***
+         JSR   XPRINT
+         ASC   "WTF WORLD"
+         HEX   8D00       ; THIS TELLS THE
+                          ; ROUTINE TO STOP
+                          ; PRINTING THE STRING
+*
+*** USE DPRINT TO PRINT THE TEXT AT A SPECIFIC
+*** MEMORY LOCATION. NOTE THAT THIS IS NOT
+*** TYPICALLY USED TO PRINT STRINGS, AND LIKE
+*** XPRINT USES THE NULL TERMINATOR TO ALERT
+*** THE ROUTINE TO STOP PRINTING. TO PRINT
+*** STRINGS, WHICH HAVE THE LENGTH OF THE STRING
+*** AS THEIR FIRST BYTE VALUE, USE SPRINT.
+*
+*
+         LDA   #$18       ; PUT 'XXX' INTO
+         STA   $300       ; LOCATION $300
+         STA   $301
+         STA   $302
+         LDA   #00
+         STA   $303
+         LDA   #>$300     ; PUSH HIBYTE
+         PHA
+         LDA   #<$300     ; PUSH LOBYTE
+         PHA
+         JSR   DPRINT     ; NOW PRINT IT
+*
+* ^^^ NOTE ABOVE THAT THE HIGH BYTE
+* IS PUSHED BEFORE THE LOW BYTE BECAUSE
+* 6502 CONVENTION IS TO READ THE LOW BYTE
+* FIRST, THEN THE HIGH BYTE. THIS IS THE
+* ORDER IT WILL POP OFF THE STACK.
+*
+***
+*** USE THLIN TO CREATE A LINE OF HORIZONTAL
+*** TEXT CONSISTING OF A SINGLE CHARACTER.
+*** LIKE MANY OTHER SUBROUTINES, THIS USES
+*** THE STACK TO PASS VARIABLES.
+***
+*
+         LDA   #0         ; START OF LINE
+         PHA
+         LDA   #15        ; END OF LINE
+         PHA
+         LDA   #10        ; Y POSITION
+         PHA
+         LDA   #$18       ; "X" CHARACTER, INVERSE
+         PHA
+         JSR   THLIN
+*
+*** TVLIN WORKS LIKE THLIN, BUT CREATES A VERTICAL
+*** LINE INSTEAD OF A HORIZONTAL ONE.
+*
+         LDA   #0         ; STARTING Y POS OF LINE
+         PHA
+         LDA   #15        ; END YPOS OF LINE
+         PHA
+         LDA   #10        ; X POSITION
+         PHA
+         LDA   #$18       ; "X" CHARACTER, INVERSE
+         PHA
+         JSR   TVLIN
+*
+*
+*** THE TFILLA ROUTINE ACTS LIKE A COMBINATION OF
+*** THLIN AND TVLIN. IT FILLS A GIVEN RECTANGULAR
+*** AREA OF THE SCREEN WITH THE DESIGNATED
+*** CHARACTER AT X1,Y1:X2,Y2.
+*
+         LDA   #10        ; LEFT BOUNDARY
+         PHA
+         LDA   #30        ; RIGHT BOUNDARY
+         PHA
+         LDA   #5         ; TOP BOUNDARY
+         PHA
+         LDA   #15        ; BOTTOM BOUNDARY
+         PHA
+         LDA   #$1A       ; "Z" CHARACTER
+         PHA
+         JSR   TFILLA
+*
+*
+*** THE SINPUT ROUTINE (SPECIAL INPUT) PROMPTS
+*** THE USER FOR A STRING OF TEXT FOLLOWED BY
+*** A <RETURN> PRESS, THEN STORES THE INPUTTED
+*** STRING AT THE SPECIFIED LOCATION, WITH ITS
+*** LENGTH AS THE FIRST BYTE (MAX: 255)
+*
+         LDA   #>$300     ; PUSH HIGH BYTE FIRST
+         PHA
+         LDA   #<$300     ; THEN LOW BYTE, SO
+                          ; THAT THE ROUTINE
+                          ; READS LOW, HIGH
+         PHA
+         JSR   SINPUT     ; STORES IN $300
+*
+*
+*** THE PADDLE BUTTON ROUTINE CHECKS
+*** WHETHER THE DESIGNATED PADDLE BUTTON
+*** IS CURRENTLY BEING PRESSED.
+*
+*
+*
+*
+*
+*
+********************************
+********************************
+* NOW LET'S DO IT AGAIN!       *
+* (BUT WITH MACROS)            *
+********************************
+********************************
+*
+         JSR   HOME
+         _PRN  "WTF, WORLD?"
+         _CXY  #10;#10
+         _TVLN #5;#20;#30;#$18
+         _THLN #5;#30;#20;#$1A
+         _INP  $300
+         _TFIL #0;#39;#0;#21;#$19
+*
+*
+*
+** LITTLE LUMPS -- MID/LOW LEVEL
+*
+*
+         JMP   REENTRY
+*
+*``````````````````````````````*
+*        BOTTOM INCLUDES       *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+*
+** BOTTOM INCLUDES
+*
+         PUT   STDIO.LIB
+*
+*
