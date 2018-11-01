@@ -1,0 +1,114 @@
+*
+*``````````````````````````````*
+* TFILLA :: TEXT FILL AREA     *
+*-                            -*
+* FILLS A RECTANGULAR AREA OF  *
+* THE SCREEN WITH THE DESIRED  *
+* CHARACTER.                   *
+*-                            -*
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  ???-----  REG: AXYM  *
+*-                            -*
+* CYCLES: ???                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*        LDA (LEFT BOUND)      *
+*        PHA                   *
+*        LDA (RIGHT BOUND)     *
+*        PHA                   *
+*        LDA (TOP BOUND)       *
+*        PHA                   *
+*        LDA (BOTTOM BOUND)    *
+*        PHA                   *
+*        LDA (FILL CHAR)       *
+*        PHA                   *
+*        JSR TFILLA            *
+*-                            -*
+* ENTRY                        *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+* FILL CHAR (:FILL)            *
+* BOTTOM BOUND (:BOTTOM)       *
+* TOP BOUND (:TOP)             *
+* RIGHT BOUND (:RIGHT)         *
+* LEFT BOUND (:LEFT)           *
+*-                            -*
+* EXIT                         *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+*                              *
+*   A = LOW BYTE OF ADDRESS    *
+*   X = COUNTER DATA; TRASH    *
+*   Y = COUNTER DATA; TRASH    *
+*       STRING                 *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+TFILLA
+*
+** SAVE RETURN ADDRESS
+*
+         PLA
+         STA   :RETADR
+         PLA
+         STA   :RETADR+1
+*
+** LOAD PARAMETERS
+*
+         PLA
+         STA   :FILL
+         PLA
+         STA   :BOTTOM
+         PLA
+         STA   :TOP
+         PLA
+         STA   :RIGHT
+         PLA
+         STA   :LEFT
+*
+
+         LDY   :TOP       ; LOAD STARTING Y
+:LOOPY
+         STY   CURSV
+         JSR   VTAB       ; SET VERTICAL
+         LDX   :LEFT      ; CURSOR POSITION
+         DEX
+:LOOPX
+         INX
+         STX   CURSH
+         JSR   VTAB       ; SET HORIZONTAL
+         LDA   :FILL
+         JSR   COUT1      ; PRINT FILL CHAR
+         CPX   :RIGHT     ; IF X < RIGHT MAX
+         BNE   :LOOPX     ; LOOP; ELSE, CONTINUE
+*                         ; END X LOOP
+         INY
+         CPY   :BOTTOM    ; IF Y < BOTTOM MAX
+         BNE   :LOOPY     ; LOOP; ELSE, CONTINUE
+*
+:EXIT
+*
+** RESTORE RETURN ADDRESS
+*
+         LDA   :RETADR+1
+         PHA
+         LDA   :RETADR
+         PHA
+*
+         RTS
+*
+** DATA
+*
+:LEFT    DS    1
+:RIGHT   DS    1
+:BOTTOM  DS    1
+:TOP     DS    1
+:FILL    DS    1
+:RETADR  DS    2

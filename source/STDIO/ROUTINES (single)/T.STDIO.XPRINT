@@ -1,0 +1,70 @@
+*
+*``````````````````````````````*
+* XPRINT :: SPECIAL PRINT      *
+*-                            -*
+* PRINTS DATA IMMEDIATELY      *
+* FOLLOWING THE JSR TO SPRINT  *
+*-                            -*
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  NZC-----  REG: AYM-  *
+*-                            -*
+* CYCLES: 53+                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*        JSR   SPRINT          *
+*        ASC   "HELLO, WORLD!" *
+*-                            -*
+* ENTRY                        *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+*-                            -*
+* EXIT                         *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+*                              *
+* A,Y = LOW BYTE OF ADDRESS    *
+*   X = UNCHANGED              *
+*-                            -*
+* NOTE: PARTIALLY ADOPTED FROM *
+* ROGER WAGNER'S AND CHRIS     *
+* TORRENCE'S /ASSEMBLY LINES/  *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+XPRINT
+*
+** GET CURRENT EXEC ADDRESS
+*
+         PLA
+         STA   ADDR1
+         PLA
+         STA   ADDR1+1
+*
+         LDY   #$01       ; POINT TO NEXT
+                          ; INSTRUCTION
+:LOOP
+         LDA   (ADDR1),Y
+         BEQ   :DONE
+         JSR   COUT1
+         INY
+         BNE   :LOOP
+:DONE                     ; RESTORE STACK
+         CLC              ; EXEC POINTER
+         TYA              ; TO RESUME
+         ADC   ADDR1
+         STA   ADDR1
+         LDA   ADDR1+1
+         ADC   #$00
+         PHA
+         LDA   ADDR1
+         PHA
+         RTS
+:EXIT
+*

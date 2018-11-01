@@ -8,22 +8,22 @@ Ultimately, my aim is to create a large enough collection of routines to address
 
 Planned libraries include, along with associated Macros:
 
-CORE
+CORE DISK
 * stdio.lib: Standard Input/Output library.
 * math.lib: Integer Math Library.
 * common.lib: Common, useful subroutines: memory swaps, etc.
 
-DATA
+DATA DISK
 * strings.lib: Library for managing strings.
 * arrays.lib: library for managing arrays.
 * fileio.lib: File Input/Output Library. 
 
-GRAPHICS
+GRAPHICS DISK
 * lores.lib: Library for fast(er) graphics in low resolution mode.
 * hires.lib: Library for fast(er) graphics in high resolution mode.
 * dubres.lib: Library for handling graphics in double-resolution modes, low and high.
 
-MISC
+MISC DISK
 * sound.lib: Music and sound effects library.
 * fpmath.lib: Floating-point math library.
 

@@ -1,0 +1,94 @@
+*
+*``````````````````````````````*
+* GPBX :: GET PADDLE BUTTON X  *
+*                              *
+* GETS STATE OF PADDLE BUTTON  *
+* SPECIFIED AND RET 0, 1 IN A  *
+*-                            -*
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  ???-----  REG: A-YM  *
+*-                            -*
+* CYCLES: ???                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*        LDA   #>(ADDRESS)     *
+*        PHA                   *
+*        LDA   #<(ADDRESS)     *
+*        PHA                   *
+*        JSR   GPBX            *
+*                              *
+* --- WHERE:                   *
+*                              *
+*    BUTTON 0 = $C061 (PB0)    *
+*    BUTTON 1 = $CO62 (PB1)    *
+*    BUTTON 2 - $C063 (PB2)    *
+*    BUTTON 3 = $C060 (PB3)    *
+*-                            -*
+* ENTRY                        *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+* LOW BYTE OF PDL BTN ADDRESS  *
+* HI BYTE OF PDL BTN ADDRESS   *
+*-                            -*
+* EXIT                         *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+*                              *
+*   A = 1 IF PRESSED, 0 IF NOT *
+*   X = UNCHANGED              *
+*   Y = GARBAGE                *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+* CHANGE THIS LATER TO ACCEPT ALL BUTTONS, 0-4
+*
+GBPX
+*
+** SAVE RETURN ADDRESS
+*
+         PLA
+         STA   :RETADR
+         PLA
+         STA   :RETADR+1
+*
+** GET PARAMETER
+*
+         PLA
+         STA   ADDR1      ; ZERO PAGE
+         PLA
+         STA   ADDR1+1
+*
+*
+         LDY   #$00
+         LDA   (ADDR1),Y  ; IF BTN = PUSHED
+         BMI   :1
+         JMP   :0
+:1
+         LDY   #$01       ; BTN PUSHED;A=1
+         JMP   :EXIT
+:0
+         LDY   #$00       ; BTN NOT PUSHED;A=0
+*
+:EXIT
+*
+** RESTORE RETURN ADDRESS
+*
+         LDA   :RETADR+1
+         PHA
+         LDA   :RETADR
+         PHA
+*
+         TYA              ; BTN FLAG MOVE TO A
+         RTS
+*
+** DATA
+*
+:RETADR  DS    2
+*

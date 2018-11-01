@@ -1,0 +1,91 @@
+*
+*``````````````````````````````*
+* SINPUT :: SPECIAL INPUT      *
+*                              *
+* INPUTS A STRING OF TEXT VIA  *
+* MONITOR HOOKS. MAC 255 CHARS *
+*-                            -*
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  ???-----  REG: AXYM  *
+*-                            -*
+* CYCLES: ???                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*        LDA   #>(ADDRESS)     *
+*        PHA                   *
+*        LDA   #<(ADDRESS)     *
+*        PHA                   *
+*        JSR   SINPUT          *
+*-                            -*
+* ENTRY                        *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+* LOW BYTE OF INPUT ADDRESS    *
+* HI BYTE OF INPUT ADDRESS     *
+*-                            -*
+* EXIT                         *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+*                              *
+*   A = LOW BYTE OF ADDRESS    *
+*   X = LENGTH OF STRING       *
+*   Y = LENGTH OF STRING       *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+SINPUT
+*
+** SAVE RETURN ADDRESS
+*
+         PLA
+         STA   :RETADR
+         PLA
+         STA   :RETADR+1
+*
+** GET PARAMETERS
+*
+         PLA
+         STA   ADDR1      ; STORE IN ZERO
+         PLA              ; PAGE
+         STA   ADDR1+1
+*
+         LDX   #$00
+         JSR   GETLN
+         STX   :STRLEN    ; STORE STR LENGTH
+         CPX   #0
+         BEQ   :EXIT
+*
+:INP_CLR
+         LDY   #0
+         LDA   :STRLEN    ; LENGTH OF STRING
+         STA   (ADDR1),Y  ; PUT LENGTH AT START OF LOC
+:LOOP
+         LDA   KEYBUFF,Y  ; PUT STR INTO NEW LOC
+         INY
+         STA   (ADDR1),Y
+         CPY   :STRLEN    ; IF Y < STR LENGTH
+         BNE   :LOOP      ; LOOP; ELSE, CONTINUE
+*
+:EXIT
+*
+** RESTORE RETURN ADDRESS
+*
+         LDA   :RETADR+1
+         PHA
+         LDA   :RETADR
+         PHA
+*
+         RTS
+*
+** DATA
+*
+:STRLEN  DS    1
+:RETADR  DS    2
+*
