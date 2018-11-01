@@ -1,0 +1,788 @@
+*
+         JMP   STDIOX
+*
+*-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*
+*                              *
+* STDIO.PUT                    *
+*                              *
+* AUTHOR:  NATHAN RIGGS        *
+* CONTACT: NATHAN.RIGGS@       *
+*          OUTLOOK.COM         *
+*                              *
+* VERSION: 0.1.2               *
+* DATE:    30-OCT-2018         *
+* ASSEMBLER: MERLIN 8 PRO      *
+*                              *
+****   SEE CHANGELOG FOR    ****
+****  HISTORY OF CHANGES    ****
+*                              *
+* LICENSE: MIT LICENSE, WHERE  *
+*  APPLICABLE. CODE INSPIRED   *
+*  BY THE WORKS OF OTHERS MAY  *
+*  FALL UNDER A DIFFERENT      *
+*  LICENSE (NOTED IN ROUTINE). *
+*                              *
+* STANDARD INPUT / OUTPUT      *
+*  LIBRARY. PRIMARILY FOR THE  *
+*  APPLE II FAMILY, BUT COULD  *
+*  BE PORTED TO OTHER 6502-    *
+*  BASED SYSTEMS FAIRLY        *
+*  EASILY.                     *
+*                              *
+*------------------------------*
+*                              *
+* LIST OF ROUTINES             *
+*                              *
+* XPRINT : SPECIAL PRINT       *
+* DPRINT : PRINT FROM MEMORY   *
+* THLIN : TEXT LINE HORIZONTAL *
+* TVLIN : TEXT LINE VERTICAL   *
+* CURSFOR : CURSOR FORWARD     *
+* CURSBAK : CURSOR BACKWARD    *
+* CURSDN : CURSOR DOWN         *
+* CURSUP : CURSOR UP           *
+* TFILLA : TEXT FILL AREA      *
+* SINPUT : STRING INPUT        *
+* GPBX : GET PADDLE BUTTON X   *
+*                              *
+*-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*
+*
+*``````````````````````````````*
+* XPRINT :: SPECIAL PRINT      *
+*-                            -*
+* PRINTS DATA IMMEDIATELY      *
+* FOLLOWING THE JSR TO SPRINT  *
+*-                            -*
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  NZC-----  REG: AYM-  *
+*-                            -*
+* CYCLES: 53+                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*        JSR   SPRINT          *
+*        ASC   "HELLO, WORLD!" *
+*-                            -*
+* ENTRY                        *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+*-                            -*
+* EXIT                         *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+*                              *
+* A,Y = LOW BYTE OF ADDRESS    *
+*   X = UNCHANGED              *
+*-                            -*
+* NOTE: PARTIALLY ADOPTED FROM *
+* ROGER WAGNER'S AND CHRIS     *
+* TORRENCE'S /ASSEMBLY LINES/  *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+XPRINT
+*
+** GET CURRENT EXEC ADDRESS
+*
+         PLA
+         STA   ADDR1
+         PLA
+         STA   ADDR1+1
+*
+         LDY   #$01       ; POINT TO NEXT
+                          ; INSTRUCTION
+:LOOP
+         LDA   (ADDR1),Y
+         BEQ   :DONE
+         JSR   COUT1
+         INY
+         BNE   :LOOP
+:DONE                     ; RESTORE STACK
+         CLC              ; EXEC POINTER
+         TYA              ; TO RESUME
+         ADC   ADDR1
+         STA   ADDR1
+         LDA   ADDR1+1
+         ADC   #$00
+         PHA
+         LDA   ADDR1
+         PHA
+         RTS
+:EXIT
+*
+*``````````````````````````````*
+* DPRINT :: PRINT FROM MEMORY  *
+*-                            -*
+* PRINTS DATA FROM SPECIFIED   *
+* MEMORY LOCATION UNTIL        *
+* REACHING 00 (STRING TERM).   *
+*-                            -*
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  --------  REG: A-YM  *
+*-                            -*
+* CYCLES: 25+                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*        LDA   #>(ADDRESS)     *
+*        PHA                   *
+*        LDA   #<(ADDRESS)     *
+*        PHA                   *
+*        JSR   DPRINT          *
+*-                            -*
+* ENTRY                        *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+* LOW BYTE OF PRINT ADDRESS    *
+* HI BYTE OF PRINT ADDRESS     *
+*-                            -*
+* EXIT                         *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+*                              *
+*   A = LOW BYTE OF ADDRESS    *
+*   X = UNCHANGED              *
+*   Y = LENGTH OF PRINTED      *
+*       STRING                 *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+DPRINT
+*
+** SAVE RETURN ADDRESS
+*
+         PLA
+         STA   :RETADR
+         PLA
+         STA   :RETADR+1
+*
+** GET ADDRESS, STORE IN ZERO PAGE
+*
+         PLA
+         STA   ADDR1
+         PLA
+         STA   ADDR1+1
+*
+         LDY   #$00
+:LOOP
+         LDA   (ADDR1),Y
+         BEQ   :EXIT
+         JSR   COUT1
+         INY
+         BNE   :LOOP
+:EXIT
+*
+** RESTORE RETURN ADDRESS
+*
+         LDA   :RETADR+1
+         PHA
+         LDA   :RETADR
+         PHA
+*
+         RTS
+*
+** DATA
+*
+:RETADR  DS    2
+*
+*
+*``````````````````````````````*
+* THLIN :: TEXT HORIZ LINE     *
+*-                            -*
+* CREATES A HORIZONTAL LINE OF *
+* TEXT COMPOSED OF THE FILL    *
+* CHARACTER SPECIFIED AT Y.    *
+*-                            -*
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  ????----  REG: AXYM  *
+*-                            -*
+* CYCLES: ???                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*        LDA (X-START)         *
+*        PHA                   *
+*        LDA (X-END)           *
+*        PHA                   *
+*        LDA (Y-POS)           *
+*        PHA                   *
+*        LDA (FILL CHAR)       *
+*        PHA                   *
+*        JSR THLIN             *
+*-                            -*
+* ENTRY                        *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+* XPOS START OF LINE (:X1)     *
+* XPOS END OF LINE (:X2)       *
+* YPOS OF LINE (:Y)            *
+* FILL CHARACTER (:F)          *
+*-                            -*
+* EXIT                         *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+*                              *
+* X,Y = START,END OF LINE      *
+*   A = LOW BYTE OF RET ADDR   *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+THLIN
+*
+** SAVE RETURN ADDRESS
+*
+         PLA
+         STA   :RETADR
+         PLA
+         STA   :RETADR+1
+*
+** GET PARAMETERS
+*
+         PLA
+         STA   :F
+         PLA
+         STA   :Y
+         PLA
+         STA   :X2
+         PLA
+         STA   :X1
+*
+*
+         LDX   :X1        ; LOAD X START POS
+         STX   CURSH      ; STORE IN CURSH
+         LDY   :Y         ; LDY Y POS
+         STY   CURSV      ; STORE IN CURSV
+         JSR   VTAB       ; MOVE CURSOR
+         LDA   :F         ; LOAD FILL CHAR
+         LDY   :X1        ; LOAD X START POS
+:LOOP
+         JSR   COUT1      ; PRINT FILL CHAR
+         INY              ; INCREASE X POS
+         CPY   :X2        ; IF LESS THAN X END POS
+         BNE   :LOOP      ; REPEAT UNTIL DONE
+:EXIT
+*
+** RESTORE RETURN ADDRESS
+*
+         LDA   :RETADR+1
+         PHA
+         LDA   :RETADR
+         PHA
+         RTS
+*
+** DATA
+*
+:X1      DS    1
+:X2      DS    1
+:Y       DS    1
+:F       DS    1          ; FILL CHAR
+:RETADR  DS    2
+*
+*``````````````````````````````*
+* TVLIN :: TEXT VERTICAL LINE  *
+*-                            -*
+* CREATES A VERTICAL LINE OF   *
+* TEXT COMPOSED OF THE FILL    *
+* CHARACTER SPECIFIED AT X.    *
+*-                            -*
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  ????----  REG: AXYM  *
+*-                            -*
+* CYCLES: ???                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*        LDA (Y-START)         *
+*        PHA                   *
+*        LDA (Y-END)           *
+*        PHA                   *
+*        LDA (X-POS)           *
+*        PHA                   *
+*        LDA (FILL CHAR)       *
+*        PHA                   *
+*        JSR TVLIN             *
+*-                            -*
+* ENTRY                        *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+* XPOS START OF LINE (:Y1)     *
+* XPOS END OF LINE (:Y2)       *
+* YPOS OF LINE (:X)            *
+* FILL CHARACTER (:F)          *
+*-                            -*
+* EXIT                         *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+*                              *
+*   Y = END OF LINE            *
+*   X = HORIZONTAL POSITION    *
+*   A = LOW BYTE OF RET ADDR   *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+TVLIN
+*
+** SAVE RETURN ADDRESS
+*
+         PLA
+         STA   :RETADR
+         PLA
+         STA   :RETADR+1
+*
+** GET PARAMETERS
+*
+         PLA
+         STA   :F         ; FILL CHAR
+         PLA
+         STA   :X         ; X POS
+         PLA
+         STA   :Y2        ; END
+         PLA
+         STA   :Y1        ; START
+*
+         LDX   :X
+         LDY   :Y1
+         STY   CURSV
+         STX   CURSH
+         JSR   VTAB       ; SET CURSOR POS
+:LOOP
+         JSR   COUT1      ; PRINT CHAR
+         LDX   :X
+         STX   CURSH
+         STY   CURSV
+         JSR   VTAB       ; SET NEW CURSOR POS
+         LDA   :F         ; RELOAD FILL CHAR
+         INY              ; INCREASE COUNTER
+         CPY   :Y2        ; IF Y1 < Y2
+         BNE   :LOOP      ; LOOP; ELSE, CONTINUE
+:EXIT
+*
+** RESTORE RETURN ADDRESS
+*
+         LDA   :RETADR+1
+         PHA
+         LDA   :RETADR
+         PHA
+*
+         RTS
+*
+** DATA
+*
+:RETADR  DS    2
+:X       DS    1
+:Y1      DS    1
+:Y2      DS    1
+:F       DS    1
+*
+*
+*``````````````````````````````*
+*CURSFOR :: MOVE CURSOR FORWD  *
+*                              *
+*-                            -*
+* FLAGS:  NZC-----  REG: AYM-  *
+* CYCLES: 20                   *
+*-                            -*
+* USAGE:                       *
+*        LDA   (AMT TO MOVE)   *
+*        JSR   CURSFOR         *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+CURSFOR
+         CLC
+         ADC   CURSH
+         STA   CURSH
+         JSR   VTAB
+         RTS
+*
+*``````````````````````````````*
+*CURSBAK :: MOVE CURSOR BACKWD *
+*                              *
+*-                            -*
+* FLAGS:  NZC-----  REG: AYM-  *
+* CYCLES: 26                   *
+*-                            -*
+* USAGE:                       *
+*        LDA   (AMT TO MOVE)   *
+*        JSR   CURSBAK         *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+CURSBAK
+         SEC
+         STA   :SCRATCH
+         LDA   CURSH
+         SBC   :SCRATCH
+         STA   CURSH
+         JSR   VTAB
+         RTS
+*
+** DATA
+*
+:SCRATCH DS    1
+*
+*``````````````````````````````*
+* CURSDN :: MOVE CURSOR DOWN   *
+*                              *
+*-                            -*
+* FLAGS:  NZC-----  REG: AYM-  *
+* CYCLES: 20                   *
+*-                            -*
+* USAGE:                       *
+*        LDA   (AMT TO MOVE)   *
+*        JSR   CURSDN          *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+CURSDN
+         CLC
+         ADC   CURSV
+         STA   CURSV
+         JSR   VTAB
+         RTS
+*
+*``````````````````````````````*
+* CURSUP :: MOVE CURSOR UP     *
+*                              *
+*-                            -*
+* FLAGS:  NZC-----  REG: AYM-  *
+* CYCLES: 26                   *
+*-                            -*
+* USAGE:                       *
+*        LDA   (AMT TO MOVE)   *
+*        JSR   CURSUP          *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+CURSUP
+         SEC
+         STA   :SCRATCH
+         LDA   CURSV
+         SBC   :SCRATCH
+         STA   CURSV
+         JSR   VTAB
+         RTS
+*
+** DATA
+*
+:SCRATCH DS    1
+*
+*``````````````````````````````*
+* TFILLA :: TEXT FILL AREA     *
+*-                            -*
+* FILLS A RECTANGULAR AREA OF  *
+* THE SCREEN WITH THE DESIRED  *
+* CHARACTER.                   *
+*-                            -*
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  ???-----  REG: AXYM  *
+*-                            -*
+* CYCLES: ???                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*        LDA (LEFT BOUND)      *
+*        PHA                   *
+*        LDA (RIGHT BOUND)     *
+*        PHA                   *
+*        LDA (TOP BOUND)       *
+*        PHA                   *
+*        LDA (BOTTOM BOUND)    *
+*        PHA                   *
+*        LDA (FILL CHAR)       *
+*        PHA                   *
+*        JSR TFILLA            *
+*-                            -*
+* ENTRY                        *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+* FILL CHAR (:FILL)            *
+* BOTTOM BOUND (:BOTTOM)       *
+* TOP BOUND (:TOP)             *
+* RIGHT BOUND (:RIGHT)         *
+* LEFT BOUND (:LEFT)           *
+*-                            -*
+* EXIT                         *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+*                              *
+*   A = LOW BYTE OF ADDRESS    *
+*   X = COUNTER DATA; TRASH    *
+*   Y = COUNTER DATA; TRASH    *
+*       STRING                 *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+TFILLA
+*
+** SAVE RETURN ADDRESS
+*
+         PLA
+         STA   :RETADR
+         PLA
+         STA   :RETADR+1
+*
+** LOAD PARAMETERS
+*
+         PLA
+         STA   :FILL
+         PLA
+         STA   :BOTTOM
+         PLA
+         STA   :TOP
+         PLA
+         STA   :RIGHT
+         PLA
+         STA   :LEFT
+*
+
+         LDY   :TOP       ; LOAD STARTING Y
+:LOOPY
+         STY   CURSV
+         JSR   VTAB       ; SET VERTICAL
+         LDX   :LEFT      ; CURSOR POSITION
+         DEX
+:LOOPX
+         INX
+         STX   CURSH
+         JSR   VTAB       ; SET HORIZONTAL
+         LDA   :FILL
+         JSR   COUT1      ; PRINT FILL CHAR
+         CPX   :RIGHT     ; IF X < RIGHT MAX
+         BNE   :LOOPX     ; LOOP; ELSE, CONTINUE
+*                         ; END X LOOP
+         INY
+         CPY   :BOTTOM    ; IF Y < BOTTOM MAX
+         BNE   :LOOPY     ; LOOP; ELSE, CONTINUE
+*
+:EXIT
+*
+** RESTORE RETURN ADDRESS
+*
+         LDA   :RETADR+1
+         PHA
+         LDA   :RETADR
+         PHA
+*
+         RTS
+*
+** DATA
+*
+:LEFT    DS    1
+:RIGHT   DS    1
+:BOTTOM  DS    1
+:TOP     DS    1
+:FILL    DS    1
+:RETADR  DS    2
+*
+*``````````````````````````````*
+* SINPUT :: SPECIAL INPUT      *
+*                              *
+* INPUTS A STRING OF TEXT VIA  *
+* MONITOR HOOKS. MAC 255 CHARS *
+*-                            -*
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  ???-----  REG: AXYM  *
+*-                            -*
+* CYCLES: ???                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*        LDA   #>(ADDRESS)     *
+*        PHA                   *
+*        LDA   #<(ADDRESS)     *
+*        PHA                   *
+*        JSR   SINPUT          *
+*-                            -*
+* ENTRY                        *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+* LOW BYTE OF INPUT ADDRESS    *
+* HI BYTE OF INPUT ADDRESS     *
+*-                            -*
+* EXIT                         *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+*                              *
+*   A = LOW BYTE OF ADDRESS    *
+*   X = LENGTH OF STRING       *
+*   Y = LENGTH OF STRING       *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+SINPUT
+*
+** SAVE RETURN ADDRESS
+*
+         PLA
+         STA   :RETADR
+         PLA
+         STA   :RETADR+1
+*
+** GET PARAMETERS
+*
+         PLA
+         STA   ADDR1      ; STORE IN ZERO
+         PLA              ; PAGE
+         STA   ADDR1+1
+*
+         LDX   #$00
+         JSR   GETLN
+         STX   :STRLEN    ; STORE STR LENGTH
+         CPX   #0
+         BEQ   :EXIT
+*
+:INP_CLR
+         LDY   #0
+         LDA   :STRLEN    ; LENGTH OF STRING
+         STA   (ADDR1),Y  ; PUT LENGTH AT START OF LOC
+:LOOP
+         LDA   KEYBUFF,Y  ; PUT STR INTO NEW LOC
+         INY
+         STA   (ADDR1),Y
+         CPY   :STRLEN    ; IF Y < STR LENGTH
+         BNE   :LOOP      ; LOOP; ELSE, CONTINUE
+*
+:EXIT
+*
+** RESTORE RETURN ADDRESS
+*
+         LDA   :RETADR+1
+         PHA
+         LDA   :RETADR
+         PHA
+*
+         RTS
+*
+** DATA
+*
+:STRLEN  DS    1
+:RETADR  DS    2
+*
+*
+*``````````````````````````````*
+* GPBX :: GET PADDLE BUTTON X  *
+*                              *
+* GETS STATE OF PADDLE BUTTON  *
+* SPECIFIED AND RET 0, 1 IN A  *
+*-                            -*
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  ???-----  REG: A-YM  *
+*-                            -*
+* CYCLES: ???                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*        LDA   #>(ADDRESS)     *
+*        PHA                   *
+*        LDA   #<(ADDRESS)     *
+*        PHA                   *
+*        JSR   GPBX            *
+*                              *
+* --- WHERE:                   *
+*                              *
+*    BUTTON 0 = $C061 (PB0)    *
+*    BUTTON 1 = $CO62 (PB1)    *
+*    BUTTON 2 - $C063 (PB2)    *
+*    BUTTON 3 = $C060 (PB3)    *
+*-                            -*
+* ENTRY                        *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+* LOW BYTE OF PDL BTN ADDRESS  *
+* HI BYTE OF PDL BTN ADDRESS   *
+*-                            -*
+* EXIT                         *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+*                              *
+*   A = 1 IF PRESSED, 0 IF NOT *
+*   X = UNCHANGED              *
+*   Y = GARBAGE                *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+* CHANGE THIS LATER TO ACCEPT ALL BUTTONS, 0-4
+*
+GBPX
+*
+** SAVE RETURN ADDRESS
+*
+         PLA
+         STA   :RETADR
+         PLA
+         STA   :RETADR+1
+*
+** GET PARAMETER
+*
+         PLA
+         STA   ADDR1      ; ZERO PAGE
+         PLA
+         STA   ADDR1+1
+*
+*
+         LDY   #$00
+         LDA   (ADDR1),Y  ; IF BTN = PUSHED
+         BMI   :1
+         JMP   :0
+:1
+         LDY   #$01       ; BTN PUSHED;A=1
+         JMP   :EXIT
+:0
+         LDY   #$00       ; BTN NOT PUSHED;A=0
+*
+:EXIT
+*
+** RESTORE RETURN ADDRESS
+*
+         LDA   :RETADR+1
+         PHA
+         LDA   :RETADR
+         PHA
+*
+         TYA              ; BTN FLAG MOVE TO A
+         RTS
+*
+** DATA
+*
+:RETADR  DS    2
+*
+STDIOX   RTS
