@@ -10,36 +10,20 @@ Planned libraries include, along with associated Macros:
 
 CORE DISK
 * stdio.lib: Standard Input/Output library.
-* common.lib: Common, useful subroutines: memory swaps, etc.
-
-MATH DISK
-
 * math.lib: Integer Math Library.
-* fpmath.lib: Floating-point Math Library.
-
-IO DISK
-* fileio.lib: File Input/Output Library.
-* 80colstdio.lib: stdio library for 80-column display.
+* common.lib: Common, useful subroutines: memory swaps, etc.
 
 DATA DISK
 * strings.lib: Library for managing strings.
-* arrays.lib: library for managing arrays. 
+* arrays.lib: library for managing arrays.
+* fileio.lib: File Input/Output Library. 
 
-LORES DISK
+GRAPHICS DISK
 * lores.lib: Library for fast(er) graphics in low resolution mode.
-* dublores.lib: Library for double-low-resolution graphics.
-
-HIRES DISK
 * hires.lib: Library for fast(er) graphics in high resolution mode.
-* dubhires.lib: Library for handling graphics in double-high-resolution mode.
-
-HIRES DISK 2
-* hireschar.lib: High Resolution mode text character library.
-* hiresshapes.lib: Routines for creating lines, circles, etc.
+* dubres.lib: Library for handling graphics in double-resolution modes, low and high.
 
 MISC DISK
 * sound.lib: Music and sound effects library.
-* applesoft.lib: Library for interfacing ASM programs with Applesoft BASIC.
+* fpmath.lib: Floating-point math library.
 
-UTIL DISK
-* various useful utilities
