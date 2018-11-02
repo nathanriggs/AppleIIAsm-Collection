@@ -1,0 +1,780 @@
+         JMP   COMMONX
+*
+*-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*
+*                              *
+*       COMMON.LIB             *
+*                              *
+* AUTHOR:  NATHAN RIGGS        *
+* CONTACT: NATHAN.RIGGS@       *
+*          OUTLOOK.COM         *
+*                              *
+* VERSION: 0.1.2               *
+* DATE:    30-OCT-2018         *
+* ASSEMBLER: MERLIN 8 PRO      *
+*                              *
+* LICENSE: APACHE 2.0 LICENSE  *
+* WHEN APPLICABLE. CODE        *
+* INSPIRED BY THE WORKS OF     *
+* OTHERS MAY FALL UNDER A      *
+* DIFFERENT LICENSE.           *
+*                              *
+* COMMON ASM ROUTINES          *
+* LIBRARY FOR FUNCTIONS SUCH   *
+* AS MEMORY SWAPPING.          *
+*                              *
+*------------------------------*
+*                              *
+* LIST OF ROUTINES             *
+*                              *
+* MEMFILL : FILL LOCATION WITH *
+*           A SINGLE VALUE.    *
+*                              *
+* MEMMOVE : MOVE A BLOCK OF    *
+*           MEMORY FROM ONE    *
+*           LOC TO ANOTHER.    *
+*                              *
+* DELAYMS : DELAY FOR A NUMBER *
+*           OF MILLISECONDS.   *
+*           THIS DEPENDS ON    *
+*           THE ACTUAL SYSTEM  *
+*           BEING USED, SO     *
+*           ISN'T AS EASILY    *
+*           PORTED TO OTHER    *
+*           6502 SIBLINGS.     *
+*                              *
+* ZSAVE : SAVE STATE OF FREE   *
+*         ZERO PAGE LOCATIONS  *
+*         AT MEM LOC SPECIFIED *
+*                              *
+* ZLOAD : LOAD PREVIOUS SAVED  *
+*         ZERO PAGE VALUES     *
+*         BACK INTO PROPER     *
+*         LOCATION.            *
+*                              *
+*-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*
+*
+*``````````````````````````````*
+* MEMFILL :: FILL MEMORY LOC   *
+*-                            -*
+* FILLS A BLOCK OF MEMORY WITH *
+* THE SPECIFIED VALUE; USED    *
+* OFTEN TO CLEAR LARGE BLOCKS. *
+*-                            -*
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  ????----  REG: AXYM  *
+*-                            -*
+* CYCLES: ???                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*                              *
+*     LDA  #>$6A00             *
+*     PHA                      *
+*     LDA  #<$6A00             *
+*     PHA                      *
+*     LDA  #>1024              *
+*     PHA                      *
+*     LDA  #<1024              *
+*     PHA                      *
+*     LDA  #0                  *
+*     PHA                      *
+*     JSR  MEMFILL             *
+*-                            -*
+* ENTRY                        *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+* FILL VALUE FOR MEMORY        *
+* ARRAY SIZE                   *
+* LOW BYTE OF STARTING POINT   *
+* HIGH BYTE OF STARTING POINT  *
+*-                            -*
+* EXIT                         *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+*                              *
+*   Y = COUNTER; TRASH         *
+*   X = COUNTER; TRASH         *
+*   A = LOW BYTE OF RET ADDR   *
+*-                            -*
+* ADAPTED FROM LEVANTHAL AND   *
+* WINTHROP'S /6502 ASSEMBLY    *
+* LANGUAGE ROUTINES/.          *
+* AS SUCH, THIS MAY NOT FALL   *
+* UNDER THE APACHE 2.0 LICENSE *
+* AGREEMENT, SINCE THE BOOK    *
+* WAS WRITTEN BEFORE THE       *
+* LICENSE!                     *
+*                              *
+* THAT SAID, LEVENTHAL WROTE   *
+* THAT THE PURPOSE OF THE BOOK *
+* WAS TO COPY THE SOURCE CODE, *
+* AS REINVENTING THE WHEEL IS  *
+* TEDIOUS, AND HE PLACED NO    *
+* RESTRICTIONS ON ITS USE.     *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+MEMFILL
+*
+** SAVE RETURN ADDRESS
+*
+         PLA
+         STA   :RETADR
+         PLA
+         STA   :RETADR+1
+*
+** GET PARAMETERS
+*
+         PLA
+         STA   :VALUE
+         PLA
+         STA   :ARYSZ
+         PLA
+         STA   :ARYSZ+1
+         PLA
+         STA   ADDR1      ; ZERO PAGE POINTER
+         PLA              ; DEFINED IN
+         STA   ADDR1+1    ; DECS
+*
+** FILL WHOLE PAGES FIRST
+*
+         LDA   :VALUE     ; GET VAL FOR FILL
+         LDX   :ARYSZ+1   ; X=# OF PAGES TO DO
+         BEQ   :PARTPG    ; BRANCH IF HIGHBYTE OF SZ = 0
+         LDY   #0
+:FULLPG
+         STA   (ADDR1),Y
+         INY              ; INC TO NEXT BYTE
+         BNE   :FULLPG    ; BRANCH IF NOT DONE W/ PAGE
+         INC   ADDR1+1    ; ADVANCE TO NEXT PAGE
+         DEX
+         BNE   :FULLPG    ; BRANCH IF NOT DONE W/ PAGES
+*
+** DO THE REMAINING PARTIAL PAGE
+** REGISTER A STILL CONTAINS VALUE
+*
+:PARTPG
+         LDX   :ARYSZ     ;GET # OF BYTES IN FINAL PAGE
+         BEQ   :EXIT      ; BRANCH IF LOW BYTE = 0
+         LDY   #0
+:PARTLP
+         STA   (ADDR1),Y  ; STORE VAL
+         INY              ; INCREMENT INDEX
+         DEX              ; DECREMENT COUNTER
+         BNE   :PARTLP    ; BRANCH IF NOT DONE
+:EXIT
+*
+** RESTORE RETURN ADDRESS
+*
+         LDA   :RETADR+1
+         PHA
+         LDA   :RETADR
+         PHA
+         RTS
+*
+** DATA
+*
+:VALUE   DS    1          ; FILL VALUE
+:ARYSZ   DS    2          ; ARRAY SIZE
+:RETADR  DS    2
+*
+*``````````````````````````````*
+* MEMMOVE :: MOVE MEM BLOCK    *
+*-                            -*
+* MOVES A SPECIFIED BLOCK OF   *
+* MEMORY FROM A SOURCE ADDRESS *
+* TO A DESTINATION ADDRESS     *
+* RANGE.                       *
+*-                            -*
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  ????----  REG: AXYM  *
+*-                            -*
+* CYCLES: ???                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*                              *
+*      LDA #>$6A00             *
+*      PHA                     *
+*      LDA #<$6A00             *
+*      PHA                     *
+*      LDA #>$7000 ; DEST      *
+*      PHA                     *
+*      LDA #<$7000             *
+*      PHA                     *
+*      LDA #>1024              *
+*      PHA                     *
+*      LDA #<1024              *
+*      PHA                     *
+*      JSR MEMMOVE             *
+*-                            -*
+* ENTRY                        *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+* NUMBER OF BYTES TO MOVE      *
+* LOW BYTE OF DESTINATION      *
+* HIGH BYTE OF DESTINATION     *
+* LOW BYTE OF SOURCE ADDRESS   *
+* HIGH BYTE OF SOURCE ADDRESS  *
+*-                            -*
+* EXIT                         *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+*                              *
+*   Y = COUNTER; TRASH         *
+*   X = COUNTER; TRASH         *
+*   A = LOW BYTE OF RET ADDR   *
+*-                            -*
+* ADAPTED FROM LEVANTHAL AND   *
+* WINTHROP'S /6502 ASSEMBLY    *
+* LANGUAGE ROUTINES/.          *
+* AS SUCH, THIS MAY NOT FALL   *
+* UNDER THE APACHE 2.0 LICENSE *
+* AGREEMENT, SINCE THE BOOK    *
+* WAS WRITTEN BEFORE THE       *
+* LICENSE!                     *
+*                              *
+* THAT SAID, LEVENTHAL WROTE   *
+* THAT THE PURPOSE OF THE BOOK *
+* WAS TO COPY THE SOURCE CODE, *
+* AS REINVENTING THE WHEEL IS  *
+* TEDIOUS, AND HE PLACED NO    *
+* RESTRICTIONS ON ITS USE.     *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+MEMMOVE
+*
+*
+** SAVE RETURN ADDRESS
+*
+         PLA
+         STA   :RETADR
+         PLA
+         STA   :RETADR+1
+*
+** GET PARAMETERS
+*
+         PLA
+         STA   :MVELEN
+         PLA
+         STA   :MVELEN+1
+         PLA
+         STA   ADDR2      ; ZERO PAGE POINTER
+         PLA
+         STA   ADDR2+1
+         PLA
+         STA   ADDR1
+         PLA
+         STA   ADDR1+1
+*
+** DETERMINE IF DEST AREA IS
+** ABOVE SRC AREA BUT OVERLAPS
+** IT. REMEMBER, OVERLAP CAN BE
+** MOD 64K. OVERLAP OCCURS IF
+** STARTING DEST ADDRESS MINUS
+** STARTING SRC ADDRESS (MOD
+** 64K) IS LESS THAN NUMBER
+** OF BYTES TO MOVE.
+*
+         LDA   ADDR2      ;CALC DEST-SRC
+         SEC
+         SBC   ADDR1
+         TAX
+         LDA   ADDR2+1
+         SBC   ADDR1+1    ; MOD 64K AUTOMATIC
+                          ; -- DISCARD CARRY
+         TAY
+         TXA              ; CMP WITH # OF BYTES TO MOVE
+         CMP   :MVELEN
+         TYA
+         SBC   :MVELEN+1
+         BCS   :DOLEFT    ; BRANCH IF NO OVERLAP
+*
+** DEST AREA IS ABOVE SRC AREA
+** BUT OVERLAPS IT.
+** MOVE FROM HIGHEST ADDR TO
+** AVOID DESTROYING DATA
+*
+         JSR   :MVERHT
+         JMP   :EXIT
+*
+** NO PROB DOING ORDINARY MOVE
+** STARTING AT LOWEST ADDR
+*
+:DOLEFT
+         JSR   :MVELEFT
+:EXIT
+         JMP   :MREXIT
+*
+********************************
+* SUBROUTINE: MVELEFT          *
+********************************
+*
+:MVELEFT
+         LDY   #0         ; ZERO INDEX
+         LDX   :MVELEN+1  ; X=# OF FULL PP TO MOVE
+         BEQ   :MLPART    ; IF X=0, DO PARTIAL PAGE
+:MLPAGE
+         LDA   (ADDR1),Y
+         STA   (ADDR2),Y  ;MOVE ONE BYTE
+         INY              ; NEXT BYTE
+         BNE   :MLPAGE    ; CONT UNTIL 256B MOVED
+         INC   ADDR1+1    ; ADV TO NEXT SRC PAGE
+         INC   ADDR2+1    ; ADV NEXT DEST PAGE
+         DEX              ; DEC PAGE COUNT
+         BNE   :MLPAGE    ; CONT UNTIL ALL FULL
+                          ; PAGES ARE MOVED
+:MLPART
+         LDX   :MVELEN    ; GET LENGTH OF LAST PAGE
+         BEQ   :MLEXIT    ; BR IF LENGTH OF LAST
+                          ; PAGE = 0
+                          ; REG Y IS 0
+:MLLAST
+         LDA   (ADDR1),Y
+         STA   (ADDR2),Y  ; MOVE BYTE
+         INY              ; NEXT BYTE
+         DEX              ; DEC COUNTER
+         BNE   :MLLAST    ; CONT UNTIL LAST P DONE
+:MLEXIT
+         JMP   :MREXIT
+*
+********************************
+* SUBROUTINE: MVERHT           *
+********************************
+*
+:MVERHT
+*
+** MOVE THE PARTIAL PAGE FIRST
+*
+         LDA   :MVELEN+1
+         CLC
+         ADC   ADDR1+1
+         STA   ADDR1+1    ;POINT TO LAST P OF SRC
+         LDA   :MVELEN+1
+         CLC
+         ADC   ADDR2+1
+         STA   ADDR2+1    ; POINT TO LAST P OF DEST
+*
+** MOVE THE LAST PARTIAL PAGE FIRST
+*
+         LDY   :MVELEN    ;GET LENGTH OF LAST PAGE
+         BEQ   :MRPAGE    ; IF Y=0 DO THE FULL PAGES
+:MR0
+         DEY              ; BACK UP Y TO NEXT BYTE
+         LDA   (ADDR1),Y
+         STA   (ADDR2),Y  ; MOVE BYTE
+         CPY   #0
+         BNE   :MR0       ; BR IF NOT DONE W LAST P
+:MRPAGE
+         LDX   :MVELEN+1  ; GET BYTE OF COUNT AS P CT
+         BEQ   :MREXIT    ; BR IF HYBYTE = 0 (NO FULL P)
+:MR1
+         DEC   ADDR1+1    ; BACK UP TO PREV SRC PAGE
+         DEC   ADDR2+1    ; AND DEST
+:MR2
+         DEY              ; BACK UP Y TO NEXT BYTE
+         LDA   (ADDR1),Y
+         STA   (ADDR2),Y  ; MOVE BYTE
+         CPY   #0
+         BNE   :MR2       ; BR IF NOT DONE W THIS PAGE
+         DEX
+         BNE   :MR1       BR IF NOT ALL PAGES MOVED
+:MREXIT
+*
+** RESTORE RETURN ADDRESS
+*
+         LDA   :RETADR+1
+         PHA
+         LDA   :RETADR
+         PHA
+         RTS
+*
+** DATA
+*
+:RETADR  DS    2
+:MVELEN  DS    2
+*
+*``````````````````````````````*
+* DELAYMS :: DELAY X MILLISECS *
+*-                            -*
+* DELAYS FOR X NUMBER OF       *
+* MILLISECONDS BY LOOPING      *
+* THROUGH PRECISELY CALCULATED *
+* NUMBER OF CYCLES.            *
+*-                            -*
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  ????----  REG: -XY-  *
+*-                            -*
+* CYCLES: ???                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*                              *
+*          LDY #250 ;1/4 SEC   *
+*          JSR DELAYMS         *
+*-                            -*
+* ENTRY                        *
+*                              *
+* Y = NUMBER OF MILLISECONDS   *
+*-                            -*
+* EXIT                         *
+*                              *
+*   Y = COUNTER; TRASH         *
+*   X = COUNTER; TRASH         *
+*   A = UNCHANGED              *
+*-                            -*
+* ADAPTED FROM LEVANTHAL AND   *
+* WINTHROP'S /6502 ASSEMBLY    *
+* LANGUAGE ROUTINES/.          *
+* AS SUCH, THIS MAY NOT FALL   *
+* UNDER THE APACHE 2.0 LICENSE *
+* AGREEMENT, SINCE THE BOOK    *
+* WAS WRITTEN BEFORE THE       *
+* LICENSE!                     *
+*                              *
+* THAT SAID, LEVENTHAL WROTE   *
+* THAT THE PURPOSE OF THE BOOK *
+* WAS TO COPY THE SOURCE CODE, *
+* AS REINVENTING THE WHEEL IS  *
+* TEDIOUS, AND HE PLACED NO    *
+* RESTRICTIONS ON ITS USE.     *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+DELAYMS
+*
+MSCNT    EQU   $0CA       ; 202 TIMES THROUGH DELAY1
+                          ; SPECIFIC TO 1.23 MHZ
+                          ; SPEED OF APPLE II
+:DELAY
+         CPY   #0         ; 2 CYCLES
+         BEQ   :EXIT      ; 2C (EXIT IF DEL=0)
+         NOP              ; 2 CYCLES (MAKE OVERHEAD=25C)
+*
+** IF DELAY IS 1MS THEN GOTO LAST1
+** THIS LOGIC IS DESIGNED TO BE
+** 5 CYCLES THROUGH EITHER ATH
+*
+         CPY   #1         ; 2 CYCLES
+         BNE   :DELAYA    ; 3C IF TAKEN, ELSE 2C
+         JMP   :LAST1     ; 3C
+*
+** DELAY 1 MILLISENCOND TIMES (Y-1)
+*
+:DELAYA
+         DEY              ; 2C (PREDEC Y)
+:DELAY0
+         LDX   #MSCNT     ; 2C
+:DELAY1
+         DEX              ; 2C
+         BNE   :DELAY1    ; 3C
+         NOP              ; 2C
+         NOP              ; 2C
+         DEY              ; 2C
+         BNE   :DELAY0    ; 3C
+:LAST1
+*
+** DELAY THE LAST TIME 25 CYCLES
+** LESS TO TAKE THE CALL, RETURN,
+** AND ROUTINE OVERHEAD INTO
+** ACCOUNT.
+*
+         LDX   #MSCNT-3   ; 2C
+:DELAY2
+         DEX              ; 2C
+         BNE   :DELAY2    ; 3C
+:EXIT
+         RTS              ; 6C
+*
+*
+*``````````````````````````````*
+* ZSAVE :: SAVE 0-PAGE FREE    *
+*-                            -*
+* STORES THE VALUES IN THE     *
+* LITTLE FREE SPACE ON THE     *
+* ZERO PAGE AT AN ALTERNATE    *
+* MEMORY LOCATION TO BE        *
+* RETRIEVED AND RESTORED AT A  *
+* LATER POINT.                 *
+*-                            -*
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  ????----  REG: AXYM  *
+*-                            -*
+* CYCLES: ???                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*                              *
+*         LDA #>$6A00          *
+*         PHA                  *
+*         LDA #<$6A00          *
+*         PHA                  *
+*         JSR ZSAVE            *
+*-                            -*
+* ENTRY                        *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+* LOW BYTE OF DESTINATION      *
+* HIGH BYTE OF DESTINATION     *
+*-                            -*
+* EXIT                         *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+*                              *
+*   Y = TRASH                  *
+*   X = TRASH                  *
+*   A = LOW BYTE OF RET ADDR   *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+ZSAVE
+*
+** LOAD ADDR1 ZERO PAGE AREA FIRST,
+** SINCE WE'LL BE USING THAT
+*
+** NOTE THAT THIS SHOULD ALWAYS BE
+** $06 AND $07, OR ELSE CODE WILL
+** HAVE TO CHANGE.
+*
+         LDX   ADDR1
+         LDY   ADDR1+1
+*
+** SAVE  RETURN ADDRESS
+*
+         PLA
+         STA   :RETADR
+         PLA
+         STA   :RETADR+1
+*
+** GET PARAMETERS
+*
+         PLA
+         STA   ADDR1
+         PLA
+         STA   ADDR1+1
+*
+** COPY ZERO PAGE TO SPECIFIED
+** NON-ZERO LOCATION (ONLY THE
+** FREE ONES..)
+*
+         TYA              ; STORE ADDR1 VALS
+         LDY   #1         ; FIRST
+         STA   (ADDR1),Y
+         LDY   #0
+         TXA
+         STA   (ADDR1),Y
+         LDY   #2
+         LDA   $08
+         STA   (ADDR1),Y
+         INY
+         LDA   $09
+         STA   (ADDR1),Y
+         INY
+         LDA   $19
+         STA   (ADDR1),Y
+         INY
+         LDA   $1E
+         STA   (ADDR1),Y
+         INY
+         LDA   $E3
+         STA   (ADDR1),Y
+         INY
+         LDA   $EB
+         STA   (ADDR1),Y
+         INY
+         LDA   $EC
+         STA   (ADDR1),Y
+         INY
+         LDA   $ED
+         STA   (ADDR1),Y
+         INY
+         LDA   $EE
+         STA   (ADDR1),Y
+         INY
+         LDA   $EF
+         STA   (ADDR1),Y
+         INY
+         LDA   $FA
+         STA   (ADDR1),Y
+         INY
+         LDA   $FB
+         STA   (ADDR1),Y
+         INY
+         LDA   $FC
+         STA   (ADDR1),Y
+         INY
+         LDA   $FD
+         STA   (ADDR1),Y
+         INY
+         LDA   $FE
+         STA   (ADDR1),Y
+         INY
+         LDA   $FF
+         STA   (ADDR1),Y
+*
+** RESTORE RETURN ADDRESS
+*
+         LDA   :RETADR+1
+         PHA
+         LDA   :RETADR
+         PHA
+*
+         RTS
+*
+** DATA
+*
+:RETADR  DS    2
+*
+*``````````````````````````````*
+* ZLOAD :: RESTORE 0-PAGE FREE *
+*-                            -*
+* RESTORES PREVIOUSLY SAVED    *
+* ZERO PAGE VALUES FROM        *
+* HIGHER MEMORY LOCATION.      *
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  ????----  REG: AXYM  *
+*-                            -*
+* CYCLES: ???                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*                              *
+*        LDA #>$6A00           *
+*        PHA                   *
+*        LDA #<$6A00           *
+*        PHA                   *
+*        JSR ZLOAD             *
+*-                            -*
+* ENTRY                        *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+* LOW BYTE OF SOURCE           *
+* HIGH BYTE OF SOURCE          *
+*-                            -*
+* EXIT                         *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+*                              *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+ZLOAD
+*
+** SAVE  RETURN ADDRESS
+*
+         PLA
+         STA   :RETADR
+         PLA
+         STA   :RETADR+1
+*
+** GET PARAMETERS
+*
+         PLA
+         STA   ADDR1
+         PLA
+         STA   ADDR1+1
+*
+** COPY ZERO PAGE TO SPECIFIED
+** NON-ZERO LOCATION (ONLY THE
+** FREE ONES..)
+*
+         LDY   #2         ; START 2 AHEAD
+         LDA   (ADDR1),Y  ; AND PUT ADDR1
+         STA   $08        ; AREA LAST
+         INY
+         LDA   (ADDR1),Y
+         STA   $09
+         INY
+         LDA   (ADDR1),Y
+         STA   $19
+         INY
+         LDA   (ADDR1),Y
+         STA   $1E
+         INY
+         LDA   (ADDR1),Y
+         STA   $E3
+         INY
+         LDA   (ADDR1),Y
+         STA   $EB
+         INY
+         LDA   (ADDR1),Y
+         STA   $EC
+         INY
+         LDA   (ADDR1),Y
+         STA   $ED
+         INY
+         LDA   (ADDR1),Y
+         STA   $EE
+         INY
+         LDA   (ADDR1),Y
+         STA   $EF
+         INY
+         LDA   (ADDR1),Y
+         STA   $FA
+         INY
+         LDA   (ADDR1),Y
+         STA   $FB
+         INY
+         LDA   (ADDR1),Y
+         STA   $FC
+         INY
+         LDA   (ADDR1),Y
+         STA   $FD
+         INY
+         LDA   (ADDR1),Y
+         STA   $FE
+         INY
+         LDA   (ADDR1),Y
+         STA   $FF
+*
+** NOW GET ZERO PAGE VALUES
+** FOR SPACE OCCUPIED BY ADDR; RETURN IN X,Y
+*
+         LDY   #0
+         LDA   (ADDR1),Y
+         TAX
+         LDA   (ADDR1+1),Y
+         TAY
+         STX   ADDR1
+         STY   ADDR1+1
+*
+** RESTORE RETURN ADDRESS
+*
+         LDA   :RETADR+1
+         PHA
+         LDA   :RETADR
+         PHA
+*
+         RTS
+*
+** DATA
+*
+:RETADR  DS    2
+*
+*
+COMMONX  RTS

@@ -1,0 +1,15 @@
+*-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*
+*                              *
+*      COMMON.LIB HOOKS        *
+*                              *
+*=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-*
+*
+PROMPT EQU $33
+REENTRY EQU $03D0 ; WARM REENTRY TO DOS
+COLDENT EQU $03D3 ; COLD ENTRY TO DOS
+SRESET EQU $03F2 ; SOFT RESET
+PRNTAX EQU $F941 ; PRINT HEX VALS OF A,X REGISTERS
+BELL EQU $FBE4 ; RING MY BELL
+IOSAVE EQU $FF4A ; SAVE CURRENT STATE OF REGISTERS
+IOREST EQU $FF3F ; RESTORE OLD STATE OF REGISTERS
+*
