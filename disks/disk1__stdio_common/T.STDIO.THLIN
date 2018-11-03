@@ -1,0 +1,98 @@
+*
+*``````````````````````````````*
+* THLIN :: TEXT HORIZ LINE     *
+*-                            -*
+* CREATES A HORIZONTAL LINE OF *
+* TEXT COMPOSED OF THE FILL    *
+* CHARACTER SPECIFIED AT Y.    *
+*-                            -*
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  ????----  REG: AXYM  *
+*-                            -*
+* CYCLES: ???                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*        LDA (X-START)         *
+*        PHA                   *
+*        LDA (X-END)           *
+*        PHA                   *
+*        LDA (Y-POS)           *
+*        PHA                   *
+*        LDA (FILL CHAR)       *
+*        PHA                   *
+*        JSR THLIN             *
+*-                            -*
+* ENTRY                        *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+* XPOS START OF LINE (:X1)     *
+* XPOS END OF LINE (:X2)       *
+* YPOS OF LINE (:Y)            *
+* FILL CHARACTER (:F)          *
+*-                            -*
+* EXIT                         *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+*                              *
+* X,Y = START,END OF LINE      *
+*   A = LOW BYTE OF RET ADDR   *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+THLIN
+*
+** SAVE RETURN ADDRESS
+*
+         PLA
+         STA   :RETADR
+         PLA
+         STA   :RETADR+1
+*
+** GET PARAMETERS
+*
+                                PLA
+                                STA   :F
+                                PLA
+                                STA   :Y
+                                PLA
+                                STA   :X2
+                                PLA
+                                STA   :X1
+*
+*
+                                LDX   :X1        ; LOAD X START POS
+                                STX   CURSH      ; STORE IN CURSH
+                                LDY   :Y         ; LDY Y POS
+                                STY   CURSV      ; STORE IN CURSV
+                                JSR   VTAB       ; MOVE CURSOR
+                                LDA   :F         ; LOAD FILL CHAR
+                                LDY   :X1        ; LOAD X START POS
+:LOOP
+                                JSR   COUT1      ; PRINT FILL CHAR
+                                INY              ; INCREASE X POS
+                                CPY   :X2        ; IF LESS THAN X END POS
+                                BNE   :LOOP      ; REPEAT UNTIL DONE
+:EXIT
+*
+** RESTORE RETURN ADDRESS
+*
+                                LDA   :RETADR+1
+                                PHA
+                                LDA   :RETADR
+                                PHA
+                                RTS
+*
+** DATA
+*
+:X1                          DS    1
+:X2                          DS    1
+:Y                            DS    1
+:F                            DS    1          ; FILL CHAR
+:RETADR        DS            2

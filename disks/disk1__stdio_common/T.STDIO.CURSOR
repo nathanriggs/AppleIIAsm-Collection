@@ -1,0 +1,89 @@
+*
+*``````````````````````````````*
+*CURSFOR :: MOVE CURSOR FORWD  *
+*                              *
+*-                            -*
+* FLAGS:  NZC-----  REG: AYM-  *
+* CYCLES: 20                   *
+*-                            -*
+* USAGE:                       *
+*        LDA   (AMT TO MOVE)   *
+*        JSR   CURSFOR         *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+CURSFOR
+                                CLC
+                                ADC   CURSH
+                                STA   CURSH
+                                JSR   VTAB
+                                RTS
+*
+*``````````````````````````````*
+*CURSBAK :: MOVE CURSOR BACKWD *
+*                              *
+*-                            -*
+* FLAGS:  NZC-----  REG: AYM-  *
+* CYCLES: 26                   *
+*-                            -*
+* USAGE:                       *
+*        LDA   (AMT TO MOVE)   *
+*        JSR   CURSBAK         *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+CURSBAK
+                                SEC
+                                STA   :SCRATCH
+                                LDA   CURSH
+                                SBC   :SCRATCH
+                                STA   CURSH
+                                JSR   VTAB
+                                RTS
+*
+** DATA
+*
+:SCRATCH DS                 1
+*
+*``````````````````````````````*
+* CURSDN :: MOVE CURSOR DOWN   *
+*                              *
+*-                            -*
+* FLAGS:  NZC-----  REG: AYM-  *
+* CYCLES: 20                   *
+*-                            -*
+* USAGE:                       *
+*        LDA   (AMT TO MOVE)   *
+*        JSR   CURSDN          *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+CURSDN
+                                CLC
+                                ADC   CURSV
+                                STA   CURSV
+                                JSR   VTAB
+                                RTS
+*
+*``````````````````````````````*
+* CURSUP :: MOVE CURSOR UP     *
+*                              *
+*-                            -*
+* FLAGS:  NZC-----  REG: AYM-  *
+* CYCLES: 26                   *
+*-                            -*
+* USAGE:                       *
+*        LDA   (AMT TO MOVE)   *
+*        JSR   CURSUP          *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+CURSUP
+                                SEC
+                                STA   :SCRATCH
+                                LDA   CURSV
+                                SBC   :SCRATCH
+                                STA   CURSV
+                                JSR   VTAB
+                                RTS
+*
+** DATA
+*
+:SCRATCH DS                 1
+*
