@@ -1,0 +1,20 @@
+*``````````````````````````````*
+* DECLARATIONS.PUT             *
+*-                            -*
+*  USED IN CONJUNCTION WITH    *
+*  OTHER PUT FILES. DEFINES    *
+*  BASIC DECLARATIONS USED     *
+*  ACROSS DIFFERENT ROUTINES   *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+REENTRY  EQU   $03D0
+SMALLASM EQU   $300       ; STADDR FOR SMALL PROGRAMS
+*
+ADDR1    EQU   $06
+ADDR2    EQU   $08
+ADDR3    EQU   $EB
+ADDR4    EQU   $ED
+ADDR5    EQU   $FA
+ADDR6    EQU   $FC
+ADDR7    EQU   $FE
+*

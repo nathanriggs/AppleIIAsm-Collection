@@ -1,0 +1,110 @@
+*
+*``````````````````````````````*
+* SUB16 :: SUBTRACT WORDS      *
+*-                            -*
+* SUBTRACT ONE 16BIT NUMBER    *
+* FROM ANOTHER, RETURNING THE  *
+* RESULT IN X (HI) AND Y (LOW) *
+*-                            -*
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  ????----  REG: AXYM  *
+*-                            -*
+* CYCLES: ???                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*                              *
+*        LDA #>1000 ; MINU     *
+*        PHA                   *
+*        LDA #<1000            *
+*        PHA                   *
+*        LDA #>500 ; SUBT      *
+*        PHA                   *
+*        LDA #<500             *
+*        PHA                   *
+*        JSR SUB16             *
+*-                            -*
+* ENTRY                        *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+* LOW BYTE OF SUBTRAHEND       *
+* HIGH BYTE OF SUBTRAHEND      *
+* LOW BYTE OF MINUEND          *
+* HIGH BYTE OF MINUEND         *
+*-                            -*
+* EXIT                         *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+*                              *
+*   Y = RESULT LOW BYTE        *
+*   X = RESULT HIGH BYTE       *
+*   A = LOW BYTE OF RET ADDR   *
+*-                            -*
+* ADAPTED FROM LEVANTHAL AND   *
+* WINTHROP'S /6502 ASSEMBLY    *
+* LANGUAGE ROUTINES/.          *
+* AS SUCH, THIS MAY NOT FALL   *
+* UNDER THE APACHE 2.0 LICENSE *
+* AGREEMENT, SINCE THE BOOK    *
+* WAS WRITTEN BEFORE THE       *
+* LICENSE!                     *
+*                              *
+* THAT SAID, LEVENTHAL WROTE   *
+* THAT THE PURPOSE OF THE BOOK *
+* WAS TO COPY THE SOURCE CODE, *
+* AS REINVENTING THE WHEEL IS  *
+* TEDIOUS, AND HE PLACED NO    *
+* RESTRICTIONS ON ITS USE.     *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+SUB16
+*
+** GET RETURN ADDRESS
+*
+         PLA
+         STA   :RETADR
+         PLA
+         STA   :RETADR+1
+*
+** GET PARAMETERS
+*
+         PLA
+         STA   :SUBT
+         PLA
+         STA   :SUBT+1    ; SUBTRAHEND
+         PLA
+         STA   :MINU
+         PLA
+         STA   :MINU+1    ; MINUEND
+*
+** MINUEND - SUBTRAHEND
+*
+         LDA   :MINU
+         SEC
+         SBC   :SUBT
+         TAY              ; LOW BYTE
+         LDA   :MINU+1
+         SBC   :SUBT+1
+         TAX              ; HIGH BYTE
+*
+** RESTORE REUTNR ADDRESS
+*
+         LDA   :RETADR+1
+         PHA
+         LDA   :RETADR
+         PHA
+*
+         RTS
+*
+** DATA
+*
+:RETADR  DS    2
+:MINU    DS    2
+:SUBT    DS    2

@@ -1,0 +1,350 @@
+*-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*
+*                              *
+* MATH.MAC                     *
+*                              *
+* AUTHOR:  NATHAN RIGGS        *
+* CONTACT: NATHAN.RIGGS@       *
+*          OUTLOOK.COM         *
+*                              *
+* VERSION: 0.1.2               *
+* DATE:    30-OCT-2018         *
+* ASSEMBLER: MERLIN 8 PRO      *
+*                              *
+* LICENSE: APACHE 2.0 LICENSE, *
+*  WHERE APPLICABLE. CODE      *
+*  INSPIRED BY OR COPIED FROM  *
+*  OTHERS MAY FALL UNDER A     *
+*  DIFFERENT LICENSE. I WILL   *
+*  DO MY BEST TO NOTIFY SUCH   *
+*  CASES.                      *
+*                              *
+*------------------------------*
+*                              *
+* THIS IS A MACRO LIBRARY FOR  *
+* MATH.LIB, AND CAN BE USED    *
+* REGARDLESS OF WHETHER A      *
+* SPECIFIC FUNCTION IS         *
+* INCLUDED AS A PUT IN THE     *
+* MAIN SOURCE.                 *
+*                              *
+*------------------------------*
+*                              *
+* LIST OF MACROS               *
+*                              *
+* _ADD16 : 16BIT ADD           *
+* _SUB16 : 16BIT SUBTRACT      *
+* _MUL16 : 16BIT MULTIPLY      *
+* _DIV16 : 16BIT DIVIDE        *
+* _REM16 : 16BIT REMAINDER     *
+* _RND8 : RANDOM # 0..255      *
+* _RNDB : RANDOM # LOW..HIGH   *
+*                              *
+* _CMP16 : 16BIT COMPARE       *
+* _RND16 : 16BIT RANDOM #      *
+* _RNDW : RANDOM WORD LOW..HI  *
+* _MUL8 : 8BIT MULTIPLY        *
+* _DIV8 : 8BIT DIVIDE, REMAIND *
+*                              *
+*-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*
+*
+*
+*``````````````````````````````*
+* _ADD16 :: 16-BIT ADDITION    *
+*-                            -*
+* ADD TWO 16BIT VALUES, STORE  *
+* RESULT IN Y, X (LOW, HIGH)   *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* PARAM1 = ADDEND 1            *
+* PARAM2 = ADDEND 2            *
+*-                            -*
+* SAMPLE USAGE:                *
+*                              *
+*        _ADD16 #3000;#4000    *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_ADD16   MAC
+         LDA   #>]1
+         PHA
+         LDA   #<]1
+         PHA
+         LDA   #>]2
+         PHA
+         LDA   #<]2
+         PHA
+         JSR   ADD16
+         <<<
+*
+*``````````````````````````````*
+* _SUB16 :: 16-BIT SUBTRACTION *
+*-                            -*
+* SUBTRACTS ONE 16BIT INTEGER  *
+* FROM ANOTHER, STORING THE    *
+* RESULT IN Y,X (LOW, HIGH)    *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* PARAM1 = MINUEND             *
+* PARAM2 = SUBTRAHEND          *
+*-                            -*
+* SAMPLE USAGE:                *
+*                              *
+*        _SUB16 #2000;#1500    *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_SUB16   MAC
+         LDA   #>]1
+         PHA
+         LDA   #<]1
+         PHA
+         LDA   #>]2
+         PHA
+         LDA   #<]2
+         PHA
+         JSR   SUB16
+         <<<
+*
+*``````````````````````````````*
+* _MUL16 :: 16-BIT MULTIPLY    *
+*-                            -*
+* MULTIPLIES TWO 16BIT NUMBERS *
+* AND RETURNS THE PRODUCT IN   *
+* Y,X (LOW, HIGH).             *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* PARAM1 = MULTIPLICAND        *
+* PARAM2 = MULTIPLIER          *
+*-                            -*
+* SAMPLE USAGE:                *
+*                              *
+*        _MUL16 #400;#500      *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_MUL16   MAC
+         LDA   #>]1
+         PHA
+         LDA   #<]1
+         PHA
+         LDA   #>]2
+         PHA
+         LDA   #<]2
+         PHA
+         JSR   MUL16
+*
+** NOW XFER STACK TO X,Y
+*
+** REALLY, THIS SHOULD BE IN THE
+** ACTUAL ROUTINE. UNNECESSARY CYCLES.
+*
+** ALSO, HAVE IT RETURN THE 24BIT IN A,
+** EVEN THOUGH IT'S CURRENTLY UNRELIABLE
+*
+         PLA
+         TAY
+         PLA
+         TAX              ; HIGH
+         <<<
+*
+*``````````````````````````````*
+* _DIV16 :: 16-BIT DIVISION    *
+*-                            -*
+* DIVIDES ONE 16BIT NUMBER BY  *
+* ANOTHER AND RETURNS THE      *
+* RESULT IN Y,X (LOW,HIGH).    *
+*                              *
+* IF THE THIRD PARAMETER IS    *
+* PASSED WITH A U, VALUES WILL *
+* BE TREATED AS UNSIGNED; IF   *
+* NOT, VALUES WILL BE TREATED  *
+* AS SIGNED.                   *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* PARAM1 = DIVIDEND            *
+* PARAM2 = DIVISOR             *
+*-                            -*
+* SAMPLE USAGE:                *
+*                              *
+*        _DIV16 #3000;#300     *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_DIV16   MAC
+         LDA   #>]1
+         PHA
+         LDA   #<]1
+         PHA
+         LDA   #>]2
+         PHA
+         LDA   #>]2
+         PHA
+         IF    U,]3       ; UNSIGNED
+         JSR   UDIV16
+         ELSE
+         JSR   SDIV16     ; SIGNED
+         FIN
+*
+** NOW TRANSFER STACK TO Y,X
+*
+         PLA
+         TAY              ; LOW
+         PLA
+         TAX              ; HIGH
+         <<<
+*
+*``````````````````````````````*
+* _REM16 :: 16-BIT DIV REMAINR *
+*-                            -*
+* DIVIDES ONE INTEGER BY       *
+* ANOTHER AND RETURNS THE      *
+* REMAINDER IN Y,X (LOW, HIGH) *
+*                              *
+* IF THE THIRD PARAMETER IS    *
+* PASSED WITH A U, VALUES WILL *
+* BE TREATED AS UNSIGNED; IF   *
+* NOT, VALUES WILL BE TREATED  *
+* AS SIGNED.                   *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* PARAM1 = DIVIDEND            *
+* PARAM2 = DIVISOR             *
+*-                            -*
+* SAMPLE USAGE:                *
+*                              *
+*        _REM16 #1000;#333     *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_REM16   MAC
+         LDA   #>]1
+         PHA
+         LDA   #<]1
+         PHA
+         LDA   #>]2
+         PHA
+         LDA   #>]2
+         PHA
+         IF    U,]3       ; UNSIGNED
+         JSR   UREM16
+         ELSE
+         JSR   SREM16     ; SIGNED
+         FIN
+*
+** TRANSFER STACK TO Y,XX
+*
+         PLA
+         TAY              ; LOW
+         PLA
+         TAX              ; HIGH
+         <<<
+*
+*``````````````````````````````*
+* _RNDB :: 8BIT RANDOM LOW,HI  *
+*-                            -*
+* RETURNS A RANDOM NUMBER IN   *
+* REGISTER A THAT IS BETWEEN   *
+* THE LOW AND HIGH BOUNDARIES  *
+* PASSED IN THE PARAMETERS.    *
+*                              *
+* NOTE THAT THIS RETURNS A     *
+* BYTE, AND THUS ONLY DEALS    *
+* WITH VALUES BETWEEN 0..255.  *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* PARAM1 = LOW BOUNDARY        *
+* PARAM2 = HIGH BOUNDARY       *
+*-                            -*
+* SAMPLE USAGE:                *
+*                              *
+*        _RNDB #50;#100        *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_RNDB    MAC
+         LDA   ]1         ; LOW
+         PHA
+         LDA   ]2         ; HIGH
+         PHA
+         JSR   RANDB
+         <<<
+*
+*``````````````````````````````*
+* _CMP16 : 16BIT COMPARISON    *
+*-                            -*
+* COMPARES TWO 16BIT VALUES    *
+* AND ALTERS THE P-REGISTER    *
+* ACCORDINGLY (FLAGS).         *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* PARAM1 = WORD 1 TO COMPARE   *
+* PARAM2 = WORD 2 TO COMPARE   *
+*-                            -*
+* SAMPLE USAGE:                *
+*                              *
+*        _CMP16 #1023;#3021    *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_CMP16   MAC
+         LDA   #>]1
+         PHA
+         LDA   #<]1
+         PHA
+         LDA   #>]2
+         PHA
+         LDA   #<]2
+         PHA
+         JSR   CMP16
+         <<<
+*
+*``````````````````````````````*
+* _MUL8 :: 8BIT MULTIPLICATION *
+*-                            -*
+* MULTIPLIES TWO 8BIT VALUES   *
+* AND RETURNS A 16BIT RESULT   *
+* IN Y,X (LOW, HIGH).          *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* PARAM1 = MULTIPLICAND        *
+* PARAM2 = MULTIPLIER          *
+*-                            -*
+* SAMPLE USAGE:                *
+*                              *
+*         _MUL8 #10;#20        *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_MUL8    MAC
+         LDA   ]1
+         PHA
+         LDA   ]2
+         PHA
+         JSR   MUL8
+         <<<
+*
+*``````````````````````````````*
+* _DIV8 :: 8BIT MULTIPLICATION *
+*-                            -*
+* DIVIDES ONE 8BIT NUMBER BY   *
+* ANOTHER AND STORES THE       *
+* QUOTIENT IN A WITH THE       *
+* REMAINDER IN X.              *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* PARAM1 = DIVIDEND            *
+* PARAM2 = DIVISOR             *
+*-                            -*
+* SAMPLE USAGE:                *
+*                              *
+*        _DIV8 #100;#10        *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_DIV8    MAC
+         LDA   ]1
+         PHA
+         LDA   ]2
+         PHA
+         JSR   DIV8
+         <<<

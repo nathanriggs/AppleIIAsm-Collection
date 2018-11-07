@@ -1,0 +1,93 @@
+*
+*``````````````````````````````*
+* DIV8 :: 8BIT DIVISION (8BR)  *
+*-                            -*
+* DIVIDE ONE 8BIT NUMBER BY    *
+* ANOTHER TO GET AN 8BIT       *
+* RESULT.                      *
+*                              *
+* ORIGINAL AUTHOR IS WHITE     *
+* FLAME, AS SHARED ON          *
+* CODEBASE64. I HAVE MADE SOME *
+* MINOR ALTERATIONS, BUT NOT   *
+* NEARLY ENOUGH TO CALL IT MY  *
+* OWN.                         *
+*-                            -*
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  ????----  REG: AXYM  *
+*-                            -*
+* CYCLES: ???                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*                              *
+*        LDA  #200             *
+*        PHA                   *
+*        PDA #10               *
+*        PHA                   *
+*        JSR DIV8              *
+*-                            -*
+* ENTRY                        *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HIGH BYTE OF RETURN ADDRESS  *
+* SECOND NUM TO BE MULTIPLIED  *
+* FIRST NUM TO BE MULTIPLIED   *
+*-                            -*
+* EXIT                         *
+*                              *
+*   Y = HIGH BYTE OF PRODUCT   *
+*   X = LOW BYTE OF PRODUCT    *
+*   A = LOW BYTE OF PRODUCT    *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+DIV8
+*
+** GET RETURN ADDRESS
+*
+         PLA
+         STA   :RETADR
+         PLA
+         STA   :RETADR+1
+*
+** GET PARAMETERS
+*
+         PLA
+         STA   :DVEND
+         PLA
+         STA   :DVSOR
+*
+         LDA   #$00
+         LDX   #8
+         ASL   :DVSOR
+:L1      ROL
+         CMP   :DVEND
+         BCC   :L2
+         SBC   :DVEND
+:L2      ROL   :DVSOR
+         DEX
+         BNE   :L1
+         STA   :REM
+*
+** RESTORE RETURN ADDRESS
+*
+         LDA   :RETADR+1
+         PHA
+         LDA   :RETADR
+         PHA
+*
+** LOAD QUOTIENT INTO A, REMAINDER INTO X
+*
+         LDX   :REM       ; REMAINDER TO X
+*
+         LDA   :DVSOR
+         RTS
+*
+** DATA
+*
+:REM     DS    1
+:DVEND   DS    1
+:DVSOR   DS    1
+:RETADR  DS    2
+*

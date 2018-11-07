@@ -1,0 +1,400 @@
+*
+*``````````````````````````````*
+* RND8 :: 8-BIT RANDOM NUMBER  *
+*-                            -*
+* GENERATES A PSEUDO-RANDOM    *
+* NUMBER BETWEEN 0..255 (BYTE) *
+* AND RETURNS THE VALUE IN A.  *
+*                              *
+* THIS USES THE GALOIS LINEAR  *
+* FEEDBACK SHIFT REGISTER      *
+* ALGORITHM WITH POLYNOMIAL    *
+* $002D. THE SEQUENCE WILL     *
+* REPEAT AFTER 65535 CALLS.    *
+*-                            -*
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  ????----  REG: AX--  *
+*-                            -*
+* CYCLES: ???                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*                              *
+*        JSR RND8              *
+*-                            -*
+* ENTRY: NONE                  *
+*-                            -*
+* EXIT                         *
+*                              *
+*   Y = NOT AFFECTED           *
+*   X = CLOBBERED              *
+*   A = RANDOM NUM 0..255      *
+*-                            -*
+* NOTE: BASED ON THE PRNG      *
+* LISTING FOUND IN THE NESDEV  *
+* WIKI.                        *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+RND8
+*
+         LDX   #8
+         LDA   RNDL+0
+:A
+         ASL              ;SHIFT THE REG
+         ROL   RNDL+1
+         BCC   :B
+         EOR   #$2D       ; APPLY XOR FEEDBACK
+                          ; WHENEVER A 1 BIT IS
+                          ; SHIFTED OUT
+:B
+         DEX
+         BNE   :A
+         STA   RNDL+0
+         CMP   #0         ; RELOAD FLAGS
+         RTS
+*
+*``````````````````````````````*
+* RANDB :: RANDOM BYTE         *
+*-                            -*
+* RETURNS A RANDOM BYTE VALUE  *
+* BETWEEN THE HIGH AND LOW     *
+* BOUNDS PASSED TO ROUTINE.    *
+*-                            -*
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  ????----  REG: AXYM  *
+*-                            -*
+* CYCLES: ???                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*                              *
+*        LDA #1 ;  LOW BOUND   *
+*        PHA                   *
+*        LDA #100 ; HIGH       *
+*        PHA                   *
+*        JSR RANDB             *
+*-                            -*
+* ENTRY                        *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+*-                            -*
+* EXIT                         *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+*                              *
+*   Y = COUNTER; TRASH         *
+*   X = COUNTER; TRASH         *
+*   A = LOW BYTE OF RET ADDR   *
+*-                            -*
+* *** NOTE: I DON'T LIKE THAT  *
+* THIS HAS TO CALL UDIV16, AND *
+* THUS CANNOT BE INCLUDED ON   *
+* ITS OWN. IN FUTURE, HANDLE   *
+* DIVISION WITHIN ROUTINE,     *
+* ESPECIALLY SINCE IT IS 8BIT. *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+RANDB
+*
+** GET RETURN ADDRESS
+*
+         PLA
+         STA   :RETADR
+         PLA
+         STA   :RETADR+1
+*
+** GET PARAMETERS
+*
+         PLA
+         STA   :RHB       ; HIGH BOUND
+         PLA
+         STA   :RLB       ; LOW BOUND
+*
+** FORMULA: F = L + (R-((R\(H-L))*(H-L)
+*
+         LDA   :RHB
+         CLC
+         ADC   #2         ; NO IDEA WHY I NEED
+                          ; THIS BUT I DO
+         STA   :RHB
+         LDA   :RHB       ;LOAD IN HIGH RANGE
+         SEC
+         SBC   :RLB       ;SUBTRACT LOW RANGE
+         STA   :RHL       ;STORE HIGH - LOW HERE
+         JSR   RND8       ; GET NUM BETWEEN 0..255
+         STA   :R         ; RANDOM 0,,255
+*
+** R\(H-L)
+*
+         LDX   #0         ; STORE 0 FOR HIGH BYTE
+         STX   :R+1       ; 0 HIGH BYTE
+         STX   :RHL+1     ; 0 HIGH BYTE
+         LDA   :R+1
+         PHA
+         LDA   :R
+         PHA
+         LDA   :RHL+1     ; LOAD (H-L) BACK INTO A
+         PHA
+         LDA   :RHL
+         PHA
+         JSR   UDIV16     ; DIV (H-L) BY __R
+         PLA
+         STA   :QUOT
+         PLA
+         STA   :QUOT+1
+*
+** R-(R\(H-L)
+*
+         LDA   :R         ; LOAD RND BACK INTO A
+         SEC
+         SBC   :QUOT      ; SUBTRACT (R/(H-L) FROM RND8
+         STA   :QUOT      ; STORE TEMP
+*
+** (R-(R\(H-L))*(H-L)
+*
+         LDA   #0         ; ZERO HIGH BYTE
+         STA   :QUOT+1    ; 0 HIGH BYTE
+         LDA   :RHL+1     ; LOAD (H-L)
+         PHA
+         LDA   :RHL
+         PHA
+         LDA   :QUOT+1
+         PHA
+         LDA   :QUOT
+         PHA
+         JSR   MUL16      ; MUL (H-L) * __R - (H-L)
+         PLA
+         STA   :RESULT
+         PLA
+         STA   :RESULT+1
+*
+** L + EVERYTHING ELSE
+*
+         CLC
+         ADC   :RLB       ;ADD LOW BYTE TO ALL ELSE
+:FINISH
+         STA   :RESULT    ; STORE IN RESULT
+         LDX   :RESULT+1  ; HIGH BYTE; FOR
+                          ; DEBUGGING PURPOSES
+*
+** RESTORE RETURN ADDRESS
+*
+         LDA   :RETADR+1
+         PHA
+         LDA   :RETADR
+         PHA
+*
+         LDA   :RESULT    ; RETURN # IN A
+         RTS
+*
+** DATA
+*
+:R       DS    2
+:RETADR  DS    2
+:RESULT  DS    2
+:RHB     DS    2
+:RLB     DS    2
+:RHL     DS    2
+:QUOT    DS    2
+*
+*``````````````````````````````*
+* MUL8 :: 8BIT MULTIPLY (16BR) *
+*-                            -*
+* MULTIPLY TWO 8BIT NUMBERS TO *
+* GET  16BIT RESULT. NUMBERS   *
+* MUST BE UNSIGNED.            *
+*                              *
+* ORIGINAL AUTHOR IS WHITE     *
+* FLAME, AS SHARED ON          *
+* CODEBASE64. I HAVE MADE SOME *
+* MINOR ALTERATIONS, BUT NOT   *
+* NEARLY ENOUGH TO CALL IT MY  *
+* OWN.                         *
+*-                            -*
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  ????----  REG: AXYM  *
+*-                            -*
+* CYCLES: ???                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*                              *
+*        LDA  #100             *
+*        PHA                   *
+*        PDA #200              *
+*        PHA                   *
+*        JSR MUL8              *
+*-                            -*
+* ENTRY                        *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HIGH BYTE OF RETURN ADDRESS  *
+* SECOND NUM TO BE MULTIPLIED  *
+* FIRST NUM TO BE MULTIPLIED   *
+*-                            -*
+* EXIT                         *
+*                              *
+*   Y = HIGH BYTE OF PRODUCT   *
+*   X = LOW BYTE OF PRODUCT    *
+*   A = LOW BYTE OF PRODUCT    *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+MUL8
+*
+** GET RETURN ADDRESS
+*
+         PLA
+         STA   :RETADR
+         PLA
+         STA   :RETADR+1
+*
+** GET PARAMETERS
+*
+         PLA
+         STA   :MUL1
+         PLA
+         STA   :MUL2
+*
+** INIT
+*
+         LDA   #$00
+         TAX
+         STX   :MUL1H
+         BEQ   :GOLOOP
+*
+:DOADD
+         CLC
+         ADC   :MUL1
+         TAY
+*
+         TXA
+         ADC   :MUL1H
+         TAX
+         TYA
+*
+:LP
+         ASL   :MUL1
+         ROL   :MUL1H
+:GOLOOP
+         LSR   :MUL2
+         BCS   :DOADD
+         BNE   :LP
+*
+** RESTORE RETURN ADDRESS
+*
+         LDA   :RETADR+1
+         PHA
+         LDA   :RETADR
+         PHA
+*
+         RTS
+*
+** DATA
+*
+:MUL1    DS    1
+:MUL2    DS    1
+:RETADR  DS    2
+:MUL1H   DS    1
+*
+*
+*``````````````````````````````*
+* DIV8 :: 8BIT DIVISION (8BR)  *
+*-                            -*
+* DIVIDE ONE 8BIT NUMBER BY    *
+* ANOTHER TO GET AN 8BIT       *
+* RESULT.                      *
+*                              *
+* ORIGINAL AUTHOR IS WHITE     *
+* FLAME, AS SHARED ON          *
+* CODEBASE64. I HAVE MADE SOME *
+* MINOR ALTERATIONS, BUT NOT   *
+* NEARLY ENOUGH TO CALL IT MY  *
+* OWN.                         *
+*-                            -*
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  ????----  REG: AXYM  *
+*-                            -*
+* CYCLES: ???                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*                              *
+*        LDA  #200             *
+*        PHA                   *
+*        PDA #10               *
+*        PHA                   *
+*        JSR DIV8              *
+*-                            -*
+* ENTRY                        *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HIGH BYTE OF RETURN ADDRESS  *
+* SECOND NUM TO BE MULTIPLIED  *
+* FIRST NUM TO BE MULTIPLIED   *
+*-                            -*
+* EXIT                         *
+*                              *
+*   Y = HIGH BYTE OF PRODUCT   *
+*   X = LOW BYTE OF PRODUCT    *
+*   A = LOW BYTE OF PRODUCT    *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+DIV8
+*
+** GET RETURN ADDRESS
+*
+         PLA
+         STA   :RETADR
+         PLA
+         STA   :RETADR+1
+*
+** GET PARAMETERS
+*
+         PLA
+         STA   :DVEND
+         PLA
+         STA   :DVSOR
+*
+         LDA   #$00
+         LDX   #8
+         ASL   :DVSOR
+:L1      ROL
+         CMP   :DVEND
+         BCC   :L2
+         SBC   :DVEND
+:L2      ROL   :DVSOR
+         DEX
+         BNE   :L1
+         STA   :REM
+*
+** RESTORE RETURN ADDRESS
+*
+         LDA   :RETADR+1
+         PHA
+         LDA   :RETADR
+         PHA
+*
+** LOAD QUOTIENT INTO A, REMAINDER INTO X
+*
+         LDX   :REM       ; REMAINDER TO X
+*
+         LDA   :DVSOR
+         RTS
+*
+** DATA
+*
+:REM     DS    1
+:DVEND   DS    1
+:DVSOR   DS    1
+:RETADR  DS    2
+*

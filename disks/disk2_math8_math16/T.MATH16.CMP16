@@ -1,0 +1,144 @@
+*
+*``````````````````````````````*
+* CMP16 :: 16-BIT COMPARE      *
+*-                            -*
+* COMPARE TWO 16BIT SIGNED OR  *
+* UNSIGNED WORDS AND RETURN    *
+* THE C,Z,N FLAGS AS SET OR    *
+* CLEARED.                     *
+*-                            -*
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  CZN-----  REG: AXYM  *
+*-                            -*
+* CYCLES: ???                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*                              *
+*      LDA #>123               *
+*      PHA                     *
+*      LDA #<123               *
+*      PHA         ; WORD 1    *
+*      LDA #>1023              *
+*      PHA                     *
+*      LDA #<1023              *
+*      PHA         ; WORD 2    *
+*      JSR CMP16               *
+*-                            -*
+* ENTRY                        *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+* LOW BYTE OF WORD 2 (SUBTRA)  *
+* HIGH BYTE OF WORD 2          *
+* LOW BYTE OF WORD 1 (MINU)    *
+* HIGH BYTE OF WORD 1          *
+*-                            -*
+* EXIT                         *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* FLAGS RETURNED BASED ON WORD *
+* 1 - WORD 2.                  *
+*                              *
+* IF W1 & W2 ARE 2S COMPLEMENT *
+*    IF W1 = W2 Z=1,N=0        *
+*    IF W1 > W2 Z=0,N=0        *
+*    IF W1 < W2 Z=0,N=1        *
+* ELSE                         *
+*    IF W1 = W2 Z=1,C=1        *
+*    IF W1 > W2 Z=0,C=1        *
+*    IF W1 < W2 Z=0,C=0        *
+*                              *
+*-                            -*
+* ADAPTED FROM LEVANTHAL AND   *
+* WINTHROP'S /6502 ASSEMBLY    *
+* LANGUAGE ROUTINES/.          *
+* AS SUCH, THIS MAY NOT FALL   *
+* UNDER THE APACHE 2.0 LICENSE *
+* AGREEMENT, SINCE THE BOOK    *
+* WAS WRITTEN BEFORE THE       *
+* LICENSE!                     *
+*                              *
+* THAT SAID, LEVENTHAL WROTE   *
+* THAT THE PURPOSE OF THE BOOK *
+* WAS TO COPY THE SOURCE CODE, *
+* AS REINVENTING THE WHEEL IS  *
+* TEDIOUS, AND HE PLACED NO    *
+* RESTRICTIONS ON ITS USE.     *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+CMP16
+*
+** GET RETURN ADDRESS
+*
+         PLA
+         STA   :RETADR
+         PLA
+         STA   :RETADR+1
+*
+** GET PARAMETERS
+*
+         PLA
+         STA   :SUBT      ; SUBTRAHEND
+         PLA
+         STA   :SUBT+1
+         PLA
+         STA   :MINU      ; MINUEND
+         PLA
+         STA   :MINU+1
+*
+** RESTORE RETURN ADDRESS
+*
+         LDA   :RETADR+1
+         PHA
+         LDA   :RETADR
+         PHA
+*
+         LDA   :MINU
+         CMP   :SUBT      ; COMPARE LOW BYTES
+         BEQ   :EQUAL
+*
+** LOW BYTES ARE NOTE EQUAL
+** COMPARE HIGH BYTES
+*
+         LDA   :MINU+1
+         SBC   :SUBT+1    ; COMPARE HIGH BYTES
+         ORA   #1         ; MAKE Z=0, SINCE LOW
+                          ; BYTES ARE NOT EQUAL
+         BVS   :OVFLOW    ; MUST HANDLE OVERFLOW
+                          ; FOR SIGNED MATH
+         RTS              ; EXIT
+*
+** LOW BYTES ARE UQAL -- COMPARE HIGH
+*
+:EQUAL
+         LDA   :MINU+1
+         SBC   :SUBT+1    ; UPPER BYTES
+         BVS   :OVFLOW
+         RTS              ; RETURN W FLAGS SET
+*
+**
+** OVERFLOW WITH SIGNED ARITHMETIC SO
+** COMPLEMENT THE NEGATIVE FLAG.
+** DO NO CHANGE THE CARRY FLAG AND
+** MAKE THE ZERO FLAG EQUAL TO 0.
+** COMPLEMENT NEG FLAG BY EORING
+** #$80 AND ACCUMULATOR.
+**
+*
+:OVFLOW
+         EOR   #$80       ; COMPLEMENT N FLAG
+         ORA   #1         ; IF OVERFLOW THEN THE
+                          ; WORDS ARE !=. Z= 0
+                          ; CARRY UNCHANGED
+         RTS
+*
+** DATA
+*
+:MINU    DS    2
+:SUBT    DS    2
+:RETADR  DS    2

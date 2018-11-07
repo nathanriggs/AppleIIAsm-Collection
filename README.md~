@@ -13,7 +13,6 @@ CORE DISK
 * common.lib: Common, useful subroutines: memory swaps, etc.
 
 MATH DISK
-
 * math.lib: Integer Math Library.
 * fpmath.lib: Floating-point Math Library.
 
@@ -43,3 +42,7 @@ MISC DISK
 
 UTIL DISK
 * various useful utilities
+
+COMPACT DISK 1 (and maybe a second one)
+* every routine, separately packaged, without comments.
+

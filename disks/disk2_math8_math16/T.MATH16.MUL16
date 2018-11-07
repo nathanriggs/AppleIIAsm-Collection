@@ -1,0 +1,164 @@
+*
+*``````````````````````````````*
+* MUL16 :: MULTIPLY WORDS      *
+*-                            -*
+* PERFORM MULTIPLICATION USING *
+* THE SHIFT AND ADD ALGORITHM  *
+*                              *
+* THIS ALGORITHM PRODUCES AN   *
+* UNSIGNED 32-BIT PRODUCT IN   *
+* HIPROD AND MLIER WITH HIPROD *
+* BEING THE HIGH WORD.         *
+*                              *
+* NOTE: WHILE THIS DOES PASS   *
+* THE FULL 32BIT PRODUCT BACK  *
+* VIA X AND Y, BUT THIS WOULD  *
+* RETURN FALSE RESULTS IF ONE  *
+* OF THE PARAMETERS HAD BEEN   *
+* SIGNED. THIS, USUALLY ONLY   *
+* THE LOW WORD IS USED.        *
+*-                            -*
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  ????----  REG: AXYM  *
+*-                            -*
+* CYCLES: ???                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*                              *
+*        LDA #>1000            *
+*        PHA                   *
+*        LDA #<1000 ; MCAND    *
+*        PHA                   *
+*        LDA #>3               *
+*        PHA                   *
+*        LDA #<3 ; MLIER       *
+*        PHA                   *
+*        JSR MUL16 ; = 3000    *
+*-                            -*
+* ENTRY                        *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+* LOW BYTE OF MULTIPLIER       *
+* HIGH BYTE OF MULTIPLIER      *
+* LOW BYTE OF MULTIPLICAND     *
+* HIGH BYTE OF MULTIPLICAND    *
+*-                            -*
+* EXIT                         *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+* LOW BYTE OF PRODUCT          *
+* HIGH BYTE OF PRODUCT (16BIT) *
+*                              *
+*   Y = LOW BYTE OF HIGH WORD  *
+*   X = HIGH BYTE OF HIGH WORD *
+*   A = LOW BYTE OF RET ADDR   *
+*-                            -*
+* ADAPTED FROM LEVANTHAL AND   *
+* WINTHROP'S /6502 ASSEMBLY    *
+* LANGUAGE ROUTINES/.          *
+* AS SUCH, THIS MAY NOT FALL   *
+* UNDER THE APACHE 2.0 LICENSE *
+* AGREEMENT, SINCE THE BOOK    *
+* WAS WRITTEN BEFORE THE       *
+* LICENSE!                     *
+*                              *
+* THAT SAID, LEVENTHAL WROTE   *
+* THAT THE PURPOSE OF THE BOOK *
+* WAS TO COPY THE SOURCE CODE, *
+* AS REINVENTING THE WHEEL IS  *
+* TEDIOUS, AND HE PLACED NO    *
+* RESTRICTIONS ON ITS USE.     *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+MUL16
+*
+** GET RETURN ADDRESS
+*
+         PLA
+         STA   :RETADR
+         PLA
+         STA   :RETADR+1
+*
+** GET PARAMETERS
+*
+         PLA
+         STA   :MLIER
+         PLA
+         STA   :MLIER+1
+         PLA
+         STA   :MCAND
+         PLA
+         STA   :MCAND+1
+*
+** PERFORM MULTIPLICATION USING THE SHIFT
+** AND ADD ALGORITHM, WHICH PRODUCES AN
+** UNSIGNED 32-BIT PRODUCT IN :HIPROD AND
+** :MLIER WITH :HIPROD BEING THE HIGH WORD.
+*
+         LDA   #0
+         STA   :HPROD     ; ZERO HIGH WORD
+         STA   :HPROD+1
+         LDX   #17        ; # OF BITS IN MPLIER
+                          ; PLUS 1. EXTRA LOOP IS
+                          ; TO MOVE LAST CARRY INTO
+                          ; THE PRODUCT.
+         CLC              ; CLEAR CARRY FOR 1ST TIME
+                          ; THROUGH LOOP.
+:MULLP
+*
+** IF NEXT BIT = 1 THEN
+** HIPROD = HIPROD+MCAND
+*
+         ROR   :HPROD+1
+         ROR   :HPROD
+         ROR   :MLIER+1
+         ROR   :MLIER
+         BCC   :DECCNT    ; BR IF NEXT BIT OF
+                          ; MULTIPLIER IS 0
+         CLC              ; NEXT BIT=1 SO ADD MCAND
+                          ; TO PRODUCT
+         LDA   :MCAND
+         ADC   :HPROD
+         STA   :HPROD
+         LDA   :MCAND+1
+         ADC   :HPROD+1
+         STA   :HPROD+1   ; CARRY = OVERFLOW
+                          ; FROM ADD
+:DECCNT
+         DEX
+         BNE   :MULLP     ; CONTINUE UNTIL DONE
+
+         LDY   :HPROD     ; LOW BYTE OF HIGH WORD
+         LDX   :HPROD+1   ; HIGH BYTE OF HIGH WORD
+*
+** PUSH LOW WORD OF PRODUCT ONTO THE STACK
+*
+         LDA   :MLIER+1
+         TAX
+         LDA   :MLIER
+         TAY
+*
+** RESTORE RETURN ADDRESS
+*
+         LDA   :RETADR+1
+         PHA
+         LDA   :RETADR
+         PHA
+*
+         LDA   :HPROD     ;24BIT
+         RTS
+*
+** DATA
+*
+:MCAND   DS    3
+:MLIER   DS    3
+:HPROD   DS    2
+:RETADR  DS    2

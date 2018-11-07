@@ -1,0 +1,263 @@
+*
+********************************
+*                              *
+*      -< MATH  DEMO >-        *
+*                              *
+*       VERSION 00.00.01       *
+*                              *
+*         03/04/1980           *
+*                              *
+********************************
+*                              *
+*       NATHAN D. RIGGS        *
+*   NATHAN.RIGGS@OUTLOOK.COM   *
+*                              *
+********************************
+*
+** ASSEMBLER DIRECTIVES
+*
+         CYC   AVE
+         EXP   ONLY
+         DSK   MATH.DEMO
+*
+*``````````````````````````````*
+*  TOP INCLUDES (PUTS, MACROS) *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+         PUT   DECS
+*USE MATH.MAC ; CAN'T USE RIGHT NOW
+* BECAUSE OF MEMORY LIMITATIONS
+*
+         PUT   MATH.HOOKS
+*
+         OBJ   $BFE0
+         ORG $6000
+*
+*``````````````````````````````*
+*      PROGRAM MAIN BODY       *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+*
+*
+** BIG LUMPS -- HIGH LEVEL CODE
+*
+*
+*
+** ADD16 ADDS TWO 16-BIT NUMBERS AND
+** RETURNS THE RESULT IN Y(LOW) AND X (HIGH).
+*
+** MACRO: _ADD16 #1000;#2000
+*
+         LDA   #>1000     ; ADD1, HIGH
+         PHA
+         LDA   #<1000     ; ADD1, LOW
+         PHA
+         LDA   #>2000     ; ADD2, HIGH
+         PHA
+         LDA   #<2000     ; ADD2, LOW
+         PHA
+         JSR   ADD16
+* BRK ; X=0B, Y=B8, == 3000
+*
+** SUB16 SUBTRACTS ONE 16-BIT NUMBER
+** FROM ANOTHER, AND RETURNS RESULT IN
+** Y (LOW) AND X (HIGH)
+*
+** MACRO: _SUB16 #2000;#1000
+*
+         LDA   #>2000     ; MINUEND
+         PHA
+         LDA   #<2000
+         PHA
+         LDA   #>1000     ; SUBTRAHEND
+         PHA
+         LDA   #<1000
+         PHA
+         JSR   SUB16
+* BRK ; X = 03, Y = E8, == 1000
+*
+** MUL16 MULTIPLES TWO VALUES AND RETURNS THE
+** PRODUCT OVER THE STACK (LOW, HIGH)
+*
+** MACRO: _MUL16 #1000;#3
+*
+         LDA   #>1000
+         PHA
+         LDA   #<1000     ; MULTIPLICAND
+         PHA
+         LDA   #>3
+         PHA
+         LDA   #<3        ; MULTIPLIER
+         PHA
+         JSR   MUL16
+* BRK ; X=0B, Y=08, == 3000
+*
+** UDIV16 DVIDES ONE UNSIGNED NUMBER BY ANOTHER
+** UNSIGNED NUMBER, THEN RETURNS THE RESULT OVER
+** THE STACK (16-BIT).
+*
+** MACRO: _DIV16 #30000;#3000;U
+*
+         LDA   #>30000
+         PHA
+         LDA   #<30000
+         PHA
+         LDA   #>3000
+         PHA
+         LDA   #<3000
+         PHA
+         JSR   UDIV16
+*BRK ; X=00,Y=0A, == 30000/3000=10
+*
+** SDIV16 DIVIDES TWO NUMBERS THAT ARE
+** SIGNED.
+*
+** MACRO: _DIV16 #-1000;#10
+*
+         LDA   #>-1000
+         PHA
+         LDA   #<-1000
+         PHA
+         LDA   #>10
+         PHA
+         LDA   #<10
+         PHA
+         JSR   SDIV16
+* BRK ; X=FF,Y=9C, == -100 (2'S COMPLEMENT)
+*
+** SREM16 DIVIDES TWO NUMBERS THAT ARE
+** SIGNED, THEN RETURNS THE REMAINDER.
+*
+** MACRO: _REM16 #-1000;#13
+*
+         LDA   #>-1000
+         PHA
+         LDA   #<-1000
+         PHA
+         LDA   #>13
+         PHA
+         LDA   #<13
+         PHA
+         JSR   SREM16
+* BRK ; X=FF,Y=F4, == -12 (2'S COMPLEMENT)
+*
+** UREM16 DIVIDES TWO NUMBERS THAT ARE
+** UNSIGNED, THEN RETURNS THE REMAINDER.
+*
+** MACRO: _REM16 #1000;#13;U
+*
+         LDA   #>1000
+         PHA
+         LDA   #<1000
+         PHA
+         LDA   #>13
+         PHA
+         LDA   #<13
+         PHA
+         JSR   UREM16
+* BRK ; X=00,Y=0C, == 12
+*
+** CMP16 COMPARES TWO 16BIT VALUES, THEN
+** ALTERS THE REGISTER FLAGS AS FOLLOWS:
+*
+** MACRO: _CMP16 #1023;#123
+*
+
+* IF W1 & W2 ARE 2S COMPLEMENT
+*    IF W1 = W2 Z=1,N=0
+*    IF W1 > W2 Z=0,N=0
+*    IF W1 < W2 Z=0,N=1
+* ELSE
+*    IF W1 = W2 Z=1,C=1
+*    IF W1 > W2 Z=0,C=1
+*    IF W1 < W2 Z=0,C=0
+*
+         LDA   #>1023
+         PHA
+         LDA   #<1023
+         PHA
+         LDA   #>123
+         PHA
+         LDA   #<123
+         PHA
+         JSR   CMP16
+* BRK ; P=31, == 11000100
+*             ^^ N     ZC
+* N (SIGN) =0, Z (ZERO) = 0, C (CARRY) = 0
+*
+** RND8 SIMPLY RETURNS A PSEUDO-RANDOM
+** NUMBER BETWEEN 0 AND 255 IN A.
+*
+** NO MACRO **
+*
+         JSR   RND8
+* BRK ; RUN THIS A FEW TIMES TO SEE A CHANGE
+*
+*
+** RANDB RETURNS A VALUE BETWEEN A LOW AND
+** HIGH BOUNDARY PUSHED TO THE STACK. SINCE THIS
+** RETURNS A BYTE, THE RANGE MUST BE 0..255.
+*
+** MACRO: _RANDB #50;#100
+*
+         LDA   #50
+         PHA
+         LDA   #100       ; HIGH BOUND
+         PHA
+         JSR   RANDB
+* BRK ; RUN A FEW TIMES TO SEE THE CHANGE IN A
+*
+** MUL8 MULTIPLIES TWO 8-BIT NUMBERS AND
+** RETURNS A 16BIT RESULT, ALL UNSIGNED.
+** MACRO: _MUL8 #100;#200
+*
+*
+         LDA   #100
+         PHA
+         LDA   #200
+         PHA
+         JSR   MUL8
+* BRK ; X=4E,Y=20, == 20000
+*
+** DIV8 DIVIDES ONE 8BIT NUMBER BY
+** ANOTHER (UNSIGNED), AND RETURNS
+** AN 8BIT QUOTIENT.
+**
+** THE QUOTIENT IS STORED IN A, WHILE
+** THE REMAINDER IS RETURNED IN X.
+** MACRO: _DIV8 #200;#10
+*
+*
+         LDA   #200
+         PHA
+         LDA   #10
+         PHA
+         JSR DIV8
+*BRK ; A=14, X=0, == 20 R 0
+*
+** RND16 RETURNS A PSEUDO-RANDOM NUMBER (WORD)
+** BETWEEN 0 AND 65535 (0000-FFFF)
+*
+** NO MACRO **
+*
+         JSR   RND16
+*BRK ; BRUN A FEW TIMES TO SEE X,Y
+*
+*
+*
+*
+** LITTLE LUMPS -- MID/LOW LEVEL
+*
+*
+         JMP   REENTRY
+*
+*``````````````````````````````*
+*        BOTTOM INCLUDES       *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+*
+** BOTTOM INCLUDES
+*
+         PUT   MATH16.LIB
+         PUT   MATH8.LIB
+*

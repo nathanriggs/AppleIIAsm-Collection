@@ -1,0 +1,558 @@
+6000-   A9 03       LDA   #$03
+6002-   48          PHA
+6003-   A9 E8       LDA   #$E8
+6005-   48          PHA
+6006-   A9 07       LDA   #$07
+6008-   48          PHA
+6009-   A9 D0       LDA   #$D0
+600B-   48          PHA
+600C-   20 9C 60    JSR   $609C
+600F-   A9 07       LDA   #$07
+6011-   48          PHA
+6012-   A9 D0       LDA   #$D0
+6014-   48          PHA
+6015-   A9 03       LDA   #$03
+6017-   48          PHA
+6018-   A9 E8       LDA   #$E8
+601A-   48          PHA
+601B-   20 D2 60    JSR   $60D2
+601E-   A9 03       LDA   #$03
+6020-   48          PHA
+6021-   A9 E8       LDA   #$E8
+6023-   48          PHA
+6024-   A9 00       LDA   #$00
+6026-   48          PHA
+6027-   A9 03       LDA   #$03
+6029-   48          PHA
+602A-   20 08 61    JSR   $6108
+602D-   A9 75       LDA   #$75
+602F-   48          PHA
+6030-   A9 30       LDA   #$30
+6032-   48          PHA
+6033-   A9 0B       LDA   #$0B
+6035-   48          PHA
+6036-   A9 B8       LDA   #$B8
+6038-   48          PHA
+6039-   20 73 61    JSR   $6173
+603C-   A9 FC       LDA   #$FC
+603E-   48          PHA
+603F-   A9 18       LDA   #$18
+6041-   48          PHA
+6042-   A9 00       LDA   #$00
+6044-   48          PHA
+6045-   A9 0A       LDA   #$0A
+6047-   48          PHA
+6048-   20 9F 61    JSR   $619F
+604B-   A9 FC       LDA   #$FC
+604D-   48          PHA
+604E-   A9 18       LDA   #$18
+6050-   48          PHA
+6051-   A9 00       LDA   #$00
+6053-   48          PHA
+6054-   A9 0D       LDA   #$0D
+6056-   48          PHA
+6057-   20 A3 61    JSR   $61A3
+605A-   A9 03       LDA   #$03
+605C-   48          PHA
+605D-   A9 E8       LDA   #$E8
+605F-   48          PHA
+6060-   A9 00       LDA   #$00
+6062-   48          PHA
+6063-   A9 0D       LDA   #$0D
+6065-   48          PHA
+6066-   20 77 61    JSR   $6177
+6069-   A9 03       LDA   #$03
+606B-   48          PHA
+606C-   A9 FF       LDA   #$FF
+606E-   48          PHA
+606F-   A9 00       LDA   #$00
+6071-   48          PHA
+6072-   A9 7B       LDA   #$7B
+6074-   48          PHA
+6075-   20 A3 62    JSR   $62A3
+6078-   20 28 63    JSR   $6328
+607B-   A9 32       LDA   #$32
+607D-   48          PHA
+607E-   A9 64       LDA   #$64
+6080-   48          PHA
+6081-   20 3B 63    JSR   $633B
+6084-   A9 64       LDA   #$64
+6086-   48          PHA
+6087-   A9 C8       LDA   #$C8
+6089-   48          PHA
+608A-   20 D5 63    JSR   $63D5
+608D-   A9 C8       LDA   #$C8
+608F-   48          PHA
+6090-   A9 0A       LDA   #$0A
+6092-   48          PHA
+6093-   20 13 64    JSR   $6413
+6096-   20 EA 62    JSR   $62EA
+6099-   4C D0 03    JMP   $03D0
+609C-   68          PLA
+609D-   8D CC 60    STA   $60CC
+60A0-   68          PLA
+60A1-   8D CD 60    STA   $60CD
+60A4-   68          PLA
+60A5-   8D D0 60    STA   $60D0
+60A8-   68          PLA
+60A9-   8D D1 60    STA   $60D1
+60AC-   68          PLA
+60AD-   8D CE 60    STA   $60CE
+60B0-   68          PLA
+60B1-   8D CF 60    STA   $60CF
+60B4-   AD CE 60    LDA   $60CE
+60B7-   18          CLC
+60B8-   6D D0 60    ADC   $60D0
+60BB-   A8          TAY
+60BC-   AD CF 60    LDA   $60CF
+60BF-   6D D1 60    ADC   $60D1
+60C2-   AA          TAX
+60C3-   AD CD 60    LDA   $60CD
+60C6-   48          PHA
+60C7-   AD CC 60    LDA   $60CC
+60CA-   48          PHA
+60CB-   60          RTS
+60CC-   00          BRK
+60CD-   00          BRK
+60CE-   00          BRK
+60CF-   00          BRK
+60D0-   00          BRK
+60D1-   00          BRK
+60D2-   68          PLA
+60D3-   8D 02 61    STA   $6102
+60D6-   68          PLA
+60D7-   8D 03 61    STA   $6103
+60DA-   68          PLA
+60DB-   8D 06 61    STA   $6106
+60DE-   68          PLA
+60DF-   8D 07 61    STA   $6107
+60E2-   68          PLA
+60E3-   8D 04 61    STA   $6104
+60E6-   68          PLA
+60E7-   8D 05 61    STA   $6105
+60EA-   AD 04 61    LDA   $6104
+60ED-   38          SEC
+60EE-   ED 06 61    SBC   $6106
+60F1-   A8          TAY
+60F2-   AD 05 61    LDA   $6105
+60F5-   ED 07 61    SBC   $6107
+60F8-   AA          TAX
+60F9-   AD 03 61    LDA   $6103
+60FC-   48          PHA
+60FD-   AD 02 61    LDA   $6102
+6100-   48          PHA
+6101-   60          RTS
+6102-   00          BRK
+6103-   00          BRK
+6104-   00          BRK
+6105-   00          BRK
+6106-   00          BRK
+6107-   00          BRK
+6108-   68          PLA
+6109-   8D 71 61    STA   $6171
+610C-   68          PLA
+610D-   8D 72 61    STA   $6172
+6110-   68          PLA
+6111-   8D 6C 61    STA   $616C
+6114-   68          PLA
+6115-   8D 6D 61    STA   $616D
+6118-   68          PLA
+6119-   8D 69 61    STA   $6169
+611C-   68          PLA
+611D-   8D 6A 61    STA   $616A
+6120-   A9 00       LDA   #$00
+6122-   8D 6F 61    STA   $616F
+6125-   8D 70 61    STA   $6170
+6128-   A2 11       LDX   #$11
+612A-   18          CLC
+612B-   6E 70 61    ROR   $6170
+612E-   6E 6F 61    ROR   $616F
+6131-   6E 6D 61    ROR   $616D
+6134-   6E 6C 61    ROR   $616C
+6137-   90 13       BCC   $614C
+6139-   18          CLC
+613A-   AD 69 61    LDA   $6169
+613D-   6D 6F 61    ADC   $616F
+6140-   8D 6F 61    STA   $616F
+6143-   AD 6A 61    LDA   $616A
+6146-   6D 70 61    ADC   $6170
+6149-   8D 70 61    STA   $6170
+614C-   CA          DEX
+614D-   D0 DC       BNE   $612B
+614F-   AC 6F 61    LDY   $616F
+6152-   AE 70 61    LDX   $6170
+6155-   AD 6D 61    LDA   $616D
+6158-   AA          TAX
+6159-   AD 6C 61    LDA   $616C
+615C-   A8          TAY
+615D-   AD 72 61    LDA   $6172
+6160-   48          PHA
+6161-   AD 71 61    LDA   $6171
+6164-   48          PHA
+6165-   AD 6F 61    LDA   $616F
+6168-   60          RTS
+6169-   00          BRK
+616A-   00          BRK
+616B-   00          BRK
+616C-   00          BRK
+616D-   00          BRK
+616E-   00          BRK
+616F-   00          BRK
+6170-   00          BRK
+6171-   00          BRK
+6172-   00          BRK
+6173-   A9 00       LDA   #$00
+6175-   F0 02       BEQ   $6179
+6177-   A9 02       LDA   #$02
+6179-   8D A2 62    STA   $62A2
+617C-   68          PLA
+617D-   8D 9E 62    STA   $629E
+6180-   68          PLA
+6181-   8D 9F 62    STA   $629F
+6184-   68          PLA
+6185-   8D 98 62    STA   $6298
+6188-   68          PLA
+6189-   8D 99 62    STA   $6299
+618C-   68          PLA
+618D-   8D 9A 62    STA   $629A
+6190-   68          PLA
+6191-   8D 9B 62    STA   $629B
+6194-   20 57 62    JSR   $6257
+6197-   90 03       BCC   $619C
+6199-   4C 31 62    JMP   $6231
+619C-   4C 42 62    JMP   $6242
+619F-   A9 00       LDA   #$00
+61A1-   F0 04       BEQ   $61A7
+61A3-   A9 02       LDA   #$02
+61A5-   D0 00       BNE   $61A7
+61A7-   8D A2 62    STA   $62A2
+61AA-   68          PLA
+61AB-   8D 9E 62    STA   $629E
+61AE-   68          PLA
+61AF-   8D 9F 62    STA   $629F
+61B2-   68          PLA
+61B3-   8D 98 62    STA   $6298
+61B6-   68          PLA
+61B7-   8D 99 62    STA   $6299
+61BA-   68          PLA
+61BB-   8D 9A 62    STA   $629A
+61BE-   68          PLA
+61BF-   8D 9B 62    STA   $629B
+61C2-   AD 9B 62    LDA   $629B
+61C5-   4D 99 62    EOR   $6299
+61C8-   8D A0 62    STA   $62A0
+61CB-   AD 9B 62    LDA   $629B
+61CE-   8D A1 62    STA   $62A1
+61D1-   AD 99 62    LDA   $6299
+61D4-   10 11       BPL   $61E7
+61D6-   A9 00       LDA   #$00
+61D8-   38          SEC
+61D9-   ED 98 62    SBC   $6298
+61DC-   8D 98 62    STA   $6298
+61DF-   A9 00       LDA   #$00
+61E1-   ED 99 62    SBC   $6299
+61E4-   8D 99 62    STA   $6299
+61E7-   AD 9B 62    LDA   $629B
+61EA-   10 11       BPL   $61FD
+61EC-   A9 00       LDA   #$00
+61EE-   38          SEC
+61EF-   ED 9A 62    SBC   $629A
+61F2-   8D 9A 62    STA   $629A
+61F5-   A9 00       LDA   #$00
+61F7-   ED 9B 62    SBC   $629B
+61FA-   8D 9B 62    STA   $629B
+61FD-   20 57 62    JSR   $6257
+6200-   B0 2F       BCS   $6231
+6202-   AD A0 62    LDA   $62A0
+6205-   10 11       BPL   $6218
+6207-   A9 00       LDA   #$00
+6209-   38          SEC
+620A-   ED 9A 62    SBC   $629A
+620D-   8D 9A 62    STA   $629A
+6210-   A9 00       LDA   #$00
+6212-   ED 9B 62    SBC   $629B
+6215-   8D 9B 62    STA   $629B
+6218-   AD A1 62    LDA   $62A1
+621B-   10 25       BPL   $6242
+621D-   A9 00       LDA   #$00
+621F-   38          SEC
+6220-   ED 9C 62    SBC   $629C
+6223-   8D 9C 62    STA   $629C
+6226-   A9 00       LDA   #$00
+6228-   ED 9D 62    SBC   $629D
+622B-   8D 9D 62    STA   $629D
+622E-   4C 42 62    JMP   $6242
+6231-   A9 00       LDA   #$00
+6233-   8D 9A 62    STA   $629A
+6236-   8D 9B 62    STA   $629B
+6239-   8D 9C 62    STA   $629C
+623C-   8D 9D 62    STA   $629D
+623F-   38          SEC
+6240-   B0 01       BCS   $6243
+6242-   18          CLC
+6243-   AE A2 62    LDX   $62A2
+6246-   BD 9A 62    LDA   $629A,X
+6249-   A8          TAY
+624A-   BD 9B 62    LDA   $629B,X
+624D-   AA          TAX
+624E-   AD 9F 62    LDA   $629F
+6251-   48          PHA
+6252-   AD 9E 62    LDA   $629E
+6255-   48          PHA
+6256-   60          RTS
+6257-   A9 00       LDA   #$00
+6259-   8D 9C 62    STA   $629C
+625C-   8D 9D 62    STA   $629D
+625F-   AD 98 62    LDA   $6298
+6262-   0D 99 62    ORA   $6299
+6265-   D0 02       BNE   $6269
+6267-   38          SEC
+6268-   60          RTS
+6269-   A2 10       LDX   #$10
+626B-   2E 9A 62    ROL   $629A
+626E-   2E 9B 62    ROL   $629B
+6271-   2E 9C 62    ROL   $629C
+6274-   2E 9D 62    ROL   $629D
+6277-   38          SEC
+6278-   AD 9C 62    LDA   $629C
+627B-   ED 98 62    SBC   $6298
+627E-   A8          TAY
+627F-   AD 9D 62    LDA   $629D
+6282-   ED 99 62    SBC   $6299
+6285-   90 06       BCC   $628D
+6287-   8C 9C 62    STY   $629C
+628A-   8D 9D 62    STA   $629D
+628D-   CA          DEX
+628E-   D0 DB       BNE   $626B
+6290-   2E 9A 62    ROL   $629A
+6293-   2E 9B 62    ROL   $629B
+6296-   18          CLC
+6297-   60          RTS
+6298-   00          BRK
+6299-   00          BRK
+629A-   00          BRK
+629B-   00          BRK
+629C-   00          BRK
+629D-   00          BRK
+629E-   00          BRK
+629F-   00          BRK
+62A0-   00          BRK
+62A1-   00          BRK
+62A2-   00          BRK
+62A3-   68          PLA
+62A4-   8D E8 62    STA   $62E8
+62A7-   68          PLA
+62A8-   8D E9 62    STA   $62E9
+62AB-   68          PLA
+62AC-   8D E6 62    STA   $62E6
+62AF-   68          PLA
+62B0-   8D E7 62    STA   $62E7
+62B3-   68          PLA
+62B4-   8D E4 62    STA   $62E4
+62B7-   68          PLA
+62B8-   8D E5 62    STA   $62E5
+62BB-   AD E9 62    LDA   $62E9
+62BE-   48          PHA
+62BF-   AD E8 62    LDA   $62E8
+62C2-   48          PHA
+62C3-   AD E4 62    LDA   $62E4
+62C6-   CD E6 62    CMP   $62E6
+62C9-   F0 0B       BEQ   $62D6
+62CB-   AD E5 62    LDA   $62E5
+62CE-   ED E7 62    SBC   $62E7
+62D1-   09 01       ORA   #$01
+62D3-   70 0A       BVS   $62DF
+62D5-   60          RTS
+62D6-   AD E5 62    LDA   $62E5
+62D9-   ED E7 62    SBC   $62E7
+62DC-   70 01       BVS   $62DF
+62DE-   60          RTS
+62DF-   49 80       EOR   #$80
+62E1-   09 01       ORA   #$01
+62E3-   60          RTS
+62E4-   00          BRK
+62E5-   00          BRK
+62E6-   00          BRK
+62E7-   00          BRK
+62E8-   00          BRK
+62E9-   00          BRK
+62EA-   A5 4E       LDA   $4E
+62EC-   8D 26 63    STA   $6326
+62EF-   A5 4F       LDA   $4F
+62F1-   8D 27 63    STA   $6327
+62F4-   AD 26 63    LDA   $6326
+62F7-   F0 19       BEQ   $6312
+62F9-   0E 26 63    ASL   $6326
+62FC-   AD 27 63    LDA   $6327
+62FF-   2A          ROL
+6300-   90 1A       BCC   $631C
+6302-   49 03       EOR   #$03
+6304-   8D 27 63    STA   $6327
+6307-   AD 26 63    LDA   $6326
+630A-   49 69       EOR   #$69
+630C-   8D 26 63    STA   $6326
+630F-   4C 1F 63    JMP   $631F
+6312-   AD 27 63    LDA   $6327
+6315-   F0 EB       BEQ   $6302
+6317-   0A          ASL
+6318-   F0 02       BEQ   $631C
+631A-   B0 E6       BCS   $6302
+631C-   8D 27 63    STA   $6327
+631F-   AE 27 63    LDX   $6327
+6322-   AC 26 63    LDY   $6326
+6325-   60          RTS
+6326-   00          BRK
+6327-   00          BRK
+6328-   A2 08       LDX   #$08
+632A-   A5 4E       LDA   $4E
+632C-   0A          ASL
+632D-   26 4F       ROL   $4F
+632F-   90 02       BCC   $6333
+6331-   49 2D       EOR   #$2D
+6333-   CA          DEX
+6334-   D0 F6       BNE   $632C
+6336-   85 4E       STA   $4E
+6338-   C9 00       CMP   #$00
+633A-   60          RTS
+633B-   68          PLA
+633C-   8D C9 63    STA   $63C9
+633F-   68          PLA
+6340-   8D CA 63    STA   $63CA
+6343-   68          PLA
+6344-   8D CD 63    STA   $63CD
+6347-   68          PLA
+6348-   8D CF 63    STA   $63CF
+634B-   AD CD 63    LDA   $63CD
+634E-   18          CLC
+634F-   69 02       ADC   #$02
+6351-   8D CD 63    STA   $63CD
+6354-   AD CD 63    LDA   $63CD
+6357-   38          SEC
+6358-   ED CF 63    SBC   $63CF
+635B-   8D D1 63    STA   $63D1
+635E-   20 28 63    JSR   $6328
+6361-   8D C7 63    STA   $63C7
+6364-   A2 00       LDX   #$00
+6366-   8E C8 63    STX   $63C8
+6369-   8E D2 63    STX   $63D2
+636C-   AD C8 63    LDA   $63C8
+636F-   48          PHA
+6370-   AD C7 63    LDA   $63C7
+6373-   48          PHA
+6374-   AD D2 63    LDA   $63D2
+6377-   48          PHA
+6378-   AD D1 63    LDA   $63D1
+637B-   48          PHA
+637C-   20 73 61    JSR   $6173
+637F-   68          PLA
+6380-   8D D3 63    STA   $63D3
+6383-   68          PLA
+6384-   8D D4 63    STA   $63D4
+6387-   AD C7 63    LDA   $63C7
+638A-   38          SEC
+638B-   ED D3 63    SBC   $63D3
+638E-   8D D3 63    STA   $63D3
+6391-   A9 00       LDA   #$00
+6393-   8D D4 63    STA   $63D4
+6396-   AD D2 63    LDA   $63D2
+6399-   48          PHA
+639A-   AD D1 63    LDA   $63D1
+639D-   48          PHA
+639E-   AD D4 63    LDA   $63D4
+63A1-   48          PHA
+63A2-   AD D3 63    LDA   $63D3
+63A5-   48          PHA
+63A6-   20 08 61    JSR   $6108
+63A9-   68          PLA
+63AA-   8D CB 63    STA   $63CB
+63AD-   68          PLA
+63AE-   8D CC 63    STA   $63CC
+63B1-   18          CLC
+63B2-   6D CF 63    ADC   $63CF
+63B5-   8D CB 63    STA   $63CB
+63B8-   AE CC 63    LDX   $63CC
+63BB-   AD CA 63    LDA   $63CA
+63BE-   48          PHA
+63BF-   AD C9 63    LDA   $63C9
+63C2-   48          PHA
+63C3-   AD CB 63    LDA   $63CB
+63C6-   60          RTS
+63C7-   00          BRK
+63C8-   00          BRK
+63C9-   00          BRK
+63CA-   00          BRK
+63CB-   00          BRK
+63CC-   00          BRK
+63CD-   00          BRK
+63CE-   00          BRK
+63CF-   00          BRK
+63D0-   00          BRK
+63D1-   00          BRK
+63D2-   00          BRK
+63D3-   00          BRK
+63D4-   00          BRK
+63D5-   68          PLA
+63D6-   8D 10 64    STA   $6410
+63D9-   68          PLA
+63DA-   8D 11 64    STA   $6411
+63DD-   68          PLA
+63DE-   8D 0E 64    STA   $640E
+63E1-   68          PLA
+63E2-   8D 0F 64    STA   $640F
+63E5-   A9 00       LDA   #$00
+63E7-   AA          TAX
+63E8-   8E 12 64    STX   $6412
+63EB-   F0 11       BEQ   $63FE
+63ED-   18          CLC
+63EE-   6D 0E 64    ADC   $640E
+63F1-   A8          TAY
+63F2-   8A          TXA
+63F3-   6D 12 64    ADC   $6412
+63F6-   AA          TAX
+63F7-   98          TYA
+63F8-   0E 0E 64    ASL   $640E
+63FB-   2E 12 64    ROL   $6412
+63FE-   4E 0F 64    LSR   $640F
+6401-   B0 EA       BCS   $63ED
+6403-   D0 F3       BNE   $63F8
+6405-   AD 11 64    LDA   $6411
+6408-   48          PHA
+6409-   AD 10 64    LDA   $6410
+640C-   48          PHA
+640D-   60          RTS
+640E-   00          BRK
+640F-   00          BRK
+6410-   00          BRK
+6411-   00          BRK
+6412-   00          BRK
+6413-   68          PLA
+6414-   8D 4E 64    STA   $644E
+6417-   68          PLA
+6418-   8D 4F 64    STA   $644F
+641B-   68          PLA
+641C-   8D 4C 64    STA   $644C
+641F-   68          PLA
+6420-   8D 4D 64    STA   $644D
+6423-   A9 00       LDA   #$00
+6425-   A2 08       LDX   #$08
+6427-   0E 4D 64    ASL   $644D
+642A-   2A          ROL
+642B-   CD 4C 64    CMP   $644C
+642E-   90 03       BCC   $6433
+6430-   ED 4C 64    SBC   $644C
+6433-   2E 4D 64    ROL   $644D
+6436-   CA          DEX
+6437-   D0 F1       BNE   $642A
+6439-   8D 4B 64    STA   $644B
+643C-   AD 4F 64    LDA   $644F
+643F-   48          PHA
+6440-   AD 4E 64    LDA   $644E
+6443-   48          PHA
+6444-   AE 4B 64    LDX   $644B
+6447-   AD 4D 64    LDA   $644D
+644A-   60          RTS
+644B-   00          BRK
+644C-   00          BRK
+644D-   00          BRK
+644E-   00          BRK
+644F-   00          BRK

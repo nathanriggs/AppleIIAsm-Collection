@@ -1,0 +1,55 @@
+*
+*``````````````````````````````*
+* RND8 :: 8-BIT RANDOM NUMBER  *
+*-                            -*
+* GENERATES A PSEUDO-RANDOM    *
+* NUMBER BETWEEN 0..255 (BYTE) *
+* AND RETURNS THE VALUE IN A.  *
+*                              *
+* THIS USES THE GALOIS LINEAR  *
+* FEEDBACK SHIFT REGISTER      *
+* ALGORITHM WITH POLYNOMIAL    *
+* $002D. THE SEQUENCE WILL     *
+* REPEAT AFTER 65535 CALLS.    *
+*-                            -*
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  ????----  REG: AX--  *
+*-                            -*
+* CYCLES: ???                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*                              *
+*        JSR RND8              *
+*-                            -*
+* ENTRY: NONE                  *
+*-                            -*
+* EXIT                         *
+*                              *
+*   Y = NOT AFFECTED           *
+*   X = CLOBBERED              *
+*   A = RANDOM NUM 0..255      *
+*-                            -*
+* NOTE: BASED ON THE PRNG      *
+* LISTING FOUND IN THE NESDEV  *
+* WIKI.                        *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+RND8
+*
+         LDX   #8
+         LDA   RNDL+0
+:A
+         ASL              ;SHIFT THE REG
+         ROL   RNDL+1
+         BCC   :B
+         EOR   #$2D       ; APPLY XOR FEEDBACK
+                          ; WHENEVER A 1 BIT IS
+                          ; SHIFTED OUT
+:B
+         DEX
+         BNE   :A
+         STA   RNDL+0
+         CMP   #0         ; RELOAD FLAGS
+         RTS
