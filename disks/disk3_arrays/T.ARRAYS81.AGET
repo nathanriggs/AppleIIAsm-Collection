@@ -1,0 +1,145 @@
+*
+*``````````````````````````````*
+* AGET81 :: GET ARRAY ELEMENT  *
+*           ADDRESS            *
+*-                            -*
+* GETS THE ADDRESS LOCATION OF *
+* AN ELEMENT IN THE SPECIFIED  *
+* ARRAY AT THE SPECIFIED INDEX *
+*-                            -*
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  ????----  REG: AXYM  *
+*-                            -*
+* CYCLES: ???                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*                              *
+*        LDA #>$300 ;HI ARADDR *
+*        PHA                   *
+*        LDA #<$300 ; LOW      *
+*        PHA                   *
+*        LDA #5 ; INDEX        *
+*        PHA                   *
+*        JSR AGET81            *
+*-                            -*
+* ENTRY                        *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+* INDEX OF ELEMENT TO GET      *
+* ADDRESS OF ARRAY LO BYTE     *
+* ADDRESS OF ARRAY HI BYTE     *
+*-                            -*
+* EXIT                         *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+*                              *
+*   Y = LOBYTE OF ELEMENT ADDR *
+*   X = HIBYTE OF ELEMENT ADDR *
+*   A = TRASH                  *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+AGET81
+*
+** SAVE RETURN ADDRESS
+*
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+*
+** GET PARAMETERS
+*
+         PLA
+         STA   :IDX
+         PLA
+         STA   ADDR1
+         PLA
+         STA   ADDR1+1
+*
+** GET ELEMENT SIZE
+*
+         LDY   #1         ; ELEMENT SIZE LOC
+         LDA   (ADDR1),Y
+         STA   :ESIZE
+*
+*
+** FIRST, MUL INDEX BY ELEMENT SIZE,
+** THEN ADD TWO TO GET THE PROPER ADDRESS.
+*
+         LDY   #0
+         LDA   #0
+         TAY
+         STY   SCRATCH
+         BEQ   :ENTLP
+*
+:DOADD
+         CLC
+         ADC   :IDX
+         TAX
+         TYA
+         ADC   SCRATCH
+         TAY
+         TXA
+:LP
+         ASL   :IDX
+         ROL   SCRATCH
+:ENTLP
+         LSR   :ESIZE
+         BCS   :DOADD
+         BNE   :LP
+*
+** ARRAY INDEX STORED IN X (LOW) AND Y (HIGH)
+*
+         STX   :IDX
+         STY   :IDX+1
+*
+** ADD 2 TO INDEX
+*
+         CLC
+         LDA   #2
+         ADC   :IDX
+         STA   :RES
+         LDA   #0
+         ADC   :IDX+1
+         STA   :RES+1
+*
+** NOW ADD THAT TO BASE ARRAY ADDRESS
+** TO GET ADDRESS OF INDEX VALUE
+*
+         CLC
+         LDA   :RES
+         ADC   ADDR1      ; LOW OF ARRAY ADDRESS
+         STA   :RES
+         LDA   :RES+1
+         ADC   ADDR1+1
+         STA   :RES+1
+*
+** ADDRESS TO ARRAY ELEMENT IS STORED
+** IN Y (LOW BYTE), X (HIGH BYTE)
+*
+         LDY   :RES
+         LDX   :RES+1
+*
+** RESTORE RETURN ADDRESS
+*
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+*
+         RTS
+*
+** DATA
+*
+:RES     DS    2
+:IDX     DS    2
+:ESIZE   DS    1
+*

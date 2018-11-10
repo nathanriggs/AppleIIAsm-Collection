@@ -1,0 +1,214 @@
+*
+*``````````````````````````````*
+* DIM82 :: INIT 2D ARRAY       *
+*-                            -*
+* THIS SIMPLY CREATES A 1D     *
+* ARRAY WITH THE DIM OF        *
+* ARRAYX BY ARRAYY.            *
+*-                            -*
+* FIRST BYTE OF MEMORY USED    *
+* HOLDS LENGTH OF X (ROWS);    *
+* SECOND BYTE HOLDS LENGTH OF  *
+* Y (COLUMNS); THIRD BYTE      *
+* HOLDS LENGTH OF EACH ELEMENT *
+*-                            -*
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  ????----  REG: AXYM  *
+*-                            -*
+* CYCLES: ???                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*                              *
+*   LDA #>$300 ; ARRAY ADDR    *
+*   PHA                        *
+*   LDA #<$300                 *
+*   PHA                        *
+*   LDA #4 ; X DIMENSION BOUND *
+*   PHA                        *
+*   LDA #4 ; Y DIMENSION BOUND *
+*   PHA                        *
+*   LDA #1 ; ELEMENT BYTESIZE  *
+*   PHA                        *
+*   JSR DIM82                  *
+*-                            -*
+* ENTRY                        *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+* ELEMENT SIZE IN BYTES        *
+* Y DIMENSION BOUNDARY         *
+* X DIMENSION BOUNDARY         *
+* ARRAY ADDRESS, LOW BYTE      *
+* ARRAY ADDRESS, HIGH BYTE     *
+*-                            -*
+* EXIT                         *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+*                              *
+*   Y = ARRAY ADDRESS LO BYTE  *
+*   X = ARRAY ADDRESS HI BYTE  *
+*   A = CLOBBERED              *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+DIM82
+*
+** SAVE RETURN ADDRESS
+*
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+*
+** GET PARAMETERS
+*
+         PLA
+         STA   :MCAND     ; ELEMENT LENGTH
+         PLA
+         STA   :AYSIZE
+         STA   :AYBAK
+         PLA
+         STA   :AXSIZE
+         STA   :AXBAK
+         PLA
+         STA   ADDR1
+         PLA
+         STA   ADDR1+1
+*
+** LOOP THROUGH Y, CLEARING MEMORY
+** FOR X BYTES TIMES ELEMENT SIZE,
+** MOVING TO END OF LAST CLEAR
+** UNTIL FINISHED
+*
+** MULTIPLY X AND Y
+*
+         LDA   #0
+         TAY
+         STY   SCRATCH
+         BEQ   :ENTLP
+*
+:DOADD
+         CLC
+         ADC   :AXSIZE
+         TAX
+*
+         TYA
+         ADC   SCRATCH
+         TAY
+         TXA
+*
+:LP
+         ASL   :AXSIZE
+         ROL   SCRATCH
+:ENTLP
+         LSR   :AYSIZE
+         BCS   :DOADD
+         BNE   :LP
+*
+         STX   :MLIER
+         STY   :MLIER+1
+*
+** NOW MULTIPLY BY LENGTH OF ELEMENTS
+*
+         LDA   #0
+         STA   :PROD+2
+         STA   :PROD+3
+         LDX   #$10
+:SHIFTR  LSR   :MLIER+1
+         ROR   :MLIER
+         BCC   :ROTR
+         LDA   :PROD+2
+         CLC
+         ADC   :MCAND
+         STA   :PROD+2
+         LDA   :PROD+3
+         ADC   :MCAND+1
+:ROTR
+         ROR
+         STA   :PROD+3
+         ROR   :PROD+2
+         ROR   :PROD+1
+         ROR   :PROD
+         DEX
+         BNE   :SHIFTR
+*
+         INC   :PROD      ; INCREASE BY 3
+         INC   :PROD
+         INC   :PROD
+         LDX   :PROD
+         LDY   :PROD+1
+*
+** NOW CLEAR MEMORY BLOCKS, WHOLE PAGES FIRST
+*
+         LDA   #$00       ; FILL VALUE
+         LDX   :PROD+1    ; NOTE THAT THIS WON'T
+                          ; GO BEYOND A 16BIT VALUE;
+                          ; ANYTHING HIGHER THAN
+                          ; 16BITS IS MORE THAN
+                          ; THERE IS MEMORY IN A
+                          ; STANDARD APPLE ][
+         BEQ   :PART
+         LDY   #0
+:FULL
+         STA   (ADDR1),Y
+         INY
+         BNE   :FULL
+         INC   ADDR1+1
+         DEX
+         BNE   :FULL      ; LOOP UNTIL PAGES DONE
+*
+** NOW DO REMAINING BYTES
+*
+:PART
+         LDX   :PROD
+         BEQ   :MFEXIT
+         LDY   #0
+:PARTLP
+         STA   (ADDR1),Y
+         INY
+         DEX
+         BNE   :PARTLP    ; LOOP UNTIL DONE
+:MFEXIT
+*
+** NOW SET SIZES
+*
+         LDY   #0
+         LDA   :AXBAK
+         STA   (ADDR1),Y
+         INY
+         LDA   :AYBAK
+         STA   (ADDR1),Y
+         INY
+         LDA   :MCAND
+         STA   (ADDR1),Y
+*
+** RESTORE RETURN ADDRESS
+*
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+*
+** RETURN POINTER TO STARTING ADDRESS OF ARRAY
+*
+         LDY   ADDR1
+         LDX   ADDR1+1
+*
+         RTS
+*
+** DATA
+*
+:PROD    DS    4
+:AXSIZE  DS    1
+:AYSIZE  DS    1
+:AXBAK   DS    1
+:AYBAK   DS    1
+:MLIER   DS    2
+:MCAND   DS    2
+*

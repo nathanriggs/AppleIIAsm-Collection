@@ -1,0 +1,187 @@
+*
+********************************
+*                              *
+*      -< ARRAYS DEMO >-       *
+*                              *
+*       VERSION 00.00.01       *
+*                              *
+*         03/04/1980           *
+*                              *
+********************************
+*                              *
+*       NATHAN D. RIGGS        *
+*   NATHAN.RIGGS@OUTLOOK.COM   *
+*                              *
+********************************
+*
+** ASSEMBLER DIRECTIVES
+*
+         CYC   AVE
+         EXP   ONLY
+         DSK   ARRAYS.DEMO
+*
+*``````````````````````````````*
+*  TOP INCLUDES (PUTS, MACROS) *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+         PUT   DECS
+         USE ARRAYS.MAC
+*
+         PUT   ARRAYS.HOOKS
+*
+         OBJ   $BFE0
+         ORG $6000
+*
+*``````````````````````````````*
+*      PROGRAM MAIN BODY       *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+*
+*
+** BIG LUMPS -- HIGH LEVEL CODE
+*
+*
+** DIM81 CLEARS THE MEMORY AT THE SPECIFIED
+** LOCATION AND SETS UP THE DATA CONFIGURATION
+** FOR AN ARRAY (ARRAY LENGTH, ELEMENT LENGTH, DATA)
+*
+** MACRO: _DIM81 $300;#10;#2
+*
+         LDA   #>$300     ; HIGH LOCATION FOR ARRAY
+         PHA
+         LDA   #<$300     ; LOW LOCATION
+         PHA
+         LDA   #10        ; ARRAY LENGTH
+         PHA
+         LDA   #2         ; ELEMENT LENGTH
+         PHA
+         JSR   DIM81
+*
+** NOW CHECK $300 TO SEE RESULT
+*
+*
+** AGET81 RETURNS THE MEMORY ADDRESS WHERE
+** AN ELEMENT AT THE SPECIFIED INDEX IN THE
+** ARRAY AT THE SPECIFIED ADDRESS IS LOCATED
+*
+*** MACRO: _GET81 $300;#5
+*
+         LDA   #>$300
+         PHA
+         LDA   #<$300
+         PHA
+         LDA   #05        ; INDEX
+         PHA
+         JSR   AGET81
+*
+*BRK ; X=03 (HI), Y=0C (LOW)
+*
+** NOTE THAT INDEXING STARTS AT 0, SO AN ARRAY
+** OF TEN ELEMENTS WOULD BE LISTED AS 0..9
+** SO HERE WE ARE ACTUALLY ASKING FOR THE
+** ADDRESS OF THE SIXTH ELEMENT!
+*
+*
+** APUT81 COPIES DATA FROM ONE SPECIFIED LOCATION
+** TO THE ELEMENT INDEXED IN AN ARRAY AT ANOTHER
+** LOCATION.
+*
+*** MACRO: _PUT81 $300;$300;#5 (SRC,ARRAY,INDEX)
+*
+         LDA   #>$300     ; ADDRESS TO COPY
+         PHA
+         LDA   #<$300
+         PHA
+         LDA   #>$300     ; ARRAY ADDRESS
+         PHA
+         LDA   #<$300
+         PHA
+         LDA   #5
+         PHA              ; INDEX
+         JSR   APUT81
+*BRK
+*
+** NOTE THAT THIS JUST COPIED THE INDEXING DATA
+** OF THE ARRAY TO ITS SIXTH ELEMENT (#5), SO
+** THAT NOW 030C CONTAINS A002 (ARRAY LENGTH,
+** ELEMENT LENGTH).
+*
+*
+** DIM82 CREATES AN 8BIT, 2D ARRAY AT THE
+** SPECIFIED LOCATION WITH THE LENGTH AND
+** HEIGHT PASSED VIA THE STACK
+*
+** MACRO: _DIM82 $300;#4;#4;#1
+*
+         LDA   #>$300
+         PHA
+         LDA   #<$300     ; ARRAY ADDRESS
+         PHA
+         LDA   #4         ; X-DIMENSION
+         PHA
+         LDA   #4         ; Y-DIMESION
+         PHA
+         LDA   #1         ; ELEMENT SIZE
+         PHA
+         JSR   DIM82
+*BRK
+*
+*
+** AGET82 GETS THE MEMORY LOCATION OF THE ELEMENT
+** STORED AT INDEX X,Y IN THE GIVEN ARRAYS AND
+** RETURNS IT IN Y (LOW) AND X (HIGH)
+*
+** MACRO: _GET82 $300;#2;#3
+*
+         LDA   #>$300
+         PHA
+         LDA   #<$300
+         PHA
+         LDA   #2         ; X INDEX
+         PHA
+         LDA   #3         ; Y INDEX
+         PHA
+         JSR   AGET82
+*BRK ; X=03; Y=09
+*
+*
+** APUT82 PUTS THE DATA STORED IN ONE LOCATION
+** INTO THE ARRAY AT THE SPECIFIED INDEX X,Y.
+*
+** MACRO: _PUT82 $300;$300;#2;#3
+*
+         LDA   #>$300     ; SRC
+         PHA
+         LDA   #<$300
+         PHA
+         LDA   #>$300     ; DEST
+         PHA
+         LDA   #<$300
+         PHA
+         LDA   #2         ; X INDEX
+         PHA
+         LDA   #3
+         PHA              ; Y INDEX
+         JSR   APUT82
+*
+*BRK ; NOW $0309 WILL HOLD 04, THE X-BOUNDARY
+*
+*
+*
+*
+*
+** LITTLE LUMPS -- MID/LOW LEVEL
+*
+*
+         JMP   REENTRY
+*
+*``````````````````````````````*
+*        BOTTOM INCLUDES       *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+*
+** BOTTOM INCLUDES
+*
+         PUT   ARRAYS81.LIB
+         PUT   ARRAYS82.LIB
+*

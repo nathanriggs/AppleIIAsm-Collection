@@ -1,0 +1,134 @@
+*
+*``````````````````````````````*
+* APUT81 :: PUT TO ARR ELEMNT  *
+*-                            -*
+* COPIES FROM SOURCE LOCATION  *
+* AND PUTS IT IN MEMLOC FOR    *
+* DESIRED ELEMENT. DIRECT      *
+* PUTTING OF ELEMENT DATA      *
+* CAN BE DONE VIA SIMPLE       *
+* LDA/STA OPERATIONS.          *
+*-                            -*
+* NOTE THAT THIS DOES NOT      *
+* CHECK FOR OUT OF BOUNDS      *
+* SO THAT CYCLES ARE NOT       *
+* WASTED.                      *
+*-                            -*
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  ????----  REG: AXYM  *
+*-                            -*
+* CYCLES: ???                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*                              *
+*        LDA #>$300 ; SRC ADDR *
+*        PHA                   *
+*        LDA #<$300            *
+*        PHA                   *
+*        LDA #>$300 ;DEST ADDR *
+*        PHA                   *
+*        STA #<$300            *
+*        PHA                   *
+*        LDA #5 ; INDEX        *
+*        PHA                   *
+*-                            -*
+* ENTRY                        *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+* INDEX OF PUT ELEMENT         *
+* LOW BYTE OF DESTINATION ADDR *
+* HI BYTE OF DESTINATION ADDR  *
+* LO BYTE OF SOURCE ADDRESS    *
+* HI BYTE OF SOURCE ADDRESS    *
+*-                            -*
+* EXIT                         *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+*                              *
+*   Y = LOBYTE OF ELEMENT ADDR *
+*   X = HIBYTE OF ELEMENT ADDR *
+*   A = BYTE LENGTH OF ELEMENT *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+APUT81
+*
+** SAVE RETURN ADDRESS
+*
+         PLA
+         STA   :RETADR    ; LOCAL RETURN ADDRESS STORAGE
+         PLA              ; BECAUSE OF CALLING AGET81
+         STA   :RETADR+1
+*
+** GET PARAMETERS
+*
+         PLA
+         STA   :AIDX
+         PLA
+         STA   ADDR4      ; ARRAY ADDRESS; USES ADDR4
+                          ; BECAUSE CALL TO AGET81 USES
+                          ; ADDR1
+         PLA
+         STA   ADDR4+1
+         PLA
+         STA   ADDR3      ; ADDRESS OF DATA TO BE
+                          ; COPIED TO ELEMENT
+         PLA
+         STA   ADDR3+1
+*
+         LDA   ADDR4+1
+         PHA
+         LDA   ADDR4
+         PHA
+         LDA   :AIDX
+         PHA
+         JSR   AGET81     ; GET MEMORY POS OF ELEM
+         STY   ADDR2
+         STX   ADDR2+1
+*
+** GET ARRAY'S ELEMENT SIZE
+*
+         LDY   #1
+         LDA   (ADDR4),Y
+         STA   :ESIZE
+         LDY   #0
+*
+** COPY FROM ADDR1 TO ADDR2
+*
+:LP
+         LDA   (ADDR3),Y
+         STA   (ADDR2),Y
+         INY
+         CPY   :ESIZE
+         BNE   :LP
+*
+** RESTORE RETURN ADDRESS
+*
+         LDA   :RETADR+1
+         PHA
+         LDA   :RETADR
+         PHA
+*
+** RETURN ELEMENT ADDRESS AND SIZE
+** IN REGISTERS
+*
+         LDX   ADDR2+1
+         LDY   ADDR2
+         LDA   :ESIZE
+*
+         RTS
+*
+** DATA
+*
+:RETADR  DS    2
+:ESIZE   DS    1
+:ASIZE   DS    1
+:AIDX    DS    1
+*

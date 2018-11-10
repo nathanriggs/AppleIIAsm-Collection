@@ -1,0 +1,181 @@
+*
+*``````````````````````````````*
+* DIM81  :: INIT 1D ARRAY      *
+*-                            -*
+* CREATES AN ARRAY OF LENGTH   *
+* :ASIZE WITH ELEMENTS OF      *
+* LENGTH :ESIZE AT MEMORY      *
+* LOCATION POINTED TO BY       *
+* :ALOC. RETURNS ARRAY START   *
+* LOCATION IF SUCCESSFUL IN A, *
+* OR 0FF IF UNSUCCESSFUL.      *
+*-                            -*
+* FIRST BYTE OF MEMORY USED    *
+* HOLDS LENGTH OF ARRAY;       *
+* SECOND BYTE HOLDS LENGTH OF  *
+*-                            -*
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  ????----  REG: AXYM  *
+*-                            -*
+* CYCLES: ???                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*                              *
+*       LDA  #>$300 ; ARRAYLOC *
+*       PHA                    *
+*       LDA  #<$300            *
+*       PHA                    *
+*       LDA  #10 ; ARRAY SIZE  *
+*       PHA                    *
+*       LDA  #2 ; ELEMENT SIZE *
+*       PHA                    *
+*       JSR  DIM81             *
+*-                            -*
+* ENTRY                        *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+* ELEMENT SIZE                 *
+* ARRAY SIZE                   *
+* LOW BYTE OF ARRAY ADDRESS    *
+* HIGH BYTE OF ARRAY ADDRESS   *
+*-                            -*
+* EXIT                         *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+*                              *
+*   Y = LO BYTE OF ARRAY ADDR  *
+*   X = HI BYTE OF ARRAY ADDR  *
+*   A = TRASH                  *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+DIM81
+*
+** FIRST, CLEAR BLOCK OF MEM TO BE USED
+**  THEN MUL ASIZE BY ESIZE, AND ADD 2 TO
+** GET TOTAL MEMORY USED BY ARRAY
+*
+** SAVE RETURN ADDRESS
+*
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+*
+** GET PARAMETERS
+*
+         PLA
+         STA   :ESIZE     ; ELEMENT SIZE
+         STA   :ESZBAK
+         PLA
+         STA   :ASIZE     ; ARRAY SIZE
+         STA   :ASZBAK
+         PLA
+         STA   ADDR1
+         PLA
+         STA   ADDR1+1
+         LDY   #0
+         LDX   #0
+         LDA   #0
+         STY   SCRATCH
+         BEQ   :ENTLP
+*
+** MULTIPLY ASIZE AND ESIZE TO GET TOTAL SIZE
+** OF MEMORY TO CLEAR AND USE
+*
+:DOADD
+         CLC
+         ADC   :ASIZE
+         TAX
+*
+         TYA
+         ADC   SCRATCH
+         TAY
+         TXA
+*
+:LP
+         ASL   :ASIZE
+         ROL   SCRATCH
+:ENTLP
+         LSR   :ESIZE
+         BCS   :DOADD
+         BNE   :LP
+*
+         CLC
+         INX
+         INX              ; INCREASE BY TWO
+                          ; TO MAKE ROOM FOR SIZES
+         BCC   :NOINY     ; IF X ROLLS OVER, INC Y
+         INY
+:NOINY
+         STX   :MSIZE     ; LOW BYTE
+         STY   :MSIZE+1   ; HIGH BYTE
+*
+** NOW CLEAR MEMORY BLOCKS
+*
+** FILL WHOLE PAGES FIRST
+*
+         LDA   #0         ; FILL VALUE
+         LDX   :MSIZE+1
+         BEQ   :PART      ; IF NO WHOLE PAGES, JUST PART
+         LDY   #0
+:FULL
+         STA   (ADDR1),Y
+         INY              ; NEXT BYTE
+         BNE   :FULL      ; LOOP UNTIL PAGE DONE
+         INC   ADDR1+1    ; GO TO NEXT PAGE
+         DEX
+         BNE   :FULL      ; LOOP IF PAGES LEFT
+*
+** NOW DO REMAINING PARTIAL PAGES
+*
+:PART
+         LDX   :MSIZE     ; PARTIAL PAGE BYTES
+         BEQ   :MFEXIT    ; EXIT IF = 0
+         LDY   #0
+:PARTLP
+         STA   (ADDR1),Y  ; STORE VAL
+         INY              ; INC INDEX
+         DEX              ; DEC COUNTER
+         BNE   :PARTLP    ; LOOP UNTIL DONE
+:MFEXIT
+*
+** MEMORY FILL IS DONE
+*
+** THEN, SET SIZES
+*
+         LDY   #0
+         LDA   :ASZBAK
+         STA   (ADDR1),Y
+         INY
+         LDA   :ESZBAK
+         STA   (ADDR1),Y
+*
+** RESTORE RETURN ADDRESS
+*
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+*
+** RETURN POINTER TO STARTING ADDR OF ARRAY
+*
+         LDY   ADDR1      ; LOW
+         LDX   ADDR1+1    ; HIGH
+*
+         RTS
+*
+** DATA
+*
+:MSIZE   DS    2
+:ASIZE   DS    1
+:ESIZE   DS    1
+:ASZBAK  DS    1
+:ESZBAK  DS    1

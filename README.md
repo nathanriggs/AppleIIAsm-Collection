@@ -18,19 +18,20 @@ MATH DISK
 
 IO DISK
 * fileio.lib: File Input/Output Library.
-* 80colstdio.lib: stdio library for 80-column display.
 
-DATA DISK
-* strings.lib: Library for managing strings.
-* arrays.lib: library for managing arrays. 
+ARRAYS DISK
+* arrays81.lib: library for managing 1-dimensional 8-bit arrays.
+* arrays82.lib: library for managing 2-dimensional 8-bit arrays.
+* 16-bit array libraries will also be on this disk in the future
+
+STRINGS DISK
+* strings.lib: Library for managing strings. 
 
 LORES DISK
 * lores.lib: Library for fast(er) graphics in low resolution mode.
-* dublores.lib: Library for double-low-resolution graphics.
 
 HIRES DISK
 * hires.lib: Library for fast(er) graphics in high resolution mode.
-* dubhires.lib: Library for handling graphics in double-high-resolution mode.
 
 HIRES DISK 2
 * hireschar.lib: High Resolution mode text character library.
@@ -45,4 +46,7 @@ UTIL DISK
 
 FPMATH DISK 1 (and maybe a second one)
 * fpmath.lib: Floating-point math library
+
+80COL DISK
+* stdio library and some routines for double lores and double hires
 

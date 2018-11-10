@@ -1,0 +1,234 @@
+*
+*-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*
+*                              *
+* ARRAYS.MAC                   *
+*                              *
+* AUTHOR:  NATHAN RIGGS        *
+* CONTACT: NATHAN.RIGGS@       *
+*          OUTLOOK.COM         *
+*                              *
+* VERSION: 0.1.2               *
+* DATE:    30-OCT-2018         *
+* ASSEMBLER: MERLIN 8 PRO      *
+*                              *
+* LICENSE: APACHE 2.0 LICENSE, *
+*  WHERE APPLICABLE. CODE      *
+*  INSPIRED BY OR COPIED FROM  *
+*  OTHERS MAY FALL UNDER A     *
+*  DIFFERENT LICENSE. I WILL   *
+*  DO MY BEST TO NOTIFY SUCH   *
+*  CASES.                      *
+*                              *
+*------------------------------*
+*                              *
+* THIS IS A MACRO LIBRARY FOR  *
+* THE 8BIT ARRAY LIBRARIES,    *
+* ARRAYS81.LIB & ARRAYS82.LIB. *
+* THESE ARE 8BIT 1D AND 2D     *
+* ARRAY LIBS, RESPECTIVELY.    *
+*                              *
+*------------------------------*
+*                              *
+* LIST OF MACROS               *
+*                              *
+*                              *
+*-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*
+*
+*``````````````````````````````*
+* _DIM81 : INIT 1D, 8BIT ARRAY *
+*-                            -*
+* INITS A 1-DIMENSIONAL ARRAY  *
+* BY CLEARING MEMORY IT WILL   *
+* SPAN ACROSS AND PUTTING THE  *
+* INDEXING INFORMATION AS THE  *
+* ARRAY HEADER (0 = ARRAY      *
+* LENGTH, 1 = ELEMEN LENGTH).  *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* PARAM1 = ARRAY ADDRESS       *
+* PARAM2 = ARRAY BYTE LENGTH   *
+* PARAM3 = ELEMENT BYTE LENGTH *
+*-                            -*
+* SAMPLE USAGE:                *
+*   _DIM81 $300;#10;#2         *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_DIM81   MAC
+         LDA   #>]1       ; ARRAY ADDR
+         PHA
+         LDA   #<]1
+         PHA
+         LDA   ]2         ; ARRAY LENGTH
+         PHA
+         LDA   ]3         ; ELEMENT LENGTH
+         PHA
+         JSR   DIM1D
+         <<<
+*
+*``````````````````````````````*
+* _GET81 : GET ARRAY ELEMENT   *
+*          FROM 1D, 8BIT ARRAY *
+*-                            -*
+* CALCULATES THE ADDRESS OF AN *
+* ELEMENT IN THE GIVEN ARRAY   *
+* AND RETURNS THE ADDRESS IN   *
+* Y (LOW) AND X (HIGH), WITH   *
+* THE ELEMENT LENGTH IN A.     *
+* THEN, DATA CAN BE READ VIA   *
+* REGULAR STATEMENTS WITH THAT *
+* ADDRESS.                     *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* PARAM1 = ARRAY ADDRESS       *
+* PARAM2 = ELEMENT INDEX       *
+*-                            -*
+* SAMPLE USAGE:                *
+*   _GET81 $300;#5             *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_GET81   MAC
+         LDA   #>]1       ; ARRAY ADDR
+         PHA
+         LDA   #<]1
+         PHA
+         LDA   ]2         ; ELEM INDEX
+         PHA
+         JSR   AGET81
+         <<<
+*
+*``````````````````````````````*
+* _PUT81 : PUT ARRAY ELEMENT   *
+*          IN 1D, 8BIT ARRAY   *
+*-                            -*
+* COPIES DATA FROM ONE MEMORY  *
+* LOCATION (P1) AND PUTS IT    *
+* IN THE SPECIFIED ARRAY (P2)  *
+* AT THE SPECIFIED INDEX (P3). *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* PARAM1 = SOURCE ADDRESS      *
+* PARAM2 = ARRAY ADDRESS       *
+* PARAM3 = ELEMENT INDEX       *
+*-                            -*
+* SAMPLE USAGE:                *
+*   _PUT81 $300;$3A0;#5        *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_PUT81   MAC
+         LDA   #>]1
+         PHA              ; SRC ADDR
+         LDA   #<]1
+         PHA
+         LDA   #>]2       ; DEST ARRAY
+         PHA
+         LDA   #<]2
+         PHA
+         LDA   ]3         ; DEST INDEX
+         PHA
+         JSR   APUT81
+         <<<
+*
+*``````````````````````````````*
+* _DIM82 : INIT 12, 8BIT ARRAY *
+*-                            -*
+* INITS AN 8BIT 2D ARRAY AT    *
+* SPECIFIED LOCATION WITH THE  *
+* DIMENSIONS OF X,Y. ARRAY     *
+* BEGINS WITH A 4 BYTE HEADER  *
+* WITH THE ARRAY LENGTH, X     *
+* DIM, Y DIM, AND ELEM LENGTH. *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* PARAM1 = ARRAY ADDRESS       *
+* PARAM2 = X DIMENSION         *
+* PARAM3 = Y DIMENSION         *
+* PARAM4 = ELEMENT SIZE        *
+*-                            -*
+* SAMPLE USAGE:                *
+*   _DIM82 $300;#4;#4;#1       *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_DIM82   MAC
+         LDA   #>]1       ; ARRAY ADDR
+         PHA
+         LDA   #<]1
+         PHA
+         LDA   ]2         ; X DIM
+         PHA
+         LDA   ]3         ; Y DIM
+         PHA
+         LDA   ]4         ; ELEMENT LENGTH
+         PHA
+         JSR   DIM82
+         <<<
+*
+*``````````````````````````````*
+* _GET82 : GET ARRAY ELEMENT   *
+*          FROM 2D, 8BIT ARRAY *
+*-                            -*
+* RETURNS THE MEMORY LOCATION  *
+* OF AN X,Y INDEX IN THE ARRAY *
+* VIA THE REGISTERS: Y (LOW),  *
+* X (HIGH), A (ELEMENT LENGTH) *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* PARAM1 = ARRAY ADDRESS       *
+* PARAM2 = X INDEX             *
+* PARAM3 = Y INDEX             *
+*-                            -*
+* SAMPLE USAGE:                *
+*   _GET82 $300;#2;#3          *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_GET82   MAC
+         LDA   #>]1       ; ARRAY ADDR
+         PHA
+         LDA   #<]1
+         PHA
+         LDA   ]2         ; X INDEX
+         PHA
+         LDA   ]3         ; Y INDEX
+         PHA
+         JSR   AGET82
+         <<<
+*
+*``````````````````````````````*
+* _PUT82 : PUT ARRAY ELEMENT   *
+*          IN 2D, 8BIT ARRAY   *
+*-                            -*
+* COPIES DATA FROM SOURCE LOC  *
+* TO THE MEMLOC OF INDEX X,Y   *
+* IN THE SPECIFIED ARRAY.      *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* PARAM1 =  SOURCE ADDRESS     *
+* PARAM2 =  DEST ARRAY ADDRESS *
+* PARAM3 =  ELEMENT X INDEX    *
+* PARAM4 = Y INDEX             *
+*-                            -*
+* SAMPLE USAGE:                *
+*   _PUT82 $300;$3A0;#2;#3     *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_PUT82   MAC
+         LDA   #>]1       ; SRC ADDR
+         PHA
+         LDA   #<]1
+         PHA
+         LDA   #>]2       ; ARRAY ADDR
+         PHA
+         LDA   #<]2
+         PHA
+         LDA   ]3         ; X INDEX
+         PHA
+         LDA   ]4         ; Y INDEX
+         PHA
+         JSR   APUT82
+         <<<
+*

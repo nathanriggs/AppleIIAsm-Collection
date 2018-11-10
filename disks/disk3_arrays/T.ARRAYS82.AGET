@@ -1,0 +1,163 @@
+*
+*``````````````````````````````*
+* AGET82 :: INIT 2D ARRAY      *
+*-                            -*
+* THIS GETS THE ADDRESS OF AN  *
+* ELEMENT AT THE INDEX X,Y IN  *
+* THE SPECIFIED ARRAY.         *
+*-                            -*
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  ????----  REG: AXYM  *
+*-                            -*
+* CYCLES: ???                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*                              *
+*   LDA #>$300 ; ARRAY ADDR    *
+*   PHA                        *
+*   LDA #<$300                 *
+*   PHA                        *
+*   LDA #2 ; X INDEX           *
+*   PHA                        *
+*   LDA #3 ; Y INDEX           *
+*   PHA                        *
+*   JSR AGET82                 *
+*-                            -*
+* ENTRY                        *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+* Y INDEX OF ELEMENT           *
+* X INDEX OF ELEMENT           *
+* LOW BYTE OF ARRAY ADDRESS    *
+* HIGH BYTE OF ARRAY ADDRESS   *
+*-                            -*
+* EXIT                         *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+*                              *
+*   Y = LO BYTE OF ELEM ADDR   *
+*   X = HI BYTE OF ELEM ADDR   *
+*   A = CLOBBERED; TRASH       *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+AGET82
+*
+** SAVE RETURN ADDRESS
+*
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+*
+** GET PARAMETERS
+*
+         PLA
+         STA   :YIDX
+         PLA
+         STA   :XIDX
+         PLA
+         STA   ADDR1
+         PLA
+         STA   ADDR1+1
+*
+         LDY   #2
+         LDA   (ADDR1),Y  ; ELEMENT LENGTH
+         STA   :MCAND     ; ELEMENT LENGTH
+*
+** MULTIPLY X AND Y
+*
+         LDA   #0
+         TAY
+         STY   SCRATCH
+         BEQ   :ENTLP
+*
+:DOADD
+         CLC
+         ADC   :XIDX
+         TAX
+*
+         TYA
+         ADC   SCRATCH
+         TAY
+         TXA
+*
+:LP
+         ASL   :XIDX
+         ROL   SCRATCH
+:ENTLP
+         LSR   :YIDX
+         BCS   :DOADD
+         BNE   :LP
+*
+         STX   :MLIER
+         STY   :MLIER+1
+*
+** NOW MULTIPLY BY LENGTH OF ELEMENTS
+*
+         LDA   #0
+         STA   :PROD+2
+         STA   :PROD+3
+         LDX   #$10
+:SHIFTR  LSR   :MLIER+1
+         ROR   :MLIER
+         BCC   :ROTR
+         LDA   :PROD+2
+         CLC
+         ADC   :MCAND
+         STA   :PROD+2
+         LDA   :PROD+3
+         ADC   :MCAND+1
+:ROTR
+         ROR
+         STA   :PROD+3
+         ROR   :PROD+2
+         ROR   :PROD+1
+         ROR   :PROD
+         DEX
+         BNE   :SHIFTR
+*
+         INC   :PROD      ; INCREASE BY 3
+         INC   :PROD
+         INC   :PROD
+*
+** NOW ADD BASE ADDRESS OF ARRAY TO GET
+** THE ADDRESS OF THE INDEX VALUE
+*
+         CLC
+         LDA   :PROD
+         ADC   ADDR1
+         STA   :PROD
+         LDA   :PROD+1
+         ADC   ADDR1+1
+         STA   :PROD+1
+*
+** RETURN ADDRESS IN Y(LOW) AND X(HIGH)
+*
+         LDY   :PROD
+         LDX   :PROD+1
+*
+** RESTORE RETURN ADDRESS
+*
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+*
+         RTS
+*
+** DATA
+*
+:XIDX    DS    2
+:YIDX    DS    2
+:PROD    DS    4
+:MLIER   DS    2
+:MCAND   DS    2
+*

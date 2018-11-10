@@ -1,0 +1,122 @@
+*
+*``````````````````````````````*
+*-                            -*
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+*-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*
+*                              *
+*                              *
+*                              *
+*=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-*
+*
+*``````````````````````````````*
+* PRINT INDEXED STRING         *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_PRS     MAC
+         LDA   #<]1
+         STA   RESULT2
+         LDA   #>]1
+         STA   RESULT2+1
+         JSR   PRNSTR
+         <<<
+*
+*``````````````````````````````*
+* CONCATENATE STRINGS          *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_SCAT    MAC
+         LDA   #<]1
+         STA   __S1A
+         LDA   #>]1
+         STA   __S1A+1
+         LDA   #<]2
+         STA   __S2A
+         LDA   #>]2
+         STA   __S2A+1
+         LDA   ]3
+         STA   __MLEN
+         JSR   STRCAT
+         <<<
+*
+*``````````````````````````````*
+* FIND SUBSTRING               *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_SPOS    MAC
+         LDA   #<]1
+         STA   __SUB
+         LDA   #>]1
+         STA   __SUB+1
+         LDA   #<]2
+         STA   __STR
+         LDA   #>]2
+         STA   __STR+1
+         JSR   SUBPOS
+         <<<
+*
+*``````````````````````````````*
+* _SCPY :: SUBSTRING COPY      *
+*-                            -*
+*  USAGE: _SCPY ]1;]2;]3;]4;]5 *
+*                              *
+*  ]1 SRC STRING ADDR          *
+*  ]2 DEST STRING ADDRESS      *
+*  ]3 STARTING SUBSTRING INDEX *
+*  ]4 SUBSTRING LENGTH         *
+*  ]5 MAX LENGTH OF DEST STR   *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_SCPY    MAC
+         LDA   #<]1
+         STA   __S1A
+         LDA   #>]1
+         STA   __S1A+1
+         LDA   #<]2
+         STA   __S2A
+         LDA   #>]2
+         STA   __S2A+1
+         LDA   ]3
+         STA   __SINDEX
+         LDA   ]4
+         STA   __SCNT
+         LDA   ]5
+         STA   __MLEN
+         JSR   SUBCOPY
+         <<<
+*
+*``````````````````````````````*
+* _SDEL :: DELETE SUBSTRING    *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_SDEL    MAC
+         LDA   #<]1
+         STA   __S1A
+         LDA   #>]1
+         STA   __S1A+1
+         LDA   ]2
+         STA   __SINDEX
+         LDA   ]3
+         STA   __SCNT
+         JSR   SUBDEL
+         <<<
+*
+*``````````````````````````````*
+* _SINS :: INSERT SUBSTRING    *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_SINS    MAC
+         LDA   #<]1
+         STA   __S1A
+         LDA   #>]1
+         STA   __S1A+1
+         LDA   #<]2
+         STA   __S2A
+         LDA   #>]2
+         STA   __S2A+1
+         LDA   ]3
+         STA   __SINDEX
+         LDA   ]4
+         STA   __MLEN
+         JSR   SUBINS
+         <<<
