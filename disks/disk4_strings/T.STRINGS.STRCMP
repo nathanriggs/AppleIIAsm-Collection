@@ -1,0 +1,152 @@
+*
+*``````````````````````````````*
+* STRCMP :: STRING COMPARE     *
+*-                            -*
+* COMPARE TWO STRINGS AND      *
+* DETERMINE IF THEY ARE        *
+* IDENTICAL; IF NOT, DETERMINE *
+* WHICH IS THE SHORTEST AND    *
+* WHICH IS THE LONGEST.        *
+*                              *
+* Z FLAG = 1 IF IDENTICAL      *
+* Z FLAG = 0 IF NOT            *
+* CARRY = 1 IF STR2 > STR1 LEN *
+* CARRY = 0 IF STR1 > STR2 LEN *
+*-                            -*
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  ????----  REG: AXYM  *
+*-                            -*
+* CYCLES: ???                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*                              *
+*   LDA #>STR1                 *
+*   PHA                        *
+*   LDA #<STR1                 *
+*   PHA                        *
+*   LDA #>STR2                 *
+*   PHA                        *
+*   LDA #<STR2                 *
+*   PHA                        *
+*   JSR STRCMP                 *
+*                              *
+* STR1 STR "STRING1 "          *
+* STR2 STR "ZTRING2"           *
+*-                            -*
+* ENTRY                        *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+* STRING 2 ADDRESS LOW BYTE    *
+* STRING 2 ADDRESS HI BYTE     *
+* STRING 1 ADDRESS LOW BYTE    *
+* STRING 1 ADDRESS HI BYTE     *
+*-                            -*
+* EXIT                         *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+*                              *
+*   Y = LENGTH OF STRING 2     *
+*   X = LENGTH OF STRING 1     *
+*   A = CLOBBERED; TRASH       *
+*                              *
+* - SEE DESCRIPTION FOR FLAG   *
+*   CHANGES                    *
+*-                            -*
+* ADAPTED FROM LEVANTHAL AND   *
+* WINTHROP'S /6502 ASSEMBLY    *
+* LANGUAGE ROUTINES/. NOT      *
+* UNDER THE APACHE 2.0 LICENSE *
+* AGREEMENT, SINCE THE BOOK    *
+* WAS WRITTEN BEFORE THE       *
+* LICENSE!                     *
+*                              *
+* THAT SAID, LEVENTHAL WROTE   *
+* THAT THE PURPOSE OF THE BOOK *
+* WAS TO COPY THE SOURCE CODE, *
+* AS REINVENTING THE WHEEL IS  *
+* TEDIOUS, AND HE PLACED NO    *
+* RESTRICTIONS ON ITS USE.     *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+STRCMP
+*
+** SAVE RETURN ADDRESS
+*
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+*
+** GET PARAMETERS
+*
+         PLA
+         STA   ADDR2
+         PLA
+         STA   ADDR2+1
+         PLA
+         STA   ADDR1
+         PLA
+         STA   ADDR1+1
+*
+         LDY   #0
+         LDA   (ADDR1),Y  ; GET LENGTH OF STRING 1
+         CMP   (ADDR2),Y
+         BCC   :BEGCMP    ; IF STRING 2 IS SHORTER THEN
+         LDA   (ADDR2),Y  ; USE ITS LENGTH INSTEAD
+*
+** COMPARE THE STRINGS THROUGH THE
+** LENGTH OF THE SHORTER STRING
+*
+:BEGCMP
+         TAX              ; X IS LENGTH OF SHORTER STRING
+         BEQ   :TSTLEN    ; BR IF LENGTH IS 0
+         LDY   #1         ; POINT AT FIRST CHAR OF STRINGS
+:CMPLP
+         LDA   (ADDR1),Y
+         CMP   (ADDR2),Y
+         BNE   :EXIT      ; BR IF CHARS NOT EQUAL
+                          ; Z,C WILL BE PROPERLY SET
+                          ; OR CLEARED
+                          ; ELSE
+         INY              ; NEXT CHAR
+         DEX              ; DECREMENT COUNTER
+         BNE   :CMPLP     ; CONTINUE UNTIL ALL BYTES PAIRED
+*
+* THE 2 STRINGS ARE EQUAL TO LENGTH OF THE SHORTER
+* SO USE LENGTHS AS BASIS FOR SETTING THE FLAGS
+*
+:TSTLEN
+         LDY   #0         ; COMPARE LENGTHS
+         LDA   (ADDR1),Y
+         CMP   (ADDR2),Y  ; SET OR CLEAR THE FLAGS
+*
+** Z FLAG = 1 IF STRINGS IDENTICAL
+** Z FLAG = 0 IF NOT IDENTICAL
+** CARRY = 0 IF STR2 LENGTH > STR1 LENGTH
+** CARRY = 1 IF STR1 LENGTH >= STR2 LENGTH
+*
+:EXIT
+*
+** RESTORE RETURN ADDRESS
+*
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+*
+         LDY   #0
+         LDA   (ADDR1),Y  ; GET STR1 LENGTH
+         TAX              ; RETURN IN X
+         LDA   (ADDR2),Y  ; STR2 LENGTH
+         TAY              ; RETURN IN Y
+*
+         RTS
+*

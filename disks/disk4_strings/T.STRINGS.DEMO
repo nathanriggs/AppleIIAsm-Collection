@@ -1,0 +1,265 @@
+*
+********************************
+*                              *
+*      -< STRINGS DEMO >-      *
+*                              *
+*       VERSION 00.00.01       *
+*                              *
+*         03/04/1980           *
+*                              *
+********************************
+*                              *
+*       NATHAN D. RIGGS        *
+*   NATHAN.RIGGS@OUTLOOK.COM   *
+*                              *
+********************************
+*
+** ASSEMBLER DIRECTIVES
+*
+         CYC   AVE
+         EXP   ONLY
+         DSK   STRINGS.DEMO
+*
+*``````````````````````````````*
+*  TOP INCLUDES (PUTS, MACROS) *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+         PUT   DECS
+         USE STRINGS.MAC
+*
+         PUT   STRINGS.HOOKS
+*
+         OBJ   $BFE0
+         ORG $6000
+*
+*``````````````````````````````*
+*      PROGRAM MAIN BODY       *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+*
+*
+** BIG LUMPS -- HIGH LEVEL CODE
+*
+*
+** STRCMP COMPARES TWO STRINGS, THEN
+** SETS THE STATUS REGISTER AS FOLLOWS:
+*
+** Z=1 IF STRINGS ARE IDENTICAL
+** Z=0 IF STRINGS NOT IDENTICAL
+** C=1 IF STRING2 LENGTH IS >
+** C=0 IF STRING1 LENGTH IS >
+*
+** MACRO:
+*
+         JMP   CONT
+STR1     STR   "THIZ IS STRING1"
+STR2     STR   "THIS IS STRING 2"
+CONT
+         LDA   #>STR1
+         PHA
+         LDA   #<STR1
+         PHA
+         LDA   #>STR2
+         PHA
+         LDA   #<STR2
+         PHA
+         JSR   STRCMP
+* BRK ; P = 31 = 00110001; Z=0,C=1
+*
+*
+** STRCAT CONCATENATES TWO STRINGS AND RETURNS
+** THE CONCATENATED STRING WHERE THE FIRST
+** STRING WAS STORED.
+*
+** MACRO:
+*
+         JMP   CATCON
+CATSTR   STR   "ABC"
+BLANK    STR   "   "
+CATSTR2  STR   "DEF"
+*
+CATCON
+         LDA   #>CATSTR
+         PHA
+         LDA   #<CATSTR
+         PHA
+         LDA   #>CATSTR2
+         PHA
+         LDA   #<CATSTR2
+         PHA
+         LDA   #7         ; MAX SIZE OF CAT
+         PHA
+         JSR   STRCAT
+         LDX   #>CATSTR
+         LDY   #<CATSTR
+* BRK ; X,Y HOLDS LOW AND HIGH BYTES OF
+* THE ADDRESS TO THE CONCATENATED STRING.
+* IF YOU LIST THAT ADDRESS, YOU SHOULD SEE
+* THAT THE FIRST LOCATION HOLDS THE LENGTH
+* OF THE NEW STRING (06), FOLLOWED BY THE
+* HEXADECIMAL CODES FOR THE CHARACTERS
+* ABCDEF: C1 C2 C3 C4 C5 C6
+*
+*
+*
+** PRNSTR PRINTS THE STRING AT THE SPECIFIED
+** MEMORY ADDRESS TO COUT1.
+*
+** MACRO:
+*
+         LDA   #>CATSTR   ; FROM PREVIOUS EXAMPLE
+         PHA
+         LDA   #<CATSTR
+         PHA
+         JSR   PRNSTR
+* BRK ; YOU SHOULD SEE
+* "ABCDEF" APPENDED TO THE LINE WHERE YOU
+* TYPED "BRUN STRINGS.DEMO." USE ROUTINES FROM
+* STDIO FOR PLACEMENT OF THE TEXT.
+*
+*
+*
+*
+         JMP   NUMSTRX
+NUMSTR   HEX   2B67       ;11111
+NUMSTRX
+*
+         LDA   #>$300     ; DESTINATION
+         PHA
+         LDA   #<$300
+         PHA
+         LDA   #>11111    ; VALUE TO CONVERT
+         PHA
+         LDA   #<11111
+         PHA
+         JSR   NUM2STR
+*BRK
+*
+* $300 SHOULD NOW HOLD 05,B1,B1,B1,B1,B1
+*
+*
+*
+** STR2NUM DOES THE OPPOSITE OF NUM2STR: IT
+** RETURNS THE NUMBER EQUIVALENT OF A STRING
+** AND HOLDS THEM IN X (HIGH) AND Y (LOW)
+*
+         LDA   #>$300     ; STRING FROM PREVIOUS
+         PHA
+         LDA   #<$300
+         PHA
+         JSR   STR2NUM
+*BRK ; X,Y HOLDS 2B67, #11111
+*
+*
+** SUBPOS RETURNS THE POSITION OF A SUBSTRING
+** WITHIN A PARENT STRING.
+*
+         LDA   #>STR      ; STRING ADDRESS
+         PHA
+         LDA   #<STR
+         PHA
+         LDA   #>SUB      ; SUBSTRING ADDRESS
+         PHA
+         LDA   #<SUB
+         PHA
+         JSR   SUBPOS
+         JMP   SUBPOSX
+STR      STR   "THIS IS A TEST"
+SUB      STR   "IS A TEST"
+SUBPOSX
+*BRK ; A = 06
+*
+*
+** SUBCOPY COPIES A SUBSTRING AT THE SPECIFIED
+** POSITION TO A PARTICULAR MEMORY ADDRESS
+*
+         LDA   #>STR11    ; SOURCE STRING
+         PHA
+         LDA   #<STR11
+         PHA
+         LDA   #5         ; INDEX TO START COPY
+         PHA
+         LDA   #5         ; LENGTH TO COPY
+         PHA
+         LDA   #>STR21
+         PHA
+         LDA   #<STR21
+         PHA
+         LDA   #15        ; MAX LENGTH OF STRING 2
+         PHA
+         JSR   SUBCOPY
+         JMP   STRCOPYX
+STR11    STR   "0123456789012345"
+STR21    STR   "000000000000000000"
+STRCOPYX
+         LDX   #>STR21
+         LDY   #<STR21    ; ADDRESS OF STR2
+*BRK ; LOCATION FOR STR21 SHOULD NOW START WITH
+* 4,5,6,7,8
+*
+*
+** SUBDEL DELETES A SUBSTRING FROM A GIVEN STRING
+** AND CHANGES THE STRING SIZE ACCORDINGLY.
+** MIN POSITION IS 1, NOT 0
+*
+         LDA   #>STR11    ; STRING LOCATION
+         PHA
+         LDA   #<STR11
+         PHA
+         LDA   #1         ; STARTING INDEX FOR DELETE
+         PHA
+         LDA   #5         ; LENGTH TO DELETE
+         PHA
+         JSR   SUBDEL
+         LDX   #>STR11
+         LDY   #<STR11
+*BRK ; FIRST 5 DIGITS ARE DELETED, REMAINING STRING
+* STORED ANEW
+*
+*
+** SUBINS INSERTS A SOURCE STRING
+** INTO ANOTHER DESTINATION STRING, MOVING THE
+** CONTENTS AND ADJUSTING LENGTH AS NECESSARY.
+*
+         LDA   #>INS1     ; DESTINATION
+         PHA
+         LDA   #<INS1
+         PHA
+         LDA   #3         ; INDEX
+         PHA
+         LDA   #200       ; MAXLEN OF NEW STRING
+         PHA
+         LDA   #>INS2     ; SOURCE SUBSTRING
+         PHA
+         LDA   #<INS2
+         PHA
+         JSR   SUBINS
+         LDY   #<INS1
+         LDX   #>INS1
+*BRK ; MEMLOC IN XY NOW HAS INS2 INSERTED INTO INS1
+* AT LOCATION 3
+*
+** DATA
+*
+INS1     STR   "XXXXXXXXX"
+ZZZ      STR   "999999999"
+INS2     STR   "111111111"
+*
+*
+*
+*
+** LITTLE LUMPS -- MID/LOW LEVEL
+*
+*
+         JMP   REENTRY
+*
+*``````````````````````````````*
+*        BOTTOM INCLUDES       *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+*
+** BOTTOM INCLUDES
+*
+         PUT   STRINGS.LIB
+         PUT   SUBSTRINGS.LIB
+*

@@ -1,0 +1,194 @@
+*
+*``````````````````````````````*
+* STR2NUM :: STRING TO NUMBER  *
+*-                            -*
+* CONVERTS A STRING TO THE     *
+* EQUIVALENT 16BIT NUMBER.     *
+*-                            -*
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  ????----  REG: AXYM  *
+*-                            -*
+* CYCLES: ???                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*                              *
+*   LDA #>$300 ; STRING ADDR   *
+*   PHA                        *
+*   LDA #<$300                 *
+*   PHA                        *
+*   JSR STR2NUM                *
+*-                            -*
+* ENTRY                        *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+* LO BYTE OF STRING ADDRESS    *
+* HI BYTE OF STRING ADDRESS    *
+*-                            -*
+* EXIT                         *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+*                              *
+*   Y = HI BYTE OF NUMBER      *
+*   X = LO BYTE OF NUMBER      *
+*   A = LOW BYTE OF RET ADDR   *
+*-                            -*
+* ADAPTED FROM LEVANTHAL AND   *
+* WINTHROP'S /6502 ASSEMBLY    *
+* LANGUAGE ROUTINES/.          *
+* AS SUCH, THIS MAY NOT FALL   *
+* UNDER THE APACHE 2.0 LICENSE *
+* AGREEMENT, SINCE THE BOOK    *
+* WAS WRITTEN BEFORE THE       *
+* LICENSE!                     *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+*
+STR2NUM
+*
+** SAVE RETURN ADDRESS
+*
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+*
+** GET PARAMETERS
+*
+         PLA
+         STA   ADDR1      ; ADRESS OF STRING
+         PLA              ; TO CNVERT
+         STA   ADDR1+1
+*
+** INITIALIZE
+*
+         LDY   #0
+         LDA   (ADDR1),Y
+         TAX              ; GET LENGITH; TO REGX
+         LDA   #1
+         STA   :NINDEX    ; INDEX = 1
+         LDA   #0
+         STA   :NACCUM    ; ACCUM = 0
+         STA   :NACCUM+1
+         STA   :SNGFLAG   ; SIGN IS POSITIVE
+*
+** CHECK THAT BUFFER IS NOT ZERO
+*
+         TXA
+         BNE   :INIT1     ; EXIT WITH ACCUM = 0
+                          ; IF BUFFER IS EMPTY
+         JMP   :EREXIT    ; ERROR EXIT IF NOTHING
+                          ; IN BUFFER
+:INIT1
+         LDY   :NINDEX
+         LDA   (ADDR1),Y
+         CMP   #'-'
+         BNE   :PLUS      ; BR IF NOT -
+         LDA   #$0FF
+         STA   :SNGFLAG   ; ELSE SIGN IS NEGATIVE
+         INC   :NINDEX
+         DEX              ; DECREMENT COUNT
+         BEQ   :EREXIT    ; ERROR EXIT IF ONLY
+                          ; - IN BUFFER
+         JMP   :CNVERT
+:PLUS
+         CMP   #'+'
+         BNE   :CHKDIG    ; START CONVERSION IF 1ST
+                          ; CHARACTER IS NOT A +
+         INC   :NINDEX
+         DEX              ; DEC COUNT; IGNORE + SIGN
+         BEQ   :EREXIT    ; ERROR EXIT IF ONLY
+                          ; + IN THE BUFFER
+:CNVERT
+         LDY   :NINDEX
+         LDA   (ADDR1),Y
+                          ; GET NEXT CHAR
+:CHKDIG
+         CMP   #$B0       ; "0"
+         BMI   :EREXIT    ; ERROR IF NOT A NUMERAL
+         CMP   #$BA       ; '9'+1; TECHNICALLY :
+         BPL   :EREXIT    ; ERR IF > 9 (NOT NUMERAL)
+         PHA              ; PUSH DIGIT TO STACK
+*
+** VALID DECIMAL DIGIT SO
+** ACCUM = ACCUM * 10
+**   = * (8+2)
+**   = (ACCUM * 8) + (ACCUM * 2)
+*
+         ASL   :NACCUM
+         ROL   :NACCUM+1  ; TIMES 2
+         LDA   :NACCUM
+         LDY   :NACCUM+1  ; SAVE ACCUM * 2
+         ASL   :NACCUM
+         ROL   :NACCUM+1
+         ASL   :NACCUM
+         ROL   :NACCUM+1  ; TIMES 8
+         CLC
+         ADC   :NACCUM    ; SUM WITH * 2
+         STA   :NACCUM
+         TYA
+         ADC   :NACCUM+1
+         STA   :NACCUM+1  ; ACCUM=ACCUM * 10
+*
+** ADD IN THE NEXT DIGIT
+** ACCUM = ACCUM + DIGIT
+*
+         PLA              ; GET THE DIGIT NACK
+         SEC
+         SBC   #$B0
+         CLC              ; CONVERT STR TO BIN
+         ADC   :NACCUM
+         STA   :NACCUM
+         BCC   :D2B1      ; BRANCH IF NO CARRY TO HBYTE
+         INC   :NACCUM+1  ; ELSE INC HIGH BYTE
+:D2B1
+         INC   :NINDEX    ;INC TO NEXT CHARACTER
+         DEX
+         BNE   :CNVERT    ; CONTINUE CONVERSION
+         LDA   :SNGFLAG
+         BPL   :OKEXIT    ; BR IF VAL IS POSITIVE
+         LDA   #0         ; ELSE REPLACE WITH -RESULT
+         SEC
+         SBC   :NACCUM
+         STA   :NACCUM
+         LDA   #0
+         SBC   :NACCUM+1
+         STA   :NACCUM+1
+*
+** GET THE BINARY VALUE AND RETURN
+*
+:OKEXIT
+         CLC
+         BCC   :EXIT
+:EREXIT
+         SEC
+:EXIT
+
+                          ; Y IS ALREADY LOW BYTE
+*
+** RESTORE RETURN ADDRESS
+*
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+*
+         LDX   :NACCUM+1
+         LDY   :NACCUM
+         LDA   :NINDEX
+*
+         RTS
+*
+** DATA
+*
+:NACCUM  DS    2
+:SNGFLAG DS    1
+:NINDEX  DS    1
+*

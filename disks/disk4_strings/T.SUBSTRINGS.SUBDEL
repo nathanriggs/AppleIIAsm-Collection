@@ -1,0 +1,197 @@
+*
+*``````````````````````````````*
+* SUBDEL :: DELETE SUBSTRING   *
+*-                            -*
+* DELETE A SUBSTRING FROM A    *
+* STRING.                      *
+*-                            -*
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  ????----  REG: AXYM  *
+*-                            -*
+* CYCLES: ???                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*                              *
+* LDA #>STR ; STRING ADDRESS   *
+* PHA                          *
+* LDA #<STR                    *
+* PHA                          *
+* LDA IND ; DEL START INDEX    *
+* PHA                          *
+* LDA LEN ; LENGTH OF DELETE   *
+* PHA                          *
+* JSR SUBDEL                   *
+*-                            -*
+* ENTRY                        *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+* NUMBER OF BYTES TO DELETE    *
+* STARTING INDEX OF DELETION   *
+* LO BYTE OF STRING ADDRESS    *
+* HI BYTE OF STRING ADDRESS    *
+*-                            -*
+* EXIT                         *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+*                              *
+*   Y = TRASH                  *
+*   X = TRASH                  *
+*   A = TRASH                  *
+*                              *
+* IF NO ERRORS, CARRY = 0;     *
+* ELSE, CARRY = 1              *
+*-                            -*
+* ADAPTED FROM LEVANTHAL AND   *
+* WINTHROP'S /6502 ASSEMBLY    *
+* LANGUAGE ROUTINES/.          *
+* AS SUCH, THIS MAY NOT FALL   *
+* UNDER THE APACHE 2.0 LICENSE *
+* AGREEMENT, SINCE THE BOOK    *
+* WAS WRITTEN BEFORE THE       *
+* LICENSE!                     *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+SUBDEL
+*
+** SAVE RETURN ADDRES
+*
+         PLA
+         TAY
+         PLA
+         TAX
+*
+** GET PARAMTERS
+*
+         PLA
+         STA   :SCNT
+         PLA
+         STA   :SINDEX
+         PLA
+         STA   ADDR1
+         PLA
+         STA   ADDR1+1
+*
+** RESTORE RETURN ADDRESS
+*
+         TXA
+         PHA
+         TYA
+         PHA
+*
+** INITIALIZE ERROR INDICATOR TO 0
+*
+         LDY   #0
+         STY   :SCERR
+         LDA   (ADDR1),Y
+         STA   :S1LEN     ; GET STRING LENGTH
+*
+** CHECK FOR A NON-ZERO COUNT AND INDEX
+*
+         LDA   :SCNT
+         BEQ   :OKEXIT
+                          ; GOOD EXIT IF NO DELETE
+         LDA   :SINDEX
+         BEQ   :ERREXIT   ; ERR EXIT IF START = 0
+*
+** CHECK FOR STARTING INDEX WITHIN THE STRING
+*
+* EXIT IF IT IS NOT
+*
+         LDA   :S1LEN
+         CMP   :SINDEX
+         BCC   :ERREXIT
+*
+** BE SURE THE NUMBER OF CHARACTERS REQUESTED
+** TO BE DELETED ARE PRESENT.
+** IF NOT, THEN ONLY DELETE FROM THE INDEX
+** TO THE END OF THE STRING.
+*
+         LDA   :SINDEX
+         CLC
+         ADC   :SCNT
+         BCS   :TRUNC     ;TRUNCATE IF INDEX
+                          ; + COUNT > 255
+         STA   :SIDX      ; SAVE INDEX + COUNT AS
+                          ; THE SOURCE INDEX
+         TAX              ; X = INDEX + COUNT
+         DEX
+         CPX   :S1LEN
+         BCC   :CNTOK     ; BR IF IND + CNT - 1
+                          ; < __S1LEN
+                          ; ELSE JUST TRUNC STRING
+         BEQ   :TRUNC     ; TRUNC BUT NO ERROR--
+                          ; EXACTLY ENOUGH CHARS
+         LDA   #$0FF
+         STA   :SCERR     ; INDICATE ERROR - NOT
+                          ; ENOUGH CHARS TO DELETE
+*
+** TRUNCATE THE STRING - NO COMPACTING NECESSARY
+*
+:TRUNC
+         LDX   :SINDEX    ; STRING LENGTH =
+                          ;   START INDEX - 1
+         DEX
+         STX   :S1LEN
+         LDA   :SCERR
+         BEQ   :OKEXIT
+         BNE   :ERREXIT
+*
+** DELETE THE SUBSTRING BY COMPACTING
+** MOVE ALL CHARS ABOVE THE DELETED AREA DOWN
+*
+:CNTOK
+*
+** CALCULATE NUMBER OF CHARS TO MOVE
+** (SLEN - SIDX + 1)
+*
+         LDA   :S1LEN     ; GET STR LENGTH
+         SEC
+         SBC   :SIDX      ; SUBTRACT START INDEX
+         TAX
+         INX
+         BEQ   :OKEXIT    ; ADD 1 TO INCLUDE LAST
+                          ; CHAR; BR IF CNT = 0
+:MVLP
+         LDY   :SIDX
+         LDA   (ADDR1),Y  ; GET NEXT CHAR
+         LDY   :SINDEX
+         STA   (ADDR1),Y  ;MOVE IT DOWN
+         INC   :SINDEX
+         INC   :SIDX      ; INC DEST, SRC INDEXES
+         DEX
+         BNE   :MVLP      ; CONT UNTIL CNT = 0
+         LDX   :SINDEX
+         DEX              ; START LENGTH = FINAL
+                          ; DEST INDEX -1
+         STX   :S1LEN
+*
+** GOOD EXIT
+*
+:OKEXIT
+         CLC
+         BCC   :EXIT
+:ERREXIT
+         SEC
+*
+:EXIT
+         LDA   :S1LEN
+         LDY   #0
+         STA   (ADDR1),Y  ; SET LENGTH OF STRING
+         RTS
+*
+** DATA
+*
+:S1LEN   DS    1
+:SCNT    DS    1
+:SINDEX  DS    1
+:SIDX    DS    1
+:SCERR   DS    1
+*

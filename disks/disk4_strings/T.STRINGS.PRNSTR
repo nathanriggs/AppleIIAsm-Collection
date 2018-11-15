@@ -1,0 +1,91 @@
+*
+*``````````````````````````````*
+* PRNSTR :: PRINT INDEXED STR  *
+*-                            -*
+* PRINT A STRING WITH LENGTH   *
+* THAT PRECEDES START OF STR   *
+*-                            -*
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  ????----  REG: AXYM  *
+*-                            -*
+* CYCLES: ???                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*                              *
+*   LDA #>STR ; STRING ADDRESS *
+*   PHA                        *
+*   LDA #<STR                  *
+*   PHA                        *
+*   JSR PRNSTR                 *
+*-                            -*
+* ENTRY                        *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+* LOW BYTE OF STRING ADDRESS   *
+* HIGH BYTE OF STRING ADDRESS  *
+*-                            -*
+* EXIT                         *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+*                              *
+*   Y = LOW BYTE STRING ADDR   *
+*   X = HI BYTE STRING ADDR    *
+*   A = STRING LENGTH          *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+PRNSTR
+*
+** SAVE RETURN ADDRESS
+*
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+*
+** GET PARAMETERS
+*
+         PLA
+         STA   ADDR1      ; ADDRESS OF STRING
+         PLA
+         STA   ADDR1+1
+*
+         LDY   #0
+         LDA   (ADDR1),Y  ; GET STRING LENGTH
+         STA   :S1LEN
+:LP
+         INY
+         LDA   (ADDR1),Y  ; GET CHARACTER
+         JSR   SCOUT1     ; PRINT CHARACTER TO SCREEN
+         CPY   :S1LEN     ; IF Y < LENGTH
+         BNE   :LP
+                          ; LOOP; ELSE
+         LDY   #0
+         LDA   (ADDR1),Y
+*
+** RESTORE RETURN ADDRESS
+*
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+*
+         LDY   #0
+         LDA   (ADDR1),Y  ; STRING LENGTH IN A
+         LDY   ADDR1
+         LDX   ADDR1+1    ; ADDRESS IN Y,X
+*
+         RTS
+*
+** DATA
+*
+:S1LEN   DS    1
+*
+*

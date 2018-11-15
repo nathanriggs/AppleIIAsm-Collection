@@ -1,0 +1,307 @@
+*
+*-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*
+*                              *
+* STRINGS.MAC                  *
+*                              *
+* AUTHOR:  NATHAN RIGGS        *
+* CONTACT: NATHAN.RIGGS@       *
+*          OUTLOOK.COM         *
+*                              *
+* VERSION: 0.1.2               *
+* DATE:    30-OCT-2018         *
+* ASSEMBLER: MERLIN 8 PRO      *
+*                              *
+* LICENSE: APACHE 2.0 LICENSE, *
+*  WHERE APPLICABLE. CODE      *
+*  INSPIRED BY OR COPIED FROM  *
+*  OTHERS MAY FALL UNDER A     *
+*  DIFFERENT LICENSE. I WILL   *
+*  DO MY BEST TO NOTIFY SUCH   *
+*  CASES.                      *
+*                              *
+*------------------------------*
+*                              *
+* THIS IS A MACRO LIBRARY FOR  *
+* THE 8BIT STRING LIBRARIES,   *
+* STRINGS.LIB & SUBSTRINGS.LIB *
+*                              *
+*------------------------------*
+*                              *
+* LIST OF MACROS               *
+*                              *
+* _SCMP : STRING COMPARE       *
+* _SCAT : STRING CONCATENATE   *
+* _SPRN : PRINT STRING         *
+* _2STR : NUMBER TO STRING     *
+* _2NUM : STRING TO NUMBER     *
+* _SPOS : FIND SUBSTRING POS   *
+* _SCOP : SUBSTRING COPY       *
+* _SDEL : SUBSTRING DELETE     *
+* _SINS : SUBSTRING INSERT     *
+*                              *
+*-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*
+*
+*``````````````````````````````*
+* _SCMP : STRING COMPARE       *
+*-                            -*
+* COMPARE TWO STRINGS AND      *
+* DETERMINE IF IDENTICAL, OR   *
+* LONGER AND SHORTER.          *
+*                              *
+* Z = 1 IF IDENTICAL; 0 IF NOT *
+* C = 1 IF STR2 > STR1         *
+* C = 0 IF STR1 > STR2 LENGTH  *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* PARAM1 = STRING 1 ADDRESS    *
+* PARAM2 = STRING 2 ADDRESS    *
+*-                            -*
+* SAMPLE USAGE:                *
+*   _SCMP $300;$320            *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_SCMP    MAC
+         LDA   #>]1       ; STRING 1
+         PHA
+         LDA   #<]1
+         PHA
+         LDA   #>]2       ; STRING 2
+         PHA
+         LDA   #<]2
+         PHA
+         JSR   STRCMP
+         <<<
+*
+*``````````````````````````````*
+* _SCAT : CONCATENATE STRINGS  *
+*-                            -*
+* CONCATENATES STRING 1 AND    *
+* STRING 2, STORED AT THE      *
+* ADDRESS OF STRING 1.         *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* PARAM1 = ADDR OF STRING 1    *
+* PARAM2 = ADDR OF STRING 2    *
+* PARAM3 = MAX LENGTH OF NEW   *
+*          STRING              *
+*-                            -*
+* SAMPLE USAGE:                *
+*   _SCAT $300;$320;#18        *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_SCAT    MAC
+         LDA   #>]1       ; STRING 1
+         PHA
+         LDA   #<]1
+         PHA
+         LDA   #>]2       ; STRING 2 ADDR
+         PHA
+         LDA   #<]2
+         PHA
+         LDA   ]3         ; MAX SIZE; BYTE
+         PHA
+         JSR   STRCAT
+         <<<
+*
+*``````````````````````````````*
+* _SPRN : PRINT STRING         *
+*-                            -*
+* PRINTS THE STRING LOCATED AT *
+* THE SPECIFIED ADDRESS, WHICH *
+* HAS A PRECEDING LENGTH BYTE. *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* PARAM1 = STRING ADDRESS      *
+*-                            -*
+* SAMPLE USAGE:                *
+*   _SPRN $300                 *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_PRS     MAC
+         LDA   #>]1       ; ADDRESS OF STRING
+         PHA
+         LDA   #<]1
+         PHA
+         JSR   PRNSTR
+         <<<
+*
+*``````````````````````````````*
+* _2STR : NUMBER TO STRING     *
+*-                            -*
+* CONVERTS A 16BIT NUMBER TO   *
+* ITS STRING EQUIVALENT.       *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* PARAM1 = ADDR TO STORE STRNG *
+* PARAM2 = VALUE TO CONVERT    *
+*-                            -*
+* SAMPLE USAGE:                *
+*   _2STR $300; #11111         *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_2STR    MAC
+         LDA   #>]1       ; DEST ADDR
+         PHA
+         LDA   #<]1
+         PHA
+         LDA   #>]2       ; NUMBER VAL
+         PHA
+         LDA   #<]2
+         PHA
+         JSR   NUM2STR
+         <<<
+*
+** NOTE: HOW TO DO ADDRESS WHERE NUM IS STORED?
+*
+*``````````````````````````````*
+* _2NUM : STRING TO NUMBER     *
+*-                            -*
+* CONVERTS A STRING TO A 16BIT *
+* NUMBER EQUIVALENT; RETURNS   *
+* VALUE IN Y(LOW) AND X(HIGH)  *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* PARAM1 = ADDR TO STORE VALUE *
+*-                            -*
+* SAMPLE USAGE:                *
+*   _2NUM $300;#11111          *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_2NUM    MAC
+         LDA   #>]1       ; STRING ADDR
+         PHA
+         LDA   #<]1
+         PHA
+         JSR   STR2NUM
+         <<<
+*
+*``````````````````````````````*
+* _SPOS : FIND SUBSTRING POS   *
+*-                            -*
+* POSITION OF SUBSTRING WITHIN *
+* ANOTHER STRING IS RETURNED   *
+* IN Y(LOW) AND X (HIGH)       *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* PARAM1 = PARENT STRING ADDR  *
+* PARAM2 = SUBSTRING ADDR      *
+*-                            -*
+* SAMPLE USAGE:                *
+*   _SPOS $300;$320            *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_SPOS    MAC
+         LDA   #>]1       ; PARENT
+         PHA
+         LDA   #<]1
+         PHA
+         LDA   #>]2       ; SUBSTRING
+         PHA
+         LDA   #<]2
+         PHA
+         JSR   SUBPOS
+         <<<
+*
+*``````````````````````````````*
+* _SCPY :: SUBSTRING COPY      *
+*-                            -*
+* COPY A SUBSTRING FROM A      *
+* SOURCE STRING TO ANOTHER     *
+* MEMORY ADDRESS.              *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* PARAM1 = SOURCE STRING       *
+* PARAM2 = STARTING INDEX      *
+* PARAM3 = SUBSTRING LENGTH    *
+* PARAM4 = SUBSTRING ADDRESS   *
+* PARAM5 = MAX LENGTH          *
+*-                            -*
+* SAMPLE USAGE:                *
+*   $300;#1;#10;$320;#20       *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_SCPY    MAC
+         LDA   #>]1       ; SOURCE STRING
+         PHA
+         LDA   #<]1
+         PHA
+         LDA   ]2         ; STARTING INDEX
+         PHA
+         LDA   ]3         ; SUBSTRING LENGTH
+         PHA
+         LDA   #>]4       ; SUBSTRING ADDR
+         PHA
+         LDA   #<]4
+         PHA
+         LDA   ]5         ; MAX LENGTH OF SUBSTR
+         JSR   SUBCOPY
+         <<<
+*
+*``````````````````````````````*
+* _SDEL :: DELETE SUBSTRING    *
+*-                            -*
+* DELETE A SUBSTRING FROM A    *
+* PARENT STRING. ADJUSTS THE   *
+* STRING LENGTH ACCORDINGLY.   *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* PARAM1 = PARENT STRING ADDR  *
+* PARAM2 = STARTING INDEX      *
+* PARAM3 = DELETION LENGTH     *
+*-                            -*
+* SAMPLE USAGE:                *
+*   _SDEL $300;#3;#10          *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_SDEL    MAC
+         LDA   #>]1       ; STRING ADDRESS
+         PHA
+         LDA   #<]1
+         PHA
+         LDA   ]2         ; INDEX BYTE
+         PHA
+         LDA   ]3         ; LENGTH
+         PHA
+         JSR   SUBDEL
+         <<<
+*
+*``````````````````````````````*
+* _SINS :: INSERT SUBSTRING    *
+*-                            -*
+* INSERT A SUBSTRING INTO A    *
+* PARENT STRING.               *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* PARAM1 = PARENT STRING       *
+* PARAM2 = INDEX               *
+* PARAM3 = MAX LENGTH OF NEW   *
+* PARAM4 = SUBSTRING           *
+*-                            -*
+* SAMPLE USAGE:                *
+*   _SINS $300;#1;#254;$6000   *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_SINS    MAC
+         LDA   #>]1       ; PARENT STRING
+         PHA
+         LDA   #<]1
+         PHA
+         LDA   ]2         ; INDEX
+         PHA
+         LDA   ]3         ; MAXIMUM LENGTH
+         PHA
+         LDA   #>]4       SUBSTR TO INSERT
+         PHA
+         LDA   #<]4
+         PHA
+         JSR   SUBINS
+         <<<
