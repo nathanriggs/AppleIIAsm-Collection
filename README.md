@@ -10,23 +10,77 @@ Planned libraries include, along with associated Macros:
 
 CORE DISK
 * stdio.lib: Standard Input/Output library.
+...* XPRINT
+...* DPRINT
+...* THLIN
+...* TVLIN
+...* CURSFOR
+...* CURSBAK
+...* CURSDN
+...* CURSUP
+...* TFILLA
+...* SINPUT
+...* GPBX
 * common.lib: Common, useful subroutines: memory swaps, etc.
+...* MEMFILL
+...* MEMMOVE
+...* DELAYMS
+...* ZSAVE
+...* ZLOAD
 
 MATH DISK
 * math8.lib: 8-bit Integer Math Library.
+...* RND8
+...* RANDB
+...* MUL8
+...* DIV8
 * math16.lib: 16-bit Integer Math Library.
+...* ADD16
+...* SUB16
+...* MUL16
+...* SDIV16
+...* UDIV16
+...* SREM16
+...* UREM16
+...* CMP16
+...* RND16
 
 IO DISK
 * fileio.lib: File Input/Output Library.
+...* BSAVE (may be deleted)
+...* BLOAD (may be deleted)
+...* TMODE
+...* CMD
+...* FPRINT
+...* FPSTR
+...* FINPUT
 * in the future, serial routines will also reside here.
 
 ARRAYS DISK
 * arrays81.lib: library for managing 1-dimensional 8-bit arrays.
+...* DIM81
+...* AGET81
+...* APUT81
 * arrays82.lib: library for managing 2-dimensional 8-bit arrays.
+...* DIM82
+...* AGET82
+...* APUT82
 * 16-bit array libraries will also be on this disk in the future
 
 STRINGS DISK
 * strings.lib: Library for managing strings. 
+...* STRCOMP
+...* STRCAT
+...* ASC2STR
+...* STR2ASC
+...* PRNSTR
+...* NUM2STR
+...* STR2NUM
+* substrings.lib: Library for manipulating substrings.
+...* SUBPOS
+...* SUBCOPY
+...* SUBDEL
+...* SUBINS
 
 ~~LORES DISK~~
 * ~~lores.lib: Library for fast(er) graphics in low resolution mode.~~
