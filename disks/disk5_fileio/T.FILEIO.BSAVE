@@ -1,0 +1,111 @@
+*
+*``````````````````````````````*
+* BSAVE :: BINARY SAVE         *
+*-                            -*
+* SIMPLY DOES A BINARY SAVE    *
+* WITH THE COMMAND LINE PARAMS *
+* SPECIFIED IN THE STRING AT   *
+* THE GIVEN ADDRESS.           *
+*-                            -*
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  ????----  REG: AXYM  *
+*-                            -*
+* CYCLES: ???                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*                              *
+*  LDA #>SADDR ; STRING ADDR   *
+*  PHA                         *
+*  LDA #<SADDR                 *
+*  PHA                         *
+*  JSR BSAVE                   *
+*-                            -*
+* ENTRY                        *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+* LO BYTE OF STRING ADDRESS    *
+* HI BYTE OF STRING ADDRESS    *
+*-                            -*
+* EXIT                         *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+*                              *
+*   Y = UNCHANGED              *
+*   X = UNCHANGED              *
+*   A = CLOBBERED; TRASH       *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+*
+BSAVE
+*
+** GET RETURN ADDRESS
+*
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+*
+** GET PARAMETERS
+*
+         PLA
+         STA   ADDR2      ; CMD STRING ADDR
+         PLA
+         STA   ADDR2+1
+*
+         LDA   #$8D
+         JSR   FCOUT
+         LDA   #$84       ; CTRL-D
+         JSR   FCOUT
+         LDA   #$C2       ; B
+         JSR   FCOUT
+         LDA   #$D3       ; S
+         JSR   FCOUT
+         LDA   #$C1       ; A
+         JSR   FCOUT
+         LDA   #$D6       ; V
+         JSR   FCOUT
+         LDA   #$C5       ; E
+         JSR   FCOUT
+         LDA   #$A0       ; [SPACE]
+         JSR   FCOUT
+*
+** NOW SEND STRING TO COUT
+*
+         LDY   #0
+         LDA   (ADDR2),Y
+         STA   :SLEN
+         LDY   #1
+:LP
+         LDA   (ADDR2),Y
+         JSR   FCOUT
+         INY
+         CPY   :SLEN
+         BCC   :LP
+         BEQ   :LP
+*
+** NOW PRESS RETURN AND PRAY
+*
+         LDA   #$8D
+         JSR   FCOUT
+*
+** RESTORE RETURN ADDRESS
+*
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+*
+         RTS
+*
+** DATA
+*
+:SLEN    DS    1
+*

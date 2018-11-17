@@ -18,6 +18,7 @@ MATH DISK
 
 IO DISK
 * fileio.lib: File Input/Output Library.
+* in the future, serial routines will also reside here.
 
 ARRAYS DISK
 * arrays81.lib: library for managing 1-dimensional 8-bit arrays.
@@ -27,26 +28,26 @@ ARRAYS DISK
 STRINGS DISK
 * strings.lib: Library for managing strings. 
 
-LORES DISK
-* lores.lib: Library for fast(er) graphics in low resolution mode.
+~~LORES DISK~~
+* ~~lores.lib: Library for fast(er) graphics in low resolution mode.~~
 
-HIRES DISK
-* hires.lib: Library for fast(er) graphics in high resolution mode.
+~~HIRES DISK~~
+* ~~hires.lib: Library for fast(er) graphics in high resolution mode.~~
 
-HIRES DISK 2
-* hireschar.lib: High Resolution mode text character library.
-* hiresshapes.lib: Routines for creating lines, circles, etc.
+~~HIRES DISK 2~~
+* ~~hireschar.lib: High Resolution mode text character library.~~
+* ~~hiresshapes.lib: Routines for creating lines, circles, etc.~~
 
-MISC DISK
-* sound.lib: Music and sound effects library.
-* applesoft.lib: Library for interfacing ASM programs with Applesoft BASIC.
+~~MISC DISK~~
+* ~~sound.lib: Music and sound effects library.~~
+* ~~applesoft.lib: Library for interfacing ASM programs with Applesoft BASIC.~~
 
-UTIL DISK
-* various useful utilities
+~~UTIL DISK~~
+* ~~various useful utilities~~
 
-FPMATH DISK 1 (and maybe a second one)
-* fpmath.lib: Floating-point math library
+~~FPMATH DISK 1 (and maybe a second one)~~
+* ~~fpmath.lib: Floating-point math library~~
 
-80COL DISK
-* stdio library and some routines for double lores and double hires
+~~80COL DISK~~
+* ~~stdio library and some routines for double lores and double hires~~
 

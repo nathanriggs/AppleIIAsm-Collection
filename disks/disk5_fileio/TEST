@@ -1,0 +1,128 @@
+0300-   00          BRK
+0301-   01 02       ORA   ($02,X)
+0303-   03          ???
+0304-   2C A2 03    BIT   $03A2
+0307-   38          SEC
+0308-   A9 00       LDA   #$00
+030A-   8D ED 03    STA   $03ED
+030D-   A9 09       LDA   #$09
+030F-   8D EE 03    STA   $03EE
+0312-   68          PLA
+0313-   4C 14 C3    JMP   $C314    ROM:XFER
+0316-   48          PHA
+0317-   2C A2 03    BIT   $03A2
+031A-   38          SEC
+031B-   A9 4B       LDA   #$4B
+031D-   8D ED 03    STA   $03ED
+0320-   A9 09       LDA   #$09
+0322-   8D EE 03    STA   $03EE
+0325-   68          PLA
+0326-   4C 14 C3    JMP   $C314    ROM:XFER
+0329-   48          PHA
+032A-   2C A2 03    BIT   $03A2
+032D-   38          SEC
+032E-   A9 40       LDA   #$40
+0330-   8D ED 03    STA   $03ED
+0333-   A9 0C       LDA   #$0C
+0335-   8D EE 03    STA   $03EE
+0338-   68          PLA
+0339-   4C 14 C3    JMP   $C314    ROM:XFER
+033C-   48          PHA
+033D-   2C A2 03    BIT   $03A2
+0340-   38          SEC
+0341-   A9 94       LDA   #$94
+0343-   8D ED 03    STA   $03ED
+0346-   A9 0C       LDA   #$0C
+0348-   8D EE 03    STA   $03EE
+034B-   68          PLA
+034C-   4C 14 C3    JMP   $C314    ROM:XFER
+034F-   48          PHA
+0350-   2C A2 03    BIT   $03A2
+0353-   38          SEC
+0354-   A9 12       LDA   #$12
+0356-   8D ED 03    STA   $03ED
+0359-   A9 0D       LDA   #$0D
+035B-   8D EE 03    STA   $03EE
+035E-   68          PLA
+035F-   4C 14 C3    JMP   $C314    ROM:XFER
+0362-   20 F0 E5    JSR   $E5F0
+0365-   48          PHA
+0366-   2C A2 03    BIT   $03A2
+0369-   38          SEC
+036A-   A9 A0       LDA   #$A0
+036C-   8D ED 03    STA   $03ED
+036F-   A9 0B       LDA   #$0B
+0371-   8D EE 03    STA   $03EE
+0374-   68          PLA
+0375-   4C 14 C3    JMP   $C314    ROM:XFER
+0378-   24 9C       BIT   $9C
+037A-   70 1F       BVS   $039B
+037C-   6C 90 00    JMP   ($0090)
+037F-   20 7C 03    JSR   $037C
+0382-   48          PHA
+0383-   2C A2 03    BIT   $03A2
+0386-   38          SEC
+0387-   A9 B8       LDA   #$B8
+0389-   8D ED 03    STA   $03ED
+038C-   A9 09       LDA   #$09
+038E-   8D EE 03    STA   $03EE
+0391-   68          PLA
+0392-   4C 14 C3    JMP   $C314    ROM:XFER
+0395-   20 02 E6    JSR   $E602
+0398-   4C 82 03    JMP   $0382
+039B-   60          RTS
+039C-   20 1B E0    JSR   $E01B
+039F-   4C 00 D1    JMP   $D100
+03A2-   40          RTI
+03A3-   1C 1D 1E    TRB   $1E1D
+03A6-   00          BRK
+03A7-   00          BRK
+03A8-   FF          ???
+03A9-   1F          ???
+03AA-   00          BRK
+03AB-   00          BRK
+03AC-   20 21 00    JSR   $0021
+03AF-   22          ???
+03B0-   23          ???
+03B1-   24 25       BIT   $25
+03B3-   26 27       ROL   $27
+03B5-   28          PLP
+03B6-   00          BRK
+03B7-   00          BRK
+03B8-   FF          ???
+03B9-   FF          ???
+03BA-   00          BRK
+03BB-   29 2A       AND   #$2A
+03BD-   2B          ???
+03BE-   00          BRK
+03BF-   2C 2D 2E    BIT   $2E2D
+03C2-   2F          ???
+03C3-   30 31       BMI   $03F6
+03C5-   32 00       AND   ($00)
+03C7-   00          BRK
+03C8-   33          ???
+03C9-   34 35       BIT   $35,X
+03CB-   36 37       ROL   $37,X
+03CD-   38          SEC
+03CE-   00          BRK
+03CF-   39 4C BF    AND   $BF4C,Y
+03D2-   9D 4C 84    STA   $844C,X
+03D5-   9D 4C FD    STA   $FD4C,X
+03D8-   AA          TAX
+03D9-   4C B5 B7    JMP   $B7B5
+03DC-   AD 0F 9D    LDA   $9D0F
+03DF-   AC 0E 9D    LDY   $9D0E
+03E2-   60          RTS
+03E3-   AD C2 AA    LDA   $AAC2
+03E6-   AC C1 AA    LDY   $AAC1
+03E9-   60          RTS
+03EA-   4C 51 A8    JMP   $A851
+03ED-   A0 A5       LDY   #$A5
+03EF-   4C 59 FA    JMP   $FA59    F8ROM:OLDBRK
+03F2-   BF          ???
+03F3-   9D 38 4C    STA   $4C38,X
+03F6-   00          BRK
+03F7-   03          ???
+03F8-   4C 03 E0    JMP   $E003
+03FB-   4C 65 FF    JMP   $FF65    F8ROM:MON
+03FE-   65 FF       ADC   $FF

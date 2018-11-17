@@ -1,0 +1,371 @@
+*
+*-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*
+*                              *
+* FILEIO.MAC                   *
+*                              *
+* AUTHOR:  NATHAN RIGGS        *
+* CONTACT: NATHAN.RIGGS@       *
+*          OUTLOOK.COM         *
+*                              *
+* VERSION: 0.1.2               *
+* DATE:    30-OCT-2018         *
+* ASSEMBLER: MERLIN 8 PRO      *
+*                              *
+* LICENSE: APACHE 2.0 LICENSE, *
+*  WHERE APPLICABLE. CODE      *
+*  INSPIRED BY OR COPIED FROM  *
+*  OTHERS MAY FALL UNDER A     *
+*  DIFFERENT LICENSE. I WILL   *
+*  DO MY BEST TO NOTIFY SUCH   *
+*  CASES.                      *
+*                              *
+*------------------------------*
+*                              *
+* THIS IS A MACRO LIBRARY FOR  *
+* FILE INPUT AND OUTPUT, AS    *
+* WELL AS DISK OPERATIONS. IT  *
+* USES FILEIO.LIB AND          *
+* DISKS.LIB.                   *
+*                              *
+*------------------------------*
+*                              *
+* LIST OF MACROS               *
+*                              *
+* _BSAV : BINARY SAVE          *
+* _BLOD : BINARY LOAD          *
+* _TMOD : TEXT FILE OP MODE    *
+* _CMD : EXECUTE DOS COMMAND   *
+* _FPRN : PRINT TO FILE        *
+* _FINP : INPUT LINE FROM FILE *
+* _FGET : GET CHAR FROM FILE   *
+* _SLOT : SET RWTS SLOT        *
+* _DRIV : SET RWTS DRIVE       *
+* _TRAK : SET RWTS TRACK       *
+* _SECT : SET RWTS SECTOR      *
+* _COMM : RWTS COMMAND; RD/WRT *
+* _DBUF : SET BUFFER ADDRESS   *
+* _RWTS : CALL THE RWTS ROUTE  *
+*                              *
+*-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*
+*
+*``````````````````````````````*
+* _BLOD : LOAD A BINARY FILE   *
+*-                            -*
+* LOAD INTO THE GIVEN ADDRESS  *
+* THE SPECIFIED BINARY FILE.   *
+* TO SAVE ON CYCLES, PARAMS    *
+* ARE PASSED AS ONE STRING AS  *
+* IT WOULD BE ENTERED ON THE   *
+* COMMAND LINE.                *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* PARAM1 = ADDRESS OF CMD STR  *
+*-                            -*
+* SAMPLE USAGE:                *
+* _BLOD "TEST,A$300"           *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_BLOD    MAC
+         LDA   #>]1
+         PHA
+         LDA   #<]1
+         PHA
+         JSR   BLOAD
+         <<<
+*
+*``````````````````````````````*
+* _BSAV : SAVE TO BINARY FILE  *
+*-                            -*
+* SAVE THE GIVEN ADDRESS RANGE *
+* TO THE SPECIFIED FILE NAME.  *
+* TO SAVE ON CYCLES, PARAMS    *
+* ARE PASSED AS ONE STRING AS  *
+* IT WOULD BE ENTERED ON THE   *
+* COMMAND LINE.                *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* PARAM1 = ADDRESS OF CDM STR  *
+*-                            -*
+* SAMPLE USAGE:                *
+* _BSAV "TEST,A$300,L$100"     *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_BSAV    MAC
+         LDA   #>]1
+         PHA
+         LDA   #<]1
+         PHA
+         JSR   BSAVE
+         <<<
+*
+*``````````````````````````````*
+* _TMOD : INIT TXTFILE OP MODE *
+*-                            -*
+* FOOLS DOS INTO THINKING THAT *
+* WE ARE IN INDIRECT MODE TO   *
+* ALLOW FOR TEXT FILE READ AND *
+* WRITE OPERATIONS.            *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* NO PARAMETERS                *
+*-                            -*
+* SAMPLE USAGE:                *
+* _TMOD                        *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_TMOD    MAC
+         JSR   TMODE
+         <<<
+*
+*``````````````````````````````*
+* _CMD : EXECUTE DOS COMMAND   *
+*-                            -*
+* SIMPLY EXECUTES THE DOS CMD  *
+* AS IT IS PROVIDED IN THE     *
+* STRING PASSED AS PARAMETER 1 *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* PARAM1 = COMMAND STRING      *
+*-                            -*
+* SAMPLE USAGE:                *
+* _CMD "CATALOG"               *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_CMD     MAC
+         JSR   CMD
+         ASC   ]1
+         HEX   8D00
+         <<<
+*
+*``````````````````````````````*
+* _FPRN : PRINT LINE TO FILE   *
+*-                            -*
+* PRINTS THE GIVEN STRING TO   *
+* THE FILE THAT IS OPEN FOR    *
+* WRITING. IF MEMORY ADDRESS   *
+* IS PASSED, THEN PRINT THE    *
+* STRING THAT IS AT THAT       *
+* LOCATION.                    *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* PARAM1 = EITHER A STRING OR  *
+*          MEMLOC OF STRING    *
+*-                            -*
+* SAMPLE USAGE:                *
+* _FPRN "TESTING"              *
+* _FPRN $300                   *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_FPRN    MAC
+         IF    $,]1       ; IF PARAM IS ADDR
+         LDA   #>]1
+         PHA
+         LDA   #<]1
+         PHA
+         JSR   FPSTR      ; PRINT STRING
+         ELSE             ; ASSUME A STRING
+         JSR   FPRINT
+         ASC   ]1
+         HEX   8D00
+         FIN
+         <<<
+*
+*``````````````````````````````*
+* _FINP : GET LINE FROM TXTFILE*
+*-                            -*
+* GETS A LINE OF TEXT FROM THE *
+* FILE OPEN FOR READING AND    *
+* STORES IT AD THE ADDRRESS    *
+* SPECIFIED IN THE PARAMETERS. *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* PARAM1 = ADDRESS OF CDM STR  *
+*-                            -*
+* SAMPLE USAGE:                *
+* _FINP $300                   *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_FINP    MAC
+         LDA   #>]1
+         PHA
+         LDA   #<]1
+         PHA
+         JSR   FINPUT
+         <<<
+*``````````````````````````````*
+* _FGET : GET CHAR FROM TXTFILE*
+*-                            -*
+* GETS A SINGLE CHAR FROM THE  *
+* FILE OPEN FOR READING AND    *
+* STORES IT IN THE ACCUMULATOR *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* NO PARAMETERS                *
+*-                            -*
+* SAMPLE USAGE:                *
+* _FGET                        *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_FGET    MAC
+         JSR   FGET
+         <<<
+*
+*``````````````````````````````*
+* _SLOT : CHANGE RWTS IOB SLOT *
+*-                            -*
+* CHANGES THE SLOT VALUE IN   *
+* THE IOB TABLE FOR THE RWTS   *
+* ROUTINE. JUST USES DOS IOB.  *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* PARAM1 = SLOT NUMBER         *
+*-                            -*
+* SAMPLE USAGE:                *
+* _SLOT #6                     *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_SLOT    MAC
+*
+         LDA   ]1
+         STA   SCRATCH
+         ASL   SCRATCH
+         ASL   SCRATCH
+         ASL   SCRATCH
+         ASL   SCRATCH    ; MUL BY 16
+         LDA   SCRATCH
+         STA   IOB_SLOT
+         <<<
+*
+*``````````````````````````````*
+* _DRIV : CHANGE RWTSIOB DRIVE *
+*-                            -*
+* CHANGES THE DRIVE VALUE IN   *
+* THE IOB TABLE FOR THE RWTS   *
+* ROUTINE. JUST USES DOS IOB.  *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* PARAM1 = DRIVE NUMBER        *
+*-                            -*
+* SAMPLE USAGE:                *
+* _DRIV #1                     *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_DRIV    MAC
+*
+         LDA   ]1
+         STA   IOB_DRIV
+         <<<
+*
+*``````````````````````````````*
+* _TRAK : CHANGE RWTSIOB TRACK *
+*-                            -*
+* CHANGES THE TRACK VALUE IN   *
+* THE IOB TABLE FOR THE RWTS   *
+* ROUTINE. JUST USES DOS IOB.  *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* PARAM1 = TRACK NUMBER        *
+*-                            -*
+* SAMPLE USAGE:                *
+* _TRAK #5                     *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_TRAK    MAC
+*
+         LDA   ]1
+         STA   IOB_TRAK
+         <<<
+*
+*``````````````````````````````*
+* _SECT : CHANGE RWTS SECTOR   *
+*-                            -*
+* CHANGES THE SECTOR VALUE IN  *
+* THE IOB TABLE FOR THE RWTS   *
+* ROUTINE. JUST USES DOS IOB.  *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* PARAM1 = SECTOR NUMBER       *
+*-                            -*
+* SAMPLE USAGE:                *
+* _SECT #3                     *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_SECT    MAC
+*
+         LDA   ]1
+         STA   IOB_SECT
+         <<<
+*
+*``````````````````````````````*
+* _SECT : CHANGE RWTS COMMAND  *
+*-                            -*
+* CHANGES THE RWTS COMMAND TO  *
+* EITHER READ OR WRITE ($01 OR *
+* $02, RESPECTIVELY).          *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* PARAM1 = COMMAND VALUE       *
+*-                            -*
+* SAMPLE USAGE:                *
+* _COMM #1                     *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_COMM    MAC
+*
+         LDA   ]1
+         STA   IOB_COMM
+         <<<
+*
+*``````````````````````````````*
+* _DBUF : CHANGE RWTS BUFFADDR *
+*-                            -*
+* CHANGES THE BUFFER ADDRESS   *
+* FOR THE RWTS SUBROUTINE      *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* PARAM1 = BUFFER ADDRESS      *
+*-                            -*
+* SAMPLE USAGE:                *
+* _BUFF $300                   *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_DBUF    MAC
+*
+         LDA   #<]1
+         STA   IOB_BUFL
+         LDA   #>]1
+         STA   IOB_BUFH
+         <<<
+*
+*``````````````````````````````*
+* _RWTS : EXECUTE RWTS ROUTINE *
+*-                            -*
+* RUNS THE RWTS ROUTINE AFTER  *
+* THE APPROPRIATE VARIABLES IN *
+* THE IOB TABLE ARE SET.       *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+*  NO PARAMETERS               *
+*-                            -*
+* SAMPLE USAGE:                *
+* _RWTS                        *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_RWTS    MAC
+*
+         JSR   DISKOP
+         <<<

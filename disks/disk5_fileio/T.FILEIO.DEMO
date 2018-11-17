@@ -1,0 +1,275 @@
+*
+********************************
+*                              *
+*      -< FILEIO  DEMO >-      *
+*                              *
+*       VERSION 00.00.01       *
+*                              *
+*         03/04/1980           *
+*                              *
+********************************
+*                              *
+*       NATHAN D. RIGGS        *
+*   NATHAN.RIGGS@OUTLOOK.COM   *
+*                              *
+********************************
+*
+** ASSEMBLER DIRECTIVES
+*
+         CYC   AVE
+         EXP   ONLY
+         DSK   FILEIO.DEMO
+*
+*``````````````````````````````*
+*  TOP INCLUDES (PUTS, MACROS) *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+         PUT   DECS
+         USE FILEIO.MAC
+*
+         PUT   FILEIO.HOOKS
+*
+         OBJ   $BFE0
+         ORG $6000
+*
+*``````````````````````````````*
+*      PROGRAM MAIN BODY       *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+*
+*
+** BIG LUMPS -- HIGH LEVEL CODE
+*
+*
+*
+*
+** PUT A FEW VALUES AT $300 TO PROVE
+** BSAVING AND BLOADING
+*
+         LDA   #0
+         STA   $300
+         LDA   #1
+         STA   $301
+         LDA   #2
+         STA   $302
+         LDA   #3
+         STA   $303
+*
+*
+** BSAVE DOES A DOS BINARY SAVE WITH THE
+** COMMAND LINE PARAMETERS STORED IN THE
+** STRING CONTAINED AT THE SPECIFIED ADDRESS.
+*
+** FOR INSTANCE, IF THE STRING CONTAINS:
+**       TEST,A$300,L$100
+** SPCIFYING THE NAME OF THE FILE, THE ADDRESS
+** OFF THE MEMORY TO STORE, AND THE LENGTH
+** TO SAVE, THE BSAVE ROUTINE WILL EXECUTE
+** THE COMMAND: BSAVE TEST,A$300,L$100
+*
+** MACRO: _BSAV TESTSTR
+*
+         LDA   #>TESTSTR
+         PHA
+         LDA   #<TESTSTR
+         PHA
+         JSR   BSAVE
+*
+** NOW CLEAR THE 1,2,3 STORED IN $300 TO
+** SHOW THAT IT WAS LOADED AGAIN
+*
+         LDA   #0
+         STA   $300
+         STA   $301
+         STA   $302
+         STA   $303
+*
+** BLOAD SIMPLY BLOADS PREVIOUSLY BSAVED DATA
+** INTO THE SPECIFIED ADDRESS IN THE STRING
+*
+** MACRO: _BLOD TESTLD
+*
+         LDA   #>TESTLD
+         PHA
+         LDA   #<TESTLD
+         PHA
+         JSR   BLOAD
+*
+*
+** CMD SIMPLY RUNS A DOS COMMAND. THIS CAN BE USED
+** TO READ AND WRITE TEXT FILES, BUT THAT REQUIRES
+** AN EXTRA STEP (SEE BELOW). OTHERWISE, IT'S JUST
+** A MATTER OF CALLING THE SUBROUTINE, THEN HAVING
+** AN ASC THAT FOLLOWS WITH THE DOS COMMAND.
+*
+** MACRO: _CMD "CATALOG"
+*
+         JSR   CMD
+         ASC   "CATALOG"
+         HEX   8D00
+*
+*
+** TO ACCESS TEXT FILES, WE HAVE TO GO INTO
+** INDIRECT MODE TO FOOL DOS INTO THINKING A
+** PROGRAM IS RUNNING. THE CAVEAT IS THAT WE
+** MUST JUMP TO 3D0 (REENTRY) TO TERMINTE THE
+** PROGRAM INSTEAD OF USING RTS. THIS IS THE
+** SAME ISSUE WHEN USING COUT, HOWEVER, SO IT
+** IS PRETTY STANDARD.
+*
+** MACRO: _TMOD
+*
+         JSR   TMODE      ; ENTER TEXT OPERATION MODE
+*
+*
+** NOW LET'S WRITE A TEXT FILE USING A MIX
+** OF CMD AND THE FPRINT COMMAND
+*
+** MACRO: _FPRN "THIS IS A TEST."
+*
+         JSR   CMD
+         ASC   "OPEN TEXT1"
+         HEX   8D00
+         JSR   CMD
+         ASC   "WRITE TEXT1"
+         HEX   8D00
+         JSR   FPRINT
+         ASC   "THIS IS A TEST."
+         HEX   8D00
+         JSR   CMD
+         ASC   "CLOSE TEXT1"
+         HEX   8D00
+*
+*
+** NOW LET'S READ THAT FILE WITH FINPUT, WHICH
+** SIMPLY USES THE MONITOR INPUT ROUTINE AND THEN
+** COPIES THE BUFFER TO THE SPECIFIED LOCATION.
+** YOU CAN ALSO USE FGET, WHICH STORES A SINGLE
+** CHARACTER FROM THE FILE INTO THE ACCUMULATOR.
+*
+** MACRO: _FINP $300
+*
+         JSR   CMD
+         ASC   "OPEN TEXT1"
+         HEX   8D00
+         JSR   CMD
+         ASC   "READ TEXT1"
+         HEX   8D00
+         LDA   #>$300     ; PUT READ STRING HERE
+         PHA
+         LDA   #<$300
+         PHA
+         JSR   FINPUT
+         JSR   CMD
+         ASC   "CLOSE TEXT1"
+         HEX   8D00
+*
+*
+** FPSTR WRITES A STRING TO A TEXT FILE
+** THAT RESIDES IN A SPECIFIC ADDRESS.
+*
+** MACRO: _FPRN TSTR
+*
+         JSR   CMD
+         ASC   "OPEN T.TEST"
+         HEX   8D00
+         JSR   CMD
+         ASC   "WRITE T.TEST"
+         HEX   8D00
+         LDA   #>TSTR
+         PHA
+         LDA   #<TSTR
+         PHA
+         JSR   FPSTR
+         JSR   CMD
+         ASC   "CLOSE T.TEST"
+         HEX   8D00
+*
+** _FGET SIMPLY GETS A SINGLE CHARACTER FROM
+** THE GIVEN FILE AND STORES IT IN THE
+** ACCUMULATOR.
+*
+         _CMD  "OPEN T.TEST"
+         _CMD  "READ T.TEST"
+         _FGET
+         _CMD  "CLOSE T.TEST"
+*
+*
+********************************
+********************************
+********************************
+********************************
+*                              *
+*   D A N G E R D A N G E R    *
+*                              *
+********************************
+********************************
+********************************
+********************************
+*
+** THE FOLLOWING CODE DOES LOW
+** LEVEL DISK ACCESS, WHICH COULD
+** SERIOUSLY CORRUPT YOUR DISK.
+*
+** MAKE SURE YOU USE THESE ROUTINES
+** ONLY WHEN YOU HAVE BACKUPS AND
+** KNOW WHAT YOU'RE DOING!
+*
+*
+** _SLOT SETS THE SLOT FOR RWTS
+** LOW-LEVEL DISK OPERATIONS.
+** THERE IS NO ACTUAL ROUTINE FOR
+** THIS IN THE LIBRARY; IT ONLY EXISTS
+** AS A MACRO.
+*
+         _SLOT #6
+*
+** THE REST OF THE COMMANDS UP UNTIL
+** _RWTS FOLLOW A SIMILAR PATTERN, AND ALL
+** CHANGE THE IOB TABLE.
+*
+*
+         _DRIV #2         ; CHANGE DRIVE
+*
+         _COMM #1         ; SET FOR READ
+*
+         _DBUF $1000      ; DISK BUFFER AREA
+*
+         _TRAK #2         ; SET TRACK
+         _SECT #2         ; SET SECTOR
+*
+         _RWTS
+         BRK
+*
+** THE PRECEDING READS FROM TRACK 2, SECTOR 2
+** OF DRIVE 2 IN SLOT 6, AND COPIES IT TO $1000.
+*
+** THERE ARE PLENTY OF OTHER USES HERE, BUT FOR
+** THE SAKE OF SAFETY, WE WON'T BE SHOWING ANY
+** DISK WRITE OPERATIONS. HOWEVER, THERE WILL BE A
+** DISK DEDICATED TO THIS IN THE FUTURE, BUT WITHOUT
+** THE SOURCE CODE ON IT.
+*
+*
+*
+** LITTLE LUMPS -- MID/LOW LEVEL
+*
+*
+         JMP   REENTRY
+*
+** DATA
+*
+TESTSTR  STR   "TEST,A$300,L$100"
+TESTLD   STR   "TEST,A$300"
+TSTR     STR   "COMMUNISM WILL WIN!"
+*
+*
+*``````````````````````````````*
+*        BOTTOM INCLUDES       *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+*
+** BOTTOM INCLUDES
+*
+         PUT   FILEIO.LIB
+*

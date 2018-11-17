@@ -1,0 +1,78 @@
+*
+*``````````````````````````````*
+* FPSTR : PRINT STRING TO FILE *
+*-                            -*
+* PRINTS THE SPECIFIED STRING  *
+* AT GIVEN LOCATION TO THE     *
+* FILE OPEN AND SET TO BE      *
+* WRITTEN.                     *
+*-                            -*
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  ????----  REG: AXYM  *
+*-                            -*
+* CYCLES: ???                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*                              *
+*-                            -*
+* ENTRY                        *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+*-                            -*
+* EXIT                         *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+*                              *
+*   Y = CLOBBERED              *
+*   X = CLOBBERED              *
+*   A = CLOBBERED              *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+FPSTR
+*
+** SAVE RETURN ADDRESS
+*
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+*
+** GET PARAMETERS
+*
+         PLA
+         STA   ADDR1
+         PLA
+         STA   ADDR1+1
+*
+         LDY   #0
+         LDA   (ADDR1),Y
+         STA   :SLEN
+:LP
+         INY
+         LDA   (ADDR1),Y
+         JSR   FCOUT
+         CPY   :SLEN
+         BNE   :LP
+:EXIT
+*
+** RESTORE RETURN ADDRESS
+*
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+*
+         RTS
+*
+** DATA
+*
+:SLEN    DS    1
+*
