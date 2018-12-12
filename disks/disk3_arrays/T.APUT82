@@ -1,10 +1,11 @@
 *
 *``````````````````````````````*
-* APUT82 :: PUT DATA INTO ELEM *
+* APUT82 :  PUT DATA INTO ELEM *
 *-                            -*
 * THIS PUTS DATA FROM ONE ADDR *
 * INTO THE ADDRESS OF AN ARRAY *
-* WITH THE INDEX OF X,Y.       *
+* WITH THE INDEX OF [:XIDX],   *
+* [:YIDX].                     *
 *-                            -*
 * CLOBBERS:                    *
 *                              *
@@ -15,19 +16,19 @@
 *-                            -*
 * USAGE:                       *
 *                              *
-*   LDA #>$300 ; SOURCE DATA   *
-*   PHA                        *
-*   LDA #<$300                 *
-*   PHA                        *
-*   LDA #>$3A0 ; DEST ARRAY    *
-*   PHA                        *
-*   LDA #<$3A0                 *
-*   PHA                        *
-*   LDA #2 ; ELEM X INDEX      *
-*   PHA                        *
-*   LDA #3 ; ELEM Y INDEX      *
-*   PHA                        *
-*   JSR APUT82                 *
+*  LDA #>$300 ; SOURCE DATA    *
+*  PHA                         *
+*  LDA #<$300                  *
+*  PHA                         *
+*  LDA #>$3A0 ; DEST ARRAY     *
+*  PHA                         *
+*  LDA #<$3A0                  *
+*  PHA                         *
+*  LDA #2 ; ELEM X INDEX       *
+*  PHA                         *
+*  LDA #3 ; ELEM Y INDEX       *
+*  PHA                         *
+*  JSR APUT82                  *
 *-                            -*
 * ENTRY                        *
 *                              *
@@ -49,9 +50,9 @@
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
 *                              *
-*   Y = LOBYTE ELEMENT ADDRESS *
-*   X = HIBYTE ELEMENT ADDRESS *
-*   A = ELEMENT BYTE LENGTH    *
+* .Y = LOBYTE ELEMENT ADDRESS  *
+* .X = HIBYTE ELEMENT ADDRESS  *
+* .A = ELEMENT BYTE LENGTH     *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 APUT82

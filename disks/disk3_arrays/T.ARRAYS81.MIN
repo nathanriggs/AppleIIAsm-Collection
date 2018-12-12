@@ -1,0 +1,216 @@
+         JMP   ARRAYS81X
+         SKP   10
+ADIM81
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+         PLA
+         STA   :ESIZE
+         STA   :ESZBAK
+         PLA
+         STA   :ASIZE
+         STA   :ASZBAK
+         PLA
+         STA   ADDR1
+         PLA
+         STA   ADDR1+1
+         LDY   #0
+         LDA   #0
+         STY   SCRATCH
+         BEQ   :ENTLP
+:DOADD
+         CLC
+         ADC   :ASIZE
+         TAX
+         TYA
+         ADC   SCRATCH
+         TAY
+         TXA
+:LP
+         ASL   :ASIZE
+         ROL   SCRATCH
+:ENTLP
+         LSR   :ESIZE
+         BCS   :DOADD
+         BNE   :LP
+         CLC
+         INX
+         INX
+
+         BCC   :NOINY
+         INY
+:NOINY
+         STX   :MSIZE
+         STY   :MSIZE+1
+         LDA   #0
+         LDX   :MSIZE+1
+         BEQ   :PART
+         LDY   #0
+:FULL
+         STA   (ADDR1),Y
+         INY
+         BNE   :FULL
+         INC   ADDR1+1
+         DEX
+         BNE   :FULL
+:PART
+         LDX   :MSIZE
+         BEQ   :MFEXIT
+         LDY   #0
+:PARTLP
+         STA   (ADDR1),Y
+         INY
+         DEX
+         BNE   :PARTLP
+:MFEXIT
+         LDY   #0
+         LDA   :ASZBAK
+         STA   (ADDR1),Y
+         INY
+         LDA   :ESZBAK
+         STA   (ADDR1),Y
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+         LDY   ADDR1
+         LDX   ADDR1+1
+         LDA   :ASZBAK
+         LDA   :MSIZE
+         STA   RETURN
+         LDA   :MSIZE+1
+         STA   RETURN+1
+         LDA   #2
+         STA   RETLEN
+         RTS
+:MSIZE   DS    2
+:ASIZE   DS    1
+:ESIZE   DS    1
+:ASZBAK  DS    1
+:ESZBAK  DS    1
+         SKP   10
+AGET81
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+         PLA
+         STA   :IDX
+         PLA
+         STA   ADDR1
+         PLA
+         STA   ADDR1+1
+         LDA   #0
+         STA   :IDX+1
+         LDY   #1
+         LDA   (ADDR1),Y
+         STA   :ESIZE
+         STA   RETLEN
+         LDY   #0
+         LDA   #0
+         TAY
+         STY   SCRATCH
+         BEQ   :ENTLP
+:DOADD
+         CLC
+         ADC   :IDX
+         TAX
+         TYA
+         ADC   SCRATCH
+         TAY
+         TXA
+:LP
+         ASL   :IDX
+         ROL   SCRATCH
+:ENTLP
+         LSR   :ESIZE
+         BCS   :DOADD
+         BNE   :LP
+         STX   :IDX
+         STY   :IDX+1
+         CLC
+         LDA   #2
+         ADC   :IDX
+         STA   :RES
+         LDA   #0
+         ADC   :IDX+1
+         STA   :RES+1
+         CLC
+         LDA   :RES
+         ADC   ADDR1
+         STA   :RES
+         LDA   :RES+1
+         ADC   ADDR1+1
+         STA   :RES+1
+         LDY   #0
+         LDA   :RES
+         STA   ADDR1
+         LDA   :RES+1
+         STA   ADDR1+1
+:LDLOOP
+         LDA   (ADDR1),Y
+         STA   RETURN,Y
+         INY
+         CPY   RETLEN
+         BCC   :LDLOOP
+         BEQ   :LDLOOP
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+         LDY   :RES
+         LDX   :RES+1
+         LDA   RETLEN
+         RTS
+:RES     DS    2
+:IDX     DS    2
+:ESIZE   DS    1
+         SKP   10
+APUT81
+         PLA
+         STA   :RETADR
+         PLA
+         STA   :RETADR+1
+         PLA
+         STA   :AIDX
+         PLA
+         STA   ADDR4
+         PLA
+         STA   ADDR4+1
+         PLA
+         STA   ADDR3
+         PLA
+         STA   ADDR3+1
+         LDA   ADDR4+1
+         PHA
+         LDA   ADDR4
+         PHA
+         LDA   :AIDX
+         PHA
+         JSR   AGET81
+         STY   ADDR2
+         STX   ADDR2+1
+         LDY   #1
+         LDA   (ADDR4),Y
+         STA   :ESIZE
+         LDY   #0
+:LP
+         LDA   (ADDR3),Y
+         STA   (ADDR2),Y
+         INY
+         CPY   :ESIZE
+         BNE   :LP
+         LDA   :RETADR+1
+         PHA
+         LDA   :RETADR
+         PHA
+         LDX   ADDR2+1
+         LDY   ADDR2
+         LDA   :ESIZE
+         RTS
+:RETADR  DS    2
+:ESIZE   DS    1
+:ASIZE   DS    1
+:AIDX    DS    1
+ARRAYS81X

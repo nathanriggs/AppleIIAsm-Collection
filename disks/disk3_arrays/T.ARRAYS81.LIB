@@ -8,19 +8,15 @@
 * CONTACT: NATHAN.RIGGS@       *
 *          OUTLOOK.COM         *
 *                              *
-* VERSION: 0.1.2               *
-* DATE:    30-OCT-2018         *
+* VERSION:   0.2.0             *
+* DATE:      09-DEC-2018       *
 * ASSEMBLER: MERLIN 8 PRO      *
-*                              *
-* LICENSE: APACHE 2.0, WHERE   *
-*  APPLICABLE. CODE INSPIRED   *
-*  BY THE WORKS OF OTHERS MAY  *
-*  FALL UNDER A DIFFERENT      *
-*  LICENSE (NOTED IN ROUTINE). *
+* OS:        DOS 3.3           *
+* LICENSE:   APACHE 2.0        *
 *                              *
 * THIS IS A STANDARD LIBRARY   *
 * FOR 1-DIMENSIONAL 8-BIT      *
-* ARRAY MANIPUALTION. ARRAYS   *
+* ARRAY MANIPULATION. ARRAYS   *
 * ARE PRECEDED BY LENGTH AND   *
 * INDEXING INFORMATION.        *
 *                              *
@@ -28,8 +24,8 @@
 *                              *
 * LIST OF ROUTINES             *
 *                              *
-* DIM81 : DIM 8BIT,1D ARRAY    *
-* AGET81 : GET ADDR OF ELEMENT *
+* ADIM81  : DIM 8BIT,1D ARRAY  *
+* AGET81 : GET ARRAY ELEMENT   *
 * APUT81 : COPY DATA FROM MEM  *
 *          INTO ELEMENT AT     *
 *          SPECIFIED LOCATION  *
@@ -37,19 +33,19 @@
 *-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*
 *
 *``````````````````````````````*
-* DIM81D :: INIT 1D ARRAY      *
+* ADIM81D :      INIT 1D ARRAY *
 *-                            -*
 * CREATES AN ARRAY OF LENGTH   *
-* :ASIZE WITH ELEMENTS OF      *
-* LENGTH :ESIZE AT MEMORY      *
+* [:ASIZE] WITH ELEMENTS OF    *
+* LENGTH [:ESIZE] AT MEMORY    *
 * LOCATION POINTED TO BY       *
-* :ALOC. RETURNS ARRAY START   *
-* LOCATION IF SUCCESSFUL IN A, *
-* OR 0FF IF UNSUCCESSFUL.      *
+* [:ALOC]. RETURNS ARRAY START *
+* LOCATION IN .A               *
 *-                            -*
 * FIRST BYTE OF MEMORY USED    *
 * HOLDS LENGTH OF ARRAY;       *
 * SECOND BYTE HOLDS LENGTH OF  *
+* ELEMENTS.                    *
 *-                            -*
 * CLOBBERS:                    *
 *                              *
@@ -60,15 +56,15 @@
 *-                            -*
 * USAGE:                       *
 *                              *
-*       LDA  #>$300 ; ARRAYLOC *
-*       PHA                    *
-*       LDA  #<$300            *
-*       PHA                    *
-*       LDA  #10 ; ARRAY SIZE  *
-*       PHA                    *
-*       LDA  #2 ; ELEMENT SIZE *
-*       PHA                    *
-*       JSR  DIM81             *
+*  LDA  #>$300 ; ARRAYLOC      *
+*  PHA                         *
+*  LDA  #<$300                 *
+*  PHA                         *
+*  LDA  #10 ; ARRAY SIZE       *
+*  PHA                         *
+*  LDA  #2 ; ELEMENT SIZE      *
+*  PHA                         *
+*  JSR  DIM81                  *
 *-                            -*
 * ENTRY                        *
 *                              *
@@ -88,15 +84,18 @@
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
 *                              *
-*   Y = LO BYTE OF ARRAY ADDR  *
-*   X = HI BYTE OF ARRAY ADDR  *
-*   A = TRASH                  *
+* .Y = LO BYTE OF ARRAY ADDR   *
+* .X = HI BYTE OF ARRAY ADDR   *
+* .A = ARRAY SIZE              *
+*                              *
+* [RETURN] = TOTAL SIZE OF     *
+* ARRAY IN BYTES (WORD)        *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-DIM81
+ADIM81
 *
 ** FIRST, CLEAR BLOCK OF MEM TO BE USED
-**  THEN MUL ASIZE BY ESIZE, AND ADD 2 TO
+**  THEN MUL [:ASIZE] BY [:ESIZE], AND ADD 2 TO
 ** GET TOTAL MEMORY USED BY ARRAY
 *
 ** SAVE RETURN ADDRESS
@@ -119,13 +118,12 @@ DIM81
          PLA
          STA   ADDR1+1
          LDY   #0
-         LDX   #0
          LDA   #0
          STY   SCRATCH
          BEQ   :ENTLP
 *
-** MULTIPLY ASIZE AND ESIZE TO GET TOTAL SIZE
-** OF MEMORY TO CLEAR AND USE
+** MULTIPLY [:ASIZE] AND [:ESIZE] TO GET
+** TOTAL SIZE OF MEMORY TO CLEAR AND USE
 *
 :DOADD
          CLC
@@ -149,7 +147,7 @@ DIM81
          INX
          INX              ; INCREASE BY TWO
                           ; TO MAKE ROOM FOR SIZES
-         BCC   :NOINY     ; IF X ROLLS OVER, INC Y
+         BCC   :NOINY     ; IF .X ROLLS OVER, INC .Y
          INY
 :NOINY
          STX   :MSIZE     ; LOW BYTE
@@ -206,6 +204,17 @@ DIM81
 *
          LDY   ADDR1      ; LOW
          LDX   ADDR1+1    ; HIGH
+         LDA   :ASZBAK
+*
+** STORE TOTAL ARRAY SIZE IN BYTES
+** IN MEMORY ALLOCATED FOR RETURN VALUES
+*
+         LDA   :MSIZE
+         STA   RETURN
+         LDA   :MSIZE+1
+         STA   RETURN+1
+         LDA   #2
+         STA   RETLEN     ; 2 BYTE LENGTH
 *
          RTS
 *
@@ -218,12 +227,13 @@ DIM81
 :ESZBAK  DS    1
 *
 *``````````````````````````````*
-* AGET81 :: GET ARRAY ELEMENT  *
-*           ADDRESS            *
+* AGET81 :   GET ARRAY ELEMENT *
+*                      ADDRESS *
 *-                            -*
-* GETS THE ADDRESS LOCATION OF *
-* AN ELEMENT IN THE SPECIFIED  *
-* ARRAY AT THE SPECIFIED INDEX *
+* GETS THE SPECIFIED ELEMENT   *
+* OF THE ARRAY AND COPIES IT   *
+* TO MEMORY DEDICATED TO       *
+* RETURN VALUES.               *
 *-                            -*
 * CLOBBERS:                    *
 *                              *
@@ -234,13 +244,13 @@ DIM81
 *-                            -*
 * USAGE:                       *
 *                              *
-*        LDA #>$300 ;HI ARADDR *
-*        PHA                   *
-*        LDA #<$300 ; LOW      *
-*        PHA                   *
-*        LDA #5 ; INDEX        *
-*        PHA                   *
-*        JSR AGET81            *
+*  LDA #>$300 ;HI ARADDR       *
+*  PHA                         *
+*  LDA #<$300 ; LOW            *
+*  PHA                         *
+*  LDA #5 ; INDEX              *
+*  PHA                         *
+*  JSR AGET81                  *
 *-                            -*
 * ENTRY                        *
 *                              *
@@ -259,9 +269,12 @@ DIM81
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
 *                              *
-*   Y = LOBYTE OF ELEMENT ADDR *
-*   X = HIBYTE OF ELEMENT ADDR *
-*   A = TRASH                  *
+* .Y = LOBYTE OF ELEMENT ADDR  *
+* .X = HIBYTE OF ELEMENT ADDR  *
+* .A = LENGTH OF RETURN VAL    *
+*                              *
+* [RETURN] VALUE FOUND AT      *
+* SPECIFIED INDEX              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 AGET81
@@ -281,13 +294,15 @@ AGET81
          STA   ADDR1
          PLA
          STA   ADDR1+1
+         LDA   #0
+         STA   :IDX+1
 *
 ** GET ELEMENT SIZE
 *
          LDY   #1         ; ELEMENT SIZE LOC
          LDA   (ADDR1),Y
          STA   :ESIZE
-*
+         STA   RETLEN     ; LENGTH OF RETURN VALUE
 *
 ** FIRST, MUL INDEX BY ELEMENT SIZE,
 ** THEN ADD TWO TO GET THE PROPER ADDRESS.
@@ -314,7 +329,7 @@ AGET81
          BCS   :DOADD
          BNE   :LP
 *
-** ARRAY INDEX STORED IN X (LOW) AND Y (HIGH)
+** INDEX STORED AT X (LOW) AND Y (HIGH)
 *
          STX   :IDX
          STY   :IDX+1
@@ -340,11 +355,22 @@ AGET81
          ADC   ADDR1+1
          STA   :RES+1
 *
-** ADDRESS TO ARRAY ELEMENT IS STORED
-** IN Y (LOW BYTE), X (HIGH BYTE)
+** NOW MOVE SPECIFIED ELEMENT DATA TO THE
+** MEMORY LOCATION DEDICATED TO RETURN VALUES
 *
-         LDY   :RES
-         LDX   :RES+1
+         LDY   #0
+         LDA   :RES
+         STA   ADDR1
+         LDA   :RES+1
+         STA   ADDR1+1
+:LDLOOP
+         LDA   (ADDR1),Y
+         STA   RETURN,Y
+         INY
+         CPY   RETLEN
+         BCC   :LDLOOP    ; IF .Y <= RETLEN
+         BEQ   :LDLOOP    ; KEEP LOOPING
+*
 *
 ** RESTORE RETURN ADDRESS
 *
@@ -353,6 +379,14 @@ AGET81
          LDA   RETADR
          PHA
 *
+** ADDRESS TO ARRAY ELEMENT IS STORED
+** IN .Y (LOW BYTE), .X (HIGH BYTE)
+*
+** LENGTH OF RETURN VALUE IS STORED IN .A
+*
+         LDY   :RES
+         LDX   :RES+1
+         LDA   RETLEN
          RTS
 *
 ** DATA
@@ -362,19 +396,12 @@ AGET81
 :ESIZE   DS    1
 *
 *``````````````````````````````*
-* APUT81 :: PUT TO ARR ELEMNT  *
+* APUT81 : PUT DATA INTO ARRAY *
+*                      ELEMENT *
 *-                            -*
 * COPIES FROM SOURCE LOCATION  *
 * AND PUTS IT IN MEMLOC FOR    *
-* DESIRED ELEMENT. DIRECT      *
-* PUTTING OF ELEMENT DATA      *
-* CAN BE DONE VIA SIMPLE       *
-* LDA/STA OPERATIONS.          *
-*-                            -*
-* NOTE THAT THIS DOES NOT      *
-* CHECK FOR OUT OF BOUNDS      *
-* SO THAT CYCLES ARE NOT       *
-* WASTED.                      *
+* DESIRED ELEMENT.             *
 *-                            -*
 * CLOBBERS:                    *
 *                              *
@@ -385,16 +412,16 @@ AGET81
 *-                            -*
 * USAGE:                       *
 *                              *
-*        LDA #>$300 ; SRC ADDR *
-*        PHA                   *
-*        LDA #<$300            *
-*        PHA                   *
-*        LDA #>$300 ;DEST ADDR *
-*        PHA                   *
-*        STA #<$300            *
-*        PHA                   *
-*        LDA #5 ; INDEX        *
-*        PHA                   *
+*  LDA #>$300 ; SRC ADDR       *
+*  PHA                         *
+*  LDA #<$300                  *
+*  PHA                         *
+*  LDA #>$300 ;DEST ADDR       *
+*  PHA                         *
+*  STA #<$300                  *
+*  PHA                         *
+*  LDA #5 ; INDEX              *
+*  PHA                         *
 *-                            -*
 * ENTRY                        *
 *                              *
@@ -415,9 +442,9 @@ AGET81
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
 *                              *
-*   Y = LOBYTE OF ELEMENT ADDR *
-*   X = HIBYTE OF ELEMENT ADDR *
-*   A = BYTE LENGTH OF ELEMENT *
+* .Y = LOBYTE OF ELEMENT ADDR  *
+* .X = HIBYTE OF ELEMENT ADDR  *
+* .A = BYTE LENGTH OF ELEMENT  *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 APUT81

@@ -1,18 +1,18 @@
 *
 *``````````````````````````````*
-* DIM81  :: INIT 1D ARRAY      *
+* ADIM81D :      INIT 1D ARRAY *
 *-                            -*
 * CREATES AN ARRAY OF LENGTH   *
-* :ASIZE WITH ELEMENTS OF      *
-* LENGTH :ESIZE AT MEMORY      *
+* [:ASIZE] WITH ELEMENTS OF    *
+* LENGTH [:ESIZE] AT MEMORY    *
 * LOCATION POINTED TO BY       *
-* :ALOC. RETURNS ARRAY START   *
-* LOCATION IF SUCCESSFUL IN A, *
-* OR 0FF IF UNSUCCESSFUL.      *
+* [:ALOC]. RETURNS ARRAY START *
+* LOCATION IN .A               *
 *-                            -*
 * FIRST BYTE OF MEMORY USED    *
 * HOLDS LENGTH OF ARRAY;       *
 * SECOND BYTE HOLDS LENGTH OF  *
+* ELEMENTS.                    *
 *-                            -*
 * CLOBBERS:                    *
 *                              *
@@ -23,15 +23,15 @@
 *-                            -*
 * USAGE:                       *
 *                              *
-*       LDA  #>$300 ; ARRAYLOC *
-*       PHA                    *
-*       LDA  #<$300            *
-*       PHA                    *
-*       LDA  #10 ; ARRAY SIZE  *
-*       PHA                    *
-*       LDA  #2 ; ELEMENT SIZE *
-*       PHA                    *
-*       JSR  DIM81             *
+*  LDA  #>$300 ; ARRAYLOC      *
+*  PHA                         *
+*  LDA  #<$300                 *
+*  PHA                         *
+*  LDA  #10 ; ARRAY SIZE       *
+*  PHA                         *
+*  LDA  #2 ; ELEMENT SIZE      *
+*  PHA                         *
+*  JSR  DIM81                  *
 *-                            -*
 * ENTRY                        *
 *                              *
@@ -51,15 +51,18 @@
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
 *                              *
-*   Y = LO BYTE OF ARRAY ADDR  *
-*   X = HI BYTE OF ARRAY ADDR  *
-*   A = TRASH                  *
+* .Y = LO BYTE OF ARRAY ADDR   *
+* .X = HI BYTE OF ARRAY ADDR   *
+* .A = ARRAY SIZE              *
+*                              *
+* [RETURN] = TOTAL SIZE OF     *
+* ARRAY IN BYTES (WORD)        *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-DIM81
+ADIM81
 *
 ** FIRST, CLEAR BLOCK OF MEM TO BE USED
-**  THEN MUL ASIZE BY ESIZE, AND ADD 2 TO
+**  THEN MUL [:ASIZE] BY [:ESIZE], AND ADD 2 TO
 ** GET TOTAL MEMORY USED BY ARRAY
 *
 ** SAVE RETURN ADDRESS
@@ -82,13 +85,12 @@ DIM81
          PLA
          STA   ADDR1+1
          LDY   #0
-         LDX   #0
          LDA   #0
          STY   SCRATCH
          BEQ   :ENTLP
 *
-** MULTIPLY ASIZE AND ESIZE TO GET TOTAL SIZE
-** OF MEMORY TO CLEAR AND USE
+** MULTIPLY [:ASIZE] AND [:ESIZE] TO GET
+** TOTAL SIZE OF MEMORY TO CLEAR AND USE
 *
 :DOADD
          CLC
@@ -112,7 +114,7 @@ DIM81
          INX
          INX              ; INCREASE BY TWO
                           ; TO MAKE ROOM FOR SIZES
-         BCC   :NOINY     ; IF X ROLLS OVER, INC Y
+         BCC   :NOINY     ; IF .X ROLLS OVER, INC .Y
          INY
 :NOINY
          STX   :MSIZE     ; LOW BYTE
@@ -169,6 +171,17 @@ DIM81
 *
          LDY   ADDR1      ; LOW
          LDX   ADDR1+1    ; HIGH
+         LDA   :ASZBAK
+*
+** STORE TOTAL ARRAY SIZE IN BYTES
+** IN MEMORY ALLOCATED FOR RETURN VALUES
+*
+         LDA   :MSIZE
+         STA   RETURN
+         LDA   :MSIZE+1
+         STA   RETURN+1
+         LDA   #2
+         STA   RETLEN     ; 2 BYTE LENGTH
 *
          RTS
 *
@@ -179,3 +192,4 @@ DIM81
 :ESIZE   DS    1
 :ASZBAK  DS    1
 :ESZBAK  DS    1
+*

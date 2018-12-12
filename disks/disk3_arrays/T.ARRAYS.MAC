@@ -7,17 +7,11 @@
 * CONTACT: NATHAN.RIGGS@       *
 *          OUTLOOK.COM         *
 *                              *
-* VERSION: 0.1.2               *
-* DATE:    30-OCT-2018         *
+* VERSION:   0.2.0             *
+* DATE:      10-DEC-2018       *
 * ASSEMBLER: MERLIN 8 PRO      *
-*                              *
-* LICENSE: APACHE 2.0 LICENSE, *
-*  WHERE APPLICABLE. CODE      *
-*  INSPIRED BY OR COPIED FROM  *
-*  OTHERS MAY FALL UNDER A     *
-*  DIFFERENT LICENSE. I WILL   *
-*  DO MY BEST TO NOTIFY SUCH   *
-*  CASES.                      *
+* LICENSE:   APACHE 2.0        *
+* OS:        DOS 3.3           *
 *                              *
 *------------------------------*
 *                              *
@@ -31,11 +25,21 @@
 *                              *
 * LIST OF MACROS               *
 *                              *
+* DIM81: DIM 1D, 8BIT ARRAY    *
+* GET81: GET ELEMENT IN 8BIT,  *
+*        1D ARRAY.             *
+* PUT81: PUT VALUE INTO ARRAY  *
+*        AT SPECIFIED INDEX    *
+* DIM82: DIM A 2D, 8BIT ARRAY  *
+* GET82: GET ELEMENT IN 8BIT,  *
+*        2D ARRAY              *
+* PUT82: PUT VALUE INTO ARRAY  *
+*        AT SPECIFIED INDEX    *
 *                              *
 *-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*
 *
 *``````````````````````````````*
-* _DIM81 : INIT 1D, 8BIT ARRAY *
+* DIM81 :  INIT 1D, 8BIT ARRAY *
 *-                            -*
 * INITS A 1-DIMENSIONAL ARRAY  *
 * BY CLEARING MEMORY IT WILL   *
@@ -46,15 +50,15 @@
 *-                            -*
 * PARAMETERS:                  *
 *                              *
-* PARAM1 = ARRAY ADDRESS       *
-* PARAM2 = ARRAY BYTE LENGTH   *
-* PARAM3 = ELEMENT BYTE LENGTH *
+* ]1 = ARRAY ADDRESS           *
+* ]2 = ARRAY BYTE LENGTH       *
+* ]3 = ELEMENT BYTE LENGTH     *
 *-                            -*
 * SAMPLE USAGE:                *
-*   _DIM81 $300;#10;#2         *
+*  DIM81 $300;#10;#2           *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-_DIM81   MAC
+DIM81    MAC
          LDA   #>]1       ; ARRAY ADDR
          PHA
          LDA   #<]1
@@ -63,32 +67,31 @@ _DIM81   MAC
          PHA
          LDA   ]3         ; ELEMENT LENGTH
          PHA
-         JSR   DIM1D
+         JSR   ADIM81
          <<<
 *
 *``````````````````````````````*
-* _GET81 : GET ARRAY ELEMENT   *
+* GET81 :    GET ARRAY ELEMENT *
 *          FROM 1D, 8BIT ARRAY *
 *-                            -*
-* CALCULATES THE ADDRESS OF AN *
-* ELEMENT IN THE GIVEN ARRAY   *
-* AND RETURNS THE ADDRESS IN   *
-* Y (LOW) AND X (HIGH), WITH   *
-* THE ELEMENT LENGTH IN A.     *
-* THEN, DATA CAN BE READ VIA   *
-* REGULAR STATEMENTS WITH THAT *
-* ADDRESS.                     *
+* GETS THE VALUE HELD IN AN    *
+* ARRAY AT THE SPECIFIED       *
+* ELEMENT. THAT VALUE IS PUT   *
+* INTO [RETURN], WITH THE      *
+* LENGTH IN [RETLEN]. THE      *
+* ELEMENT ADDRESS IS PUT IN    *
+* .Y (LOW) AND .X (HIGH).      *
 *-                            -*
 * PARAMETERS:                  *
 *                              *
-* PARAM1 = ARRAY ADDRESS       *
-* PARAM2 = ELEMENT INDEX       *
+* ]1 = ARRAY ADDRESS           *
+* ]2 = ELEMENT INDEX           *
 *-                            -*
 * SAMPLE USAGE:                *
-*   _GET81 $300;#5             *
+*   GET81 $300;#5              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-_GET81   MAC
+GET81    MAC
          LDA   #>]1       ; ARRAY ADDR
          PHA
          LDA   #<]1
@@ -99,25 +102,25 @@ _GET81   MAC
          <<<
 *
 *``````````````````````````````*
-* _PUT81 : PUT ARRAY ELEMENT   *
+* PUT81 :    PUT ARRAY ELEMENT *
 *          IN 1D, 8BIT ARRAY   *
 *-                            -*
 * COPIES DATA FROM ONE MEMORY  *
-* LOCATION (P1) AND PUTS IT    *
-* IN THE SPECIFIED ARRAY (P2)  *
-* AT THE SPECIFIED INDEX (P3). *
+* LOCATION (]1) AND PUTS IT    *
+* IN THE SPECIFIED ARRAY (]2)  *
+* AT THE SPECIFIED INDEX (]3). *
 *-                            -*
 * PARAMETERS:                  *
 *                              *
-* PARAM1 = SOURCE ADDRESS      *
-* PARAM2 = ARRAY ADDRESS       *
-* PARAM3 = ELEMENT INDEX       *
+* ]1 = SOURCE ADDRESS          *
+* ]2 = ARRAY ADDRESS           *
+* ]3 = ELEMENT INDEX           *
 *-                            -*
 * SAMPLE USAGE:                *
-*   _PUT81 $300;$3A0;#5        *
+*   PUT81 $300;$3A0;#5         *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-_PUT81   MAC
+PUT81    MAC
          LDA   #>]1
          PHA              ; SRC ADDR
          LDA   #<]1
@@ -132,7 +135,7 @@ _PUT81   MAC
          <<<
 *
 *``````````````````````````````*
-* _DIM82 : INIT 12, 8BIT ARRAY *
+* DIM82 :  INIT 12, 8BIT ARRAY *
 *-                            -*
 * INITS AN 8BIT 2D ARRAY AT    *
 * SPECIFIED LOCATION WITH THE  *
@@ -143,16 +146,16 @@ _PUT81   MAC
 *-                            -*
 * PARAMETERS:                  *
 *                              *
-* PARAM1 = ARRAY ADDRESS       *
-* PARAM2 = X DIMENSION         *
-* PARAM3 = Y DIMENSION         *
-* PARAM4 = ELEMENT SIZE        *
+* ]1 = ARRAY ADDRESS           *
+* ]2 = X DIMENSION             *
+* ]3 = Y DIMENSION             *
+* ]4 = ELEMENT SIZE            *
 *-                            -*
 * SAMPLE USAGE:                *
-*   _DIM82 $300;#4;#4;#1       *
+*   DIM82 $300;#4;#4;#1        *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-_DIM82   MAC
+DIM82    MAC
          LDA   #>]1       ; ARRAY ADDR
          PHA
          LDA   #<]1
@@ -163,26 +166,24 @@ _DIM82   MAC
          PHA
          LDA   ]4         ; ELEMENT LENGTH
          PHA
-         JSR   DIM82
+         JSR   ADIM82
          <<<
 *
 *``````````````````````````````*
-* _GET82 : GET ARRAY ELEMENT   *
+* GET82 :    GET ARRAY ELEMENT *
 *          FROM 2D, 8BIT ARRAY *
 *-                            -*
 * RETURNS THE MEMORY LOCATION  *
 * OF AN X,Y INDEX IN THE ARRAY *
-* VIA THE REGISTERS: Y (LOW),  *
-* X (HIGH), A (ELEMENT LENGTH) *
 *-                            -*
 * PARAMETERS:                  *
 *                              *
-* PARAM1 = ARRAY ADDRESS       *
-* PARAM2 = X INDEX             *
-* PARAM3 = Y INDEX             *
+* ]1 = ARRAY ADDRESS           *
+* ]2 = X INDEX                 *
+* ]3 = Y INDEX                 *
 *-                            -*
 * SAMPLE USAGE:                *
-*   _GET82 $300;#2;#3          *
+*  GET82 $300;#2;#3            *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 _GET82   MAC
@@ -198,8 +199,8 @@ _GET82   MAC
          <<<
 *
 *``````````````````````````````*
-* _PUT82 : PUT ARRAY ELEMENT   *
-*          IN 2D, 8BIT ARRAY   *
+* PUT82 :    PUT ARRAY ELEMENT *
+*            IN 2D, 8BIT ARRAY *
 *-                            -*
 * COPIES DATA FROM SOURCE LOC  *
 * TO THE MEMLOC OF INDEX X,Y   *
@@ -207,13 +208,13 @@ _GET82   MAC
 *-                            -*
 * PARAMETERS:                  *
 *                              *
-* PARAM1 =  SOURCE ADDRESS     *
-* PARAM2 =  DEST ARRAY ADDRESS *
-* PARAM3 =  ELEMENT X INDEX    *
-* PARAM4 = Y INDEX             *
+* ]1 =  SOURCE ADDRESS         *
+* ]2 =  DEST ARRAY ADDRESS     *
+* ]3 =  ELEMENT X INDEX        *
+* ]4 =  Y INDEX                *
 *-                            -*
 * SAMPLE USAGE:                *
-*   _PUT82 $300;$3A0;#2;#3     *
+*  PUT82 $300;$3A0;#2;#3       *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 _PUT82   MAC

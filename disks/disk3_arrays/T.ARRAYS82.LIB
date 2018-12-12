@@ -4,19 +4,15 @@
 *                              *
 * ARRAYS82.LIB                 *
 *                              *
-* AUTHOR:  NATHAN RIGGS        *
-* CONTACT: NATHAN.RIGGS@       *
-*          OUTLOOK.COM         *
+* AUTHOR:   NATHAN RIGGS       *
+* CONTACT:  NATHAN.RIGGS@      *
+*           OUTLOOK.COM        *
 *                              *
-* VERSION: 0.1.2               *
-* DATE:    30-OCT-2018         *
+* VERSION:   0.2.0             *
+* DATE:      09-DEC-2018       *
 * ASSEMBLER: MERLIN 8 PRO      *
-*                              *
-* LICENSE: APACHE 2.0, WHERE   *
-*  APPLICABLE. CODE INSPIRED   *
-*  BY THE WORKS OF OTHERS MAY  *
-*  FALL UNDER A DIFFERENT      *
-*  LICENSE (NOTED IN ROUTINE). *
+* OS:        DOS 3.3           *
+* LICENSE:   APACHE 2.0        *
 *                              *
 * THIS IS A STANDARD LIBRARY   *
 * FOR 8BIT, 2 DIMENSIONAL      *
@@ -28,9 +24,9 @@
 *                              *
 * LIST OF ROUTINES             *
 *                              *
-* DIM82 : DIM A 2D, 8BIT ARRAY *
-* AGET82: GET ADDRESS OF ELEM  *
-*         IN ARRAY AT X,Y      *
+* ADIM82 : DIM 2D, 8BIT ARRAY  *
+* AGET82: GET SPECIFIED INDEX  *
+*         ELEMENT; PUT RETURN  *
 * APUT82: PUT CONTENTS OF ONE  *
 *         ADDRESS INTO ARRAY   *
 *         AT INDEX X,Y         *
@@ -38,11 +34,11 @@
 *-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*
 *
 *``````````````````````````````*
-* DIM82 :: INIT 2D ARRAY       *
+* ADIM82 :       INIT 2D ARRAY *
 *-                            -*
 * THIS SIMPLY CREATES A 1D     *
 * ARRAY WITH THE DIM OF        *
-* ARRAYX BY ARRAYY.            *
+* [:AXSIZE] BY [:AYSIZE].      *
 *-                            -*
 * FIRST BYTE OF MEMORY USED    *
 * HOLDS LENGTH OF X (ROWS);    *
@@ -59,17 +55,17 @@
 *-                            -*
 * USAGE:                       *
 *                              *
-*   LDA #>$300 ; ARRAY ADDR    *
-*   PHA                        *
-*   LDA #<$300                 *
-*   PHA                        *
-*   LDA #4 ; X DIMENSION BOUND *
-*   PHA                        *
-*   LDA #4 ; Y DIMENSION BOUND *
-*   PHA                        *
-*   LDA #1 ; ELEMENT BYTESIZE  *
-*   PHA                        *
-*   JSR DIM82                  *
+*  LDA #>$300 ; ARRAY ADDR     *
+*  PHA                         *
+*  LDA #<$300                  *
+*  PHA                         *
+*  LDA #4 ; X DIMENSION BOUND  *
+*  PHA                         *
+*  LDA #4 ; Y DIMENSION BOUND  *
+*  PHA                         *
+*  LDA #1 ; ELEMENT BYTESIZE   *
+*  PHA                         *
+*  JSR DIM82                   *
 *-                            -*
 * ENTRY                        *
 *                              *
@@ -90,12 +86,18 @@
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
 *                              *
-*   Y = ARRAY ADDRESS LO BYTE  *
-*   X = ARRAY ADDRESS HI BYTE  *
-*   A = CLOBBERED              *
+* .Y = ARRAY ADDRESS LO BYTE   *
+* .X = ARRAY ADDRESS HI BYTE   *
+* .A = ELEMENT SIZE            *
+*                              *
+* [RETURN] = TOTAL BYTE SIZE   *
+* OF ARRAY.                    *
+*                              *
+* [RETLEN] = LENGTH IN BYTES   *
+* OF THE RETURN VALUE.         *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-DIM82
+ADIM82
 *
 ** SAVE RETURN ADDRESS
 *
@@ -118,6 +120,8 @@ DIM82
          STA   ADDR1
          PLA
          STA   ADDR1+1
+         LDA   #0
+         STA   :MCAND+1
 *
 ** LOOP THROUGH Y, CLEARING MEMORY
 ** FOR X BYTES TIMES ELEMENT SIZE,
@@ -155,6 +159,8 @@ DIM82
 ** NOW MULTIPLY BY LENGTH OF ELEMENTS
 *
          LDA   #0
+         STA   :PROD
+         STA   :PROD+1
          STA   :PROD+2
          STA   :PROD+3
          LDX   #$10
@@ -176,11 +182,13 @@ DIM82
          DEX
          BNE   :SHIFTR
 *
+         CLC
          INC   :PROD      ; INCREASE BY 3
          INC   :PROD
          INC   :PROD
-         LDX   :PROD
-         LDY   :PROD+1
+         BCC   :NOCAR
+         INC   :PROD+1
+:NOCAR
 *
 ** NOW CLEAR MEMORY BLOCKS, WHOLE PAGES FIRST
 *
@@ -234,9 +242,21 @@ DIM82
          PHA
 *
 ** RETURN POINTER TO STARTING ADDRESS OF ARRAY
+** AND STORE TOTAL BYTE SIZE IN RETURN MEM
 *
          LDY   ADDR1
          LDX   ADDR1+1
+         LDA   :PROD
+         STA   RETURN
+         LDA   :PROD+1
+         STA   RETURN+1
+         LDA   :PROD+2
+         STA   RETURN+2
+         LDA   :PROD+3
+         STA   RETURN+3
+         LDA   #4         ; SIZE OF RETURN
+         STA   RETLEN
+         LDA   :MCAND
 *
          RTS
 *
@@ -251,11 +271,11 @@ DIM82
 :MCAND   DS    2
 *
 *``````````````````````````````*
-* AGET82 :: INIT 2D ARRAY      *
+* AGET82 :       INIT 2D ARRAY *
 *-                            -*
 * THIS GETS THE ADDRESS OF AN  *
-* ELEMENT AT THE INDEX X,Y IN  *
-* THE SPECIFIED ARRAY.         *
+* ELEMENT AT THE INDEX OF      *
+* [:XIDX],[:YIDX].             *
 *-                            -*
 * CLOBBERS:                    *
 *                              *
@@ -266,15 +286,15 @@ DIM82
 *-                            -*
 * USAGE:                       *
 *                              *
-*   LDA #>$300 ; ARRAY ADDR    *
-*   PHA                        *
-*   LDA #<$300                 *
-*   PHA                        *
-*   LDA #2 ; X INDEX           *
-*   PHA                        *
-*   LDA #3 ; Y INDEX           *
-*   PHA                        *
-*   JSR AGET82                 *
+*  LDA #>$300 ; ARRAY ADDR     *
+*  PHA                         *
+*  LDA #<$300                  *
+*  PHA                         *
+*  LDA #2 ; X INDEX            *
+*  PHA                         *
+*  LDA #3 ; Y INDEX            *
+*  PHA                         *
+*  JSR AGET82                  *
 *-                            -*
 * ENTRY                        *
 *                              *
@@ -294,9 +314,15 @@ DIM82
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
 *                              *
-*   Y = LO BYTE OF ELEM ADDR   *
-*   X = HI BYTE OF ELEM ADDR   *
-*   A = CLOBBERED; TRASH       *
+* .Y = LO BYTE OF ELEM ADDR    *
+* .X = HI BYTE OF ELEM ADDR    *
+* .A = ELEMENT/RETURN LENGTH   *
+*                              *
+* [RETURN] = VALUE FOUND AT    *
+* SPECIFIED INDEX.             *
+*                              *
+* [RETLEN] = LENGTH IN BYTES   *
+* OF THE RETURN VALUE.         *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 AGET82
@@ -322,6 +348,9 @@ AGET82
          LDY   #2
          LDA   (ADDR1),Y  ; ELEMENT LENGTH
          STA   :MCAND     ; ELEMENT LENGTH
+         STA   :ELEN
+         LDA   #0
+         STA   :MCAND+1
 *
 ** MULTIPLY X AND Y
 *
@@ -375,9 +404,13 @@ AGET82
          DEX
          BNE   :SHIFTR
 *
+         CLC
          INC   :PROD      ; INCREASE BY 3
          INC   :PROD
          INC   :PROD
+         BCC   :NOCAR
+         INC   :PROD+1
+:NOCAR
 *
 ** NOW ADD BASE ADDRESS OF ARRAY TO GET
 ** THE ADDRESS OF THE INDEX VALUE
@@ -394,6 +427,17 @@ AGET82
 *
          LDY   :PROD
          LDX   :PROD+1
+         STY   ADDR1
+         STX   ADDR1+1
+         LDY   #0
+:RLP
+         LDA   (ADDR1),Y
+         STA   RETURN,Y
+         INY
+         CPY   :ELEN
+         BNE   :RLP
+         LDA   :ELEN
+         STA   RETLEN
 *
 ** RESTORE RETURN ADDRESS
 *
@@ -402,6 +446,9 @@ AGET82
          LDA   RETADR
          PHA
 *
+         LDA   RETLEN
+         LDY   ADDR1
+         LDX   ADDR1+1
          RTS
 *
 ** DATA
@@ -411,13 +458,15 @@ AGET82
 :PROD    DS    4
 :MLIER   DS    2
 :MCAND   DS    2
+:ELEN    DS    1
 *
 *``````````````````````````````*
-* APUT82 :: PUT DATA INTO ELEM *
+* APUT82 :  PUT DATA INTO ELEM *
 *-                            -*
 * THIS PUTS DATA FROM ONE ADDR *
 * INTO THE ADDRESS OF AN ARRAY *
-* WITH THE INDEX OF X,Y.       *
+* WITH THE INDEX OF [:XIDX],   *
+* [:YIDX].                     *
 *-                            -*
 * CLOBBERS:                    *
 *                              *
@@ -428,19 +477,19 @@ AGET82
 *-                            -*
 * USAGE:                       *
 *                              *
-*   LDA #>$300 ; SOURCE DATA   *
-*   PHA                        *
-*   LDA #<$300                 *
-*   PHA                        *
-*   LDA #>$3A0 ; DEST ARRAY    *
-*   PHA                        *
-*   LDA #<$3A0                 *
-*   PHA                        *
-*   LDA #2 ; ELEM X INDEX      *
-*   PHA                        *
-*   LDA #3 ; ELEM Y INDEX      *
-*   PHA                        *
-*   JSR APUT82                 *
+*  LDA #>$300 ; SOURCE DATA    *
+*  PHA                         *
+*  LDA #<$300                  *
+*  PHA                         *
+*  LDA #>$3A0 ; DEST ARRAY     *
+*  PHA                         *
+*  LDA #<$3A0                  *
+*  PHA                         *
+*  LDA #2 ; ELEM X INDEX       *
+*  PHA                         *
+*  LDA #3 ; ELEM Y INDEX       *
+*  PHA                         *
+*  JSR APUT82                  *
 *-                            -*
 * ENTRY                        *
 *                              *
@@ -462,9 +511,9 @@ AGET82
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
 *                              *
-*   Y = LOBYTE ELEMENT ADDRESS *
-*   X = HIBYTE ELEMENT ADDRESS *
-*   A = ELEMENT BYTE LENGTH    *
+* .Y = LOBYTE ELEMENT ADDRESS  *
+* .X = HIBYTE ELEMENT ADDRESS  *
+* .A = ELEMENT BYTE LENGTH     *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 APUT82

@@ -1,10 +1,10 @@
 *
 *``````````````````````````````*
-* AGET82 :: INIT 2D ARRAY      *
+* AGET82 :       INIT 2D ARRAY *
 *-                            -*
 * THIS GETS THE ADDRESS OF AN  *
-* ELEMENT AT THE INDEX X,Y IN  *
-* THE SPECIFIED ARRAY.         *
+* ELEMENT AT THE INDEX OF      *
+* [:XIDX],[:YIDX].             *
 *-                            -*
 * CLOBBERS:                    *
 *                              *
@@ -15,15 +15,15 @@
 *-                            -*
 * USAGE:                       *
 *                              *
-*   LDA #>$300 ; ARRAY ADDR    *
-*   PHA                        *
-*   LDA #<$300                 *
-*   PHA                        *
-*   LDA #2 ; X INDEX           *
-*   PHA                        *
-*   LDA #3 ; Y INDEX           *
-*   PHA                        *
-*   JSR AGET82                 *
+*  LDA #>$300 ; ARRAY ADDR     *
+*  PHA                         *
+*  LDA #<$300                  *
+*  PHA                         *
+*  LDA #2 ; X INDEX            *
+*  PHA                         *
+*  LDA #3 ; Y INDEX            *
+*  PHA                         *
+*  JSR AGET82                  *
 *-                            -*
 * ENTRY                        *
 *                              *
@@ -43,9 +43,15 @@
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
 *                              *
-*   Y = LO BYTE OF ELEM ADDR   *
-*   X = HI BYTE OF ELEM ADDR   *
-*   A = CLOBBERED; TRASH       *
+* .Y = LO BYTE OF ELEM ADDR    *
+* .X = HI BYTE OF ELEM ADDR    *
+* .A = ELEMENT/RETURN LENGTH   *
+*                              *
+* [RETURN] = VALUE FOUND AT    *
+* SPECIFIED INDEX.             *
+*                              *
+* [RETLEN] = LENGTH IN BYTES   *
+* OF THE RETURN VALUE.         *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 AGET82
@@ -71,6 +77,8 @@ AGET82
          LDY   #2
          LDA   (ADDR1),Y  ; ELEMENT LENGTH
          STA   :MCAND     ; ELEMENT LENGTH
+         LDA   #0
+         STA   :MCAND+1
 *
 ** MULTIPLY X AND Y
 *
@@ -124,9 +132,13 @@ AGET82
          DEX
          BNE   :SHIFTR
 *
+         CLC
          INC   :PROD      ; INCREASE BY 3
          INC   :PROD
          INC   :PROD
+         BCC   :NOCAR
+         INC   :PROD+1
+:NOCAR
 *
 ** NOW ADD BASE ADDRESS OF ARRAY TO GET
 ** THE ADDRESS OF THE INDEX VALUE

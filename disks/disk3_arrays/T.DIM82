@@ -1,10 +1,10 @@
 *
 *``````````````````````````````*
-* DIM82 :: INIT 2D ARRAY       *
+* DIM82 :        INIT 2D ARRAY *
 *-                            -*
 * THIS SIMPLY CREATES A 1D     *
 * ARRAY WITH THE DIM OF        *
-* ARRAYX BY ARRAYY.            *
+* [:AXSIZE] BY [:AYSIZE].      *
 *-                            -*
 * FIRST BYTE OF MEMORY USED    *
 * HOLDS LENGTH OF X (ROWS);    *
@@ -21,17 +21,17 @@
 *-                            -*
 * USAGE:                       *
 *                              *
-*   LDA #>$300 ; ARRAY ADDR    *
-*   PHA                        *
-*   LDA #<$300                 *
-*   PHA                        *
-*   LDA #4 ; X DIMENSION BOUND *
-*   PHA                        *
-*   LDA #4 ; Y DIMENSION BOUND *
-*   PHA                        *
-*   LDA #1 ; ELEMENT BYTESIZE  *
-*   PHA                        *
-*   JSR DIM82                  *
+*  LDA #>$300 ; ARRAY ADDR     *
+*  PHA                         *
+*  LDA #<$300                  *
+*  PHA                         *
+*  LDA #4 ; X DIMENSION BOUND  *
+*  PHA                         *
+*  LDA #4 ; Y DIMENSION BOUND  *
+*  PHA                         *
+*  LDA #1 ; ELEMENT BYTESIZE   *
+*  PHA                         *
+*  JSR DIM82                   *
 *-                            -*
 * ENTRY                        *
 *                              *
@@ -52,9 +52,15 @@
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
 *                              *
-*   Y = ARRAY ADDRESS LO BYTE  *
-*   X = ARRAY ADDRESS HI BYTE  *
-*   A = CLOBBERED              *
+* .Y = ARRAY ADDRESS LO BYTE   *
+* .X = ARRAY ADDRESS HI BYTE   *
+* .A = ELEMENT SIZE            *
+*                              *
+* [RETURN] = TOTAL BYTE SIZE   *
+* OF ARRAY.                    *
+*                              *
+* [RETLEN] = LENGTH IN BYTES   *
+* OF THE RETURN VALUE.         *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 DIM82
@@ -80,6 +86,8 @@ DIM82
          STA   ADDR1
          PLA
          STA   ADDR1+1
+         LDA   #0
+         STA   :MCAND+1
 *
 ** LOOP THROUGH Y, CLEARING MEMORY
 ** FOR X BYTES TIMES ELEMENT SIZE,
@@ -117,6 +125,8 @@ DIM82
 ** NOW MULTIPLY BY LENGTH OF ELEMENTS
 *
          LDA   #0
+         STA   :PROD
+         STA   :PROD+1
          STA   :PROD+2
          STA   :PROD+3
          LDX   #$10
@@ -138,11 +148,13 @@ DIM82
          DEX
          BNE   :SHIFTR
 *
+         CLC
          INC   :PROD      ; INCREASE BY 3
          INC   :PROD
          INC   :PROD
-         LDX   :PROD
-         LDY   :PROD+1
+         BCC   :NOCAR
+         INC   :PROD+1
+:NOCAR
 *
 ** NOW CLEAR MEMORY BLOCKS, WHOLE PAGES FIRST
 *
@@ -196,9 +208,21 @@ DIM82
          PHA
 *
 ** RETURN POINTER TO STARTING ADDRESS OF ARRAY
+** AND STORE TOTAL BYTE SIZE IN RETURN MEM
 *
          LDY   ADDR1
          LDX   ADDR1+1
+         LDA   :PROD
+         STA   RETURN
+         LDA   :PROD+1
+         STA   RETURN+1
+         LDA   :PROD+2
+         STA   RETURN+2
+         LDA   :PROD+3
+         STA   RETURN+3
+         LDA   #4         ; SIZE OF RETURN
+         STA   RETLEN
+         LDA   :MCAND
 *
          RTS
 *

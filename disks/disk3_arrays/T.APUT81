@@ -1,18 +1,11 @@
 *
 *``````````````````````````````*
-* APUT81 :: PUT TO ARR ELEMNT  *
+* APUT81 : PUT DATA INTO ARRAY *
+*                      ELEMENT *
 *-                            -*
 * COPIES FROM SOURCE LOCATION  *
 * AND PUTS IT IN MEMLOC FOR    *
-* DESIRED ELEMENT. DIRECT      *
-* PUTTING OF ELEMENT DATA      *
-* CAN BE DONE VIA SIMPLE       *
-* LDA/STA OPERATIONS.          *
-*-                            -*
-* NOTE THAT THIS DOES NOT      *
-* CHECK FOR OUT OF BOUNDS      *
-* SO THAT CYCLES ARE NOT       *
-* WASTED.                      *
+* DESIRED ELEMENT.             *
 *-                            -*
 * CLOBBERS:                    *
 *                              *
@@ -23,16 +16,16 @@
 *-                            -*
 * USAGE:                       *
 *                              *
-*        LDA #>$300 ; SRC ADDR *
-*        PHA                   *
-*        LDA #<$300            *
-*        PHA                   *
-*        LDA #>$300 ;DEST ADDR *
-*        PHA                   *
-*        STA #<$300            *
-*        PHA                   *
-*        LDA #5 ; INDEX        *
-*        PHA                   *
+*  LDA #>$300 ; SRC ADDR       *
+*  PHA                         *
+*  LDA #<$300                  *
+*  PHA                         *
+*  LDA #>$300 ;DEST ADDR       *
+*  PHA                         *
+*  STA #<$300                  *
+*  PHA                         *
+*  LDA #5 ; INDEX              *
+*  PHA                         *
 *-                            -*
 * ENTRY                        *
 *                              *
@@ -53,9 +46,9 @@
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
 *                              *
-*   Y = LOBYTE OF ELEMENT ADDR *
-*   X = HIBYTE OF ELEMENT ADDR *
-*   A = BYTE LENGTH OF ELEMENT *
+* .Y = LOBYTE OF ELEMENT ADDR  *
+* .X = HIBYTE OF ELEMENT ADDR  *
+* .A = BYTE LENGTH OF ELEMENT  *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 APUT81

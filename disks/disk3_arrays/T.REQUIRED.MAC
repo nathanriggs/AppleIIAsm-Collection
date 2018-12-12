@@ -1,0 +1,72 @@
+********************************
+*                              *
+********************************
+*
+*``````````````````````````````*
+* REQUIRED.MAC                 *
+*-                            -*
+* MACROS USED FOR CORE UTILS   *
+* AND LIBRARY ROUTINES. NOTE   *
+* THAT THE LIBRARIES DO NOT    *
+* USE THESE MACROS, BUT MAY    *
+* USE THE ROUTINES. THESE ARE  *
+* MERELY PROVIDED FOR THE SAKE *
+* OF CONVENIENCE.              *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+*``````````````````````````````*
+* _GRET:      GET RETURN VALUE *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_GRET    MAC
+         LDA   #>]1
+         PHA
+         LDA   #<]1
+         PHA
+         JSR   __GETRET
+         <<<
+*
+*``````````````````````````````*
+* _SPAR:        SET PARAMETER  *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_SPAR    MAC
+         LDA   #>]1
+         PHA
+         LDA   #<]1
+         PHA
+         JSR   __SETPARM
+         <<<
+*
+*``````````````````````````````*
+* _DUMP:             DUMP DATA *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_DUMP    MAC
+         LDA   #>]1
+         PHA
+         LDA   #<]1
+         PHA
+         LDA   ]2
+         PHA
+         JSR   __DUMP
+         <<<
+*
+*``````````````````````````````*
+* _PRNT:         PRINT STRING  *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_PRNT    MAC
+         JSR   __P
+         ASC   ]1
+         HEX   00
+         <<<
+*
+*``````````````````````````````*
+* _WAIT:     WAIT FOR KEYPRESS *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_WAIT    MAC
+         JSR   __W
+         <<<
+*
