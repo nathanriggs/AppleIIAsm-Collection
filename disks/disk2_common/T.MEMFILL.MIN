@@ -1,0 +1,45 @@
+*
+MEMFILL
+*
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+         PLA
+         STA   :VALUE
+         PLA
+         STA   :ARYSZ
+         PLA
+         STA   :ARYSZ+1
+         PLA
+         STA   ADDR1
+         PLA
+         STA   ADDR1+1
+         LDA   :VALUE
+         LDX   :ARYSZ+1
+         BEQ   :PARTPG
+         LDY   #0
+:FULLPG
+         STA   (ADDR1),Y
+         INY
+         BNE   :FULLPG
+         INC   ADDR1+1
+         DEX
+         BNE   :FULLPG
+:PARTPG
+         LDX   :ARYSZ
+         BEQ   :EXIT
+         LDY   #0
+:PARTLP
+         STA   (ADDR1),Y
+         INY
+         DEX
+         BNE   :PARTLP
+:EXIT
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+         RTS
+:VALUE   DS    1
+:ARYSZ   DS    2

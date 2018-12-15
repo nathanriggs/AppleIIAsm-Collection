@@ -1,0 +1,99 @@
+*
+MEMMOVE
+*
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+         PLA
+         STA   :MVELEN
+         PLA
+         STA   :MVELEN+1
+         PLA
+         STA   ADDR2
+         PLA
+         STA   ADDR2+1
+         PLA
+         STA   ADDR1
+         PLA
+         STA   ADDR1+1
+         LDA   ADDR2
+         SEC
+         SBC   ADDR1
+         TAX
+         LDA   ADDR2+1
+         SBC   ADDR1+1
+         TAY
+         TXA
+         CMP   :MVELEN
+         TYA
+         SBC   :MVELEN+1
+         BCS   :DOLEFT
+         JSR   :MVERHT
+         JMP   :EXIT
+:DOLEFT
+         JSR   :MVELEFT
+:EXIT
+         JMP   :MREXIT
+:MVELEFT
+         LDY   #0
+         LDX   :MVELEN+1
+         BEQ   :MLPART
+:MLPAGE
+         LDA   (ADDR1),Y
+         STA   (ADDR2),Y
+         INY
+         BNE   :MLPAGE
+         INC   ADDR1+1
+         INC   ADDR2+1
+         DEX
+         BNE   :MLPAGE
+:MLPART
+         LDX   :MVELEN
+         BEQ   :MLEXIT
+:MLLAST
+         LDA   (ADDR1),Y
+         STA   (ADDR2),Y
+         INY
+         DEX
+         BNE   :MLLAST
+:MLEXIT
+         JMP   :MREXIT
+:MVERHT
+         LDA   :MVELEN+1
+         CLC
+         ADC   ADDR1+1
+         STA   ADDR1+1
+         LDA   :MVELEN+1
+         CLC
+         ADC   ADDR2+1
+         STA   ADDR2+1
+         LDY   :MVELEN
+         BEQ   :MRPAGE
+:MR0
+         DEY
+         LDA   (ADDR1),Y
+         STA   (ADDR2),Y
+         CPY   #0
+         BNE   :MR0
+:MRPAGE
+         LDX   :MVELEN+1
+         BEQ   :MREXIT
+:MR1
+         DEC   ADDR1+1
+         DEC   ADDR2+1
+:MR2
+         DEY
+         LDA   (ADDR1),Y
+         STA   (ADDR2),Y
+         CPY   #0
+         BNE   :MR2
+         DEX
+         BNE   :MR
+:MREXIT
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+         RTS
+:MVELEN  DS    2

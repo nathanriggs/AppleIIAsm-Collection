@@ -1,0 +1,188 @@
+*
+********************************
+*                              *
+*      -< COMMON DEMO )-       *
+*                              *
+*       VERSION 00.02.00       *
+*                              *
+*         12-DEC-2018          *
+*                              *
+********************************
+*                              *
+*       NATHAN D. RIGGS        *
+*   NATHAN.RIGGS@OUTLOOK.COM   *
+*                              *
+********************************
+*
+** ASSEMBLER DIRECTIVES
+*
+         CYC   AVE
+         EXP   ONLY
+         DSK   COMMON.DEMO
+         OBJ   $BFE0
+         ORG   $6000
+*
+*``````````````````````````````*
+*  TOP INCLUDES (HOOKS,MACROS) *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+         USE   REQUIRED.MAC
+         PUT   REQUIRED.HOOKS
+         USE   COMMON.MAC
+         PUT   COMMON.HOOKS
+*
+*``````````````````````````````*
+*      PROGRAM MAIN BODY       *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+** MEMFILL DOES ABOUT WHAT ITS NAME
+** IMPLIES: IT FILLS A BLOCK OF MEMORY
+** WITH A PARTICULAR CHARACTER.
+*
+** MACRO: MFILL ADDRESS_START;BYTE_LENGTH;FILL_VALUE
+*
+         LDA   #>$300     ; AREA TO FILL; HIGH
+         PHA
+         LDA   #<$300     ; LOW
+         PHA
+         LDA   #>10
+         PHA
+         LDA   #<10
+         PHA
+         LDA   #0         ; FILL CHARACTER
+         PHA
+         JSR   MEMFILL
+*
+         _PRNT "MEMFILL FILLS A PORTION OF MEMORY WITH",8D
+         _PRNT "A SPECIFIED VALUE. ",8D8D
+         _DUMP $300;#10
+         _WAIT
+*
+** MEMMOVE ALSO DOES WHAT IT SAYS: IT MOVES
+** A BLOCK OF MEMORY FROM A SOURCE LOCATION
+** TO A DESTINATION LOCATION. WE'LL NOW MOVE
+** THOSE ZEROES PLACED BY MEMFILL TO ANOTHER
+** LOCATION.
+*
+** MACRO: MMOVE SRC_ADDR;DEST_ADDR;BYTE_LENGTH
+*
+         LDA   #>$300     ; SRC HIGH
+         PHA
+         LDA   #<$300     ; SRC LOW
+         PHA
+         LDA   #>$320     ; DEST HIGH
+         PHA
+         LDA   #<$320     ; DEST LOW
+         PHA
+         LDA   #>10       ; # OF BYTES TO MOVE
+         PHA
+         LDA   #<10       ; LOW BYTE
+         PHA
+         JSR   MEMMOVE
+*
+         _PRNT " ",8D8D
+         _PRNT "MEMMOVE MOVES COPIES A SPAN OF MEMORY",8D
+         _PRNT "FROM A SOURCE TO A DESTINATION ADDRESS.",8D8D
+         _PRNT "SO MOVING $300 TO $320 RESULTS IN:",8D8D
+         _DUMP $320;#10
+         _WAIT
+*
+** DELAYMS RUNS THROUGH CYCLES OF THE
+** 6502 UNTIL A CERTAIN AMOUNT OF TIME
+** HAS PASSED.
+*
+** MACRO: DELAY #250
+*
+         _PRNT " ",8D8D
+         _PRNT "DELAYMS DELAYS A SPECIFIED NUMBER OF",8D
+         _PRNT "MILLISECONDS. 250 MILLISECONDS = 1/4 SECOND.",8D8D
+*
+         LDY   #250       ; TIME IN MILLISECONDS
+                          ; IS PASSED VIA Y
+                          ; 250 = 1/4 SECOND
+         JSR   DELAYMS
+         BEEP  1
+         _PRNT "1/4 SECOND",8D
+         LDY   #250
+         JSR   DELAYMS
+         BEEP  2
+         _PRNT "1/4 SECOND",8D
+         LDY   #250
+         JSR   DELAYMS
+         BEEP  3
+         _PRNT "1/4 SECOND",8D
+         LDY   #250
+         JSR   DELAYMS    ; = 1 SECOND DELAY
+         BEEP  4
+         _PRNT "1/4 SECOND",8D
+*
+         _PRNT " ",8D8D
+         _WAIT
+*
+** ZMSAVE BACKS UP THE "FREE" AREAS OF
+** THE ZERO PAGE TO AN ALTERNATE MEMORY
+** LOCATION. THIS IS MOSTLY USEFUL WHEN
+** YOU KNOW A ROUTINE USES THE ZERO PAGE,
+** BUT YOU WANT TO KEEP THE VALUES CURRENTLY
+** STORED THERE AFTER CALLING THE ROUTINE.
+*
+** NOTE THAT SINCE THE LIBRARY MAKES HEAVY USE
+** OF THESE MEMORY ADDRESSES, ANY TIME YOUR CODE
+** MAKES USE OF THE ZERO PAGE, IT IS ADVISED TO
+** SAVE THE STATE BEFORE CALLING ANY OTHER ROUTINES.
+*
+** MACRO: ZSAVE  BACKUP_ADDR
+*
+         LDA   #01
+         STA   $06
+         LDA   #02
+         STA   $07
+         LDA   #03
+         STA   $08
+         LDA   #04
+         STA   $09
+         LDA   #>$300
+         PHA
+         LDA   #<$300     ; LOW DEST
+         PHA
+         JSR   ZMSAVE
+*
+         _PRNT " ",8D8D
+         _PRNT "ZMSAVE SAVES THE STATE OF THE ZERO PAGE ",8D
+         _PRNT "ADDRESSES THAT ARE NOT USED BY DOS,",8D
+         _PRNT "APPLESOFT,PRODOS OR INTEGER BASIC.",8D8D
+         _PRNT "SO THE BACKED UP ZERO PAGE AT $300 IS:",8D8D
+         _DUMP $300;#18
+         _PRNT " ",8D8D
+         _PRNT "18 BYTES ARE USED.",8D8D
+         _WAIT
+*
+** YOU CAN RESTORE THE ZERO PAGE TO ITS
+** PRIOR STATE BY THEN CALLING ZMLOAD.
+*
+** MACRO: ZLOAD BACKUP_ADDRESS
+*
+         LDA   #>$300     ; HIGH; SOURCE
+         PHA
+         LDA   #<$300     ; LOW
+         PHA
+         JSR ZMLOAD
+*
+         _PRNT " ",8D8D
+         _PRNT "YOU CAN THEN RESTORE THE FREE ZERO PAGE",8D
+         _PRNT "LOCATIONS WITH ZMLOAD. THERE ISN'T ANY",8D
+         _PRNT "MEANINGFUL OUTPUT TO PUT HERE TO ",8D
+         _PRNT "ILLUSTRATE THAT, SO USE YOUR IMAGINATION!",8D8D
+         _WAIT
+*
+         JMP   REENTRY
+*
+*``````````````````````````````*
+*        BOTTOM INCLUDES       *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+** BOTTOM INCLUDES
+*
+         PUT   COMMON.LIB
+         PUT   REQUIRED.LIB
+*

@@ -1,0 +1,174 @@
+*-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*
+*                              *
+* COMMON.MAC                   *
+*                              *
+* AUTHOR:  NATHAN RIGGS        *
+* CONTACT: NATHAN.RIGGS@       *
+*          OUTLOOK.COM         *
+*                              *
+* VERSION:   0.2.0             *
+* DATE:      12-DEC-2018       *
+* ASSEMBLER: MERLIN 8 PRO      *
+* LICENSE:   APACHE 2.0        *
+* OS:        DOS 3.3           *
+*                              *
+*------------------------------*
+*                              *
+* THIS IS A MACRO LIBRARY FOR  *
+* COMMON.LIB, AND CAN BE USED  *
+* REGARDLESS OF WHETHER A      *
+* SPECIFIC FUNCTION IS         *
+* INCLUDED AS A PUT IN THE     *
+* MAIN SOURCE.                 *
+*                              *
+*------------------------------*
+*                              *
+* LIST OF MACROS               *
+*                              *
+* MFILL :: FILL MEMORY BLOCK   *
+* MMOVE :: MOVE MEMORY BLOCK   *
+* BEEP  :: RING MY BELL        *
+* DELAY :: DELAY IN MILLISECS  *
+* ZSAVE :: SAVE FREE ZERO PAGE *
+* ZLOAD :: LOAD SAVE ZERO PAGE *
+*                              *
+*-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*
+*
+*``````````````````````````````*
+* MFILL ::   FILL MEMORY BLOCK *
+*-                            -*
+* FILL BLOCK OF MEMORY WITH    *
+* SPECIFIED VALUE.             *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* ]1 = STARTING ADDRESS        *
+* ]2 = LENGTH IN BYTES         *
+* ]3 = FILL VALUE              *
+*-                            -*
+* SAMPLE USAGE:                *
+*   MFILL $300;#256;#0         *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+MFILL    MAC
+         LDA   #>]1       ; STARTING POINT
+         PHA
+         LDA   #<]1
+         PHA
+         LDA   #>]2       ; # OF BYTES
+         PHA
+         LDA   #<]2
+         PHA
+         LDA   ]3         ; FILL VALUE
+         PHA
+         JSR   MEMFILL
+         <<<
+*
+*``````````````````````````````*
+* BEEP ::  RING BELL X TIMES   *
+*-                            -*
+* RING THE STANDARD BELL.      *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* ]1 = NUMBER OF RINGS         *
+*-                            -*
+* SAMPLE USAGE: BELL           *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+BEEP     MAC
+         LUP   ]1
+         JSR   BELL
+         --^
+         <<<
+*
+*``````````````````````````````*
+* MMOVE :: MOVE MEMORY BLOCK   *
+*-                            -*
+* MOVE A BLOCK OF MEMORY FROM  *
+* A SOURCE TO DESTINATION.     *
+*-                            -*
+* PARAMETERS:                  *
+* ]1 = SOURCE ADDRESS          *
+* ]2 = DESTINATION ADDRESS     *
+* ]3 = NUMBER OF BYTES         *
+*-                            -*
+* SAMPLE USAGE:                *
+*                              *
+*   MMOVE $6A00;$7B00;#1024    *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+MMOVE    MAC
+         LDA   #>]1       ; SRC ADDR
+         PHA
+         LDA   #<]1
+         PHA
+         LDA   #>]2       ; DEST ADDR
+         PHA
+         LDA   #<]2
+         PHA
+         LDA   #>]3       ; # OF BYTES
+         PHA
+         LDA   #<]3
+         PHA
+         JSR   MEMMOVE
+         <<<
+*
+*``````````````````````````````*
+* DELAY :: DELAY X MILLISECS   *
+*-                            -*
+* DELAY FOR PASSED MILLISECS   *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* ]1 = NUM OF MILLISECONDS     *
+*-                            -*
+* SAMPLE USAGE: DELAY #250     *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+DELAY    MAC
+         LDY   ]1
+         JSR   DELAYMS
+         <<<
+*
+*``````````````````````````````*
+* ZSAVE :: SAVE ZERO PAGE      *
+*-                            -*
+* SAVE ZERO PAGE FREE AREAS    *
+* FOR LATER RESTORE.           *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* ]1 = ADDRESS TO STORE AT     *
+*-                            -*
+* SAMPLE USAGE: ZSAVE $300     *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+ZSAVE    MAC
+         LDA   #>]1
+         PHA
+         LDA   #<]1
+         PHA
+         JSR   ZMSAVE
+         <<<
+*
+*``````````````````````````````*
+* ZLOAD :: LOAD ZERO PAGE      *
+*-                            -*
+* RESTORE PREVIOUSLY SAVED     *
+* FREE ZERO PAGE VALUES.       *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* ]1 = ADDR TO LOAD FROM       *
+*-                            -*
+* SAMPLE USAGE: ZLOAD $300     *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+ZLOAD    MAC
+         LDA   #>]1
+         PHA
+         LDA   #<]1
+         PHA
+         JSR   ZMLOAD
+         <<<

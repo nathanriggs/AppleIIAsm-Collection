@@ -1,0 +1,29 @@
+*
+DELAYMS
+*
+MSCNT    EQU   $0CA
+:DELAY
+         CPY   #0
+         BEQ   :EXIT
+         NOP
+         CPY   #1
+         BNE   :DELAYA
+         JMP   :LAST1
+:DELAYA
+         DEY
+:DELAY0
+         LDX   #MSCNT
+:DELAY1
+         DEX
+         BNE   :DELAY1
+         NOP
+         NOP
+         DEY
+         BNE   :DELAY0
+:LAST1
+         LDX   #MSCNT-3
+:DELAY2
+         DEX
+         BNE   :DELAY2
+:EXIT
+         RTS

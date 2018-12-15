@@ -1,0 +1,210 @@
+*
+*``````````````````````````````*
+* MEMMOVE ::    MOVE MEM BLOCK *
+*-                            -*
+* MOVES A SPECIFIED BLOCK OF   *
+* MEMORY FROM A SOURCE ADDRESS *
+* TO A DESTINATION ADDRESS     *
+* RANGE.                       *
+*-                            -*
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  ????----  REG: AXYM  *
+*-                            -*
+* CYCLES: ???                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*                              *
+*  LDA #>$6A00                 *
+*  PHA                         *
+*  LDA #<$6A00                 *
+*  PHA                         *
+*  LDA #>$7000 ; DEST          *
+*  PHA                         *
+*  LDA #<$7000                 *
+*  PHA                         *
+*  LDA #>1024                  *
+*  PHA                         *
+*  LDA #<1024                  *
+*  PHA                         *
+*  JSR MEMMOVE                 *
+*-                            -*
+* ENTRY                        *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+* NUMBER OF BYTES TO MOVE      *
+* LOW BYTE OF DESTINATION      *
+* HIGH BYTE OF DESTINATION     *
+* LOW BYTE OF SOURCE ADDRESS   *
+* HIGH BYTE OF SOURCE ADDRESS  *
+*-                            -*
+* EXIT                         *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+*                              *
+* Y = COUNTER; TRASH           *
+* X = COUNTER; TRASH           *
+* A = LOW BYTE OF RET ADDR     *
+*-                            -*
+* ADAPTED FROM LEVANTHAL AND   *
+* WINTHROP'S /6502 ASSEMBLY    *
+* LANGUAGE ROUTINES/.          *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+MEMMOVE
+*
+** SAVE RETURN ADDRESS
+*
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+*
+** GET PARAMETERS
+*
+         PLA
+         STA   :MVELEN
+         PLA
+         STA   :MVELEN+1
+         PLA
+         STA   ADDR2      ; ZERO PAGE POINTER
+         PLA
+         STA   ADDR2+1
+         PLA
+         STA   ADDR1
+         PLA
+         STA   ADDR1+1
+*
+** DETERMINE IF DEST AREA IS
+** ABOVE SRC AREA BUT OVERLAPS
+** IT. REMEMBER, OVERLAP CAN BE
+** MOD 64K. OVERLAP OCCURS IF
+** STARTING DEST ADDRESS MINUS
+** STARTING SRC ADDRESS (MOD
+** 64K) IS LESS THAN NUMBER
+** OF BYTES TO MOVE.
+*
+         LDA   ADDR2      ;CALC DEST-SRC
+         SEC
+         SBC   ADDR1
+         TAX
+         LDA   ADDR2+1
+         SBC   ADDR1+1    ; MOD 64K AUTOMATIC
+                          ; -- DISCARD CARRY
+         TAY
+         TXA              ; CMP WITH # OF BYTES TO MOVE
+         CMP   :MVELEN
+         TYA
+         SBC   :MVELEN+1
+         BCS   :DOLEFT    ; BRANCH IF NO OVERLAP
+*
+** DEST AREA IS ABOVE SRC AREA
+** BUT OVERLAPS IT.
+** MOVE FROM HIGHEST ADDR TO
+** AVOID DESTROYING DATA
+*
+         JSR   :MVERHT
+         JMP   :EXIT
+*
+** NO PROB DOING ORDINARY MOVE
+** STARTING AT LOWEST ADDR
+*
+:DOLEFT
+         JSR   :MVELEFT
+:EXIT
+         JMP   :MREXIT
+*
+********************************
+* SUBROUTINE: MVELEFT          *
+********************************
+*
+:MVELEFT
+         LDY   #0         ; ZERO INDEX
+         LDX   :MVELEN+1  ; X=# OF FULL PP TO MOVE
+         BEQ   :MLPART    ; IF X=0, DO PARTIAL PAGE
+:MLPAGE
+         LDA   (ADDR1),Y
+         STA   (ADDR2),Y  ;MOVE ONE BYTE
+         INY              ; NEXT BYTE
+         BNE   :MLPAGE    ; CONT UNTIL 256B MOVED
+         INC   ADDR1+1    ; ADV TO NEXT SRC PAGE
+         INC   ADDR2+1    ; ADV NEXT DEST PAGE
+         DEX              ; DEC PAGE COUNT
+         BNE   :MLPAGE    ; CONT UNTIL ALL FULL
+                          ; PAGES ARE MOVED
+:MLPART
+         LDX   :MVELEN    ; GET LENGTH OF LAST PAGE
+         BEQ   :MLEXIT    ; BR IF LENGTH OF LAST
+                          ; PAGE = 0
+                          ; REG Y IS 0
+:MLLAST
+         LDA   (ADDR1),Y
+         STA   (ADDR2),Y  ; MOVE BYTE
+         INY              ; NEXT BYTE
+         DEX              ; DEC COUNTER
+         BNE   :MLLAST    ; CONT UNTIL LAST P DONE
+:MLEXIT
+         JMP   :MREXIT
+*
+********************************
+* SUBROUTINE: MVERHT           *
+********************************
+*
+:MVERHT
+*
+** MOVE THE PARTIAL PAGE FIRST
+*
+         LDA   :MVELEN+1
+         CLC
+         ADC   ADDR1+1
+         STA   ADDR1+1    ;POINT TO LAST P OF SRC
+         LDA   :MVELEN+1
+         CLC
+         ADC   ADDR2+1
+         STA   ADDR2+1    ; POINT TO LAST P OF DEST
+*
+** MOVE THE LAST PARTIAL PAGE FIRST
+*
+         LDY   :MVELEN    ;GET LENGTH OF LAST PAGE
+         BEQ   :MRPAGE    ; IF Y=0 DO THE FULL PAGES
+:MR0
+         DEY              ; BACK UP Y TO NEXT BYTE
+         LDA   (ADDR1),Y
+         STA   (ADDR2),Y  ; MOVE BYTE
+         CPY   #0
+         BNE   :MR0       ; BR IF NOT DONE W LAST P
+:MRPAGE
+         LDX   :MVELEN+1  ; GET BYTE OF COUNT AS P CT
+         BEQ   :MREXIT    ; BR IF HYBYTE = 0 (NO FULL P)
+:MR1
+         DEC   ADDR1+1    ; BACK UP TO PREV SRC PAGE
+         DEC   ADDR2+1    ; AND DEST
+:MR2
+         DEY              ; BACK UP Y TO NEXT BYTE
+         LDA   (ADDR1),Y
+         STA   (ADDR2),Y  ; MOVE BYTE
+         CPY   #0
+         BNE   :MR2       ; BR IF NOT DONE W THIS PAGE
+         DEX
+         BNE   :MR1       BR IF NOT ALL PAGES MOVED
+:MREXIT
+*
+** RESTORE RETURN ADDRESS
+*
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+         RTS
+*
+** DATA
+*
+:MVELEN  DS    2
+*
