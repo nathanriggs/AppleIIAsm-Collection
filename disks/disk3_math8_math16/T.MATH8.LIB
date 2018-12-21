@@ -1,10 +1,41 @@
+         JMP   XMATH8
+*
+*-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*
+*                              *
+* MATH8.LIB                    *
+*                              *
+* AUTHOR:  NATHAN RIGGS        *
+* CONTACT: NATHAN.RIGGS@       *
+*          OUTLOOK.COM         *
+*                              *
+* VERSION:   0.2.0             *
+* DATE:      12-DEC-2018       *
+* ASSEMBLER: MERLIN 8 PRO      *
+* LICENSE:   MIT LICENSE       *
+* OS:        DOS 3.3           *
+*                              *
+* 8-BIT MATH LIBRARY FOR       *
+* UNSIGNED INTEGERS ONLY.      *
+*                              *
+*------------------------------*
+*                              *
+* LIST OF ROUTINES             *
+*                              *
+* RAND8:   RANDOM BYTE 1..255  *
+* RANDB:   RANDOM NUMBER       *
+* MULT8:   8-BIT MULTIPLY, 16  *
+*          BIT RESULT.         *
+* DIVD8:   8 BIT DIVIDE, 8 BIT *
+*         RESULT.              *
+*                              *
+*-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*
 *
 *``````````````````````````````*
-* RND8 :: 8-BIT RANDOM NUMBER  *
+* RAND8 :: 8-BIT RANDOM NUMBER *
 *-                            -*
 * GENERATES A PSEUDO-RANDOM    *
-* NUMBER BETWEEN 0..255 (BYTE) *
-* AND RETURNS THE VALUE IN A.  *
+* NUMBER BETWEEN 1..255 (BYTE) *
+* AND RETURNS THE VALUE IN .A  *
 *                              *
 * THIS USES THE GALOIS LINEAR  *
 * FEEDBACK SHIFT REGISTER      *
@@ -19,24 +50,20 @@
 * CYCLES: ???                  *
 * SIZE:                        *
 *-                            -*
-* USAGE:                       *
-*                              *
-*        JSR RND8              *
-*-                            -*
-* ENTRY: NONE                  *
+* USAGE: JSR RND8              *
 *-                            -*
 * EXIT                         *
 *                              *
-*   Y = NOT AFFECTED           *
-*   X = CLOBBERED              *
-*   A = RANDOM NUM 0..255      *
+* .Y = NOT AFFECTED            *
+* .X = CLOBBERED               *
+* .A = RANDOM NUM 1..255       *
 *-                            -*
 * NOTE: BASED ON THE PRNG      *
 * LISTING FOUND IN THE NESDEV  *
 * WIKI.                        *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-RND8
+RAND8
 *
          LDX   #8
          LDA   RNDL+0
@@ -51,15 +78,20 @@ RND8
          DEX
          BNE   :A
          STA   RNDL+0
+         STA   RETURN
+         LDY   #1
+         STY   RETLEN
          CMP   #0         ; RELOAD FLAGS
          RTS
 *
 *``````````````````````````````*
-* RANDB :: RANDOM BYTE         *
+* RANDB ::         RANDOM BYTE *
 *-                            -*
 * RETURNS A RANDOM BYTE VALUE  *
 * BETWEEN THE HIGH AND LOW     *
 * BOUNDS PASSED TO ROUTINE.    *
+* NOTE THAT THIS ONLY WORKS    *
+* WITH UNSIGNED VALUES.        *
 *-                            -*
 * CLOBBERS:                    *
 *                              *
@@ -70,11 +102,11 @@ RND8
 *-                            -*
 * USAGE:                       *
 *                              *
-*        LDA #1 ;  LOW BOUND   *
-*        PHA                   *
-*        LDA #100 ; HIGH       *
-*        PHA                   *
-*        JSR RANDB             *
+*  LDA #1 ;  LOW BOUND         *
+*  PHA                         *
+*  LDA #100 ; HIGH             *
+*  PHA                         *
+*  JSR RANDB                   *
 *-                            -*
 * ENTRY                        *
 *                              *
@@ -90,16 +122,9 @@ RND8
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
 *                              *
-*   Y = COUNTER; TRASH         *
-*   X = COUNTER; TRASH         *
-*   A = LOW BYTE OF RET ADDR   *
-*-                            -*
-* *** NOTE: I DON'T LIKE THAT  *
-* THIS HAS TO CALL UDIV16, AND *
-* THUS CANNOT BE INCLUDED ON   *
-* ITS OWN. IN FUTURE, HANDLE   *
-* DIVISION WITHIN ROUTINE,     *
-* ESPECIALLY SINCE IT IS 8BIT. *
+* .Y = COUNTER; TRASH          *
+* .X = COUNTER; TRASH          *
+* .A = LOW BYTE OF RET ADDR    *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 RANDB
@@ -107,106 +132,150 @@ RANDB
 ** GET RETURN ADDRESS
 *
          PLA
-         STA   :RETADR
+         STA   RETADR
          PLA
-         STA   :RETADR+1
+         STA   RETADR+1
 *
 ** GET PARAMETERS
 *
          PLA
-         STA   :RHB       ; HIGH BOUND
+         STA   :NEWMAX
          PLA
-         STA   :RLB       ; LOW BOUND
+         STA   :NEWMIN
 *
-** FORMULA: F = L + (R-((R\(H-L))*(H-L)
+** GET OLDMIN,OLDMAX,OLDVAL
 *
-         LDA   :RHB
-         CLC
-         ADC   #2         ; NO IDEA WHY I NEED
-                          ; THIS BUT I DO
-         STA   :RHB
-         LDA   :RHB       ;LOAD IN HIGH RANGE
+         LDA   #1
+         STA   :OLDMIN
+         LDA   #255
+         STA   :OLDMAX
+         JSR   RAND8      ; RANDOM BYTE 0..255
+         STA   :OLDVAL
+*
+** NEWVALUE = (((OLDVAL-NEWMIN) * (NEWMAX-NEWMIN) /
+**            (OLDMAX-OLDMIN)) + NEWMIN
+*
+** OR
+*
+** OLDRANGE = (OLDMAX-OLDMIN)
+** NEWRANGE = (NEWMAX - NEWMIN)
+** NEWVAL = (((OLDVAL-OLDMIN) * NEWRANGE) / OLDRANGE) + NEWMIN
+*
+** GET OLDRANGE: OLDMAX - OLDMIN
+*
+         LDA   :OLDMAX
          SEC
-         SBC   :RLB       ;SUBTRACT LOW RANGE
-         STA   :RHL       ;STORE HIGH - LOW HERE
-         JSR   RND8       ; GET NUM BETWEEN 0..255
-         STA   :R         ; RANDOM 0,,255
+         SBC   :OLDMIN
+         STA   :OLDRANGE
 *
-** R\(H-L)
+** NOW GET NEWRANGE: NEWMAX - NEWMIN
 *
-         LDX   #0         ; STORE 0 FOR HIGH BYTE
-         STX   :R+1       ; 0 HIGH BYTE
-         STX   :RHL+1     ; 0 HIGH BYTE
-         LDA   :R+1
-         PHA
-         LDA   :R
-         PHA
-         LDA   :RHL+1     ; LOAD (H-L) BACK INTO A
-         PHA
-         LDA   :RHL
-         PHA
-         JSR   UDIV16     ; DIV (H-L) BY __R
-         PLA
-         STA   :QUOT
-         PLA
-         STA   :QUOT+1
-*
-** R-(R\(H-L)
-*
-         LDA   :R         ; LOAD RND BACK INTO A
+         LDA   :NEWMAX
          SEC
-         SBC   :QUOT      ; SUBTRACT (R/(H-L) FROM RND8
-         STA   :QUOT      ; STORE TEMP
+         SBC   :NEWMIN
+         STA   :NEWRANGE
 *
-** (R-(R\(H-L))*(H-L)
+** NOW GET VALRANGE: OLDVAL - OLDMIN
 *
-         LDA   #0         ; ZERO HIGH BYTE
-         STA   :QUOT+1    ; 0 HIGH BYTE
-         LDA   :RHL+1     ; LOAD (H-L)
-         PHA
-         LDA   :RHL
-         PHA
-         LDA   :QUOT+1
-         PHA
-         LDA   :QUOT
-         PHA
-         JSR   MUL16      ; MUL (H-L) * __R - (H-L)
-         PLA
-         STA   :RESULT
-         PLA
-         STA   :RESULT+1
+         LDA   :OLDVAL
+         SEC
+         SBC   :OLDMIN
+         STA   :VALRANGE
 *
-** L + EVERYTHING ELSE
+** GET MULRANGE: VALRANGE * NEWRANGE
 *
+         LDA   #00
+         TAY
+         STY   :NUM1HI
+         BEQ   :ENTLP
+*
+:DOADD
          CLC
-         ADC   :RLB       ;ADD LOW BYTE TO ALL ELSE
-:FINISH
-         STA   :RESULT    ; STORE IN RESULT
-         LDX   :RESULT+1  ; HIGH BYTE; FOR
-                          ; DEBUGGING PURPOSES
+         ADC   :VALRANGE
+         TAX
+*
+         TYA
+         ADC   :NUM1HI
+         TAY
+         TXA
+*
+:MLP
+         ASL   :VALRANGE
+         ROL   :NUM1HI
+:ENTLP
+         LSR   :NEWRANGE
+         BCS   :DOADD
+         BNE   :MLP
+*
+         STA   :MULRANGE
+         STY   :MULRANGE+1
+*
+** NOW GET DIVRANGE: MULRANGE / OLDRANGE
+*
+:DIVIDE
+         LDA   #0
+         STA   :REMAIN
+         STA   :REMAIN+1
+         LDX   #16
+*
+:DIVLP
+         ASL   :MULRANGE
+         ROL   :MULRANGE+1
+         ROL   :REMAIN
+         ROL   :REMAIN+1
+         LDA   :REMAIN
+         SEC
+         SBC   :OLDRANGE
+         TAY
+         LDA   :REMAIN+1
+         SBC   :OLDRANGE+1
+         BCC   :SKIP
+*
+         STA   :REMAIN+1
+         STY   :REMAIN
+         INC   :DIVRANGE
+*
+:SKIP    DEX
+         BNE   :DIVLP
+*
+** NOW ADD NEWMIN TO DIVRANGE
+*
+         LDA   :DIVRANGE  ; LO BYTE ONLY
+         CLC
+         ADC   :NEWMIN
+         STA   :NEWVAL
 *
 ** RESTORE RETURN ADDRESS
 *
-         LDA   :RETADR+1
+         LDA   RETADR+1
          PHA
-         LDA   :RETADR
+         LDA   RETADR
          PHA
 *
-         LDA   :RESULT    ; RETURN # IN A
+         LDA   :NEWVAL    ; RETURN # IN A
+         STA   RETURN
+         LDX   #1
+         STX   RETLEN
          RTS
 *
 ** DATA
 *
-:R       DS    2
-:RETADR  DS    2
-:RESULT  DS    2
-:RHB     DS    2
-:RLB     DS    2
-:RHL     DS    2
-:QUOT    DS    2
+:OLDRANGE DS   2
+:NEWRANGE DS   2
+:MULRANGE DS   2
+:DIVRANGE DS   2
+:VALRANGE DS   2
+:OLDVAL  DS    2
+:NEWVAL  DS    2
+:OLDMIN  DS    2
+:NEWMIN  DS    2
+:OLDMAX  DS    2
+:NEWMAX  DS    2
+:NUM1HI  DS    2
+:REMAIN  DS    2
 *
 *``````````````````````````````*
-* MUL8 :: 8BIT MULTIPLY (16BR) *
+* MULT8 : 8BIT MULTIPLY (16BR) *
 *-                            -*
 * MULTIPLY TWO 8BIT NUMBERS TO *
 * GET  16BIT RESULT. NUMBERS   *
@@ -228,11 +297,11 @@ RANDB
 *-                            -*
 * USAGE:                       *
 *                              *
-*        LDA  #100             *
-*        PHA                   *
-*        PDA #200              *
-*        PHA                   *
-*        JSR MUL8              *
+*  LDA  #100                   *
+*  PHA                         *
+*  PDA #200                    *
+*  PHA                         *
+*  JSR MUL8                    *
 *-                            -*
 * ENTRY                        *
 *                              *
@@ -243,19 +312,22 @@ RANDB
 *-                            -*
 * EXIT                         *
 *                              *
-*   Y = HIGH BYTE OF PRODUCT   *
-*   X = LOW BYTE OF PRODUCT    *
-*   A = LOW BYTE OF PRODUCT    *
+* .Y = LOW BYTE OF PRODUCT     *
+* .X = HI BYTE OF PRODUCT      *
+* .A = PRODUCT LENGTH (2)      *
+*                              *
+* [RETURN] = PRODUCT           *
+* [RETLEN] = 2 (PRODUCT LEN)   *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-MUL8
+MULT8
 *
 ** GET RETURN ADDRESS
 *
          PLA
-         STA   :RETADR
+         STA   RETADR
          PLA
-         STA   :RETADR+1
+         STA   RETADR+1
 *
 ** GET PARAMETERS
 *
@@ -267,8 +339,9 @@ MUL8
 ** INIT
 *
          LDA   #$00
+         TAY
          TAX
-         STX   :MUL1H
+         STY   :MUL1H
          BEQ   :GOLOOP
 *
 :DOADD
@@ -291,10 +364,15 @@ MUL8
 *
 ** RESTORE RETURN ADDRESS
 *
-         LDA   :RETADR+1
+         LDA   RETADR+1
          PHA
-         LDA   :RETADR
+         LDA   RETADR
          PHA
+*
+         STY   RETURN
+         STX   RETURN+1
+         LDA   #2
+         STA   RETLEN
 *
          RTS
 *
@@ -302,23 +380,18 @@ MUL8
 *
 :MUL1    DS    1
 :MUL2    DS    1
-:RETADR  DS    2
 :MUL1H   DS    1
 *
-*
 *``````````````````````````````*
-* DIV8 :: 8BIT DIVISION (8BR)  *
+* DIVD8 :: 8BIT DIVISION (8BR) *
 *-                            -*
 * DIVIDE ONE 8BIT NUMBER BY    *
 * ANOTHER TO GET AN 8BIT       *
-* RESULT.                      *
+* RESULT. UNSIGNED ONLY.       *
 *                              *
 * ORIGINAL AUTHOR IS WHITE     *
 * FLAME, AS SHARED ON          *
-* CODEBASE64. I HAVE MADE SOME *
-* MINOR ALTERATIONS, BUT NOT   *
-* NEARLY ENOUGH TO CALL IT MY  *
-* OWN.                         *
+* CODEBASE64. MINOR CHANGES.   *
 *-                            -*
 * CLOBBERS:                    *
 *                              *
@@ -329,11 +402,11 @@ MUL8
 *-                            -*
 * USAGE:                       *
 *                              *
-*        LDA  #200             *
-*        PHA                   *
-*        PDA #10               *
-*        PHA                   *
-*        JSR DIV8              *
+*  LDA  #200                   *
+*  PHA                         *
+*  PDA #10                     *
+*  PHA                         *
+*  JSR DIV8                    *
 *-                            -*
 * ENTRY                        *
 *                              *
@@ -344,19 +417,22 @@ MUL8
 *-                            -*
 * EXIT                         *
 *                              *
-*   Y = HIGH BYTE OF PRODUCT   *
-*   X = LOW BYTE OF PRODUCT    *
-*   A = LOW BYTE OF PRODUCT    *
+* .Y = REMAINDER               *
+* .X = UNCHANGED               *
+* .A = QUOTIENT                *
+*                              *
+* [RETURN] = QUOTIENT          *
+* [RETLEN] = 1 (QUOT LENGTH)   *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-DIV8
+DIVD8
 *
 ** GET RETURN ADDRESS
 *
          PLA
-         STA   :RETADR
+         STA   RETADR
          PLA
-         STA   :RETADR+1
+         STA   RETADR+1
 *
 ** GET PARAMETERS
 *
@@ -366,29 +442,32 @@ DIV8
          STA   :DVSOR
 *
          LDA   #$00
-         LDX   #8
+         LDY   #8
          ASL   :DVSOR
 :L1      ROL
          CMP   :DVEND
          BCC   :L2
          SBC   :DVEND
 :L2      ROL   :DVSOR
-         DEX
+         DEY
          BNE   :L1
          STA   :REM
 *
 ** RESTORE RETURN ADDRESS
 *
-         LDA   :RETADR+1
+         LDA   RETADR+1
          PHA
-         LDA   :RETADR
+         LDA   RETADR
          PHA
 *
 ** LOAD QUOTIENT INTO A, REMAINDER INTO X
 *
-         LDX   :REM       ; REMAINDER TO X
-*
+         LDY   :REM       ; REMAINDER TO Y
+         LDA   #1
+         STA   RETLEN
          LDA   :DVSOR
+         STA   RETURN
+*
          RTS
 *
 ** DATA
@@ -396,5 +475,5 @@ DIV8
 :REM     DS    1
 :DVEND   DS    1
 :DVSOR   DS    1
-:RETADR  DS    2
 *
+XMATH8

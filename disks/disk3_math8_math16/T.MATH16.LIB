@@ -6,44 +6,40 @@
 * CONTACT: NATHAN.RIGGS@       *
 *          OUTLOOK.COM         *
 *                              *
-* VERSION: 0.1.2               *
-* DATE:    30-OCT-2018         *
+* VERSION:   0.2.0             *
+* DATE:      12-DEC-2018       *
 * ASSEMBLER: MERLIN 8 PRO      *
-*                              *
-* LICENSE: APACHE 2.0, WHERE   *
-*  APPLICABLE. CODE INSPIRED   *
-*  BY THE WORKS OF OTHERS MAY  *
-*  FALL UNDER A DIFFERENT      *
-*  LICENSE (NOTED IN ROUTINE). *
+* OS:        DOS 3.3           *
+* LICENSE:   APACHE 2.0        *
 *                              *
 * STANDARD INTEGER MATH        *
-* LIBRARY FOR 8-BIT AND 16-BIT *
-* CALCALUATIONS, AS WELL AS    *
-* COMMON ROUTINES LIKE PSEUDO- *
-* RANDOM NUMBER GENERATORS.    *
+* LIBRARY FOR 16-BIT VALUES,   *
+* SIGNED OR UNSIGNED, AS WELL  *
+* AS 16-BIT PRNG ROUTINES.     *
 *                              *
 *------------------------------*
 *                              *
 * LIST OF ROUTINES             *
 *                              *
-* ADD16 : 16BIT ADD            *
-* SUB16 : 16BIT SUBTRACT       *
-* MUL16 : 16BIT MULTIPLY       *
-* SDIV16 : 16BIT DIVIDE (SIGN) *
-* UDIV16 : 16BIT DIVIDE (UNSN) *
-* SREM16 : 16BIT REMNDR (SIGN) *
-* UREM16 : 16BIT REMNDR (UNSN) *
-* CMP16 : 16BIT COMPARE        *
-* RND16 : RANDOM # 0..65535    *
+* ADDIT16: 16-BIT ADD          *
+* SUBT16:  16BIT SUBTRACT      *
+* MULT16 : 16BIT MULTIPLY      *
+* SDIVD16: 16BIT DIVIDE (SIGN) *
+* UDIVD16: 16BIT DIVIDE (UNSN) *
+* SREMD16: 16BIT REMNDR (SIGN) *
+* UREMD16: 16BIT REMNDR (UNSN) *
+* COMP16 : 16BIT COMPARE       *
+* RAND16 : RANDOM # 0..65535   *
 *                              *
 *-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*
 *
 *``````````````````````````````*
-*  ADD16 :: ADD 16-BIT VALUES  *
+* ADDIT16 :: ADD 16-BIT VALUES *
 *-                            -*
 * ADDS TWO SIXTEEN BIT VALUES  *
 * AND RETURNS A 16 BIT VALUE   *
-* IN Y (LOW) AND X (HIGH).     *
+* IN .Y (LOW) AND .X (HIGH).   *
+* CAN BE SIGNED OR UNSIGNED.   *
 *-                            -*
 * CLOBBERS:                    *
 *                              *
@@ -54,15 +50,15 @@
 *-                            -*
 * USAGE:                       *
 *                              *
-*        LDA  #>1000           *
-*        PHA                   *
-*        LDA  #<1000           *
-*        PHA                   *
-*        LDA  #>1200 ; ADD2    *
-*        PHA                   *
-*        LDA  #<1200           *
-*        PHA                   *
-*        JSR ADD16             *
+*  LDA  #>1000                 *
+*  PHA                         *
+*  LDA  #<1000                 *
+*  PHA                         *
+*  LDA  #>1200 ; ADD2          *
+*  PHA                         *
+*  LDA  #<1200                 *
+*  PHA                         *
+*  JSR ADDIT16                 *
 *-                            -*
 * ENTRY                        *
 *                              *
@@ -82,35 +78,22 @@
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
 *                              *
-*   Y = LOW BYTE OF RESULT     *
-*   X = HIGH BYTE OF RESULT    *
-*   A = LOW BYTE OF RET ADDR   *
-*-                            -*
-* ADAPTED FROM LEVANTHAL AND   *
-* WINTHROP'S /6502 ASSEMBLY    *
-* LANGUAGE ROUTINES/.          *
-* AS SUCH, THIS MAY NOT FALL   *
-* UNDER THE APACHE 2.0 LICENSE *
-* AGREEMENT, SINCE THE BOOK    *
-* WAS WRITTEN BEFORE THE       *
-* LICENSE!                     *
+* .Y = LOW BYTE OF RESULT      *
+* .X = HIGH BYTE OF RESULT     *
+* .A = LOW BYTE OF RET ADDR    *
 *                              *
-* THAT SAID, LEVENTHAL WROTE   *
-* THAT THE PURPOSE OF THE BOOK *
-* WAS TO COPY THE SOURCE CODE, *
-* AS REINVENTING THE WHEEL IS  *
-* TEDIOUS, AND HE PLACED NO    *
-* RESTRICTIONS ON ITS USE.     *
+* [RETURN] = RESULT (2 BYTES)  *
+* [RETLEN] = 2 (RESULT LENGTH) *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-ADD16
+ADDIT16
 *
 ** GET RETURN ADDR
 *
          PLA
-         STA   :RETADR
+         STA   RETADR
          PLA
-         STA   :RETADR+1
+         STA   RETADR+1
 *
 ** GET PARAMETERS
 *
@@ -127,31 +110,35 @@ ADD16
          CLC
          ADC   :ADD2
          TAY              ; LOW BYTE
+         STY   RETURN
          LDA   :ADD1+1
          ADC   :ADD2+1
          TAX              ; HIGH BYTE
+         STX   RETURN+1
+         LDA   #2
+         STA   RETLEN
 *
 ** RESTORE RETURN ADDRESS
 *
-         LDA   :RETADR+1
+         LDA   RETADR+1
          PHA
-         LDA   :RETADR
+         LDA   RETADR
          PHA
 *
          RTS
 *
 ** DATA
 *
-:RETADR  DS    2
 :ADD1    DS    2
 :ADD2    DS    2
 *
 *``````````````````````````````*
-* SUB16 :: SUBTRACT WORDS      *
+* SUBT16 ::     SUBTRACT WORDS *
 *-                            -*
 * SUBTRACT ONE 16BIT NUMBER    *
 * FROM ANOTHER, RETURNING THE  *
-* RESULT IN X (HI) AND Y (LOW) *
+* RESULT IN .Y (LOW), .X (HI). *
+* SIGNED OR UNSIGNED.          *
 *-                            -*
 * CLOBBERS:                    *
 *                              *
@@ -162,15 +149,15 @@ ADD16
 *-                            -*
 * USAGE:                       *
 *                              *
-*        LDA #>1000 ; MINU     *
-*        PHA                   *
-*        LDA #<1000            *
-*        PHA                   *
-*        LDA #>500 ; SUBT      *
-*        PHA                   *
-*        LDA #<500             *
-*        PHA                   *
-*        JSR SUB16             *
+*  LDA #>1000 ; MINUEND        *
+*  PHA                         *
+*  LDA #<1000                  *
+*  PHA                         *
+*  LDA #>500 ; SUBTRAHEND      *
+*  PHA                         *
+*  LDA #<500                   *
+*  PHA                         *
+*  JSR SUBT16                  *
 *-                            -*
 * ENTRY                        *
 *                              *
@@ -190,35 +177,22 @@ ADD16
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
 *                              *
-*   Y = RESULT LOW BYTE        *
-*   X = RESULT HIGH BYTE       *
-*   A = LOW BYTE OF RET ADDR   *
-*-                            -*
-* ADAPTED FROM LEVANTHAL AND   *
-* WINTHROP'S /6502 ASSEMBLY    *
-* LANGUAGE ROUTINES/.          *
-* AS SUCH, THIS MAY NOT FALL   *
-* UNDER THE APACHE 2.0 LICENSE *
-* AGREEMENT, SINCE THE BOOK    *
-* WAS WRITTEN BEFORE THE       *
-* LICENSE!                     *
+* .Y = RESULT LOW BYTE         *
+* .X = RESULT HIGH BYTE        *
+* .A = LOW BYTE OF RET ADDR    *
 *                              *
-* THAT SAID, LEVENTHAL WROTE   *
-* THAT THE PURPOSE OF THE BOOK *
-* WAS TO COPY THE SOURCE CODE, *
-* AS REINVENTING THE WHEEL IS  *
-* TEDIOUS, AND HE PLACED NO    *
-* RESTRICTIONS ON ITS USE.     *
+* [RETURN] = RESULT (2 BYTES)  *
+* [RETLEN] = 2 (RESULT LENGTH) *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-SUB16
+SUBT16
 *
 ** GET RETURN ADDRESS
 *
          PLA
-         STA   :RETADR
+         STA   RETADR
          PLA
-         STA   :RETADR+1
+         STA   RETADR+1
 *
 ** GET PARAMETERS
 *
@@ -237,42 +211,40 @@ SUB16
          SEC
          SBC   :SUBT
          TAY              ; LOW BYTE
+         STY   RETURN
          LDA   :MINU+1
          SBC   :SUBT+1
          TAX              ; HIGH BYTE
+         STX   RETURN+1
+         LDA   #2
+         STA   RETLEN
 *
-** RESTORE REUTNR ADDRESS
+** RESTORE RETURN ADDRESS
 *
-         LDA   :RETADR+1
+         LDA   RETADR+1
          PHA
-         LDA   :RETADR
+         LDA   RETADR
          PHA
 *
          RTS
 *
 ** DATA
 *
-:RETADR  DS    2
 :MINU    DS    2
 :SUBT    DS    2
 *
 *``````````````````````````````*
-* MUL16 :: MULTIPLY WORDS      *
+* MULT16 ::     MULTIPLY WORDS *
 *-                            -*
 * PERFORM MULTIPLICATION USING *
 * THE SHIFT AND ADD ALGORITHM  *
 *                              *
-* THIS ALGORITHM PRODUCES AN   *
-* UNSIGNED 32-BIT PRODUCT IN   *
-* HIPROD AND MLIER WITH HIPROD *
-* BEING THE HIGH WORD.         *
-*                              *
 * NOTE: WHILE THIS DOES PASS   *
 * THE FULL 32BIT PRODUCT BACK  *
-* VIA X AND Y, BUT THIS WOULD  *
+* VIA X AND Y, THIS WOULD      *
 * RETURN FALSE RESULTS IF ONE  *
 * OF THE PARAMETERS HAD BEEN   *
-* SIGNED. THIS, USUALLY ONLY   *
+* SIGNED. THUS, USUALLY ONLY   *
 * THE LOW WORD IS USED.        *
 *-                            -*
 * CLOBBERS:                    *
@@ -284,15 +256,15 @@ SUB16
 *-                            -*
 * USAGE:                       *
 *                              *
-*        LDA #>1000            *
-*        PHA                   *
-*        LDA #<1000 ; MCAND    *
-*        PHA                   *
-*        LDA #>3               *
-*        PHA                   *
-*        LDA #<3 ; MLIER       *
-*        PHA                   *
-*        JSR MUL16 ; = 3000    *
+*  LDA #>1000                  *
+*  PHA                         *
+*  LDA #<1000 ; MCAND          *
+*  PHA                         *
+*  LDA #>3                     *
+*  PHA                         *
+*  LDA #<3 ; MLIER             *
+*  PHA                         *
+*  JSR MUL16 ; = 3000          *
 *-                            -*
 * ENTRY                        *
 *                              *
@@ -314,35 +286,26 @@ SUB16
 * LOW BYTE OF PRODUCT          *
 * HIGH BYTE OF PRODUCT (16BIT) *
 *                              *
-*   Y = LOW BYTE OF HIGH WORD  *
-*   X = HIGH BYTE OF HIGH WORD *
-*   A = LOW BYTE OF RET ADDR   *
+* .Y = LOW BYTE OF HIGH WORD   *
+* .X = HIGH BYTE OF HIGH WORD  *
+* .A = LOW BYTE OF RET ADDR    *
+*                              *
+* [RETURN] = RESULT (2 BYTES)  *
+* [RETLEN] = 2 (RESULT LENGTH) *
 *-                            -*
 * ADAPTED FROM LEVANTHAL AND   *
 * WINTHROP'S /6502 ASSEMBLY    *
 * LANGUAGE ROUTINES/.          *
-* AS SUCH, THIS MAY NOT FALL   *
-* UNDER THE APACHE 2.0 LICENSE *
-* AGREEMENT, SINCE THE BOOK    *
-* WAS WRITTEN BEFORE THE       *
-* LICENSE!                     *
-*                              *
-* THAT SAID, LEVENTHAL WROTE   *
-* THAT THE PURPOSE OF THE BOOK *
-* WAS TO COPY THE SOURCE CODE, *
-* AS REINVENTING THE WHEEL IS  *
-* TEDIOUS, AND HE PLACED NO    *
-* RESTRICTIONS ON ITS USE.     *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-MUL16
+MULT16
 *
 ** GET RETURN ADDRESS
 *
          PLA
-         STA   :RETADR
+         STA   RETADR
          PLA
-         STA   :RETADR+1
+         STA   RETADR+1
 *
 ** GET PARAMETERS
 *
@@ -400,14 +363,20 @@ MUL16
 *
          LDA   :MLIER+1
          TAX
+         STX   RETURN+1
          LDA   :MLIER
          TAY
+         STY   RETURN
+         LDA   :HPROD
+         STA   RETURN+2
+         LDA   #2
+         STA   RETLEN
 *
 ** RESTORE RETURN ADDRESS
 *
-         LDA   :RETADR+1
+         LDA   RETADR+1
          PHA
-         LDA   :RETADR
+         LDA   RETADR
          PHA
 *
          LDA   :HPROD     ;24BIT
@@ -418,7 +387,6 @@ MUL16
 :MCAND   DS    3
 :MLIER   DS    3
 :HPROD   DS    2
-:RETADR  DS    2
 *
 *``````````````````````````````*
 * 16-BIT DIVISION:             *
@@ -454,15 +422,15 @@ MUL16
 ** ALL ROUTINES USE THE SAME   *
 ** FORMAT.                     *
 *                              *
-*        LDA #>10000           *
-*        PHA                   *
-*        LDA #<10000 ; DIVIDND *
-*        PHA                   *
-*        LDA #>1000 ; DIVISOR  *
-*        PHA                   *
-*        LDA #<1000            *
-*        PHA                   *
-*        JSR UDIV16            *
+*  LDA #>10000                 *
+*  PHA                         *
+*  LDA #<10000 ; DIVIDEND      *
+*  PHA                         *
+*  LDA #>1000 ; DIVISOR        *
+*  PHA                         *
+*  LDA #<1000                  *
+*  PHA                         *
+*  JSR UDIV16                  *
 *-                            -*
 * ENTRY                        *
 *                              *
@@ -486,31 +454,25 @@ MUL16
 * ELSE CARRY=1, QUOTIENT=0,    *
 * AND REMAINDER=0              *
 *                              *
-*   Y = COUNTER; TRASH         *
-*   X = COUNTER; TRASH         *
-*   A = LOW BYTE OF RET ADDR   *
+* .Y = COUNTER; TRASH          *
+* .X = COUNTER; TRASH          *
+* .A = LOW BYTE OF RET ADDR    *
+*                              *
+* [RETURN] = RESULT (2 BYTES)  *
+* [RETLEN] = 2 (RESULT LENGTH) *
 *-                            -*
 * ADAPTED FROM LEVANTHAL AND   *
 * WINTHROP'S /6502 ASSEMBLY    *
 * LANGUAGE ROUTINES/.          *
-* AS SUCH, THIS MAY NOT FALL   *
-* UNDER THE APACHE 2.0 LICENSE *
-* AGREEMENT, SINCE THE BOOK    *
-* WAS WRITTEN BEFORE THE       *
-* LICENSE!                     *
-*                              *
-* THAT SAID, LEVENTHAL WROTE   *
-* THAT THE PURPOSE OF THE BOOK *
-* WAS TO COPY THE SOURCE CODE, *
-* AS REINVENTING THE WHEEL IS  *
-* TEDIOUS, AND HE PLACED NO    *
-* RESTRICTIONS ON ITS USE.     *
+* AS SUCH, IT MAY FALL UNDER A *
+* DIFFERENT LICENSE UNTIL IT   *
+* IS RADICALLY REWORKED.       *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-UDIV16
+UDIVD16
          LDA   #0
          BEQ   UDIVMD
-UREM16
+UREMD16
          LDA   #2
 UDIVMD
          STA   _RSLTI
@@ -518,9 +480,9 @@ UDIVMD
 ** GET RETURN ADDRESS
 *
          PLA
-         STA   _RETADR
+         STA   RETADR
          PLA
-         STA   _RETADR+1
+         STA   RETADR+1
 *
 ** GET PARAMETERS
 *
@@ -540,13 +502,13 @@ DIVOK    JMP   OKEXIT
 *
 ** SIGNED DIVISION
 *
-SDIV16
+SDIVD16
          LDA   #0         ; RESULT IS QUOTIENT
          BEQ   SDIVMD      ;   (INDEX=0)
 *
 ** SIGNED REMAINDER
 *
-SREM16
+SREMD16
          LDA   #2         ; RES = REMAINDER (I=2)
          BNE   SDIVMD
 *
@@ -556,9 +518,9 @@ SDIVMD
 ** GET RETURN ADDRESS
 *
          PLA
-         STA   _RETADR
+         STA   RETADR
          PLA
-         STA   _RETADR+1
+         STA   RETADR+1
 *
 ** GET PARAMETERS
 *
@@ -658,6 +620,10 @@ EREXIT
          STA   _DVEND+1   ;QUOTIENT = 0
          STA   _DVEND+2
          STA   _DVEND+3   ; REMAINDER=0
+         STA   RETURN
+         STA   RETURN+1
+         LDA   #2
+         STA   RETLEN
          SEC              ; CARRY=1 IF ERROR
          BCS   DVEXIT
 *
@@ -673,25 +639,28 @@ DVEXIT
          LDX   _RSLTI     ;GET INDEX TO RESULT
                           ; 0=QUOTIENT, 2=REMAINDER
 *
-** STORE RESULT IN STACK
+** STORE RESULT
 *
          LDA   _DVEND,X
          TAY
          LDA   _DVEND+1,X
          TAX
+         STY   RETURN
+         STX   RETURN+1
+         LDA   #2
+         STA   RETLEN
 *
 ** RESTORE RETURN ADDRESS
 *
-         LDA   _RETADR+1
+         LDA   RETADR+1
          PHA
-         LDA   _RETADR
+         LDA   RETADR
          PHA
 *
          RTS
 *
-*
 ********************************
-* UDIVE ROUTINE
+* UDIV ROUTINE
 ********************************
 UDIV
 *
@@ -743,21 +712,15 @@ DECCNT
 *
 ** DATA
 *
-** MAKING THESE GLOBAL FOR NOW WHILE I TRY TO
-** UNDERSTAND THIS ALGORITHM ENOUGH TO MAKE
-** IT USE LOCAL VARIABLES
-*
 _DVSOR   DS    2          ; DIVISOR
 _DVEND   DS    4          ; DIVIDEND[0] AND QUOTIENT
                           ; DIVIDEND[1] AND REMAINDER
-_RETADR  DS    2
 _SQUOT   DS    1          ; SIGN OF QUOTIENT
 _SREMD   DS    1          ; SIGN OF REMAINDER
 _RSLTI   DS    1          ; RESULT INDEX
 *
-*
 *``````````````````````````````*
-* CMP16 :: 16-BIT COMPARE      *
+* COMP16 ::     16-BIT COMPARE *
 *-                            -*
 * COMPARE TWO 16BIT SIGNED OR  *
 * UNSIGNED WORDS AND RETURN    *
@@ -773,15 +736,15 @@ _RSLTI   DS    1          ; RESULT INDEX
 *-                            -*
 * USAGE:                       *
 *                              *
-*      LDA #>123               *
-*      PHA                     *
-*      LDA #<123               *
-*      PHA         ; WORD 1    *
-*      LDA #>1023              *
-*      PHA                     *
-*      LDA #<1023              *
-*      PHA         ; WORD 2    *
-*      JSR CMP16               *
+*  LDA #>123                   *
+*  PHA                         *
+*  LDA #<123                   *
+*  PHA         ; WORD 1        *
+*  LDA #>1023                  *
+*  PHA                         *
+*  LDA #<1023                  *
+*  PHA         ; WORD 2        *
+*  JSR CMP16                   *
 *-                            -*
 * ENTRY                        *
 *                              *
@@ -814,28 +777,19 @@ _RSLTI   DS    1          ; RESULT INDEX
 * ADAPTED FROM LEVANTHAL AND   *
 * WINTHROP'S /6502 ASSEMBLY    *
 * LANGUAGE ROUTINES/.          *
-* AS SUCH, THIS MAY NOT FALL   *
-* UNDER THE APACHE 2.0 LICENSE *
-* AGREEMENT, SINCE THE BOOK    *
-* WAS WRITTEN BEFORE THE       *
-* LICENSE!                     *
-*                              *
-* THAT SAID, LEVENTHAL WROTE   *
-* THAT THE PURPOSE OF THE BOOK *
-* WAS TO COPY THE SOURCE CODE, *
-* AS REINVENTING THE WHEEL IS  *
-* TEDIOUS, AND HE PLACED NO    *
-* RESTRICTIONS ON ITS USE.     *
+* AS SUCH, THE SAME LICENSE    *
+* MAY NOT APPLY UNTIL RADICAL  *
+* ALTERATION.                  *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-CMP16
+COMP16
 *
 ** GET RETURN ADDRESS
 *
          PLA
-         STA   :RETADR
+         STA   RETADR
          PLA
-         STA   :RETADR+1
+         STA   RETADR+1
 *
 ** GET PARAMETERS
 *
@@ -850,9 +804,9 @@ CMP16
 *
 ** RESTORE RETURN ADDRESS
 *
-         LDA   :RETADR+1
+         LDA   RETADR+1
          PHA
-         LDA   :RETADR
+         LDA   RETADR
          PHA
 *
          LDA   :MINU
@@ -898,10 +852,9 @@ CMP16
 *
 :MINU    DS    2
 :SUBT    DS    2
-:RETADR  DS    2
 *
 *``````````````````````````````*
-* RND16 : 16BIT RANDOM NUMBER  *
+* RAND16 : 16BIT RANDOM NUMBER *
 *-                            -*
 * GENERATE A 16BIT PSEUDO-     *
 * RANDOM NUMBER AND RETURN IT  *
@@ -909,10 +862,7 @@ CMP16
 *                              *
 * ORIGINAL AUTHOR IS WHITE     *
 * FLAME, AS SHARED ON          *
-* CODEBASE64. I HAVE MADE SOME *
-* MINOR ALTERATIONS, BUT NOT   *
-* NEARLY ENOUGH TO CALL IT MY  *
-* OWN.                         *
+* CODEBASE64.                  *
 *-                            -*
 * CLOBBERS:                    *
 *                              *
@@ -931,9 +881,12 @@ CMP16
 *-                            -*
 * EXIT                         *
 *                              *
-*   Y = HIGH BYTE OF PRODUCT   *
-*   X = LOW BYTE OF PRODUCT    *
-*   A = LOW BYTE OF PRODUCT    *
+* .Y = HIGH BYTE OF PRODUCT    *
+* .X = LOW BYTE OF PRODUCT     *
+* .A = LOW BYTE OF PRODUCT     *
+*                              *
+* [RETURN] = RESULT (2 BYTES)  *
+* [RETLEN] = 2 (RESULT LENGTH) *
 *-                            -*
 * NOTE: THERE ARE 2048 MAGIC   *
 * NUMBERS THAT COULD BE EOR'D  *
@@ -945,7 +898,7 @@ CMP16
 * $41BB, $3D91, $B5E9, $FFEB   *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-RND16
+RAND16
 *
          LDA   RNDL
          STA   :SEED
@@ -978,12 +931,15 @@ RND16
          STA   :SEED+1
 :EXIT    LDX   :SEED+1
          LDY   :SEED
+         STY   RETURN
+         STX   RETURN+1
+         LDA   #2
+         STA   RETLEN
          RTS
 *
 ** DATA
 *
 :SEED    DS    2
-*
 *
 *``````````````````````````````*
 * RANDW :: RANDOM WORD         *

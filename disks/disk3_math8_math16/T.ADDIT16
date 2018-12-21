@@ -1,0 +1,100 @@
+*
+*``````````````````````````````*
+* ADDIT16 :: ADD 16-BIT VALUES *
+*-                            -*
+* ADDS TWO SIXTEEN BIT VALUES  *
+* AND RETURNS A 16 BIT VALUE   *
+* IN .Y (LOW) AND .X (HIGH).   *
+* CAN BE SIGNED OR UNSIGNED.   *
+*-                            -*
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  ????----  REG: AXYM  *
+*-                            -*
+* CYCLES: ???                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*                              *
+*  LDA  #>1000                 *
+*  PHA                         *
+*  LDA  #<1000                 *
+*  PHA                         *
+*  LDA  #>1200 ; ADD2          *
+*  PHA                         *
+*  LDA  #<1200                 *
+*  PHA                         *
+*  JSR ADDIT16                 *
+*-                            -*
+* ENTRY                        *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+* ADDEND 2 LOW BYTE            *
+* ADDEND 2 HIGH BYTE           *
+* ADDEND 1 LOW BYTE            *
+* ADDEND 1 HIGH BYTE           *
+*-                            -*
+* EXIT                         *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+*                              *
+* .Y = LOW BYTE OF RESULT      *
+* .X = HIGH BYTE OF RESULT     *
+* .A = LOW BYTE OF RET ADDR    *
+*                              *
+* [RETURN] = RESULT (2 BYTES)  *
+* [RETLEN] = 2 (RESULT LENGTH) *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+ADDIT16
+*
+** GET RETURN ADDR
+*
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+*
+** GET PARAMETERS
+*
+         PLA
+         STA   :ADD2
+         PLA
+         STA   :ADD2+1
+         PLA
+         STA   :ADD1
+         PLA
+         STA   :ADD1+1
+*
+         LDA   :ADD1
+         CLC
+         ADC   :ADD2
+         TAY              ; LOW BYTE
+         STY   RETURN
+         LDA   :ADD1+1
+         ADC   :ADD2+1
+         TAX              ; HIGH BYTE
+         STX   RETURN+1
+         LDA   #2
+         STA   RETLEN
+*
+** RESTORE RETURN ADDRESS
+*
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+*
+         RTS
+*
+** DATA
+*
+:ADD1    DS    2
+:ADD2    DS    2
+*

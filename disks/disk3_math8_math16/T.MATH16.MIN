@@ -1,0 +1,357 @@
+*
+ADDIT16
+*
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+         PLA
+         STA   :ADD2
+         PLA
+         STA   :ADD2+1
+         PLA
+         STA   :ADD1
+         PLA
+         STA   :ADD1+1
+         LDA   :ADD1
+         CLC
+         ADC   :ADD2
+         TAY
+         STY   RETURN
+         LDA   :ADD1+1
+         ADC   :ADD2+1
+         TAX
+         STX   RETURN+1
+         LDA   #2
+         STA   RETLEN
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+         RTS
+:ADD1    DS    2
+:ADD2    DS    2
+*
+SUBT16
+*
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+         PLA
+         STA   :SUBT
+         PLA
+         STA   :SUBT+1
+         PLA
+         STA   :MINU
+         PLA
+         STA   :MINU+1
+         LDA   :MINU
+         SEC
+         SBC   :SUBT
+         TAY
+         STY   RETURN
+         LDA   :MINU+1
+         SBC   :SUBT+1
+         TAX
+         STX   RETURN+1
+         LDA   #2
+         STA   RETLEN
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+         RTS
+:MINU    DS    2
+:SUBT    DS    2
+*
+MULT16
+*
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+         PLA
+         STA   :MLIER
+         PLA
+         STA   :MLIER+1
+         PLA
+         STA   :MCAND
+         PLA
+         STA   :MCAND+1
+         LDA   #0
+         STA   :HPROD
+         STA   :HPROD+1
+         LDX   #17
+         CLC
+:MULLP
+         ROR   :HPROD+1
+         ROR   :HPROD
+         ROR   :MLIER+1
+         ROR   :MLIER
+         BCC   :DECCNT
+         CLC
+         LDA   :MCAND
+         ADC   :HPROD
+         STA   :HPROD
+         LDA   :MCAND+1
+         ADC   :HPROD+1
+         STA   :HPROD+1
+:DECCNT
+         DEX
+         BNE   :MULLP
+
+         LDY   :HPROD
+         LDX   :HPROD+1
+         LDA   :MLIER+1
+         TAX
+         STX   RETURN+1
+         LDA   :MLIER
+         TAY
+         STY   RETURN
+         LDA   :HPROD
+         STA   RETURN+2
+         LDA   #2
+         STA   RETLEN
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+         LDA   :HPROD
+         RTS
+:MCAND   DS    3
+:MLIER   DS    3
+:HPROD   DS    2
+*
+UDIVD16
+         LDA   #0
+         BEQ   UDIVMD
+UREMD16
+         LDA   #2
+UDIVMD
+         STA   _RSLTI
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+         PLA
+         STA   _DVSOR
+         PLA
+         STA   _DVSOR+1
+         PLA
+         STA   _DVEND
+         PLA
+         STA   _DVEND+1
+         JSR   UDIV
+         BCC   DIVOK
+DIVERR   JMP   EREXIT
+DIVOK    JMP   OKEXIT
+SDIVD16
+         LDA   #0
+         BEQ   SDIVMD
+SREMD16
+         LDA   #2
+         BNE   SDIVMD
+SDIVMD
+         STA   _RSLTI
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+         PLA
+         STA   _DVSOR
+         PLA
+         STA   _DVSOR+1
+         PLA
+         STA   _DVEND
+         PLA
+         STA   _DVEND+1
+         LDA   _DVEND+1
+         EOR   _DVSOR+1
+         STA   _SQUOT
+         LDA   _DVEND+1
+         STA   _SREMD
+         LDA   _DVSOR+1
+         BPL   CHKDE
+         LDA   #0
+         SEC
+         SBC   _DVSOR
+         STA   _DVSOR
+         LDA   #0
+         SBC   _DVSOR+1
+         STA   _DVSOR+1
+CHKDE
+         LDA   _DVEND+1
+         BPL   DODIV
+         LDA   #0
+         SEC
+         SBC   _DVEND
+         STA   _DVEND
+         LDA   #0
+         SBC   _DVEND+1
+         STA   _DVEND+1
+DODIV
+         JSR   UDIV
+         BCS   EREXIT
+         LDA   _SQUOT
+         BPL   DOREM
+         LDA   #0
+         SEC
+         SBC   _DVEND
+         STA   _DVEND
+         LDA   #0
+         SBC   _DVEND+1
+         STA   _DVEND+1
+DOREM
+         LDA   _SREMD
+         BPL   OKEXIT
+         LDA   #0
+         SEC
+         SBC   _DVEND+2
+         STA   _DVEND+2
+         LDA   #0
+         SBC   _DVEND+3
+         STA   _DVEND+3
+         JMP   OKEXIT
+EREXIT
+         LDA   #0
+         STA   _DVEND
+         STA   _DVEND+1
+         STA   _DVEND+2
+         STA   _DVEND+3
+         STA   RETURN
+         STA   RETURN+1
+         LDA   #2
+         STA   RETLEN
+         SEC
+         BCS   DVEXIT
+OKEXIT
+         CLC
+DVEXIT
+         LDX   _RSLTI
+         LDA   _DVEND,X
+         TAY
+         LDA   _DVEND+1,X
+         TAX
+         STY   RETURN
+         STX   RETURN+1
+         LDA   #2
+         STA   RETLEN
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+*
+         RTS
+UDIV
+         LDA   #0
+         STA   _DVEND+2
+         STA   _DVEND+3
+         LDA   _DVSOR
+         ORA   _DVSOR+1
+         BNE   OKUDIV
+         SEC
+         RTS
+OKUDIV
+         LDX   #16
+DIVLP
+         ROL   _DVEND
+         ROL   _DVEND+1
+         ROL   _DVEND+2
+         ROL   _DVEND+3
+CHKLT
+         SEC
+         LDA   _DVEND+2
+         SBC   _DVSOR
+         TAY
+         LDA   _DVEND+3
+         SBC   _DVSOR+1
+         BCC   DECCNT
+         STY   _DVEND+2
+         STA   _DVEND+3
+DECCNT
+         DEX
+         BNE   DIVLP
+         ROL   _DVEND
+         ROL   _DVEND+1
+         CLC
+         RTS
+_DVSOR   DS    2
+_DVEND   DS    4
+_SQUOT   DS    1
+_SREMD   DS    1
+_RSLTI   DS    1
+*
+COMP16
+*
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+         PLA
+         STA   :SUBT
+         PLA
+         STA   :SUBT+1
+         PLA
+         STA   :MINU
+         PLA
+         STA   :MINU+1
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+         LDA   :MINU
+         CMP   :SUBT
+         BEQ   :EQUAL
+         LDA   :MINU+1
+         SBC   :SUBT+1
+         ORA   #1
+         BVS   :OVFLOW
+         RTS
+:EQUAL
+         LDA   :MINU+1
+         SBC   :SUBT+1
+         BVS   :OVFLOW
+         RTS
+:OVFLOW
+         EOR   #$80
+         ORA   #1
+         RTS
+:MINU    DS    2
+:SUBT    DS    2
+*
+RAND16
+*
+         LDA   RNDL
+         STA   :SEED
+         LDA   RNDH
+         STA   :SEED+1
+         LDA   :SEED
+         BEQ   :LOW0
+         ASL   :SEED
+         LDA   :SEED+1
+         ROL
+         BCC   :NOEOR
+:DOEOR
+         EOR   #>$0369
+         STA   :SEED+1
+         LDA   :SEED
+         EOR   #<$0369
+         STA   :SEED
+         JMP   :EXIT
+:LOW0
+         LDA   :SEED+1
+         BEQ   :DOEOR
+         ASL
+         BEQ   :NOEOR
+         BCS   :DOEOR
+:NOEOR
+         STA   :SEED+1
+:EXIT    LDX   :SEED+1
+         LDY   :SEED
+         STY   RETURN
+         STX   RETURN+1
+         LDA   #2
+         STA   RETLEN
+         RTS
+:SEED    DS    2

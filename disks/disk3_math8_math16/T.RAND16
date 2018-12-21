@@ -1,0 +1,89 @@
+*
+*``````````````````````````````*
+* RAND16 : 16BIT RANDOM NUMBER *
+*-                            -*
+* GENERATE A 16BIT PSEUDO-     *
+* RANDOM NUMBER AND RETURN IT  *
+* IN Y,X (LOW, HIGH).          *
+*                              *
+* ORIGINAL AUTHOR IS WHITE     *
+* FLAME, AS SHARED ON          *
+* CODEBASE64.                  *
+*-                            -*
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  ????----  REG: AXYM  *
+*-                            -*
+* CYCLES: ???                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*                              *
+*-                            -*
+* ENTRY                        *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HIGH BYTE OF RETURN ADDRESS  *
+*-                            -*
+* EXIT                         *
+*                              *
+* .Y = HIGH BYTE OF PRODUCT    *
+* .X = LOW BYTE OF PRODUCT     *
+* .A = LOW BYTE OF PRODUCT     *
+*                              *
+* [RETURN] = RESULT (2 BYTES)  *
+* [RETLEN] = 2 (RESULT LENGTH) *
+*-                            -*
+* NOTE: THERE ARE 2048 MAGIC   *
+* NUMBERS THAT COULD BE EOR'D  *
+* TO GENERATE A PSEUDO-RANDOM  *
+* PATTERN THAT DOESN'T REPEAT  *
+* UNTIL 65535 ITERATIONS. TOO  *
+* MANY TO LIST HERE, BUT SOME  *
+* ARE: $002D, $1979, $1B47,    *
+* $41BB, $3D91, $B5E9, $FFEB   *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+RAND16
+*
+         LDA   RNDL
+         STA   :SEED
+         LDA   RNDH
+         STA   :SEED+1
+*
+         LDA   :SEED
+         BEQ   :LOW0
+*
+** DO A NORMAL SHIFT
+*
+         ASL   :SEED
+         LDA   :SEED+1
+         ROL
+         BCC   :NOEOR
+:DOEOR                    ; HIGH BYTE IN A
+         EOR   #>$0369
+         STA   :SEED+1
+         LDA   :SEED
+         EOR   #<$0369
+         STA   :SEED
+         JMP   :EXIT
+:LOW0
+         LDA   :SEED+1
+         BEQ   :DOEOR
+         ASL
+         BEQ   :NOEOR
+         BCS   :DOEOR
+:NOEOR
+         STA   :SEED+1
+:EXIT    LDX   :SEED+1
+         LDY   :SEED
+         STY   RETURN
+         STX   RETURN+1
+         LDA   #2
+         STA   RETLEN
+         RTS
+*
+** DATA
+*
+:SEED    DS    2
+*

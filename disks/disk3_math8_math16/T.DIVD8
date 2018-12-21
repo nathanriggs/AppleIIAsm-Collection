@@ -1,0 +1,95 @@
+*
+*``````````````````````````````*
+* DIVD8 :: 8BIT DIVISION (8BR) *
+*-                            -*
+* DIVIDE ONE 8BIT NUMBER BY    *
+* ANOTHER TO GET AN 8BIT       *
+* RESULT. UNSIGNED ONLY.       *
+*                              *
+* ORIGINAL AUTHOR IS WHITE     *
+* FLAME, AS SHARED ON          *
+* CODEBASE64. MINOR CHANGES.   *
+*-                            -*
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  ????----  REG: AXYM  *
+*-                            -*
+* CYCLES: ???                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*                              *
+*  LDA  #200                   *
+*  PHA                         *
+*  PDA #10                     *
+*  PHA                         *
+*  JSR DIV8                    *
+*-                            -*
+* ENTRY                        *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HIGH BYTE OF RETURN ADDRESS  *
+* SECOND NUM TO BE MULTIPLIED  *
+* FIRST NUM TO BE MULTIPLIED   *
+*-                            -*
+* EXIT                         *
+*                              *
+* .Y = REMAINDER               *
+* .X = UNCHANGED               *
+* .A = QUOTIENT                *
+*                              *
+* [RETURN] = QUOTIENT          *
+* [RETLEN] = 1 (QUOT LENGTH)   *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+DIVD8
+*
+** GET RETURN ADDRESS
+*
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+*
+** GET PARAMETERS
+*
+         PLA
+         STA   :DVEND
+         PLA
+         STA   :DVSOR
+*
+         LDA   #$00
+         LDY   #8
+         ASL   :DVSOR
+:L1      ROL
+         CMP   :DVEND
+         BCC   :L2
+         SBC   :DVEND
+:L2      ROL   :DVSOR
+         DEY
+         BNE   :L1
+         STA   :REM
+*
+** RESTORE RETURN ADDRESS
+*
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+*
+** LOAD QUOTIENT INTO A, REMAINDER INTO X
+*
+         LDY   :REM       ; REMAINDER TO Y
+         LDA   #1
+         STA   RETLEN
+         LDA   :DVSOR
+         STA   RETURN
+*
+         RTS
+*
+** DATA
+*
+:REM     DS    1
+:DVEND   DS    1
+:DVSOR   DS    1
+*
