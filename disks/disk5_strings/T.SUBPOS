@@ -41,26 +41,20 @@
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
 *                              *
-*   Y = CLOBBERED; TRASH       *
-*   X = CLOBBERED; TRASH       *
-*   A = INDEX OF SUBSTRING IF  *
+* .Y = CLOBBERED; TRASH        *
+* .X = CLOBBERED; TRASH        *
+* .A = INDEX OF SUBSTRING IF   *
 *       FOUND; OTHERWISE, 0    *
+*                              *
+* [RETURN] = INDEX OF SUBSTR;  *
+*            0 IF NOT FOUND    *
+* [RETLEN] = 1 (INDEX LENGTH)  *
 *-                            -*
 * ADAPTED FROM LEVANTHAL AND   *
 * WINTHROP'S /6502 ASSEMBLY    *
-* LANGUAGE ROUTINES/.          *
-* AS SUCH, THIS MAY NOT FALL   *
-* UNDER THE APACHE 2.0 LICENSE *
-* AGREEMENT, SINCE THE BOOK    *
-* WAS WRITTEN BEFORE THE       *
-* LICENSE!                     *
-*                              *
-* THAT SAID, LEVENTHAL WROTE   *
-* THAT THE PURPOSE OF THE BOOK *
-* WAS TO COPY THE SOURCE CODE, *
-* AS REINVENTING THE WHEEL IS  *
-* TEDIOUS, AND HE PLACED NO    *
-* RESTRICTIONS ON ITS USE.     *
+* LANGUAGE ROUTINES/. MAY NOT  *
+* FALL UNDER APACHE 2.0 UNTIL  *
+* HEAVILY MODIFIED.            *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 SUBPOS
@@ -160,8 +154,10 @@ SUBPOS
 *
 :NOTFND
          LDA   #0         ; SUB NOT FOUND, A=0
-         STA   RESULT
 :EXIT
+         STA   RETURN
+         LDY   #1
+         STY   RETLEN
          RTS
 *
 ** DATA

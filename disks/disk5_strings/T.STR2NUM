@@ -36,20 +36,17 @@
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
 *                              *
-*   Y = HI BYTE OF NUMBER      *
-*   X = LO BYTE OF NUMBER      *
-*   A = LOW BYTE OF RET ADDR   *
+* .Y = LO BYTE OF NUMBER       *
+* .X = HI BYTE OF NUMBER       *
+* .A = LOW BYTE OF RET ADDR    *
+*                              *
+* [RETURN] = NUMBER VALUE WORD *
+* [RETLEN] = 2 (NUM OF BYTES)  *
 *-                            -*
 * ADAPTED FROM LEVANTHAL AND   *
 * WINTHROP'S /6502 ASSEMBLY    *
 * LANGUAGE ROUTINES/.          *
-* AS SUCH, THIS MAY NOT FALL   *
-* UNDER THE APACHE 2.0 LICENSE *
-* AGREEMENT, SINCE THE BOOK    *
-* WAS WRITTEN BEFORE THE       *
-* LICENSE!                     *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
-*
 *
 STR2NUM
 *
@@ -89,7 +86,7 @@ STR2NUM
 :INIT1
          LDY   :NINDEX
          LDA   (ADDR1),Y
-         CMP   #'-'
+         CMP   #173
          BNE   :PLUS      ; BR IF NOT -
          LDA   #$0FF
          STA   :SNGFLAG   ; ELSE SIGN IS NEGATIVE
@@ -170,8 +167,6 @@ STR2NUM
 :EREXIT
          SEC
 :EXIT
-
-                          ; Y IS ALREADY LOW BYTE
 *
 ** RESTORE RETURN ADDRESS
 *
@@ -182,6 +177,10 @@ STR2NUM
 *
          LDX   :NACCUM+1
          LDY   :NACCUM
+         STY   RETURN
+         STX   RETURN+1
+         LDA   #2
+         STA   RETLEN
          LDA   :NINDEX
 *
          RTS

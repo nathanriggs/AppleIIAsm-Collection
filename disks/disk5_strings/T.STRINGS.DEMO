@@ -3,9 +3,9 @@
 *                              *
 *      -< STRINGS DEMO >-      *
 *                              *
-*       VERSION 00.00.01       *
+*       VERSION 00.02.00       *
 *                              *
-*         03/04/1980           *
+*         21-DEC-2018          *
 *                              *
 ********************************
 *                              *
@@ -20,236 +20,176 @@
          EXP   ONLY
          DSK   STRINGS.DEMO
 *
+         OBJ   $BFE0
+         ORG   $6000
+*
 *``````````````````````````````*
 *  TOP INCLUDES (PUTS, MACROS) *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-         PUT   DECS
-         USE STRINGS.MAC
+         USE   REQUIRED.MAC
+         PUT   REQUIRED.HOOKS
 *
+         USE   STRINGS.MAC
          PUT   STRINGS.HOOKS
 *
-         OBJ   $BFE0
-         ORG $6000
 *
 *``````````````````````````````*
 *      PROGRAM MAIN BODY       *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-*
-*
-** BIG LUMPS -- HIGH LEVEL CODE
-*
-*
-** STRCMP COMPARES TWO STRINGS, THEN
-** SETS THE STATUS REGISTER AS FOLLOWS:
-*
-** Z=1 IF STRINGS ARE IDENTICAL
-** Z=0 IF STRINGS NOT IDENTICAL
-** C=1 IF STRING2 LENGTH IS >
-** C=0 IF STRING1 LENGTH IS >
-*
-** MACRO:
-*
+         _PRNT " ",8D8D8D8D
+         _PRNT "STRINGS LIBRARY DEMO",8D
+         _PRNT "--------------------",8D
+         _PRNT " ",8D
+         _PRNT "THE SCMP MACRO COMPARES TWO ",8D
+         _PRNT "STRINGS AND SETS THE FLAGS",8D
+         _PRNT "ACCORDINGLY. IF THE TWO ARE EQUAL,",8D
+         _PRNT "THEN .Z IS SET TO ZERO; IF NOT, 1.",8D8D
+         _PRNT "IF STRING1 LENGTH > STRING2 LENGTH,",8D
+         _PRNT ".C(ARRY) = 0; ELSE, .C = 1.",8D8D
+         _PRNT "SO, WE CAN COMPARE THE LITERAL 'A'",8D
+         _PRNT "TO THE VALUE STORED IN ASTR, WHICH",8D
+         _PRNT "HOLDS THE SAME STRING, THEN USE BNE TO",8D
+         _PRNT "TEST IF THEY ARE EQUAL.",8D8D
+         SCMP  "A";ASTR
+         BNE   PE         ; IS ZERO FLAG 1? BRANCH IF SO
          JMP   CONT
-STR1     STR   "THIZ IS STRING1"
-STR2     STR   "THIS IS STRING 2"
+PE
+         _PRNT "THE LITERAL A AND THE A STRING ARE",8D
+         _PRNT "EQUAL.",8D8D8D
 CONT
-         LDA   #>STR1
-         PHA
-         LDA   #<STR1
-         PHA
-         LDA   #>STR2
-         PHA
-         LDA   #<STR2
-         PHA
-         JSR   STRCMP
-* BRK ; P = 31 = 00110001; Z=0,C=1
+         _WAIT
+         _PRNT "NOTE THAT ONLY A SINGLE PARAMETER",8D
+         _PRNT "MAY BE A LITERAL STRING IN SCMP;",8D
+         _PRNT "THIS SAME RULE APPLIES TO ALL MACROS",8D
+         _PRNT "THAT ACCEPT STRINGS AS PARAMETERS.",8D8D
+         _PRNT "YOU CAN ALSO USE SCMP TO COMPARE",8D
+         _PRNT "THE LENGTHS OF TWO DIFFERENT STRINGS.",8D8D
+         _PRNT "THE CARRY FLAG IS SET TO 0 IF THE",8D
+         _PRNT "FIRST STRING HAS A LENGTH > THAN THE ",8D
+         _PRNT "SECOND STRING'S LENGTH. THIS CAN THEN",8D
+         _PRNT "BE TESTED WITH BCS.",8D8D
+         _PRNT "SO IF WE COMPARE THE LITERAL 'AA' ",8D
+         _PRNT "TO THE SAME ASTR, WE WILL FIND THAT",8D
+         _PRNT "THE LITERAL HAS A GREATER LENGTH.",8D8D
 *
+         SCMP  "AA";ASTR
+         BCS   LE
+         JMP   CONT2
+LE
+         _PRNT "THE LITERAL 'AA' IS GREATER THAN ",8D
+         _PRNT "ASTR, WHICH HOLDS 'A'.",8D8D8D
+CONT2
+         _WAIT
 *
-** STRCAT CONCATENATES TWO STRINGS AND RETURNS
-** THE CONCATENATED STRING WHERE THE FIRST
-** STRING WAS STORED.
+         _PRNT " ",8D8D8D8D
+         _PRNT "THE SCAT MACRO CONCATENATES",8D
+         _PRNT "A SECOND GIVEN STRING TO A ",8D
+         _PRNT "FIRST GIVEN STRING. EITHER PARAMETER",8D
+         _PRNT "MAY BE A LITERAL STRING, BUT NEVER BOTH.",8D8D
+         _PRNT "SCAT 'WTF IS ';ASTR;#50 RETURNS: ",8D8D
+         SCAT  "WTF IS ";ASTR;#50
+         SPRN  RETURN
+         _PRNT " ",8D8D8D
+         _WAIT
 *
-** MACRO:
+         _PRNT "TO SHOW THE RESULT OF SCAT,",8D
+         _PRNT "WE USED THE SPRN MACRO, WHICH",8D
+         _PRNT "SIMPLY PRINTS A STRING. THIS",8D
+         _PRNT "WORKS DIFFERENTLY THAN THE PRINT",8D
+         _PRNT "ROUTINES IN STDIO OR THE _PRNT",8D
+         _PRNT "ROUTINE, AS IT CAN ONLY HANDLE",8D
+         _PRNT "A STRING ADDRESS.",8D8D
+         _PRNT "SPRN BSTR RETURNS: "
+         SPRN  BSTR
+         _PRNT " ",8D8D8D
+         _WAIT
+         _PRNT " ",8D8D8D
+         _PRNT "TOSTR CONVERTS A 16-BIT INTEGER INTO",8D
+         _PRNT "ITS STRING EQUIVALENT. THIS CAN",8D
+         _PRNT "EITHER BE A LITERAL OR AN ADDRESS."
+         _PRNT " ",8D8D
+         _PRNT "TOSTR #5000 RETURNS: "
+         TOSTR #5000
+         SPRN  RETURN
+         _PRNT " ",8D8D
+         _PRNT "TOSTR $300 RETURNS "
+         LDA   #$FF
+         STA   $300
+         STA   $301
+         TOSTR $300
+         SPRN  RETURN
+         _PRNT " ",8D8D
+         _PRNT "NOTE THAT $FFFF RETURNS -1 BECAUSE",8D
+         _PRNT "THE TOSTR ROUTINE ASSUMES A ",8D
+         _PRNT "SIGNED VALUE. "
+         _PRNT " ",8D8D8D
+         _WAIT
 *
-         JMP   CATCON
-CATSTR   STR   "ABC"
-BLANK    STR   "   "
-CATSTR2  STR   "DEF"
+         _PRNT " ",8D8D8D
+         _PRNT "AND THE TONUM MACRO DOES THE",8D
+         _PRNT "OPPOSITE: IT RETURNS A 16-BIT ",8D
+         _PRNT "INTEGER VALUE CONERTED FROM ITS",8D
+         _PRNT "STRING EQUIVALENT. THUS:",8D8D
+         _PRNT "TONUM '255' RETURNS:",8D
+         TONUM "255"
+         _DUMP RETURN;RETLEN
+         _PRNT " ",8D8D8D
+         _WAIT
 *
-CATCON
-         LDA   #>CATSTR
-         PHA
-         LDA   #<CATSTR
-         PHA
-         LDA   #>CATSTR2
-         PHA
-         LDA   #<CATSTR2
-         PHA
-         LDA   #7         ; MAX SIZE OF CAT
-         PHA
-         JSR   STRCAT
-         LDX   #>CATSTR
-         LDY   #<CATSTR
-* BRK ; X,Y HOLDS LOW AND HIGH BYTES OF
-* THE ADDRESS TO THE CONCATENATED STRING.
-* IF YOU LIST THAT ADDRESS, YOU SHOULD SEE
-* THAT THE FIRST LOCATION HOLDS THE LENGTH
-* OF THE NEW STRING (06), FOLLOWED BY THE
-* HEXADECIMAL CODES FOR THE CHARACTERS
-* ABCDEF: C1 C2 C3 C4 C5 C6
+         _PRNT " ",8D8D8D8D
+         _PRNT "SUBSTRING ROUTINES/MACROS",8D
+         _PRNT "-------------------------",8D8D
+         _PRNT "SPOS FINDS THE POSITION OF",8D
+         _PRNT "A SUBSTRING WITHIN ANOTHER",8D
+         _PRNT "STRING.",8D8D
+         _PRNT "SPOS 'THIS IS A STRING';ASTR RETURNS: "
+         SPOS  "THIS IS A STRING";ASTR
+         STA   $300
+         LDA   #0
+         STA   $301       ; CLEAR HI BYTE
+         TOSTR $300
+         SPRN  RETURN
+         _PRNT " ",8D8D8D
 *
+         _PRNT " ",8D8D8D
+         _PRNT "THE SCPY MACRO COPIES A ",8D
+         _PRNT "SUBSTRING FROM ANOTHER STRING",8D
+         _PRNT "AT THE SPECIFIED INDEX, HOLDING",8D
+         _PRNT "THE SUBSTRING IN [RETURN].",8D8D
+         _PRNT "SCPY 'ABCDEFGHIJK';#2;#4;#50 RETURNS: "
+         SCPY  "ABCDEFGHIJK";#2;#4;#$FF
+         SPRN  RETURN
+         _PRNT " ",8D8D8D
+         _WAIT
 *
+         _PRNT " ",8D8D8D8D8D
+         _PRNT "THE SDEL MACRO DELETES A SUBSTRING",8D
+         _PRNT "FROM THE GIVEN SOURCE STRING. NOTE ",8D
+         _PRNT "THAT THE SOURCE STRING MUST NOT",8D
+         _PRNT "BE A LITERAL BECAUSE THIS ROUTINE",8D
+         _PRNT "ALTERS THE STRING PASSED TO IT.",8D8D
+         _PRNT "IF LSTR HOLDS 'THIS IS A STRING.'",8D
+         _PRNT "THEN SDEL LSTR;#1;#7 RETURNS: ",8D8D
+         SDEL  LSTR;#1;#7
+         SPRN  LSTR
+         _PRNT " ",8D8D8D8D
+         _WAIT
 *
-** PRNSTR PRINTS THE STRING AT THE SPECIFIED
-** MEMORY ADDRESS TO COUT1.
-*
-** MACRO:
-*
-         LDA   #>CATSTR   ; FROM PREVIOUS EXAMPLE
-         PHA
-         LDA   #<CATSTR
-         PHA
-         JSR   PRNSTR
-* BRK ; YOU SHOULD SEE
-* "ABCDEF" APPENDED TO THE LINE WHERE YOU
-* TYPED "BRUN STRINGS.DEMO." USE ROUTINES FROM
-* STDIO FOR PLACEMENT OF THE TEXT.
-*
-*
-*
-*
-         JMP   NUMSTRX
-NUMSTR   HEX   2B67       ;11111
-NUMSTRX
-*
-         LDA   #>$300     ; DESTINATION
-         PHA
-         LDA   #<$300
-         PHA
-         LDA   #>11111    ; VALUE TO CONVERT
-         PHA
-         LDA   #<11111
-         PHA
-         JSR   NUM2STR
-*BRK
-*
-* $300 SHOULD NOW HOLD 05,B1,B1,B1,B1,B1
-*
-*
-*
-** STR2NUM DOES THE OPPOSITE OF NUM2STR: IT
-** RETURNS THE NUMBER EQUIVALENT OF A STRING
-** AND HOLDS THEM IN X (HIGH) AND Y (LOW)
-*
-         LDA   #>$300     ; STRING FROM PREVIOUS
-         PHA
-         LDA   #<$300
-         PHA
-         JSR   STR2NUM
-*BRK ; X,Y HOLDS 2B67, #11111
-*
-*
-** SUBPOS RETURNS THE POSITION OF A SUBSTRING
-** WITHIN A PARENT STRING.
-*
-         LDA   #>STR      ; STRING ADDRESS
-         PHA
-         LDA   #<STR
-         PHA
-         LDA   #>SUB      ; SUBSTRING ADDRESS
-         PHA
-         LDA   #<SUB
-         PHA
-         JSR   SUBPOS
-         JMP   SUBPOSX
-STR      STR   "THIS IS A TEST"
-SUB      STR   "IS A TEST"
-SUBPOSX
-*BRK ; A = 06
-*
-*
-** SUBCOPY COPIES A SUBSTRING AT THE SPECIFIED
-** POSITION TO A PARTICULAR MEMORY ADDRESS
-*
-         LDA   #>STR11    ; SOURCE STRING
-         PHA
-         LDA   #<STR11
-         PHA
-         LDA   #5         ; INDEX TO START COPY
-         PHA
-         LDA   #5         ; LENGTH TO COPY
-         PHA
-         LDA   #>STR21
-         PHA
-         LDA   #<STR21
-         PHA
-         LDA   #15        ; MAX LENGTH OF STRING 2
-         PHA
-         JSR   SUBCOPY
-         JMP   STRCOPYX
-STR11    STR   "0123456789012345"
-STR21    STR   "000000000000000000"
-STRCOPYX
-         LDX   #>STR21
-         LDY   #<STR21    ; ADDRESS OF STR2
-*BRK ; LOCATION FOR STR21 SHOULD NOW START WITH
-* 4,5,6,7,8
-*
-*
-** SUBDEL DELETES A SUBSTRING FROM A GIVEN STRING
-** AND CHANGES THE STRING SIZE ACCORDINGLY.
-** MIN POSITION IS 1, NOT 0
-*
-         LDA   #>STR11    ; STRING LOCATION
-         PHA
-         LDA   #<STR11
-         PHA
-         LDA   #1         ; STARTING INDEX FOR DELETE
-         PHA
-         LDA   #5         ; LENGTH TO DELETE
-         PHA
-         JSR   SUBDEL
-         LDX   #>STR11
-         LDY   #<STR11
-*BRK ; FIRST 5 DIGITS ARE DELETED, REMAINING STRING
-* STORED ANEW
-*
-*
-** SUBINS INSERTS A SOURCE STRING
-** INTO ANOTHER DESTINATION STRING, MOVING THE
-** CONTENTS AND ADJUSTING LENGTH AS NECESSARY.
-*
-         LDA   #>INS1     ; DESTINATION
-         PHA
-         LDA   #<INS1
-         PHA
-         LDA   #3         ; INDEX
-         PHA
-         LDA   #200       ; MAXLEN OF NEW STRING
-         PHA
-         LDA   #>INS2     ; SOURCE SUBSTRING
-         PHA
-         LDA   #<INS2
-         PHA
-         JSR   SUBINS
-         LDY   #<INS1
-         LDX   #>INS1
-*BRK ; MEMLOC IN XY NOW HAS INS2 INSERTED INTO INS1
-* AT LOCATION 3
-*
-** DATA
-*
-INS1     STR   "XXXXXXXXX"
-ZZZ      STR   "999999999"
-INS2     STR   "111111111"
-*
-*
-*
-*
-** LITTLE LUMPS -- MID/LOW LEVEL
-*
+         _PRNT "THE SINS MACRO DOES THE ",8D
+         _PRNT "OPPOSITE OF SDEL: IT INSERTS",8D
+         _PRNT "A SUBSTRING INTO A PARENT STRING",8D
+         _PRNT "AT THE GIVEN INDEX. NOTE THAT",8D
+         _PRNT "WHILE THE PARENT STRING CANNOT BE ",8D
+         _PRNT "A LITERAL, THE SUBSTRING ITSELF CAN BE.",8D8D
+         _PRNT "THUS SINS LSTR;#1;#50;'THIS IS NOT'",8D
+         _PRNT "RETURNS: ",8D
+         SINS  LSTR;#1;#50;"THIS IS NOT"
+         SPRN  LSTR
+         _PRNT " ",8D8D8D8D
+         _WAIT
+
 *
          JMP   REENTRY
 *
@@ -257,9 +197,12 @@ INS2     STR   "111111111"
 *        BOTTOM INCLUDES       *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-*
 ** BOTTOM INCLUDES
 *
          PUT   STRINGS.LIB
          PUT   SUBSTRINGS.LIB
+         PUT   REQUIRED.LIB
 *
+ASTR     STR   "A"
+BSTR     STR   "B"
+LSTR     STR   "THIS IS A STRING."

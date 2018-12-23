@@ -1,0 +1,78 @@
+*
+SUBPOS
+*
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+         PLA
+         STA   ADDR2
+         PLA
+         STA   ADDR2+1
+         PLA
+         STA   ADDR1
+         PLA
+         STA   ADDR1+1
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+:POS
+         LDY   #0
+         LDA   (ADDR1),Y
+         BEQ   :NOTFND
+         STA   :SLEN
+         LDA   (ADDR2),Y
+         BEQ   :NOTFND
+         STA   :SUBLEN
+         LDA   :SUBLEN
+         CMP   :SLEN
+         BEQ   :LENOK
+         BCS   :NOTFND
+:LENOK
+         LDA   #1
+         STA   :SINDEX
+         LDA   :SLEN
+         SEC
+         SBC   :SUBLEN
+         STA   :SCOUNT
+         INC   :SCOUNT
+:SLP1
+         LDA   :SINDEX
+         STA   :SIDX
+         LDA   #1
+         STA   :SUBIDX
+:CMPLP
+         LDY   :SIDX
+         LDA   (ADDR1),Y
+         LDY   :SUBIDX
+         CMP   (ADDR2),Y
+         BNE   :SLP2
+         LDY   :SUBIDX
+         CPY   :SUBLEN
+         BEQ   :FOUND
+         INY
+         STY   :SUBIDX
+         INC   :SIDX
+         JMP   :CMPLP
+:SLP2
+         INC   :SINDEX
+         DEC   :SCOUNT
+         BNE   :SLP1
+         BEQ   :NOTFND
+:FOUND
+         LDA   :SINDEX
+         JMP   :EXIT
+:NOTFND
+         LDA   #0
+:EXIT
+         STA   RETURN
+         LDY   #1
+         STY   RETLEN
+         RTS
+:SLEN    DS    1
+:SUBLEN  DS    1
+:SINDEX  DS    1
+:SUBIDX  DS    1
+:SCOUNT  DS    1
+:SIDX    DS    1

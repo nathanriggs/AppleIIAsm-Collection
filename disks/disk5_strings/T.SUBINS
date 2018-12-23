@@ -48,9 +48,9 @@
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
 *                              *
-*   Y = TRASH                  *
-*   X = TRASH                  *
-*   A = TRASH                  *
+* .Y = TRASH                   *
+* .X = TRASH                   *
+* .A = TRASH                   *
 *                              *
 * CARRY = 0 IF NO ERRORS; ELSE *
 * CARRY = 1                    *
@@ -58,11 +58,6 @@
 * ADAPTED FROM LEVANTHAL AND   *
 * WINTHROP'S /6502 ASSEMBLY    *
 * LANGUAGE ROUTINES/.          *
-* AS SUCH, THIS MAY NOT FALL   *
-* UNDER THE APACHE 2.0 LICENSE *
-* AGREEMENT, SINCE THE BOOK    *
-* WAS WRITTEN BEFORE THE       *
-* LICENSE!                     *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 SUBINS

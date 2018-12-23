@@ -1,0 +1,83 @@
+*
+SUBDEL
+*
+         PLA
+         TAY
+         PLA
+         TAX
+         PLA
+         STA   :SCNT
+         PLA
+         STA   :SINDEX
+         PLA
+         STA   ADDR1
+         PLA
+         STA   ADDR1+1
+         TXA
+         PHA
+         TYA
+         PHA
+         LDY   #0
+         STY   :SCERR
+         LDA   (ADDR1),Y
+         STA   :S1LEN
+         LDA   :SCNT
+         BEQ   :OKEXIT
+         LDA   :SINDEX
+         BEQ   :ERREXIT
+         LDA   :S1LEN
+         CMP   :SINDEX
+         BCC   :ERREXIT
+         LDA   :SINDEX
+         CLC
+         ADC   :SCNT
+         BCS   :TRUNC
+         STA   :SIDX
+         TAX
+         DEX
+         CPX   :S1LEN
+         BCC   :CNTOK
+         BEQ   :TRUNC
+         LDA   #$0FF
+         STA   :SCERR
+:TRUNC
+         LDX   :SINDEX
+         DEX
+         STX   :S1LEN
+         LDA   :SCERR
+         BEQ   :OKEXIT
+         BNE   :ERREXIT
+:CNTOK
+         LDA   :S1LEN
+         SEC
+         SBC   :SIDX
+         TAX
+         INX
+         BEQ   :OKEXIT
+:MVLP
+         LDY   :SIDX
+         LDA   (ADDR1),Y
+         LDY   :SINDEX
+         STA   (ADDR1),Y
+         INC   :SINDEX
+         INC   :SIDX
+         DEX
+         BNE   :MVLP
+         LDX   :SINDEX
+         DEX
+         STX   :S1LEN
+:OKEXIT
+         CLC
+         BCC   :EXIT
+:ERREXIT
+         SEC
+:EXIT
+         LDA   :S1LEN
+         LDY   #0
+         STA   (ADDR1),Y
+         RTS
+:S1LEN   DS    1
+:SCNT    DS    1
+:SINDEX  DS    1
+:SIDX    DS    1
+:SCERR   DS    1

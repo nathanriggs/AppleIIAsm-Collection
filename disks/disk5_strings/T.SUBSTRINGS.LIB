@@ -9,23 +9,14 @@
 * CONTACT: NATHAN.RIGGS@       *
 *          OUTLOOK.COM         *
 *                              *
-* VERSION: 0.1.2               *
-* DATE:    30-OCT-2018         *
+* VERSION:   0.2.0             *
+* DATE:      30-OCT-2018       *
 * ASSEMBLER: MERLIN 8 PRO      *
-*                              *
-* LICENSE: APACHE 2.0, WHERE   *
-*  APPLICABLE. CODE INSPIRED   *
-*  BY THE WORKS OF OTHERS MAY  *
-*  FALL UNDER A DIFFERENT      *
-*  LICENSE (NOTED IN ROUTINE). *
+* OS:        DOS 3.3           *
+* LICENSE:   APACHE 2.0        *
 *                              *
 * THIS IS A LIBRARY FOR USING  *
-* SUBSTRING OPERATIONS. THIS   *
-* IS SEPARATE FROM THE MAIN    *
-* STRINGS LIBRARY BY VIRTUE OF *
-* DEALING WITH FULL MEMORY     *
-* ERRORS IN THE ASSEMBLER.     *
-* YEEEEE.                      *
+* SUBSTRING OPERATIONS.        *
 *                              *
 *------------------------------*
 *                              *
@@ -80,26 +71,20 @@
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
 *                              *
-*   Y = CLOBBERED; TRASH       *
-*   X = CLOBBERED; TRASH       *
-*   A = INDEX OF SUBSTRING IF  *
+* .Y = CLOBBERED; TRASH        *
+* .X = CLOBBERED; TRASH        *
+* .A = INDEX OF SUBSTRING IF   *
 *       FOUND; OTHERWISE, 0    *
+*                              *
+* [RETURN] = INDEX OF SUBSTR;  *
+*            0 IF NOT FOUND    *
+* [RETLEN] = 1 (INDEX LENGTH)  *
 *-                            -*
 * ADAPTED FROM LEVANTHAL AND   *
 * WINTHROP'S /6502 ASSEMBLY    *
-* LANGUAGE ROUTINES/.          *
-* AS SUCH, THIS MAY NOT FALL   *
-* UNDER THE APACHE 2.0 LICENSE *
-* AGREEMENT, SINCE THE BOOK    *
-* WAS WRITTEN BEFORE THE       *
-* LICENSE!                     *
-*                              *
-* THAT SAID, LEVENTHAL WROTE   *
-* THAT THE PURPOSE OF THE BOOK *
-* WAS TO COPY THE SOURCE CODE, *
-* AS REINVENTING THE WHEEL IS  *
-* TEDIOUS, AND HE PLACED NO    *
-* RESTRICTIONS ON ITS USE.     *
+* LANGUAGE ROUTINES/. MAY NOT  *
+* FALL UNDER APACHE 2.0 UNTIL  *
+* HEAVILY MODIFIED.            *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 SUBPOS
@@ -199,8 +184,10 @@ SUBPOS
 *
 :NOTFND
          LDA   #0         ; SUB NOT FOUND, A=0
-         STA   RESULT
 :EXIT
+         STA   RETURN
+         LDY   #1
+         STY   RETLEN
          RTS
 *
 ** DATA
@@ -216,8 +203,7 @@ SUBPOS
 * SUBCOPY :: COPY SUBSTRING    *
 *-                            -*
 * COPY A SUBSTRING FROM A      *
-* STRING TO A DESTINATION      *
-* ADDRESS.                     *
+* STRING TO [RETURN].          *
 *-                            -*
 * CLOBBERS:                    *
 *                              *
@@ -236,10 +222,6 @@ SUBPOS
 *  PHA                         *
 *  LDA LEN ; LENGTH OF SUBSTR  *
 *  PHA                         *
-*  LDA #>SUB ; SUBSTRING ADDR  *
-*  PHA                         *
-*  LDA #<SUB                   *
-*  PHA                         *
 *  LDA MLEN ; MAX LENGTH       *
 *  PHA                         *
 *  JSR SUBCOPY                 *
@@ -251,8 +233,6 @@ SUBPOS
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
 * MAX LENGTH OF DEST STRING    *
-* LO BYTE OF DEST STR ADDRESS  *
-* HI BYTE OF DEST STRING ADDR  *
 * NUMBER OF BYTES TO COPY      *
 * STARTING INDEX TO COPY FROM  *
 * LO BYTE OF SRC STRING ADDR   *
@@ -265,9 +245,9 @@ SUBPOS
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
 *                              *
-*   Y = TRASH                  *
-*   X = TRASH                  *
-*   A = TRASH                  *
+* .Y = TRASH                   *
+* .X = TRASH                   *
+* .A = TRASH                   *
 *                              *
 * CARRY FLAG WILL BE 0 IF NO   *
 * ERRORS; ELSE, CARRY = 1      *
@@ -275,11 +255,6 @@ SUBPOS
 * ADAPTED FROM LEVANTHAL AND   *
 * WINTHROP'S /6502 ASSEMBLY    *
 * LANGUAGE ROUTINES/.          *
-* AS SUCH, THIS MAY NOT FALL   *
-* UNDER THE APACHE 2.0 LICENSE *
-* AGREEMENT, SINCE THE BOOK    *
-* WAS WRITTEN BEFORE THE       *
-* LICENSE!                     *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 SUBCOPY
@@ -296,17 +271,19 @@ SUBCOPY
          PLA
          STA   :MLEN
          PLA
-         STA   ADDR2
-         PLA
-         STA   ADDR2+1
-         PLA
          STA   :SCNT
+         STA   RETLEN
          PLA
          STA   :SINDEX
          PLA
          STA   ADDR1
          PLA
          STA   ADDR1+1
+*
+         LDA   #<RETURN
+         STA   ADDR2
+         LDA   #>RETURN
+         STA   ADDR2+1
 *
 ** RESTORE RETURN ADDRESS
 *
@@ -421,6 +398,7 @@ SUBCOPY
          LDA   :S2LEN
          LDY   #0
          STA   (ADDR2),Y
+         STA   RETLEN
          RTS
 *
 ** DATA
@@ -475,9 +453,9 @@ SUBCOPY
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
 *                              *
-*   Y = TRASH                  *
-*   X = TRASH                  *
-*   A = TRASH                  *
+* .Y = TRASH                   *
+* .X = TRASH                   *
+* .A = TRASH                   *
 *                              *
 * IF NO ERRORS, CARRY = 0;     *
 * ELSE, CARRY = 1              *
@@ -485,11 +463,6 @@ SUBCOPY
 * ADAPTED FROM LEVANTHAL AND   *
 * WINTHROP'S /6502 ASSEMBLY    *
 * LANGUAGE ROUTINES/.          *
-* AS SUCH, THIS MAY NOT FALL   *
-* UNDER THE APACHE 2.0 LICENSE *
-* AGREEMENT, SINCE THE BOOK    *
-* WAS WRITTEN BEFORE THE       *
-* LICENSE!                     *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 SUBDEL
@@ -677,9 +650,9 @@ SUBDEL
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
 *                              *
-*   Y = TRASH                  *
-*   X = TRASH                  *
-*   A = TRASH                  *
+* .Y = TRASH                   *
+* .X = TRASH                   *
+* .A = TRASH                   *
 *                              *
 * CARRY = 0 IF NO ERRORS; ELSE *
 * CARRY = 1                    *
@@ -687,11 +660,6 @@ SUBDEL
 * ADAPTED FROM LEVANTHAL AND   *
 * WINTHROP'S /6502 ASSEMBLY    *
 * LANGUAGE ROUTINES/.          *
-* AS SUCH, THIS MAY NOT FALL   *
-* UNDER THE APACHE 2.0 LICENSE *
-* AGREEMENT, SINCE THE BOOK    *
-* WAS WRITTEN BEFORE THE       *
-* LICENSE!                     *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 SUBINS

@@ -9,28 +9,14 @@
 * CONTACT: NATHAN.RIGGS@       *
 *          OUTLOOK.COM         *
 *                              *
-* VERSION: 0.1.2               *
-* DATE:    30-OCT-2018         *
+* VERSION:   0.2.0             *
+* DATE:      30-OCT-2018       *
 * ASSEMBLER: MERLIN 8 PRO      *
-*                              *
-* LICENSE: APACHE 2.0, WHERE   *
-*  APPLICABLE. CODE INSPIRED   *
-*  BY THE WORKS OF OTHERS MAY  *
-*  FALL UNDER A DIFFERENT      *
-*  LICENSE (NOTED IN ROUTINE). *
+* OS:        DOS 3.3           *
+* LICENSE:   APACHE 2.0        *
 *                              *
 * THIS IS A STANDARD LIBRARY   *
 * FOR STRING MANIPULATION.     *
-* STRINGS ARE MOSTLY JUST 1-D  *
-* ARRAYS PRECEDED BY A LENGTH  *
-* BYTE. THIS DIFFERS FROM THE  *
-* USE OF STRING IN THE PRINT   *
-* ROUTINES OF STDIO (THOUGH    *
-* NOT THE SINPUT ROUTINE) IN   *
-* THAT THOSE "STRINGS" ARE     *
-* TERMINATED WITH A #00 TO     *
-* INDICATE AN END, RATHER THAN *
-* USING A LENGTH BYTE.         *
 *                              *
 *------------------------------*
 *                              *
@@ -38,8 +24,6 @@
 *                              *
 * STRCOMP : STRING COMPARE     *
 * STRCAT : CONCATENATE STRING  *
-* ASC2STR : NUL TO INDEXED STR *
-* STR2ASC : INDEXED TO NUL STR *
 * PRNSTR : PRINT STRING        *
 * NUM2STR : NUMBER TO STRING   *
 * STR2NUM : STRING TO NUMBER   *
@@ -47,7 +31,7 @@
 *=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-*
 *
 *``````````````````````````````*
-* STRCMP :: STRING COMPARE     *
+* STRCMP ::     STRING COMPARE *
 *-                            -*
 * COMPARE TWO STRINGS AND      *
 * DETERMINE IF THEY ARE        *
@@ -100,27 +84,15 @@
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
 *                              *
-*   Y = LENGTH OF STRING 2     *
-*   X = LENGTH OF STRING 1     *
-*   A = CLOBBERED; TRASH       *
-*                              *
-* - SEE DESCRIPTION FOR FLAG   *
-*   CHANGES                    *
+* .Y = LENGTH OF STRING 2      *
+* .X = LENGTH OF STRING 1      *
+* .A = CLOBBERED; TRASH        *
 *-                            -*
 * ADAPTED FROM LEVANTHAL AND   *
 * WINTHROP'S /6502 ASSEMBLY    *
-* LANGUAGE ROUTINES/. NOT      *
-* UNDER THE APACHE 2.0 LICENSE *
-* AGREEMENT, SINCE THE BOOK    *
-* WAS WRITTEN BEFORE THE       *
-* LICENSE!                     *
-*                              *
-* THAT SAID, LEVENTHAL WROTE   *
-* THAT THE PURPOSE OF THE BOOK *
-* WAS TO COPY THE SOURCE CODE, *
-* AS REINVENTING THE WHEEL IS  *
-* TEDIOUS, AND HE PLACED NO    *
-* RESTRICTIONS ON ITS USE.     *
+* LANGUAGE ROUTINES/. MAY NOT  *
+* FALL UNDER APACHE 2.0 UNTIL  *
+* SUBSTANTIALLY ALTERED.       *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 STRCMP
@@ -202,7 +174,9 @@ STRCMP
 *-                            -*
 * CONCATENATE TWO STRINGS INTO *
 * A SINGLE STRING STORE WHERE  *
-* THE FIRST STRING IS LOCATED  *
+* THE FIRST STRING IS LOCATED. *
+* ADDITIONALLY COPIES CONCAT'D *
+* STRING TO [RETURN].          *
 *-                            -*
 * CLOBBERS:                    *
 *                              *
@@ -248,18 +222,15 @@ STRCMP
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
 *                              *
-*   Y = CLOBBERED; TRASH       *
-*   X = LENGTH OF FINAL STRING *
-*   A = 1 OF OVERFLOW, 0 IF NO *
+* .Y = CLOBBERED; TRASH        *
+* .X = LENGTH OF FINAL STRING  *
+* .A = 1 IF OVERFLOW, 0 IF NO  *
+* [RETURN] = CONCAT'D STRING   *
+* [RETLEN] = LENGTH OF NEW STR *
 *-                            -*
 * ADAPTED FROM LEVANTHAL AND   *
 * WINTHROP'S /6502 ASSEMBLY    *
 * LANGUAGE ROUTINES/.          *
-* AS SUCH, THIS MAY NOT FALL   *
-* UNDER THE APACHE 2.0 LICENSE *
-* AGREEMENT, SINCE THE BOOK    *
-* WAS WRITTEN BEFORE THE       *
-* LICENSE!                     *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 STRCAT
@@ -272,6 +243,7 @@ STRCAT
          STA   RETADR+1
 *
 ** GET PARAMETERS
+*
          PLA
          STA   :MLEN      ; MAXIMUM CONCAT LENGTH
 *
@@ -353,8 +325,15 @@ STRCAT
          DEC   :SCNT      ; DECREMENT COUNTER
          BNE   :CATLP     ; CONT UNTIL __SCNT = 0
 *
-*
 :EXIT
+*
+** UPDATE STRING1 LENGTH
+*
+         LDA   :S1LEN
+         LDY   #0
+         STA   (ADDR1),Y
+         LDA   :SOVF
+         ROR   A
 *
 ** RESTORE RETURN ADDRESS
 *
@@ -363,11 +342,22 @@ STRCAT
          LDA   RETADR
          PHA
 *
-         LDA   :S1LEN
+** COPY TO [RETURN]
+*
+         LDY   #0
+         LDA   (ADDR1),Y  ; LENGTH OF STRING
+         STA   RETLEN
+         LDA   #1
+:RLP
+         LDA   (ADDR1),Y
+         STA   RETURN,Y
+         CPY   RETLEN
+         INY
+         BNE   :RLP
+         LDA   RETLEN
          LDY   #0
          STA   (ADDR1),Y
-         LDA   :SOVF
-         ROR   A          ; CARRY = 1 IF OVERFLOW, 0 IF NOT
+*
          LDX   :S3LEN     ; RETURN FINAL LENGTH
 *
          RTS
@@ -420,9 +410,9 @@ STRCAT
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
 *                              *
-*   Y = LOW BYTE STRING ADDR   *
-*   X = HI BYTE STRING ADDR    *
-*   A = STRING LENGTH          *
+* .Y = LOW BYTE STRING ADDR    *
+* .X = HI BYTE STRING ADDR     *
+* .A = STRING LENGTH           *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 PRNSTR
@@ -487,10 +477,6 @@ PRNSTR
 *-                            -*
 * USAGE:                       *
 *                              *
-*   LDA #>$300 ; DESTINATION   *
-*   PHA                        *
-*   LDA #<$300                 *
-*   PHA                        *
 *   LDA #>11111 ; VALUE TO     *
 *   PHA         ; CONVERT      *
 *   LDA #<11111                *
@@ -503,8 +489,6 @@ PRNSTR
 *                              *
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
-* LO BYTE DESTINATION ADDRESS  *
-* HI BYTE DESTINATION ADDRESS  *
 * LO BYTE VALUE TO CONVERT     *
 * HI BYTE VALUE TO CONVERT     *
 *-                            -*
@@ -515,18 +499,16 @@ PRNSTR
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
 *                              *
-*   Y = COUNTER; TRASH         *
-*   X = COUNTER; TRASH         *
-*   A = LOW BYTE OF RET ADDR   *
+* .Y = COUNTER; TRASH          *
+* .X = COUNTER; TRASH          *
+* .A = LOW BYTE OF RET ADDR    *
+*                              *
+* [RETURN] = STRING VALUE      *
+* [RETLEN] = LENGTH OF STRING  *
 *-                            -*
 * ADAPTED FROM LEVANTHAL AND   *
 * WINTHROP'S /6502 ASSEMBLY    *
 * LANGUAGE ROUTINES/.          *
-* AS SUCH, THIS MAY NOT FALL   *
-* UNDER THE APACHE 2.0 LICENSE *
-* AGREEMENT, SINCE THE BOOK    *
-* WAS WRITTEN BEFORE THE       *
-* LICENSE!                     *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 NUM2STR
@@ -556,9 +538,9 @@ NUM2STR
          STA   :VALSTR+1
 *
 :GETBP
-         PLA
+         LDA   #<RETURN
          STA   ADDR1      ; ADDRESS TO STORE STRING
-         PLA
+         LDA   #>RETURN+1
          STA   ADDR1+1
          LDA   #0         ; SET BUFFER TO EMPTY
          LDY   #0
@@ -621,7 +603,7 @@ NUM2STR
 :EXIT
          LDA   :NGFLAG
          BPL   :POS       ; BR IF ORIG VAL POS
-         LDA   #'-'       ; ELSE
+         LDA   #173       ; ELSE
          JSR   :CONCAT    ; PUT A MINUS SIGN IN FRONT
 *
 :POS
@@ -712,20 +694,17 @@ NUM2STR
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
 *                              *
-*   Y = HI BYTE OF NUMBER      *
-*   X = LO BYTE OF NUMBER      *
-*   A = LOW BYTE OF RET ADDR   *
+* .Y = LO BYTE OF NUMBER       *
+* .X = HI BYTE OF NUMBER       *
+* .A = LOW BYTE OF RET ADDR    *
+*                              *
+* [RETURN] = NUMBER VALUE WORD *
+* [RETLEN] = 2 (NUM OF BYTES)  *
 *-                            -*
 * ADAPTED FROM LEVANTHAL AND   *
 * WINTHROP'S /6502 ASSEMBLY    *
 * LANGUAGE ROUTINES/.          *
-* AS SUCH, THIS MAY NOT FALL   *
-* UNDER THE APACHE 2.0 LICENSE *
-* AGREEMENT, SINCE THE BOOK    *
-* WAS WRITTEN BEFORE THE       *
-* LICENSE!                     *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
-*
 *
 STR2NUM
 *
@@ -765,7 +744,7 @@ STR2NUM
 :INIT1
          LDY   :NINDEX
          LDA   (ADDR1),Y
-         CMP   #'-'
+         CMP   #173
          BNE   :PLUS      ; BR IF NOT -
          LDA   #$0FF
          STA   :SNGFLAG   ; ELSE SIGN IS NEGATIVE
@@ -846,8 +825,6 @@ STR2NUM
 :EREXIT
          SEC
 :EXIT
-
-                          ; Y IS ALREADY LOW BYTE
 *
 ** RESTORE RETURN ADDRESS
 *
@@ -858,6 +835,10 @@ STR2NUM
 *
          LDX   :NACCUM+1
          LDY   :NACCUM
+         STY   RETURN
+         STX   RETURN+1
+         LDA   #2
+         STA   RETLEN
          LDA   :NINDEX
 *
          RTS

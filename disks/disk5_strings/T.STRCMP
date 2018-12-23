@@ -1,6 +1,6 @@
 *
 *``````````````````````````````*
-* STRCMP :: STRING COMPARE     *
+* STRCMP ::     STRING COMPARE *
 *-                            -*
 * COMPARE TWO STRINGS AND      *
 * DETERMINE IF THEY ARE        *
@@ -53,27 +53,15 @@
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
 *                              *
-*   Y = LENGTH OF STRING 2     *
-*   X = LENGTH OF STRING 1     *
-*   A = CLOBBERED; TRASH       *
-*                              *
-* - SEE DESCRIPTION FOR FLAG   *
-*   CHANGES                    *
+* .Y = LENGTH OF STRING 2      *
+* .X = LENGTH OF STRING 1      *
+* .A = CLOBBERED; TRASH        *
 *-                            -*
 * ADAPTED FROM LEVANTHAL AND   *
 * WINTHROP'S /6502 ASSEMBLY    *
-* LANGUAGE ROUTINES/. NOT      *
-* UNDER THE APACHE 2.0 LICENSE *
-* AGREEMENT, SINCE THE BOOK    *
-* WAS WRITTEN BEFORE THE       *
-* LICENSE!                     *
-*                              *
-* THAT SAID, LEVENTHAL WROTE   *
-* THAT THE PURPOSE OF THE BOOK *
-* WAS TO COPY THE SOURCE CODE, *
-* AS REINVENTING THE WHEEL IS  *
-* TEDIOUS, AND HE PLACED NO    *
-* RESTRICTIONS ON ITS USE.     *
+* LANGUAGE ROUTINES/. MAY NOT  *
+* FALL UNDER APACHE 2.0 UNTIL  *
+* SUBSTANTIALLY ALTERED.       *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 STRCMP

@@ -4,7 +4,9 @@
 *-                            -*
 * CONCATENATE TWO STRINGS INTO *
 * A SINGLE STRING STORE WHERE  *
-* THE FIRST STRING IS LOCATED  *
+* THE FIRST STRING IS LOCATED. *
+* ADDITIONALLY COPIES CONCAT'D *
+* STRING TO [RETURN].          *
 *-                            -*
 * CLOBBERS:                    *
 *                              *
@@ -50,18 +52,15 @@
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
 *                              *
-*   Y = CLOBBERED; TRASH       *
-*   X = LENGTH OF FINAL STRING *
-*   A = 1 OF OVERFLOW, 0 IF NO *
+* .Y = CLOBBERED; TRASH        *
+* .X = LENGTH OF FINAL STRING  *
+* .A = 1 IF OVERFLOW, 0 IF NO  *
+* [RETURN] = CONCAT'D STRING   *
+* [RETLEN] = LENGTH OF NEW STR *
 *-                            -*
 * ADAPTED FROM LEVANTHAL AND   *
 * WINTHROP'S /6502 ASSEMBLY    *
 * LANGUAGE ROUTINES/.          *
-* AS SUCH, THIS MAY NOT FALL   *
-* UNDER THE APACHE 2.0 LICENSE *
-* AGREEMENT, SINCE THE BOOK    *
-* WAS WRITTEN BEFORE THE       *
-* LICENSE!                     *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 STRCAT
@@ -74,6 +73,7 @@ STRCAT
          STA   RETADR+1
 *
 ** GET PARAMETERS
+*
          PLA
          STA   :MLEN      ; MAXIMUM CONCAT LENGTH
 *
@@ -155,8 +155,15 @@ STRCAT
          DEC   :SCNT      ; DECREMENT COUNTER
          BNE   :CATLP     ; CONT UNTIL __SCNT = 0
 *
-*
 :EXIT
+*
+** UPDATE STRING1 LENGTH
+*
+         LDA   :S1LEN
+         LDY   #0
+         STA   (ADDR1),Y
+         LDA   :SOVF
+         ROR   A
 *
 ** RESTORE RETURN ADDRESS
 *
@@ -165,11 +172,22 @@ STRCAT
          LDA   RETADR
          PHA
 *
-         LDA   :S1LEN
+** COPY TO [RETURN]
+*
+         LDY   #0
+         LDA   (ADDR1),Y  ; LENGTH OF STRING
+         STA   RETLEN
+         LDA   #1
+:RLP
+         LDA   (ADDR1),Y
+         STA   RETURN,Y
+         CPY   RETLEN
+         INY
+         BNE   :RLP
+         LDA   RETLEN
          LDY   #0
          STA   (ADDR1),Y
-         LDA   :SOVF
-         ROR   A          ; CARRY = 1 IF OVERFLOW, 0 IF NOT
+*
          LDX   :S3LEN     ; RETURN FINAL LENGTH
 *
          RTS
@@ -184,5 +202,4 @@ STRCAT
 :MLEN    DS    1
 :SCNT    DS    1
 :SOVF    DS    1
-*
 *

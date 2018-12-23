@@ -1,0 +1,384 @@
+         JMP   SUBSTRINGSX
+*
+SUBPOS
+*
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+         PLA
+         STA   ADDR2
+         PLA
+         STA   ADDR2+1
+         PLA
+         STA   ADDR1
+         PLA
+         STA   ADDR1+1
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+:POS
+         LDY   #0
+         LDA   (ADDR1),Y
+         BEQ   :NOTFND
+         STA   :SLEN
+         LDA   (ADDR2),Y
+         BEQ   :NOTFND
+         STA   :SUBLEN
+         LDA   :SUBLEN
+         CMP   :SLEN
+         BEQ   :LENOK
+         BCS   :NOTFND
+:LENOK
+         LDA   #1
+         STA   :SINDEX
+         LDA   :SLEN
+         SEC
+         SBC   :SUBLEN
+         STA   :SCOUNT
+         INC   :SCOUNT
+:SLP1
+         LDA   :SINDEX
+         STA   :SIDX
+         LDA   #1
+         STA   :SUBIDX
+:CMPLP
+         LDY   :SIDX
+         LDA   (ADDR1),Y
+         LDY   :SUBIDX
+         CMP   (ADDR2),Y
+         BNE   :SLP2
+         LDY   :SUBIDX
+         CPY   :SUBLEN
+         BEQ   :FOUND
+         INY
+         STY   :SUBIDX
+         INC   :SIDX
+         JMP   :CMPLP
+:SLP2
+         INC   :SINDEX
+         DEC   :SCOUNT
+         BNE   :SLP1
+         BEQ   :NOTFND
+:FOUND
+         LDA   :SINDEX
+         JMP   :EXIT
+:NOTFND
+         LDA   #0
+:EXIT
+         STA   RETURN
+         LDY   #1
+         STY   RETLEN
+         RTS
+:SLEN    DS    1
+:SUBLEN  DS    1
+:SINDEX  DS    1
+:SUBIDX  DS    1
+:SCOUNT  DS    1
+:SIDX    DS    1
+*
+SUBCOPY
+*
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+         PLA
+         STA   :MLEN
+         PLA
+         STA   :SCNT
+         STA   RETLEN
+         PLA
+         STA   :SINDEX
+         PLA
+         STA   ADDR1
+         PLA
+         STA   ADDR1+1
+         LDA   #<RETURN
+         STA   ADDR2
+         LDA   #>RETURN
+         STA   ADDR2+1
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+         LDA   #0
+         STA   :S2LEN
+         STA   :SCERR
+         LDA   :SCNT
+         BEQ   :OKEXIT
+         LDA   :MLEN
+         BEQ   :EREXIT
+         LDA   :SINDEX
+         BEQ   :EREXIT
+         LDY   #0
+         LDA   (ADDR1),Y
+         STA   :S1LEN
+         CMP   :SINDEX
+         BCC   :EREXIT
+         LDA   :SINDEX
+         CLC
+         ADC   :SCNT
+         BCS   :RECALC
+         TAX
+         DEX
+         CPX   :S1LEN
+         BCC   :CNT10K
+         BEQ   :CNT10K
+:RECALC
+         LDA   :S1LEN
+         SEC
+         SBC   :SINDEX
+         STA   :SCNT
+         INC   :SCNT
+         LDA   #$0FF
+         STA   :SCERR
+:CNT10K
+         LDA   :SCNT
+         CMP   :MLEN
+         BCC   :CNT20K
+         BEQ   :CNT20K
+         LDA   :MLEN
+         STA   :SCNT
+         LDA   #$0FF
+         STA   :SCERR
+:CNT20K
+         LDX   :SCNT
+         BEQ   :EREXIT
+         LDA   #1
+         STA   :S2LEN
+:MVLP
+         LDY   :SINDEX
+         LDA   (ADDR1),Y
+         LDY   :S2LEN
+         STA   (ADDR2),Y
+         INC   :SINDEX
+         INC   :S2LEN
+         DEX
+         BNE   :MVLP
+         DEC   :S2LEN
+         LDA   :SCERR
+         BNE   :EREXIT
+:OKEXIT
+         CLC
+         BCC   :EXIT
+:EREXIT
+         SEC
+:EXIT
+         LDA   :S2LEN
+         LDY   #0
+         STA   (ADDR2),Y
+         STA   RETLEN
+         RTS
+:S1LEN   DS    1
+:S2LEN   DS    1
+:MLEN    DS    1
+:SCNT    DS    1
+:SINDEX  DS    1
+:SCERR   DS    1
+*
+SUBDEL
+*
+         PLA
+         TAY
+         PLA
+         TAX
+         PLA
+         STA   :SCNT
+         PLA
+         STA   :SINDEX
+         PLA
+         STA   ADDR1
+         PLA
+         STA   ADDR1+1
+         TXA
+         PHA
+         TYA
+         PHA
+         LDY   #0
+         STY   :SCERR
+         LDA   (ADDR1),Y
+         STA   :S1LEN
+         LDA   :SCNT
+         BEQ   :OKEXIT
+         LDA   :SINDEX
+         BEQ   :ERREXIT
+         LDA   :S1LEN
+         CMP   :SINDEX
+         BCC   :ERREXIT
+         LDA   :SINDEX
+         CLC
+         ADC   :SCNT
+         BCS   :TRUNC
+         STA   :SIDX
+         TAX
+         DEX
+         CPX   :S1LEN
+         BCC   :CNTOK
+         BEQ   :TRUNC
+         LDA   #$0FF
+         STA   :SCERR
+:TRUNC
+         LDX   :SINDEX
+         DEX
+         STX   :S1LEN
+         LDA   :SCERR
+         BEQ   :OKEXIT
+         BNE   :ERREXIT
+:CNTOK
+         LDA   :S1LEN
+         SEC
+         SBC   :SIDX
+         TAX
+         INX
+         BEQ   :OKEXIT
+:MVLP
+         LDY   :SIDX
+         LDA   (ADDR1),Y
+         LDY   :SINDEX
+         STA   (ADDR1),Y
+         INC   :SINDEX
+         INC   :SIDX
+         DEX
+         BNE   :MVLP
+         LDX   :SINDEX
+         DEX
+         STX   :S1LEN
+:OKEXIT
+         CLC
+         BCC   :EXIT
+:ERREXIT
+         SEC
+:EXIT
+         LDA   :S1LEN
+         LDY   #0
+         STA   (ADDR1),Y
+         RTS
+:S1LEN   DS    1
+:SCNT    DS    1
+:SINDEX  DS    1
+:SIDX    DS    1
+:SCERR   DS    1
+*
+SUBINS
+*
+         PLA
+         TAY
+         PLA
+         TAX
+         PLA
+         STA   ADDR2
+         PLA
+         STA   ADDR2+1
+         PLA
+         STA   :MLEN
+         PLA
+         STA   :SINDEX
+         PLA
+         STA   ADDR1
+         PLA
+         STA   ADDR1+1
+         TXA
+         PHA
+         TYA
+         PHA
+         LDA   #0
+         STA   :SCERR
+         LDY   #0
+         LDA   (ADDR1),Y
+         STA   :S1LEN
+         LDA   (ADDR2),Y
+         STA   :S2LEN
+         BNE   :IDX0
+         JMP   :OKEXIT
+:IDX0
+         LDA   :SINDEX
+         BNE   :CHKLEN
+         JMP   :EREXIT
+:CHKLEN
+         LDA   :S2LEN
+         CLC
+         ADC   :S1LEN
+         BCS   :TRUNC
+         CMP   :MLEN
+         BCC   :IDXLEN
+         BEQ   :IDXLEN
+:TRUNC
+         LDA   :MLEN
+         SEC
+         SBC   :S1LEN
+         BCC   :EREXIT
+         BEQ   :EREXIT
+         STA   :S2LEN
+         LDA   #$0FF
+         STA   :SCERR
+:IDXLEN
+         LDA   :S1LEN
+         CMP   :SINDEX
+         BCS   :LENOK
+         LDX   :S1LEN
+         INX
+         STX   :SINDEX
+         LDA   #$0FF
+         STA   :SCERR
+         LDA   :S1LEN
+         CLC
+         ADC   :S2LEN
+         STA   :S1LEN
+         JMP   :MVESUB
+:LENOK
+         LDA   :S1LEN
+         SEC
+         SBC   :SINDEX
+         TAX
+         INX
+         LDA   :S1LEN
+         STA   :SIDX
+         CLC
+         ADC   :S2LEN
+         STA   :SBIDX
+         STA   :S1LEN
+:OPNLP
+         LDY   :SIDX
+         LDA   (ADDR1),Y
+         LDY   :SBIDX
+         STA   (ADDR1),Y
+         DEC   :SIDX
+         DEC   :SBIDX
+         DEX
+         BNE   :OPNLP
+:MVESUB
+         LDA   #1
+         STA   :SIDX
+         LDX   :S2LEN
+:MVELP
+         LDY   :SIDX
+         LDA   (ADDR2),Y
+         LDY   :SINDEX
+         STA   (ADDR1),Y
+         INC   :SIDX
+         INC   :SINDEX
+         DEX
+         BNE   :MVELP
+         LDA   :SCERR
+         BNE   :EREXIT
+:OKEXIT
+         CLC
+         BCC   :EXIT
+:EREXIT
+         SEC
+:EXIT
+         LDA   :S1LEN
+         LDY   #0
+         STA   (ADDR1),Y
+         RTS
+:S1LEN   DS    1
+:S2LEN   DS    1
+:SUBLEN  DS    1
+:MLEN    DS    1
+:SINDEX  DS    1
+:SIDX    DS    1
+:SBIDX   DS    1
+:SCERR   DS    1
+SUBSTRINGSX

@@ -1,0 +1,379 @@
+         JMP   STRINGSX
+*
+STRCMP
+*
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+         PLA
+         STA   ADDR2
+         PLA
+         STA   ADDR2+1
+         PLA
+         STA   ADDR1
+         PLA
+         STA   ADDR1+1
+         LDY   #0
+         LDA   (ADDR1),Y
+         CMP   (ADDR2),Y
+         BCC   :BEGCMP
+         LDA   (ADDR2),Y
+:BEGCMP
+         TAX
+         BEQ   :TSTLEN
+         LDY   #1
+:CMPLP
+         LDA   (ADDR1),Y
+         CMP   (ADDR2),Y
+         BNE   :EXIT
+         INY
+         DEX
+         BNE   :CMPLP
+:TSTLEN
+         LDY   #0
+         LDA   (ADDR1),Y
+         CMP   (ADDR2),Y
+:EXIT
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+         LDY   #0
+         LDA   (ADDR1),Y
+         TAX
+         LDA   (ADDR2),Y
+         TAY
+         RTS
+*
+STRCAT
+*
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+         PLA
+         STA   :MLEN
+         PLA
+         STA   ADDR2
+         PLA
+         STA   ADDR2+1
+         PLA
+         STA   ADDR1
+         PLA
+         STA   ADDR1+1
+         LDY   #0
+         LDA   (ADDR1),Y
+         STA   :S1LEN
+         STA   :S1IND
+         INC   :S1IND
+         LDA   (ADDR2),Y
+         STA   :S2LEN
+         LDA   #1
+         STA   :S2IND
+         LDA   :S2LEN
+         CLC
+         ADC   :S1LEN
+         STA   :S3LEN
+         BCS   :TOOLONG
+         CMP   :MLEN
+         BEQ   :LENOK
+         BCC   :LENOK
+:TOOLONG
+         LDA   #$0FF
+         STA   :SOVF
+         LDA   :MLEN
+         SEC
+         SBC   :S1LEN
+         BCC   :EXIT
+         STA   :SCNT
+         LDA   :MLEN
+         STA   :S1LEN
+         JMP   :DOCAT
+:LENOK
+         STA   :S1LEN
+         LDA   #0
+         STA   :SOVF
+         LDA   :S2LEN
+         STA   :SCNT
+:DOCAT
+         LDA   :SCNT
+         BEQ   :EXIT
+:CATLP
+         LDY   :S2IND
+         LDA   (ADDR2),Y
+         LDY   :S1IND
+         STA   (ADDR1),Y
+         INC   :S1IND
+         INC   :S2IND
+         DEC   :SCNT
+         BNE   :CATLP
+:EXIT
+         LDA   :S1LEN
+         LDY   #0
+         STA   (ADDR1),Y
+         LDA   :SOVF
+         ROR   A
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+         LDY   #0
+         LDA   (ADDR1),Y
+         STA   RETLEN
+         LDA   #1
+:RLP
+         LDA   (ADDR1),Y
+         STA   RETURN,Y
+         CPY   RETLEN
+         INY
+         BNE   :RLP
+         LDA   RETLEN
+         LDY   #0
+         STA   (ADDR1),Y
+         LDX   :S3LEN
+         RTS
+:S3LEN   DS    1
+:S1LEN   DS    1
+:S1IND   DS    1
+:S2LEN   DS    1
+:S2IND   DS    1
+:MLEN    DS    1
+:SCNT    DS    1
+:SOVF    DS    1
+*
+PRNSTR
+*
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+         PLA
+         STA   ADDR1
+         PLA
+         STA   ADDR1+1
+         LDY   #0
+         LDA   (ADDR1),Y
+         STA   :S1LEN
+:LP
+         INY
+         LDA   (ADDR1),Y
+         JSR   SCOUT1
+         CPY   :S1LEN
+         BNE   :LP
+         LDY   #0
+         LDA   (ADDR1),Y
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+         LDY   #0
+         LDA   (ADDR1),Y
+         LDY   ADDR1
+         LDX   ADDR1+1
+         RTS
+:S1LEN   DS    1
+*
+NUM2STR
+*
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+         PLA
+         STA   :VALSTR
+         PLA
+         STA   :VALSTR+1
+         STA   :NGFLAG
+         BPL   :GETBP
+         LDA   #0
+         SEC
+         SBC   :VALSTR
+         STA   :VALSTR
+         LDA   #0
+         SBC   :VALSTR+1
+         STA   :VALSTR+1
+:GETBP
+         LDA   #<RETURN
+         STA   ADDR1
+         LDA   #>RETURN+1
+         STA   ADDR1+1
+         LDA   #0
+         LDY   #0
+         STA   (ADDR1),Y
+:CNVERT
+         LDA   #0
+         STA   :MOD10
+         STA   :MOD10+1
+         LDX   #16
+         CLC
+:DVLOOP
+         ROL   :VALSTR
+         ROL   :VALSTR+1
+         ROL   :MOD10
+         ROL   :MOD10+1
+         SEC
+         LDA   :MOD10
+         SBC   #10
+         TAY
+         LDA   :MOD10+1
+         SBC   #0
+         BCC   :DECCNT
+         STY   :MOD10
+         STA   :MOD10+1
+:DECCNT
+         DEX
+         BNE   :DVLOOP
+         ROL   :VALSTR
+         ROL   :VALSTR+1
+:CONCH
+         LDA   :MOD10
+         CLC
+         ADC   #$B0
+         JSR   :CONCAT
+         LDA   :VALSTR
+         ORA   :VALSTR+1
+         BNE   :CNVERT
+:EXIT
+         LDA   :NGFLAG
+         BPL   :POS
+         LDA   #173
+         JSR   :CONCAT
+:POS
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+         RTS
+:CONCAT
+         PHA
+         LDY   #0
+         LDA   (ADDR1),Y
+         TAY
+         BEQ   :EXITMR
+:MVELP
+         LDA   (ADDR1),Y
+         INY
+         STA   (ADDR1),Y
+         DEY
+         DEY
+         BNE   :MVELP
+:EXITMR
+         PLA
+         LDY   #1
+         STA   (ADDR1),Y
+         LDY   #0
+         LDA   (ADDR1),Y
+         CLC
+         ADC   #1
+         STA   (ADDR1),Y
+         RTS
+:NGFLAG  DS    1
+:VALSTR  DS    2
+:MOD10   DS    2
+*
+STR2NUM
+*
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+         PLA
+         STA   ADDR1
+         PLA
+         STA   ADDR1+1
+         LDY   #0
+         LDA   (ADDR1),Y
+         TAX
+         LDA   #1
+         STA   :NINDEX
+         LDA   #0
+         STA   :NACCUM
+         STA   :NACCUM+1
+         STA   :SNGFLAG
+         TXA
+         BNE   :INIT1
+         JMP   :EREXIT
+:INIT1
+         LDY   :NINDEX
+         LDA   (ADDR1),Y
+         CMP   #173
+         BNE   :PLUS
+         LDA   #$0FF
+         STA   :SNGFLAG
+         INC   :NINDEX
+         DEX
+         BEQ   :EREXIT
+         JMP   :CNVERT
+:PLUS
+         CMP   #'+'
+         BNE   :CHKDIG
+         INC   :NINDEX
+         DEX
+         BEQ   :EREXIT
+:CNVERT
+         LDY   :NINDEX
+         LDA   (ADDR1),Y
+:CHKDIG
+         CMP   #$B0       ; "0"
+         BMI   :EREXIT
+         CMP   #$BA
+         BPL   :EREXIT
+         PHA
+         ASL   :NACCUM
+         ROL   :NACCUM+1
+         LDA   :NACCUM
+         LDY   :NACCUM+1
+         ASL   :NACCUM
+         ROL   :NACCUM+1
+         ASL   :NACCUM
+         ROL   :NACCUM+1
+         CLC
+         ADC   :NACCUM
+         STA   :NACCUM
+         TYA
+         ADC   :NACCUM+1
+         STA   :NACCUM+1
+         PLA
+         SEC
+         SBC   #$B0
+         CLC
+         ADC   :NACCUM
+         STA   :NACCUM
+         BCC   :D2B1
+         INC   :NACCUM+1
+:D2B1
+         INC   :NINDEX
+         DEX
+         BNE   :CNVERT
+         LDA   :SNGFLAG
+         BPL   :OKEXIT
+         LDA   #0
+         SEC
+         SBC   :NACCUM
+         STA   :NACCUM
+         LDA   #0
+         SBC   :NACCUM+1
+         STA   :NACCUM+1
+:OKEXIT
+         CLC
+         BCC   :EXIT
+:EREXIT
+         SEC
+:EXIT
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+         LDX   :NACCUM+1
+         LDY   :NACCUM
+         STY   RETURN
+         STX   RETURN+1
+         LDA   #2
+         STA   RETLEN
+         LDA   :NINDEX
+         RTS
+:NACCUM  DS    2
+:SNGFLAG DS    1
+:NINDEX  DS    1
+STRINGSX

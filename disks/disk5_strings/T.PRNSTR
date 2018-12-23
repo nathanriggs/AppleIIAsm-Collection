@@ -36,9 +36,9 @@
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
 *                              *
-*   Y = LOW BYTE STRING ADDR   *
-*   X = HI BYTE STRING ADDR    *
-*   A = STRING LENGTH          *
+* .Y = LOW BYTE STRING ADDR    *
+* .X = HI BYTE STRING ADDR     *
+* .A = STRING LENGTH           *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 PRNSTR
@@ -87,5 +87,4 @@ PRNSTR
 ** DATA
 *
 :S1LEN   DS    1
-*
 *

@@ -14,10 +14,6 @@
 *-                            -*
 * USAGE:                       *
 *                              *
-*   LDA #>$300 ; DESTINATION   *
-*   PHA                        *
-*   LDA #<$300                 *
-*   PHA                        *
 *   LDA #>11111 ; VALUE TO     *
 *   PHA         ; CONVERT      *
 *   LDA #<11111                *
@@ -30,8 +26,6 @@
 *                              *
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
-* LO BYTE DESTINATION ADDRESS  *
-* HI BYTE DESTINATION ADDRESS  *
 * LO BYTE VALUE TO CONVERT     *
 * HI BYTE VALUE TO CONVERT     *
 *-                            -*
@@ -42,18 +36,16 @@
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
 *                              *
-*   Y = COUNTER; TRASH         *
-*   X = COUNTER; TRASH         *
-*   A = LOW BYTE OF RET ADDR   *
+* .Y = COUNTER; TRASH          *
+* .X = COUNTER; TRASH          *
+* .A = LOW BYTE OF RET ADDR    *
+*                              *
+* [RETURN] = STRING VALUE      *
+* [RETLEN] = LENGTH OF STRING  *
 *-                            -*
 * ADAPTED FROM LEVANTHAL AND   *
 * WINTHROP'S /6502 ASSEMBLY    *
 * LANGUAGE ROUTINES/.          *
-* AS SUCH, THIS MAY NOT FALL   *
-* UNDER THE APACHE 2.0 LICENSE *
-* AGREEMENT, SINCE THE BOOK    *
-* WAS WRITTEN BEFORE THE       *
-* LICENSE!                     *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 NUM2STR
@@ -83,9 +75,9 @@ NUM2STR
          STA   :VALSTR+1
 *
 :GETBP
-         PLA
+         LDA   #<RETURN
          STA   ADDR1      ; ADDRESS TO STORE STRING
-         PLA
+         LDA   #>RETURN+1
          STA   ADDR1+1
          LDA   #0         ; SET BUFFER TO EMPTY
          LDY   #0
@@ -148,7 +140,7 @@ NUM2STR
 :EXIT
          LDA   :NGFLAG
          BPL   :POS       ; BR IF ORIG VAL POS
-         LDA   #'-'       ; ELSE
+         LDA   #173       ; ELSE
          JSR   :CONCAT    ; PUT A MINUS SIGN IN FRONT
 *
 :POS
