@@ -1,0 +1,33 @@
+*
+FINPUT
+*
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+         PLA
+         STA   ADDR1
+         PLA
+         STA   ADDR1+1
+         LDX   #0
+         JSR   FGETLN
+         STX   :SLEN
+         CPX   #0
+         BEQ   :EXIT
+:INP_CLR
+         LDY   #0
+         LDA   :SLEN
+         STA   (ADDR1),Y
+:LP
+         LDA   $0200,Y
+         INY
+         STA   (ADDR1),Y
+         CPY   :SLEN
+         BNE   :LP
+:EXIT
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+         RTS
+:SLEN    DS    1

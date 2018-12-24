@@ -1,0 +1,27 @@
+*
+FPSTR
+*
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+         PLA
+         STA   ADDR1
+         PLA
+         STA   ADDR1+1
+         LDY   #0
+         LDA   (ADDR1),Y
+         STA   :SLEN
+:LP
+         INY
+         LDA   (ADDR1),Y
+         JSR   FCOUT
+         CPY   :SLEN
+         BNE   :LP
+:EXIT
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+         RTS
+:SLEN    DS    1

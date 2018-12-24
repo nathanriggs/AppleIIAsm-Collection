@@ -3,9 +3,9 @@
 *                              *
 *      -< FILEIO  DEMO >-      *
 *                              *
-*       VERSION 00.00.01       *
+*       VERSION 00.02.00       *
 *                              *
-*         03/04/1980           *
+*         22-DEC-2018          *
 *                              *
 ********************************
 *                              *
@@ -20,256 +20,237 @@
          EXP   ONLY
          DSK   FILEIO.DEMO
 *
+         OBJ   $BFE0
+         ORG   $6000
+*
 *``````````````````````````````*
-*  TOP INCLUDES (PUTS, MACROS) *
+*  TOP INCLUDES (HOOKS,MACROS) *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-         PUT   DECS
-         USE FILEIO.MAC
+         USE   REQUIRED.MAC
+         PUT   REQUIRED.HOOKS
 *
+         USE   FILEIO.MAC
          PUT   FILEIO.HOOKS
-*
-         OBJ   $BFE0
-         ORG $6000
 *
 *``````````````````````````````*
 *      PROGRAM MAIN BODY       *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-*
-*
-** BIG LUMPS -- HIGH LEVEL CODE
-*
-*
-*
-*
-** PUT A FEW VALUES AT $300 TO PROVE
-** BSAVING AND BLOADING
-*
-         LDA   #0
-         STA   $300
-         LDA   #1
-         STA   $301
-         LDA   #2
-         STA   $302
-         LDA   #3
-         STA   $303
-*
-*
-** BSAVE DOES A DOS BINARY SAVE WITH THE
-** COMMAND LINE PARAMETERS STORED IN THE
-** STRING CONTAINED AT THE SPECIFIED ADDRESS.
-*
-** FOR INSTANCE, IF THE STRING CONTAINS:
-**       TEST,A$300,L$100
-** SPCIFYING THE NAME OF THE FILE, THE ADDRESS
-** OFF THE MEMORY TO STORE, AND THE LENGTH
-** TO SAVE, THE BSAVE ROUTINE WILL EXECUTE
-** THE COMMAND: BSAVE TEST,A$300,L$100
-*
-** MACRO: _BSAV TESTSTR
-*
-         LDA   #>TESTSTR
-         PHA
-         LDA   #<TESTSTR
-         PHA
-         JSR   BSAVE
-*
-** NOW CLEAR THE 1,2,3 STORED IN $300 TO
-** SHOW THAT IT WAS LOADED AGAIN
-*
-         LDA   #0
-         STA   $300
-         STA   $301
-         STA   $302
-         STA   $303
-*
-** BLOAD SIMPLY BLOADS PREVIOUSLY BSAVED DATA
-** INTO THE SPECIFIED ADDRESS IN THE STRING
-*
-** MACRO: _BLOD TESTLD
-*
-         LDA   #>TESTLD
-         PHA
-         LDA   #<TESTLD
-         PHA
-         JSR   BLOAD
-*
-*
-** CMD SIMPLY RUNS A DOS COMMAND. THIS CAN BE USED
-** TO READ AND WRITE TEXT FILES, BUT THAT REQUIRES
-** AN EXTRA STEP (SEE BELOW). OTHERWISE, IT'S JUST
-** A MATTER OF CALLING THE SUBROUTINE, THEN HAVING
-** AN ASC THAT FOLLOWS WITH THE DOS COMMAND.
-*
-** MACRO: _CMD "CATALOG"
-*
-         JSR   CMD
-         ASC   "CATALOG"
-         HEX   8D00
-*
-*
-** TO ACCESS TEXT FILES, WE HAVE TO GO INTO
-** INDIRECT MODE TO FOOL DOS INTO THINKING A
-** PROGRAM IS RUNNING. THE CAVEAT IS THAT WE
-** MUST JUMP TO 3D0 (REENTRY) TO TERMINTE THE
-** PROGRAM INSTEAD OF USING RTS. THIS IS THE
-** SAME ISSUE WHEN USING COUT, HOWEVER, SO IT
-** IS PRETTY STANDARD.
-*
-** MACRO: _TMOD
-*
-         JSR   TMODE      ; ENTER TEXT OPERATION MODE
-*
-*
-** NOW LET'S WRITE A TEXT FILE USING A MIX
-** OF CMD AND THE FPRINT COMMAND
-*
-** MACRO: _FPRN "THIS IS A TEST."
-*
-         JSR   CMD
-         ASC   "OPEN TEXT1"
-         HEX   8D00
-         JSR   CMD
-         ASC   "WRITE TEXT1"
-         HEX   8D00
-         JSR   FPRINT
-         ASC   "THIS IS A TEST."
-         HEX   8D00
-         JSR   CMD
-         ASC   "CLOSE TEXT1"
-         HEX   8D00
-*
-*
-** NOW LET'S READ THAT FILE WITH FINPUT, WHICH
-** SIMPLY USES THE MONITOR INPUT ROUTINE AND THEN
-** COPIES THE BUFFER TO THE SPECIFIED LOCATION.
-** YOU CAN ALSO USE FGET, WHICH STORES A SINGLE
-** CHARACTER FROM THE FILE INTO THE ACCUMULATOR.
-*
-** MACRO: _FINP $300
-*
-         JSR   CMD
-         ASC   "OPEN TEXT1"
-         HEX   8D00
-         JSR   CMD
-         ASC   "READ TEXT1"
-         HEX   8D00
-         LDA   #>$300     ; PUT READ STRING HERE
-         PHA
-         LDA   #<$300
-         PHA
-         JSR   FINPUT
-         JSR   CMD
-         ASC   "CLOSE TEXT1"
-         HEX   8D00
-*
-*
-** FPSTR WRITES A STRING TO A TEXT FILE
-** THAT RESIDES IN A SPECIFIC ADDRESS.
-*
-** MACRO: _FPRN TSTR
-*
-         JSR   CMD
-         ASC   "OPEN T.TEST"
-         HEX   8D00
-         JSR   CMD
-         ASC   "WRITE T.TEST"
-         HEX   8D00
-         LDA   #>TSTR
-         PHA
-         LDA   #<TSTR
-         PHA
-         JSR   FPSTR
-         JSR   CMD
-         ASC   "CLOSE T.TEST"
-         HEX   8D00
-*
-** _FGET SIMPLY GETS A SINGLE CHARACTER FROM
-** THE GIVEN FILE AND STORES IT IN THE
-** ACCUMULATOR.
-*
-         _CMD  "OPEN T.TEST"
-         _CMD  "READ T.TEST"
-         _FGET
-         _CMD  "CLOSE T.TEST"
-*
-*
 ********************************
+********************************
+*                              *
+* NOTE: FOR THIS TO WORK       *
+* PROPERLY, THE DEMO HAS TO BE *
+* BLOADED, THEN EXECUTED VIA   *
+* THE MONITOR (6000G). IF THIS *
+* IS NOT DONE, YOU WILL GET A  *
+* "FILE NOT FOUND" ERROR WHEN  *
+* DOING FILE OPERATIONS.       *
+*                              *
+* FOR YOUR OWN PROJECTS, A WAY *
+* TO WORK AROUND THIS IS TO    *
+* USE AN EXEC FILE TO BLOAD    *
+* AND EXECUTE THE CODE.        *
+*                              *
+********************************
+********************************
+*
+         _PRNT " ",8D8D8D8D8D
+         _PRNT "FILE INPUT/OUTPUT MACROS",8D
+         _PRNT "------------------------",8D8D
+         _PRNT "THE BSAVE MACRO SAVES THE GIVEN",8D
+         _PRNT "ADDRESS RANGE UNDER THE SPECIFIED",8D
+         _PRNT "BINARY FILE. THE ARGUMENT IS SIMPLY",8D
+         _PRNT "A STRING THAT WOULD MATCH THE ARGUMENTS",8D
+         _PRNT "OF A TYPICAL BSAVE STATEMENT IN DOS.",8D8D
+         _PRNT "BSAVE 'TEST,A$800,L$100' SAVES THE",8D
+         _PRNT "$100 BYTES LOCATED AT $800 IN THE FILE",8D
+         _PRNT "TEST.",8D8D
+         _PRNT "LET'S PUT SOMETHING INTO $300 TO",8D
+         _PRNT "TEST IT OUT.",8D8D
+         LDY   #0
+LP
+         TYA
+         STA   $800,Y
+         INY
+         CPY   #$100
+         BNE   LP
+         _WAIT
+         _DUMP $800;#$100
+         _WAIT
+         _PRNT "BSAVE 'TEST,A$800,L$100'...."
+         BSAVE "TEST,A$800,L$100"
+         _PRNT "DONE!",8D8D
+         _PRNT "NOW LET'S CLEAR $100 BYTES AT",8D
+         _PRNT "$800 BEFORE WE RELOAD IT WITH BLOAD.",8D8D
+         LDY   #0
+LP2
+         LDA   #0
+         STA   $800,Y
+         INY
+         CPY   #$100
+         BNE   LP2
+         _DUMP $800;#$100
+*
+         _PRNT " ",8D8D
+         _PRNT "NOW WE CAN BLOAD TEST TO GET $800",8D
+         _PRNT "BACK INTO THE STATE WE PUT IT.",8D8D
+         _PRNT "BLOAD 'TEST'...",8D
+         _WAIT
+         BLOAD "TEST"
+         _PRNT " ",8D8D
+         _PRNT "DONE!",8D8D
+         _DUMP $0800;#$100
+         _PRNT " ",8D8D
+         _WAIT
+*
+         _PRNT "THE CMD MACRO SIMPLY EXECUTES A",8D
+         _PRNT "DOS COMMAND, ALONG WITH ANY ARGUMENTS",8D
+         _PRNT "PASSED TO IT. CMD 'CATALOG', FOR INSTANCE,",8D
+         _PRNT "RETURNS:",8D8D
+         _WAIT
+         CMD   "CATALOG"
+         _WAIT
+*
+         _PRNT " ",8D8D8D
+         _PRNT "TYPICALLY, THE CMD MACRO IS ALSO",8D
+         _PRNT "USED FOR PREPARING TO READ OR WRITE",8D
+         _PRNT "TEXT FILES. HOWEVER, BEFORE THIS CAN",8D
+         _PRNT "BE ACCOMPLISHED, THE TMODE MACRO",8D
+         _PRNT "MUST BE RUN TO TRICK APPLESOFT INTO",8D
+         _PRNT "BELIEVING IT ISN'T IN IMMEDIATE MODE.",8D8D
+         _PRNT "TMODE HAS NO ARGUMENTS. THUS, THE",8D
+         _PRNT "FOLLOWING PREPARES US TO OPEN A TEXT",8D
+         _PRNT "FILE TO BE WRITTEN TO:",8D8D
+         _PRNT "TMDOE",8D
+         _PRNT "CMD 'OPEN T.TEXTFILE'",8D
+         _PRNT "CMD 'WRITE T.TEXTFILE'",8D8D
+         _WAIT
+*
+         _PRNT "WE CAN NOW PRINT TO THIS FILE WITH",8D
+         _PRNT "THE FPRN MACRO. THIS MACRO EITHER",8D
+         _PRNT "PRINTS A GIVEN LINE OF TEXT TO THE FILE,",8D
+         _PRNT "FOLLOWED BY A RETURN ($8D), OR PRINTS",8D
+         _PRNT "THE CHARACTERS IN A STRING AT A GIVEN",8D
+         _PRNT "ADDRESS. IN THE LATTER CASE, THE LENGTH",8D
+         _PRNT "OF THE STRING IS NOT PRESERVED; ONLY",8D
+         _PRNT "THE ASCII IS.",8D8D
+         _PRNT "FPRN 'ALL IS WELL THAT ENDS WELL.'",8D
+         _PRNT "FPRN RETORT",8D8D
+         TMODE
+         CMD   "OPEN T.TEXTFILE"
+         CMD   "WRITE T.TEXTFILE"
+         FPRN  "ALL IS WELL THAT ENDS WELL."
+         FPRN  RETORT
+         CMD   "CLOSE T.TEXTFILE"
+         _PRNT " ",8D8D8D
+         _PRNT "PUTS THE LITERAL PHRASE AND A PHRASE",8D
+         _PRNT "STORED IN THE RETORT ADDRESS INTO",8D
+         _PRNT "THE FILE.",8D
+         _WAIT
+         _PRNT " ",8D8D8D
+         _PRNT "THEN, LIKE ALWAYS, WE MUST CLOSE",8D
+         _PRNT "THE FILE VIA CMD:",8D8D
+         _PRNT "CMD 'CLOSE T.TEXTFILE'",8D8D8D
+         _WAIT
+         _PRNT "FINALLY, TO READ THIS TEXT FILE",8D
+         _PRNT "WE SIMPLY NEED TO OPEN THE",8D
+         _PRNT "FILE FOR READING VIA THE CMD MACRO,",8D
+         _PRNT "THEN USE THE FINP MACRO TO READ A ",8D
+         _PRNT "LINE OF TEXT AND STORE IT IN",8D
+         _PRNT "MEMORY:",8D8D
+         _PRNT "CMD 'OPEN T.TEXTFILE'",8D
+         _PRNT "CMD 'READ T.TEXTFILE'",8D
+         _PRNT "FINP RETURN",8D
+         _PRNT "FINP PARAM",8D
+         _PRNT "CMD 'CLOSE T.TEXTFILE'",8D8D
+         CMD   "OPEN T.TEXTFILE"
+         CMD   "READ T.TEXTFILE"
+         FINP  RETURN
+         FINP  PARAM
+         CMD   "CLOSE T.TEXTFILE"
+         _WAIT
+         _DUMP RETURN;RETURN
+         _DUMP PARAM;PARAM
+         _WAIT
+*
+         _PRNT " ",8D8D
+         _PRNT "THESE STRINGS ARE NOW STORED IN",8D
+         _PRNT "[RETURN] AND [PARAM], RESPECTIVELY,",8D
+         _PRNT "WITH A PRECEDING LENGTH BYTE. THESE",8D
+         _PRNT "CAN BE PRINTED WITH THE SPRN MACRO",8D
+         _PRNT "FOUND IN THE STRINGS LIBRARY.",8D8D8D
+         _WAIT
+*
 ********************************
 ********************************
 ********************************
 *                              *
-*   D A N G E R D A N G E R    *
+*   W A R N I N G              *
 *                              *
 ********************************
 ********************************
 ********************************
-********************************
 *
-** THE FOLLOWING CODE DOES LOW
-** LEVEL DISK ACCESS, WHICH COULD
-** SERIOUSLY CORRUPT YOUR DISK.
+         _PRNT "********************************",8D
+         _PRNT "********************************",8D8D
+         _PRNT "      WARNING!!!",8D8D
+         _PRNT "********************************",8D
+         _PRNT "********************************",8D8D
+         _PRNT "AT THIS POINT, YOU WANT TO EJECT",8D
+         _PRNT "THE CURRENT DISK, AND PUT IN",8D
+         _PRNT "A DISK THAT YOU DON'T MIND ",8D
+         _PRNT "HAVING TO REFORMAT. ",8D8D
+         _PRNT "THE REST OF THE ROUTINES ARE",8D
+         _PRNT "LOW LEVEL DISK ACCESS PROCEDURES,",8D
+         _PRNT "AND CAN SERIOUSLY DAMAGE A DISK!",8D8D
+         _PRNT "<<< PRESS A KEY ONCE YOU'RE READY >>>",8D8D
+         _WAIT
 *
-** MAKE SURE YOU USE THESE ROUTINES
-** ONLY WHEN YOU HAVE BACKUPS AND
-** KNOW WHAT YOU'RE DOING!
+         _PRNT "LOW-LEVEL DISK ACCESS IS DONE VIA",8D
+         _PRNT "THE STANDARD RWTS ROUTINE, WITH A",8D
+         _PRNT "FEW MACROS THROWN IN TO MAKE IT *FEEL*",8D
+         _PRNT "MORE SERIALIZED. THE FOLLOWING MACROS",8D
+         _PRNT "ALTER THE RWTS ROUTINE'S BEAHVIOR:",8D8D
+         _PRNT "SLOT : SETS THE RWTS SLOT",8D
+         _PRNT "DRIVE: SETS THE RWTS DRIVE",8D
+         _PRNT "TRACK: SETS THE TRACK TO BE WRITTEN/READ",8D
+         _PRNT "SECT : SETS THE SECTOR TO BE READ/WRITTEN",8D
+         _PRNT "SETDR: SET RWTS TO READ MODE",8D
+         _PRNT "SETDW: SET RWTS TO WRITE MODE",8D
+         _PRNT "DBUFF: SET THE READ/WRITE BUFFER ADDRESS",8D8D
+         _WAIT
+         _PRNT "EACH OF THESE SETTINGS ARE INHERITED",8D
+         _PRNT "FROM THE PREVIOUS STATE; IF YOU ARE",8D
+         _PRNT "ALREADY USING SECTOR 6, DRIVE 1, FOR",8D
+         _PRNT "EXAMPLE, THEN YOU DON'T HAVE TO SET IT AGAIN",8D
+         _PRNT "UNLESS YOU WANT THOSE SETTINGS CHANGED.",8D
+         _PRNT "THIS LIBRARY ALSO USES THE SAME IOB",8D
+         _PRNT "TABLE AS THE OPERATING SYSTEM (DOS OR",8D
+         _PRNT "PRODOS) TO CARRY OVER ANY PREVIOUS SETTINGS.",8D8D
+         _WAIT
 *
-*
-** _SLOT SETS THE SLOT FOR RWTS
-** LOW-LEVEL DISK OPERATIONS.
-** THERE IS NO ACTUAL ROUTINE FOR
-** THIS IN THE LIBRARY; IT ONLY EXISTS
-** AS A MACRO.
-*
-         _SLOT #6
-*
-** THE REST OF THE COMMANDS UP UNTIL
-** _RWTS FOLLOW A SIMILAR PATTERN, AND ALL
-** CHANGE THE IOB TABLE.
-*
-*
-         _DRIV #2         ; CHANGE DRIVE
-*
-         _COMM #1         ; SET FOR READ
-*
-         _DBUF $1000      ; DISK BUFFER AREA
-*
-         _TRAK #2         ; SET TRACK
-         _SECT #2         ; SET SECTOR
-*
-         _RWTS
-         BRK
-*
-** THE PRECEDING READS FROM TRACK 2, SECTOR 2
-** OF DRIVE 2 IN SLOT 6, AND COPIES IT TO $1000.
-*
-** THERE ARE PLENTY OF OTHER USES HERE, BUT FOR
-** THE SAKE OF SAFETY, WE WON'T BE SHOWING ANY
-** DISK WRITE OPERATIONS. HOWEVER, THERE WILL BE A
-** DISK DEDICATED TO THIS IN THE FUTURE, BUT WITHOUT
-** THE SOURCE CODE ON IT.
-*
-*
-*
-** LITTLE LUMPS -- MID/LOW LEVEL
-*
+         _PRNT "ONCE THE SETTINGS ARE AS DESIRED,",8D
+         _PRNT "YOU USE THE DRWTS MACRO TO CALL",8D
+         _PRNT "THE RWTS ROUTINE TO MAKE THE ",8D
+         _PRNT "APPROPRIATE READ OR WRITE CHANGE TO",8D
+         _PRNT "THE DISK.",8D8D
+         _PRNT "FOR THE SAKE OF PLAYING IT SAFE,",8D
+         _PRNT "WE WON'T BE DOING THAT HERE--YOU CAN",8D
+         _PRNT "EXPERIMENT ON YOUR OWN WITH THESE CALLS;",8D
+         _PRNT "THAT WAY IF SOMETHING BAD HAPPENS,",8D
+         _PRNT "IT'S ON YOU--NOT ME! :)",8D8D8D
+         _WAIT
 *
          JMP   REENTRY
-*
-** DATA
-*
-TESTSTR  STR   "TEST,A$300,L$100"
-TESTLD   STR   "TEST,A$300"
-TSTR     STR   "COMMUNISM WILL WIN!"
-*
 *
 *``````````````````````````````*
 *        BOTTOM INCLUDES       *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-*
-** BOTTOM INCLUDES
-*
          PUT   FILEIO.LIB
+         PUT   REQUIRED.LIB
+*
+RETORT   STR   "IF YOU ARE RICH, ANYHOW..."
 *

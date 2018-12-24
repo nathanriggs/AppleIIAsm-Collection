@@ -7,26 +7,20 @@
 * CONTACT: NATHAN.RIGGS@       *
 *          OUTLOOK.COM         *
 *                              *
-* VERSION: 0.1.2               *
-* DATE:    30-OCT-2018         *
+* VERSION:   0.2.0             *
+* DATE:      22-DEC-2018       *
 * ASSEMBLER: MERLIN 8 PRO      *
-*                              *
-* LICENSE: APACHE 2.0, WHERE   *
-*  APPLICABLE. CODE INSPIRED   *
-*  BY THE WORKS OF OTHERS MAY  *
-*  FALL UNDER A DIFFERENT      *
-*  LICENSE (NOTED IN ROUTINE). *
-*                              *
+* OS:        DOS 3.3           *
+* LICENSE:   APACHE 2.0        *
 *                              *
 *------------------------------*
 *                              *
 * LIST OF ROUTINES             *
 *                              *
-* BSAVE : SAVE BINARY FILE     *
-* BLOAD : LOAD BINARY FILE     *
-* TMODE : TEXT FILE OPS MODE   *
-* CMD : EXEC DOS COMMAND       *
-* TMODE : SET TEXT IO MODE     *
+* BINSAVE : SAVE BINARY FILE   *
+* BINLOAD : LOAD BINARY FILE   *
+* TXTMODE : TEXT FILE OPS MODE *
+* DOSCMD : EXEC DOS COMMAND    *
 * FPRINT : PRINT TO FILE       *
 * FPSTR : FILE PRINT STRING    *
 * FINPUT : GET LINE FROM TEXTF *
@@ -34,7 +28,7 @@
 *=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-*
 *
 *``````````````````````````````*
-* BSAVE :: BINARY SAVE         *
+* BINSAVE ::       BINARY SAVE *
 *-                            -*
 * SIMPLY DOES A BINARY SAVE    *
 * WITH THE COMMAND LINE PARAMS *
@@ -54,7 +48,7 @@
 *  PHA                         *
 *  LDA #<SADDR                 *
 *  PHA                         *
-*  JSR BSAVE                   *
+*  JSR BINSAVE                 *
 *-                            -*
 * ENTRY                        *
 *                              *
@@ -72,12 +66,12 @@
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
 *                              *
-*   Y = UNCHANGED              *
-*   X = UNCHANGED              *
-*   A = CLOBBERED; TRASH       *
+* .Y = UNCHANGED               *
+* .X = UNCHANGED               *
+* .A = CLOBBERED; TRASH        *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-BSAVE
+BINSAVE
 *
 ** GET RETURN ADDRESS
 *
@@ -143,7 +137,7 @@ BSAVE
 :SLEN    DS    1
 *
 *``````````````````````````````*
-* BLOAD :: BINARY LOAD         *
+* BINLOAD ::       BINARY LOAD *
 *-                            -*
 * SIMPLY BLOADS INTO MEMORY AS *
 * SPECIFIED BY THE STRING      *
@@ -162,7 +156,7 @@ BSAVE
 *   PHA                        *
 *   LDA #<SADDR                *
 *   PHA                        *
-*   JSR BLOAD                  *
+*   JSR BINLOAD                *
 *-                            -*
 * ENTRY                        *
 *                              *
@@ -180,12 +174,12 @@ BSAVE
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
 *                              *
-*   Y = UNCHANGED              *
-*   X = UNCHANGED              *
-*   A = CLOBBERED; TRSAH       *
+* .Y = UNCHANGED               *
+* .X = UNCHANGED               *
+* .A = CLOBBERED; TRASH        *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-BLOAD
+BINLOAD
 *
 ** GET RETURN ADDRESS
 *
@@ -251,7 +245,7 @@ BLOAD
 :SLEN    DS    1
 *
 *``````````````````````````````*
-* TMODE :: TEXT FILE OPS MODE  *
+* TXTMODE ::    TEXT FILE MODE *
 *-                            -*
 * THIS ROUTINE FOOLS DOS INTO  *
 * THINKING IT IS IN NON-       *
@@ -265,9 +259,6 @@ BLOAD
 *-                            -*
 * CYCLES: ???                  *
 * SIZE:                        *
-*-                            -*
-* USAGE:                       *
-*                              *
 *-                            -*
 * ENTRY                        *
 *                              *
@@ -283,12 +274,12 @@ BLOAD
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
 *                              *
-*   Y = UNCHANGED              *
-*   X = UNCHANGED              *
-*   A = CLOBBERED; TRASH       *
+* .Y = UNCHANGED               *
+* .X = UNCHANGED               *
+* .A = CLOBBERED; TRASH        *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-TMODE
+TXTMODE
 *
          LDA   #$40
          STA   LANG       ; LANG = FP
@@ -298,7 +289,7 @@ TMODE
          RTS
 *
 *``````````````````````````````*
-* CMD :: EXECUTE DOS COMMAND   *
+* DOSCMD : EXECUTE DOS COMMAND *
 *-                            -*
 * EXECUTES A DOS COMMAND THAT  *
 * IS PASSED VIA AN ASC THAT    *
@@ -314,7 +305,7 @@ TMODE
 *-                            -*
 * USAGE:                       *
 *                              *
-*  JSR CMD                     *
+*  JSR DOSCMD                  *
 *  ASC "CATALOG"               *
 *  HEX 8D00                    *
 *-                            -*
@@ -332,12 +323,12 @@ TMODE
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
 *                              *
-*   Y = CLOBBERED              *
-*   X = UNCHANGED              *
-*   A = UNCHANGED              *
+* .Y = CLOBBERED               *
+* .X = UNCHANGED               *
+* .A = UNCHANGED               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-CMD
+DOSCMD
 *
 ** GET RETURN ADDRESS
 *
@@ -417,9 +408,9 @@ CMD
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
 *                              *
-*   Y = CLOBBERED              *
-*   X = UNCHANGED              *
-*   A = CLOBBERED              *
+* .Y = CLOBBERED               *
+* .X = UNCHANGED               *
+* .A = CLOBBERED               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 FPRINT
@@ -499,9 +490,9 @@ FPRINT
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
 *                              *
-*   Y = CLOBBERED              *
-*   X = CLOBBERED              *
-*   A = CLOBBERED              *
+* .Y = CLOBBERED               *
+* .X = CLOBBERED               *
+* .A = CLOBBERED               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 FINPUT
@@ -584,9 +575,9 @@ FINPUT
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
 *                              *
-*   Y = CLOBBERED              *
-*   X = CLOBBERED              *
-*   A = CLOBBERED              *
+* .Y = CLOBBERED               *
+* .X = CLOBBERED               *
+* .A = CLOBBERED               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 FPSTR
@@ -660,9 +651,9 @@ FPSTR
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
 *                              *
-*   Y = CLOBBERED              *
-*   X = CLOBBERED              *
-*   A = CLOBBERED              *
+* .Y = CLOBBERED               *
+* .X = CLOBBERED               *
+* .A = CLOBBERED               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 DISKOP

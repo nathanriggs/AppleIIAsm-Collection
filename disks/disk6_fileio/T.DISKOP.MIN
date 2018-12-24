@@ -1,0 +1,14 @@
+*
+DISKOP
+*
+:CLEAR
+         LDA   #00
+         STA   IOB_EVOL
+         LDA   #>IOB
+         LDY   #<IOB
+         JSR   RWTS
+         BCC   :EXIT
+:ERR     LDA   IOB_ERR
+         LDX   #00
+         STX   $48
+:EXIT    RTS
