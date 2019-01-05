@@ -4,8 +4,8 @@ A general purpose ASM libriary for the Apple II. Assembled in Merlin 8 Pro
 ## Table of Contents
 * Introduction
 * Disk Overviews
- * Disk 1: STDIO
- *
+  * Disk 1: STDIO
+  *
 * Macro Subroutine Overlap Table
 * Detailed Descriptions: Macros
 * Detailed Descriptions: Subroutines
@@ -18,7 +18,7 @@ Ultimately, my aim is to create a large enough collection of routines to address
 
 ---
 ## Disk Overviews
-Disk 1: STDIO
+###Disk 1: STDIO
 * stdio.mac: Standard Input/Output library.
   * PRN: Flexible (screen) Printing routine
   * PCR: Print Carraige Return
@@ -37,67 +37,24 @@ Disk 1: STDIO
   * TVLIN: Text Vertical Line Fill with Character [n]
   * TFILL: Text Fill square [x1],[x2],[y1],[y2] with Character [n]
   
-Disk 2: COMMON / REQUIRED
+###Disk 2: COMMON / REQUIRED
 * common.mac: Common, useful subroutines: memory swaps, etc.
-  * MEMFILL
-  * MEMMOVE
-  * DELAYMS
-  * ZSAVE
-  * ZLOAD
+* required.mac: Set of Macros used across every disk in the library.
+  
+###Disk 3: MATH SUBROUTINES
+* math8.mac: 8-bit and 16-bit Basic Math Macros.
 
-MATH DISK
-* math8.lib: 8-bit Integer Math Library.
-  * RND8
-  * RANDB
-  * MUL8
-  * DIV8
-* math16.lib: 16-bit Integer Math Library.
-  * ADD16
-  * SUB16
-  * MUL16
-  * SDIV16
-  * UDIV16
-  * SREM16
-  * UREM16
-  * CMP16
-  * RND16
+###Disk 4: FILE IO DISK
+* fileio.mac: Macros for file input/output and disk operations.
 
-IO DISK
-* fileio.lib: File Input/Output Library.
-  * BSAVE (may be deleted)
-  * BLOAD (may be deleted)
-  * TMODE
-  * CMD
-  * FPRINT
-  * FPSTR
-  * FINPUT
-* in the future, serial routines will also reside here.
+###Disk 5: ARRAYS DISK
+* arrays.mac: library for managing 1-dimensional 8-bit arrays.
 
-ARRAYS DISK
-* arrays81.lib: library for managing 1-dimensional 8-bit arrays.
-  * DIM81
-  * AGET81
-  * APUT81
-* arrays82.lib: library for managing 2-dimensional 8-bit arrays.
-  * DIM82
-  * AGET82
-  * APUT82
-* 16-bit array libraries will also be on this disk in the future
+###Disk 6: STRINGS DISK
+* strings.mac: library for managing strings.
 
-STRINGS DISK
-* strings.lib: Library for managing strings. 
-  * STRCOMP
-  * STRCAT
-  * ASC2STR
-  * STR2ASC
-  * PRNSTR
-  * NUM2STR
-  * STR2NUM
-* substrings.lib: Library for manipulating substrings.
-  * SUBPOS
-  * SUBCOPY
-  * SUBDEL
-  * SUBINS
+---
+## Future Disks
 
 ~~LORES DISK~~
 * ~~lores.lib: Library for fast(er) graphics in low resolution mode.~~
@@ -121,4 +78,7 @@ STRINGS DISK
 
 ~~80COL DISK~~
 * ~~stdio library and some routines for double lores and double hires~~
+
+~~PRINTER IO~~
+~~SERIAL IO~~
 
