@@ -18,7 +18,7 @@ Ultimately, my aim is to create a large enough collection of routines to address
 
 ---
 ## Disk Overviews
-###Disk 1: STDIO
+### Disk 1: STDIO
 * stdio.mac: Standard Input/Output library.
   * PRN: Flexible (screen) Printing routine
   * PCR: Print Carraige Return
@@ -37,20 +37,20 @@ Ultimately, my aim is to create a large enough collection of routines to address
   * TVLIN: Text Vertical Line Fill with Character [n]
   * TFILL: Text Fill square [x1],[x2],[y1],[y2] with Character [n]
   
-###Disk 2: COMMON / REQUIRED
+### Disk 2: COMMON / REQUIRED
 * common.mac: Common, useful subroutines: memory swaps, etc.
 * required.mac: Set of Macros used across every disk in the library.
   
-###Disk 3: MATH SUBROUTINES
+### Disk 3: MATH SUBROUTINES
 * math8.mac: 8-bit and 16-bit Basic Math Macros.
 
-###Disk 4: FILE IO DISK
+### Disk 4: FILE IO DISK
 * fileio.mac: Macros for file input/output and disk operations.
 
-###Disk 5: ARRAYS DISK
+### Disk 5: ARRAYS DISK
 * arrays.mac: library for managing 1-dimensional 8-bit arrays.
 
-###Disk 6: STRINGS DISK
+### Disk 6: STRINGS DISK
 * strings.mac: library for managing strings.
 
 ---
