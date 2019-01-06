@@ -21,6 +21,7 @@ A general purpose ASM libriary for the Apple II. Assembled in Merlin 8 Pro.
   * [Disk 6: FILEIO](#disk-6-fileio)
 * [Future Disks](#future-disks)
 * ~~Macro Subroutine Overlap Table~~
+* ~~Macro Usage Cheat Sheet~~
 * ~~Detailed Descriptions: Macros~~
 * ~~Detailed Descriptions: Subroutines~~
 
@@ -98,22 +99,22 @@ In the following descriptions, we'll be listing the .mac contents that are relev
 This disk is dedicated to Standard Input/Output operations, and a couple non-standard ones. Note that this is for 40-column mode only in order to keep compatibility with earlier hardware, and focuses on screen output alone in order to help with execution speed. Additionally, this focuses on input from the most-used peripherals: the keyboard and game paddles. Libraries for 80-column mode, as well as input and output from and to other devices, will be added later on.
 
 * stdio.mac
-  * CURB: Move Cursor Backward by [n] spaces
-  * CURD: Move Cursor Down by [n] spaces
-  * CURF: Move Cursor Forward by [n] spaces
-  * CURU: Move Cursor Up by [n] spaces
-  * INP: String Input Macro
-  * PBX: Read State of Paddle Button [x]
-  * PCR: Print Carraige Return
-  * PDL: Read Current Paddle State
-  * PRN: Flexible (screen) Printing routine
-  * RCPOS: Read Cursor Position
-  * SCPOS: Set Cursor position at [x],[y]
-  * SETCX: Set Cursor Horizontal Position
-  * SETCY: Set Cursor Vertical Position
-  * TFILL: Text Fill square [x1],[x2],[y1],[y2] with Character [n]
-  * THLIN: Text Horizontal Line Fill with Character [n]
-  * TVLIN: Text Vertical Line Fill with Character [n]
+  * [`CURB`](#CURB): Move Cursor Backward by [n] spaces
+  * `CURD`: Move Cursor Down by [n] spaces
+  * `CURF`: Move Cursor Forward by [n] spaces
+  * `CURU`: Move Cursor Up by [n] spaces
+  * `INP`: String Input Macro
+  * `PBX`: Read State of Paddle Button [x]
+  * `PCR`: Print Carraige Return
+  * `PDL`: Read Current Paddle State
+  * `PRN`: Flexible (screen) Printing routine
+  * `RCPOS`: Read Cursor Position
+  * `SCPOS`: Set Cursor position at [x],[y]
+  * `SETCX`: Set Cursor Horizontal Position
+  * `SETCY`: Set Cursor Vertical Position
+  * `TFILL`: Text Fill square [x1],[x2],[y1],[y2] with Character [n]
+  * `THLIN`: Text Horizontal Line Fill with Character [n]
+  * `TVLIN`: Text Vertical Line Fill with Character [n]
 
   
 ### Disk 2: COMMON / REQUIRED
@@ -121,50 +122,50 @@ This disk is dedicated to Standard Input/Output operations, and a couple non-sta
 This disk is dedicated to common and useful subroutines that don't necessarily fit neatly into another category worth dedicating an entire disk to, as well as the fully commented code for the required libraries and macros that exist on every disk in minified form.
 
 * common.mac
-  * BEEP: Beep for a given number of cycles.
-  * DELAY: Delay for the given number of Milliseconds.
-  * MFILL: Fill a block of memory with the passed value.
-  * MMOVE: Move a block of memory to another block of memory.
-  * ZLOAD: Retrieve previously save zero page values from a given address and restore them to the zero page. 
-  * ZSAVE: Save the zero page memory locations not used by applesoft, dos, etc. to another memory location.  
+  * `BEEP`: Beep for a given number of cycles.
+  * `DELAY`: Delay for the given number of Milliseconds.
+  * `MFILL`: Fill a block of memory with the passed value.
+  * `MMOVE`: Move a block of memory to another block of memory.
+  * `ZLOAD`: Retrieve previously save zero page values from a given address and restore them to the zero page. 
+  * `ZSAVE`: Save the zero page memory locations not used by applesoft, dos, etc. to another memory location.  
 * required.mac
-  * _DUMP: Dump the contents of a block of memory. This displays hex values only, and is primarily useful for debugging.
-  * _GRET: Get Return. Transfer the contents of the [RETURN] register to another memory location.
-  * _ISLIT: Is Literal. Tests a parameter to see if it is a literal value or an address. 
-  * _ISSTR: Is String. Tests a parameter to see if it is a literal string. 
-  * _PRNT: A standard print routine that mirrors that found in STDIO. This, too, is used mostly for debugging.
-  * _SPAR: Set Parameter. Transfer the contents of one memory location or a literal to the [PARAM] register.
-  * _WAIT: A simple routine that waits for a keypress. Again, useful for debugging.
+  * `_DUMP`: Dump the contents of a block of memory. This displays hex values only, and is primarily useful for debugging.
+  * `_GRET`: Get Return. Transfer the contents of the [RETURN] register to another memory location.
+  * `_ISLIT`: Is Literal. Tests a parameter to see if it is a literal value or an address. 
+  * `_ISSTR`: Is String. Tests a parameter to see if it is a literal string. 
+  * `_PRNT`: A standard print routine that mirrors that found in STDIO. This, too, is used mostly for debugging.
+  * `_SPAR`: Set Parameter. Transfer the contents of one memory location or a literal to the [PARAM] register.
+  * `_WAIT`: A simple routine that waits for a keypress. Again, useful for debugging.
   
 ### Disk 3: Arrays
 
 This disk contains libraries and subroutines related to the management of one-dimensional and two-dimensional arrays. Since these arrays use a singly byte for indexing, they are referred to as 8-bit arrays, even though you could technically use 64k of memory by increasing element lengths or simply having a 2D array of 256x256. Support for 16-bit indexing will be added in the future.
 
 * arrays.mac
-  * DIM81: Create a 1D array at a given address with a given element size and number of elements.
-  * DIM82: Create a 2D array at a given address with a given element size and number of elements in each dimension.
-  * GET81: Get the element at the given index in a 1D array.
-  * GET82: Get the element at the given index in a 2D array.
-  * PUT81: Put a value (literal or memory address) into a 1D array at the given index.
-  * PUT82: Put a value into a 2D array at the given index.
+  * `DIM81`: Create a 1D array at a given address with a given element size and number of elements.
+  * `DIM82`: Create a 2D array at a given address with a given element size and number of elements in each dimension.
+  * `GET81`: Get the element at the given index in a 1D array.
+  * `GET82`: Get the element at the given index in a 2D array.
+  * `PUT81`: Put a value (literal or memory address) into a 1D array at the given index.
+  * `PUT82`: Put a value into a 2D array at the given index.
 
 ### Disk 4: Math
 
 This disk hold routines related to standard mathematical calculations for signed and unsigned integer math as well as macros that use Applesoft's floating-point routines. Note that this only includes some rather basic math functions; more complicated problems should be addressed by the main program using the libraries.
 
 * math.mac
-  * ADD16: Add two 16-bit integers, signed or unsigned, and return a 16-bit result.
-  * CMP16: Compare two 16-bit values, signed or unsigned, and set flags appropriately.
-  * DIV8: Divide one unsigned 8-bit integer by another and return 8-bit result.
-  * DIV16: Divide one 16-bit value by another, signed or unsigned, and return a 16-bit result.
-  * MUL8: Multiply two unsigned 8-bit numbers and return 16-bit product.
-  * MUL16: Multiply two 16-bit integers, signed or unsigned, and return 24-bit product(see long description for some caveats)
-  * REM16: Divide one 16-bit integer by another, signed or unsigned, and return the 16-bit remainder.
-  * RND8: Generate a pseudo-random 8-bit number between 0 and 255.
-  * RND16: Generate a pseudo-random 16-bit number between 0 and 65025.
-  * RNDB: Generate an 8-bit pseudo-random integer between a given min and max value.
-  * RNDW: Generate a 16-bit pseudo-random integer between a given min and max value.
-  * SUB16: Subtract one 16-bit integer, signed or unsigned, from another and return a 16-bit result.
+  * `ADD16`: Add two 16-bit integers, signed or unsigned, and return a 16-bit result.
+  * `CMP16`: Compare two 16-bit values, signed or unsigned, and set flags appropriately.
+  * `DIV8`: Divide one unsigned 8-bit integer by another and return 8-bit result.
+  * `DIV16`: Divide one 16-bit value by another, signed or unsigned, and return a 16-bit result.
+  * `MUL8`: Multiply two unsigned 8-bit numbers and return 16-bit product.
+  * `MUL16`: Multiply two 16-bit integers, signed or unsigned, and return 24-bit product(see long description for some caveats)
+  * `REM16`: Divide one 16-bit integer by another, signed or unsigned, and return the 16-bit remainder.
+  * `RND8`: Generate a pseudo-random 8-bit number between 0 and 255.
+  * `RND16`: Generate a pseudo-random 16-bit number between 0 and 65025.
+  * `RNDB`: Generate an 8-bit pseudo-random integer between a given min and max value.
+  * `RNDW`: Generate a 16-bit pseudo-random integer between a given min and max value.
+  * `SUB16`: Subtract one 16-bit integer, signed or unsigned, from another and return a 16-bit result.
   * ~~FPADD: Floating-point addition using Applesoft's floating-point routines.~~ (not working yet)
   
 ### Disk 5: Strings
@@ -172,34 +173,34 @@ This disk hold routines related to standard mathematical calculations for signed
 This disk holds routines and macros related to string and substring manipulation. In the future, certain tasks like "TONUM" and "TOSTR" may be relegated to their own disk for data type conversion routines.
 
 * strings.mac
-  * SCAT: String Concatenate. Concatenate two independent strings and return a new string.
-  * SCMP: String Compare. Compare two strings and set flags accordingly.
-  * SCOP: Substring Copy. Returns the substring of another string at the given index and length.
-  * SDEL: Substring Delete. Deletes a given substring from another string and returns new string.
-  * SINS: Substring Insert. Inserts a substring into another string at the given index.
-  * SPOS: Substring Position. Find the position of a substring in another string and return the index.
-  * SPRN: String Print. This is a printing macro for the string data format. May be transferred to STDIO.
-  * TONUM: String to Number. Converts a string of number-characters to its integer equivalent and return a 16-bit result.
-  * TOSTR: Number to String. Converts a given 16-bit integer, signed or unsigned, to its string character equivalent.
+  * `SCAT`: String Concatenate. Concatenate two independent strings and return a new string.
+  * `SCMP`: String Compare. Compare two strings and set flags accordingly.
+  * `SCOP`: Substring Copy. Returns the substring of another string at the given index and length.
+  * `SDEL`: Substring Delete. Deletes a given substring from another string and returns new string.
+  * `SINS`: Substring Insert. Inserts a substring into another string at the given index.
+  * `SPOS`: Substring Position. Find the position of a substring in another string and return the index.
+  * `SPRN`: String Print. This is a printing macro for the string data format. May be transferred to STDIO.
+  * `TONUM`: String to Number. Converts a string of number-characters to its integer equivalent and return a 16-bit result.
+  * `TOSTR`: Number to String. Converts a given 16-bit integer, signed or unsigned, to its string character equivalent.
 
 ### Disk 6: FileIO
 
 This disk is dedicated to routines and macros that involve file manipulation and low-level disk access.
 
 * fileio.mac
-  * BLOAD: Binary load a file from the disk into the given memory location.
-  * BSAVE: Binary save a file from the given memory location to the given binary file.
-  * CMD: Execute a DOS command.
-  * DBUFF: Set RWTS Buffer Address.
-  * DRIVE: Set RWTS Drive.
-  * DRWTS: Call the RWTS routine for direct low-level access to the disk.
-  * FINP: File Input. Read a line from a text file.
-  * FPRN: File Print. Print a line to a text file.
-  * SECT: Set RWTS sector.
-  * SETDR: Set RWTS to the read command.
-  * SETDW: Set RWTS to the write command.
-  * SLOT: Set the RWTS slot.
-  * TMODE: Ready system for text-file mode. This is necessary for reading and writing text files.
+  * `BLOAD`: Binary load a file from the disk into the given memory location.
+  * `BSAVE`: Binary save a file from the given memory location to the given binary file.
+  * `CMD`: Execute a DOS command.
+  * `DBUFF`: Set RWTS Buffer Address.
+  * `DRIVE`: Set RWTS Drive.
+  * `DRWTS`: Call the RWTS routine for direct low-level access to the disk.
+  * `FINP`: File Input. Read a line from a text file.
+  * `FPRN`: File Print. Print a line to a text file.
+  * `SECT`: Set RWTS sector.
+  * `SETDR`: Set RWTS to the read command.
+  * `SETDW`: Set RWTS to the write command.
+  * `SLOT`: Set the RWTS slot.
+  * `TMODE`: Ready system for text-file mode. This is necessary for reading and writing text files.
   * ~~FCOPY: Copy a source file to a destination file~~ (not implemented yet)
   * ~~FDEL: Delete a file from the disk~~ (not implemented yet)
 
@@ -234,10 +235,10 @@ The following disks are in pre-production/planning, and will be part of future v
 * ~~library for sending and receiving data over the serial port~~
 
 ~~DOUBLE HIRES DISK~~
-* ~~ library for double high resolution graphics. Note that this is only available on the IIe (with 80col card), //c, and IIgs.~~
+* ~~library for double high resolution graphics. Note that this is only available on the IIe (with 80col card), //c, and IIgs.~~
 
 ~~DOUBLE LORES DISK~~
-* ~~ library for double low resolution graphics. Only available on IIe (with 80col card), //c, and IIgs.~~
+* ~~library for double low resolution graphics. Only available on IIe (with 80col card), //c, and IIgs.~~
 
 ~~CUSTOM LIBRARY BUILDER DISK~~
 * ~~A utility that automatically builds custom libraries by copying routines from the appropriate disks, commented or minified.~~
