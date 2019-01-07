@@ -20,8 +20,8 @@ A general purpose ASM libriary for the Apple II. Assembled in Merlin 8 Pro.
   * [Disk 5: STRINGS](#disk-5-strings)
   * [Disk 6: FILEIO](#disk-6-fileio)
 * [Future Disks](#future-disks)
-* ~~Macro Subroutine Overlap Table~~
-* ~~Macro Usage Cheat Sheet~~
+* [Macro Subroutine Overlap Table](#macro-subroutine-calls-and-clobbers)
+* [Macro Usage Cheat Sheet](#macro-usage-cheat-sheet)
 * ~~Detailed Descriptions: Macros~~
 * ~~Detailed Descriptions: Subroutines~~
 
@@ -127,7 +127,9 @@ This disk is dedicated to common and useful subroutines that don't necessarily f
   * `MFILL`: Fill a block of memory with the passed value.
   * `MMOVE`: Move a block of memory to another block of memory.
   * `ZLOAD`: Retrieve previously save zero page values from a given address and restore them to the zero page. 
-  * `ZSAVE`: Save the zero page memory locations not used by applesoft, dos, etc. to another memory location.  
+  * `ZSAVE`: Save the zero page memory locations not used by applesoft, dos, etc. to another memory location.
+  * ~~`MSWAP`~~
+    
 * required.mac
   * `_DUMP`: Dump the contents of a block of memory. This displays hex values only, and is primarily useful for debugging.
   * `_GRET`: Get Return. Transfer the contents of the [RETURN] register to another memory location.
@@ -136,6 +138,7 @@ This disk is dedicated to common and useful subroutines that don't necessarily f
   * `_PRNT`: A standard print routine that mirrors that found in STDIO. This, too, is used mostly for debugging.
   * `_SPAR`: Set Parameter. Transfer the contents of one memory location or a literal to the [PARAM] register.
   * `_WAIT`: A simple routine that waits for a keypress. Again, useful for debugging.
+  * ~~`_RDMP`: Registry Dump.~~
   
 ### Disk 3: Arrays
 
@@ -166,7 +169,25 @@ This disk hold routines related to standard mathematical calculations for signed
   * `RNDB`: Generate an 8-bit pseudo-random integer between a given min and max value.
   * `RNDW`: Generate a 16-bit pseudo-random integer between a given min and max value.
   * `SUB16`: Subtract one 16-bit integer, signed or unsigned, from another and return a 16-bit result.
-  * ~~FPADD: Floating-point addition using Applesoft's floating-point routines.~~ (not working yet)
+  * ~~FPADD: Floating-point addition using Applesoft's floating-point routines.~~ (not working yet)~~
+  * ~~FPMUL: Floating-point multiplication.~~
+  * ~~FPSUB: Floating-point subtraction.~~
+  * ~~FPDIV: Floating-point division.~~
+  * ~~FPPWR: Floating-point exponent.~~
+  * ~~FPSQR: Floating-point square-root.~~
+  * ~~FPEXP: Floating-point power of e.~~
+  * ~~FPLOG: Floating-point logarithm.~~
+  * ~~FPSIN: Floating-point sine.~~
+  * ~~FPCOS: Floating-point cosine.~~
+  * ~~FPTAN: Floating-point tangent.~~
+  * ~~FPATN: Floating-point atangent.~~
+  * ~~FPABS: Floating-point absolute value.~~
+  * ~~FPINT: floating point integer value.~~
+  * ~~FPFLT: integer to Floating-point.~~
+  * ~~FPSGN: Floating-point sign determination.~~
+  * ~~FPCMP: Floating-point compare.~~
+  * ~~FPD10: Floating-point divide by ten.~~
+  * ~~FPM10: Floating-point multiply by ten.~~
   
 ### Disk 5: Strings
 
@@ -209,48 +230,134 @@ This disk is dedicated to routines and macros that involve file manipulation and
 
 The following disks are in pre-production/planning, and will be part of future versions of the library. I am currently focusing on the six core disks to make sure everything works seamlessly and functions the same across different subroutine calls, which is taking time to sort out. Once production of each of these disks begins, I'll be moving them from this section to the actual disks section.
 
-~~LORES DISK~~
-* ~~lores.lib: Library for fast(er) graphics in low resolution mode.~~
+CONVERSIONS DISK
+* convert.mac: Library for converting between different data types.
 
-~~HIRES DISK~~
-* ~~hires.lib: Library for fast(er) graphics in high resolution mode.~~
+LORES DISK
+* lores.mac: Library for fast(er) graphics in low resolution mode.
+  * `LHLIN`: Low resolution horizontal line.
+  * `LVLIN`: Low resolution vertical line.
+  * `LLINE`: Low resolution line from x1,y1 to x2,y2.
+  * `LCIRC`: Low resolution circle at position x,y with a radius of r.
+  * `LSQR`: Low resolution square at position x,y with a width of w.
+  * `LBLIT`: Low resolution sprite blitting macro.
+  * `LCOLR`: Change low resolution color.
+  * `LGET`: Get color of low-resolution screen at x,y.
+  * `LPUT`: plot a low resolution block at x,y on the screen.
+  * `LCHAR`: plot a text character on the low resolution screen at x,y.
+  * `LPRN`: plot a string of characters on the low resolution screen at x,y.
+  * `LINV`: Invert colors on the low resolution screen.
 
-~~HIRES DISK 2~~
-* ~~hrchar.lib: High Resolution mode text character library.~~
-* ~~hrshape.lib: Routines for creating lines, circles, etc.~~
+HIRES DISK
+* hires.mac: Library for fast(er) graphics in high resolution mode.
+  * `HHLIN`: High resolution horizontal line.
+  * `HVLIN`: High resolution vertical line.
+  * `HLINE`: High resolution line from x1,y1 to x2,y2.
+  * `HCIRC`: High resolution circle at position x,y with a radius of r.
+  * `HSQR`: High resolution square at position x,y with a width of w.
+  * `HBLIT`: High resolution sprite blitting macro.
+  * `HCOLR`: Change High resolution color.
+  * `HGET`: Get color of high-resolution screen at x,y.
+  * `HPUT`: plot a high resolution block at x,y on the screen.
+  * `HCHAR`: plot a text character on the high resolution screen at x,y.
+  * `HPRN`: plot a string of characters on the high resolution screen at x,y.
 
-~~SOUND DISK~~
-* ~~sound.lib: Music and sound effects library for the internal speaker (not add-on cards like Mockingboard).~~
+DOUBLE LORES DISK
+* dlres.mac: library for double low resolution graphics. Only available on IIe (with 80col card), //c, and IIgs.
+  * `DLHLN`: Double Low resolution horizontal line.
+  * `DLVLN`: Double Low resolution vertical line.
+  * `DLLNE`: Double Low resolution line from x1,y1 to x2,y2.
+  * `DLCRC`: Double Low resolution circle at position x,y with a radius of r.
+  * `DLSQR`: Double Low resolution square at position x,y with a width of w.
+  * `DLBLT`: Double Low resolution sprite blitting macro.
+  * `DLCLR`: Change Double low resolution color.
+  * `DLGET`: Get color of Double low-resolution screen at x,y.
+  * `DLPUT`: plot a Double low resolution block at x,y on the screen.
+  * `DLCHR`: plot a text character on the Double low resolution screen at x,y.
+  * `DLPRN`: plot a string of characters on the Double resolution screen at x,y.
 
-~~APPLESOFT DISK~~
-* ~~applesoft.lib: Library for interfacing ASM programs with Applesoft BASIC.~~
+DOUBLE HIRES DISK
+* dhres.mac: library for double high resolution graphics. Note that this is only available on the IIe (with 80col card), //c, and IIgs.
+  * `DHHLN`: Double high resolution horizontal line.
+  * `DHVLN`: Double high resolution vertical line.
+  * `DHLNE`: Double high resolution line from x1,y1 to x2,y2.
+  * `DHCRC`: Double high resolution circle at position x,y with a radius of r.
+  * `DHSQR`: Double high resolution square at position x,y with a width of w.
+  * `DHBLT`: Double high resolution sprite blitting macro.
+  * `DHCLR`: Change Double high resolution color.
+  * `DHGET`: Get color of Double high-resolution screen at x,y.
+  * `DHPUT`: plot a Double high resolution block at x,y on the screen.
+  * `DHCHR`: plot a text character on the Double high resolution screen at x,y.
+  * `DHPRN`: plot a string of characters on the Double high resolution screen at x,y.
+  
+SOUND DISK
+* sound.mac: Music and sound effects library for the internal speaker (not add-on cards like Mockingboard).~~
+  * `STONE`: Play a tone at the specified megahertz for a specified duration of milliseconds.
+  * `SNOTE`: Play a specified musical note at the specified octave for a specified duration in milliseconds.
+  * `SWAIT`: See the `DELAY` Macro, as this is simply a slightly modified version for music timing.
+  * `SDRUM`: Send a sharp sound to the speaker that emulates the nois of a bass drum.
+  * `SHATC`: Send a short click that emulates a closed hi hat.
+  * `SHATO`: Send a long bout of noise to emulate an open hi hat.
+  * `SSTAT`: Send static to the speaker for a specified number of milliseconds.
+  * `SARPG`: Send a series of Arpeggio notes to the speaker to emulate multiple notes at once or chords.
+  * `SASC`: Play a series of tones between a low and high mhz, ascending at a given rate.
+  * `SDESC`: Play a series of tones between a high and low mhz, descending at a given rate.
+  * `SENV`: Rudimentary envelope for notes achieved by manipulating octave frequencies.
+  
+80COL DISK
+* stdio80.mac: stdio library for 80-column output. Most of these will be identical to the routines on the stdio disk.
+  * `80CB`: Move Cursor Backward by [n] spaces
+  * `80CD`: Move Cursor Down by [n] spaces
+  * `80CF`: Move Cursor Forward by [n] spaces
+  * `80CU`: Move Cursor Up by [n] spaces
+  * `80INP`: String Input Macro
+  * `80PBX`: Read State of Paddle Button [x]
+  * `80PCR`: Print Carraige Return
+  * `80PDL`: Read Current Paddle State
+  * `80PRN`: Flexible (screen) Printing routine
+  * `80RCP`: Read Cursor Position
+  * `80SCP`: Set Cursor position at [x],[y]
+  * `80SCX`: Set Cursor Horizontal Position
+  * `80SCY`: Set Cursor Vertical Position
+  * `80TFIL`: Text Fill square [x1],[x2],[y1],[y2] with Character [n]
+  * `80THLN`: Text Horizontal Line Fill with Character [n]
+  * `80TVLN`: Text Vertical Line Fill with Character [n]
+* 80to40.mac: a simple set of macros that calls the 80-column macros when 40-column macros are invoked. Obviously, the 40-colum stdio.mac cannot be use simultaneously.
 
-~~80COL DISK~~
-* ~~stdio library for 80-column output.~~
+PRINTER IO
+* library for interfacing with a printer.
+  * `PINIT`: Printer Detect and Initialize.
+  * `PPRNC`: Print a single Character on the Printer.
+  * `PPRNL`: Print a line of text on the printer.
+  * `PPUT`: Print a single dot on the printer.
+  * `PLBLK`: Print a block of low-res graphics at a given memory location to the printer.
+  * `PHBLK`: Print a block of high resolution graphics at a given memory location on the printer.
+  
+SERIAL IO
+* library for sending and receiving data over the serial port
+  * `SSEND`: Serial send bit/byte.
+  * `SRECV`: Serial Receive bit/byte.
+  * `SLSTN`: Listen to serial and wait for data for continuing.
+  
+CUSTOM LIBRARY BUILDER DISK
+* builder.bas: A utility that automatically builds custom libraries by copying routines from the appropriate disks, commented or minified.
 
-~~PRINTER IO~~
-* ~~library for interfacing with a printer.~~
 
-~~SERIAL IO~~
-* ~~library for sending and receiving data over the serial port~~
-
-~~DOUBLE HIRES DISK~~
-* ~~library for double high resolution graphics. Note that this is only available on the IIe (with 80col card), //c, and IIgs.~~
-
-~~DOUBLE LORES DISK~~
-* ~~library for double low resolution graphics. Only available on IIe (with 80col card), //c, and IIgs.~~
-
-~~CUSTOM LIBRARY BUILDER DISK~~
-* ~~A utility that automatically builds custom libraries by copying routines from the appropriate disks, commented or minified.~~
-
-~~INTEGRATED DEMO DISK(S)~~
-* ~~disk(s) with demos that show more complicated usage of the libraries, integrating them as each demo needs. The first of these demos will be a roguelike text game, accompanied by all the development utilities.~~
-
+INTEGRATED DEMO DISK(S)
+* disk(s) with demos that show more complicated usage of the libraries, integrating them as each demo needs. The first of these demos will be a roguelike text game, accompanied by all the development utilities.
+  * Item Editor (bas)
+  * Settings Editor (bas)
+  * NPC Editor (bas)
+  * Character Editor (bas)
+  * Enemy Editor (bas)
+  * Map Key Editor (bas)
+  * Room contours editor (asm)
+  * Rogue Game (asm)
 
 ---
 ## Macro Subroutine Calls and Clobbers
 
-The following table shows which subroutines each Macro calls, along with the resulting registers, flags, and memory locations clobbered.
+The following table shows which subroutines each Macro calls, along with the resulting registers, flags, and memory locations clobbered. This is up to date for version 0.3.0.
 
 
  MACRO  | SUBROUTINES                | FLAGS CLOBBED | REGS CLOBBED | MEMORY CLOBBERED  
@@ -262,25 +369,146 @@ The following table shows which subroutines each Macro calls, along with the res
  _PRNT  |                            |               |              |                   
  _SPAR  |                            |               |              |                   
  _WAIT  |                            |               |              |                   
+ ADD16  |                            |               |              |
  BEEP   |                            |               |              |
+ BLOAD  |                            |               |              |
+ BSAVE  |                            |               |              |
+ CMD    |                            |               |              |
+ CMP16  |                            |               |              |
  CURB   |                            |               |              |                   
  CURD   |                            |               |              |                   
  CURF   |                            |               |              |                   
  CURU   |                            |               |              |                   
+ DBUFF  |                            |               |              |
  DELAY  |                            |               |              |
+ DIM81  |                            |               |              |
+ DIM82  |                            |               |              |
+ DIV8   |                            |               |              |
+ DIV16  |                            |               |              |
+ DRIVE  |                            |               |              |
+ DRWTS  |                            |               |              |
+ FINP   |                            |               |              |
+ FPRN   |                            |               |              |
+ GET81  |                            |               |              |
+ GET82  |                            |               |              |
  INP    |                            |               |              |                   
  MFILL  |                            |               |              |
  MMOVE  |                            |               |              |
+ MUL8   |                            |               |              |
+ MUL16  |                            |               |              |
  PBX    |                            |               |              |                   
  PCR    |                            |               |              |                   
  PDL    |                            |               |              |                   
  PRN    |                            |               |              |                   
+ PUT81  |                            |               |              |
+ PUT82  |                            |               |              |
  RCPOS  |                            |               |              |                   
+ REM16  |                            |               |              |
+ RND8   |                            |               |              |
+ RND16  |                            |               |              |
+ RNDB   |                            |               |              |
+ RNDW   |                            |               |              |
+ SCAT   |                            |               |              |                   
+ SCMP   |                            |               |              |                   
  SCPOS  |                            |               |              |                   
+ SCOP   |                            |               |              |                   
+ SDEL   |                            |               |              |                   
+ SECT   |                            |               |              |
  SETCX  |                            |               |              |                   
  SETCY  |                            |               |              |                   
+ SETDR  |                            |               |              |
+ SETDW  |                            |               |              |
+ SINS   |                            |               |              |                   
+ SLOT   |                            |               |              |
+ SPOS   |                            |               |              |                   
+ SPRN   |                            |               |              |                   
  TFILL  |                            |               |              |                   
  THLIN  |                            |               |              |                   
+ TONUM  |                            |               |              |                   
+ TOSTR  |                            |               |              |                   
  TVLIN  |                            |               |              |                   
  ZLOAD  |                            |               |              | 
  ZSAVE  |                            |               |              |
+ 
+---
+
+## Macro Usage Cheat Sheet
+
+Once Macros are mostly finished in how they are called, you can find how to use them here. New versions, of course, always run the risk of changing something integral; This cheat sheet will be updated accordingly.
+
+
+ MACRO  | USAGE                                                          | RETURNS
+ ------ | -------------------------------------------------------------- | ----------------------------------- 
+ _DUMP  | ```_DUMP [memory address];[# of bytes to dump]```              | Nothing
+ _GRET  | ```_GRET [dest memory address]```                              | [return] stored in specified address
+ _ISLIT |                           
+ _ISSTR |                           
+ _PRNT  |                           
+ _SPAR  |                           
+ _WAIT  |                           
+ ADD16  |        
+ BEEP   |        
+ BLOAD  |        
+ BSAVE  |        
+ CMD    |        
+ CMP16  |        
+ CURB   |                           
+ CURD   |                           
+ CURF   |                           
+ CURU   |                           
+ DBUFF  |        
+ DELAY  |        
+ DIM81  |        
+ DIM82  |        
+ DIV8   |        
+ DIV16  |        
+ DRIVE  |        
+ DRWTS  |        
+ FINP   |        
+ FPRN   |        
+ GET81  |        
+ GET82  |        
+ INP    |                           
+ MFILL  |        
+ MMOVE  |        
+ MUL8   |        
+ MUL16  |        
+ PBX    |                           
+ PCR    |                           
+ PDL    |                           
+ PRN    |                           
+ PUT81  |        
+ PUT82  |        
+ RCPOS  |                           
+ REM16  |        
+ RND8   |        
+ RND16  |        
+ RNDB   |        
+ RNDW   |        
+ SCAT   |                           
+ SCMP   |                           
+ SCPOS  |                           
+ SCOP   |                           
+ SDEL   |                           
+ SECT   |        
+ SETCX  |                           
+ SETCY  |                           
+ SETDR  |        
+ SETDW  |        
+ SINS   |                           
+ SLOT   |        
+ SPOS   |                           
+ SPRN   |                           
+ TFILL  |                           
+ THLIN  |                           
+ TONUM  |                           
+ TOSTR  |                           
+ TVLIN  |                           
+ ZLOAD  |         
+ ZSAVE  |        
+ 
+---
+
+
+
+
