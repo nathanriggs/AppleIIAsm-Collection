@@ -20,7 +20,7 @@ A general purpose ASM libriary for the Apple II. Assembled in Merlin 8 Pro.
   * [Disk 5: STRINGS](#disk-5-strings)
   * [Disk 6: FILEIO](#disk-6-fileio)
 * [Future Disks](#future-disks)
-* [Macro Subroutine Overlap Table](#macro-subroutine-calls-and-clobbers)
+* [Macro Subroutine Calls and Clobbers](#macro-subroutine-calls-and-clobbers)
 * [Macro Usage Cheat Sheet](#macro-usage-cheat-sheet)
 * ~~Detailed Descriptions: Macros~~
 * ~~Detailed Descriptions: Subroutines~~
@@ -222,8 +222,8 @@ This disk is dedicated to routines and macros that involve file manipulation and
   * `SETDW`: Set RWTS to the write command.
   * `SLOT`: Set the RWTS slot.
   * `TMODE`: Ready system for text-file mode. This is necessary for reading and writing text files.
-  * ~~FCOPY: Copy a source file to a destination file~~ (not implemented yet)
-  * ~~FDEL: Delete a file from the disk~~ (not implemented yet)
+  * ~~FCOPY: Copy a source file to a destination file~~ (not implemented yet)~~
+  * ~~FDEL: Delete a file from the disk~~ (not implemented yet)~~
 
 ---
 ## Future Disks
@@ -291,7 +291,7 @@ DOUBLE HIRES DISK
   * `DHPRN`: plot a string of characters on the Double high resolution screen at x,y.
   
 SOUND DISK
-* sound.mac: Music and sound effects library for the internal speaker (not add-on cards like Mockingboard).~~
+* sound.mac: Music and sound effects library for the internal speaker (not add-on cards like Mockingboard). Note that this is not really for "real-time" music generation while doing something else, as that would involve counting the cycles in loops that a library would not necessarily have access to. In the future, I may try to create a library that does this, but it would still be pretty limited and the main execution would have to follow a very rigid format. I may also create a library that takes advantage of the Mockingboard.
   * `STONE`: Play a tone at the specified megahertz for a specified duration of milliseconds.
   * `SNOTE`: Play a specified musical note at the specified octave for a specified duration in milliseconds.
   * `SWAIT`: See the `DELAY` Macro, as this is simply a slightly modified version for music timing.
@@ -303,6 +303,11 @@ SOUND DISK
   * `SASC`: Play a series of tones between a low and high mhz, ascending at a given rate.
   * `SDESC`: Play a series of tones between a high and low mhz, descending at a given rate.
   * `SENV`: Rudimentary envelope for notes achieved by manipulating octave frequencies.
+  * `SQKEY`: Set the keypress to signal the library to halt playing a note.
+  * `SPLOD`: a sound effect resembling an explosion sound. Customizeable via parameters.
+  * `SPLAY`: play a sequence of given notes found at a given memory address. Follows same sequence as `SNOTE` parameters, ending with #00.
+  * `SALRM`: play an alarm sound.
+  * `SLAZE`: play a lazer sound at a specific frequency.
   
 80COL DISK
 * stdio80.mac: stdio library for 80-column output. Most of these will be identical to the routines on the stdio disk.
@@ -322,7 +327,7 @@ SOUND DISK
   * `80TFIL`: Text Fill square [x1],[x2],[y1],[y2] with Character [n]
   * `80THLN`: Text Horizontal Line Fill with Character [n]
   * `80TVLN`: Text Vertical Line Fill with Character [n]
-* 80to40.mac: a simple set of macros that calls the 80-column macros when 40-column macros are invoked. Obviously, the 40-colum stdio.mac cannot be use simultaneously.
+* 80to40.mac: a simple set of macros that calls the 80-column macros when 40-column macros are invoked. Obviously, the 40-column stdio.mac cannot be used simultaneously.
 
 PRINTER IO
 * library for interfacing with a printer.
@@ -357,11 +362,12 @@ INTEGRATED DEMO DISK(S)
 ---
 ## Macro Subroutine Calls and Clobbers
 
-The following table shows which subroutines each Macro calls, along with the resulting registers, flags, and memory locations clobbered. This is up to date for version 0.3.0.
+The following table shows which subroutines each Macro calls, along with the resulting registers, flags, and memory locations clobbered. This is up to date for version 0.3.0. Note that by "clobbered" here, I don't mean that the register or memory location has trash in it; it's just been altered in some way. For list of what useful imformation is passed after a Macro is executed, see [the cheat sheet](#macro-usage-cheat-sheet).
 
+If a memory alteration is indicated by a [PASS], it means that the memory area that was passed to the macro was altered.
 
- MACRO  | SUBROUTINES                | FLAGS CLOBBED | REGS CLOBBED | MEMORY CLOBBERED  
- ------ | -------------------------- |:-------------:|:------------:| ----------------- 
+ MACRO  | SUBROUTINES CALLED         | FLAGS ALTERED | REGS ALTERED | MEM ALTERED  
+ ------ | -------------------------- |:-------------:|:------------:| ----------- 
  _DUMP  |                            |               |              |                   
  _GRET  |                            |               |              |                   
  _ISLIT |                            |               |              |                   
@@ -439,13 +445,13 @@ Once Macros are mostly finished in how they are called, you can find how to use 
 
  MACRO  | USAGE                                                          | RETURNS
  ------ | -------------------------------------------------------------- | ----------------------------------- 
- _DUMP  | ```_DUMP [memory address];[# of bytes to dump]```              | Nothing
+ _DUMP  | ```_DUMP [memory address];[# of bytes to dump]```              | Nothing; dump to screen
  _GRET  | ```_GRET [dest memory address]```                              | [return] stored in specified address
- _ISLIT |                           
- _ISSTR |                           
- _PRNT  |                           
- _SPAR  |                           
- _WAIT  |                           
+ _ISLIT | ```_ISLIT [data]```                                            | inserts executable code at pointer                
+ _ISSTR | ```_ISLIT [data]```                                            | inserts executable code at pointer
+ _PRNT  | ```_PRNT [string or address]```                                | prints provided literal string                 
+ _SPAR  | ```_SPAR [src address];[length]```                             | moves data at address to [param]                          
+ _WAIT  | ```_WAIT```                                                    | Nothing; wait for keypress.
  ADD16  |        
  BEEP   |        
  BLOAD  |        
