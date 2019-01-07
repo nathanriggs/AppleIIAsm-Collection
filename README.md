@@ -454,15 +454,15 @@ If a memory alteration is indicated by a [PASS], it means that the memory area t
 Once Macros are mostly finished in how they are called, you can find how to use them here. New versions, of course, always run the risk of changing something integral; This cheat sheet will be updated accordingly.
 
 
- MACRO  | USAGE                                                          | RETURNS
- ------ | -------------------------------------------------------------- | ----------------------------------- 
- _DUMP  | ```_DUMP [memory address];[# of bytes to dump]```              | Nothing; dump to screen
- _GRET  | ```_GRET [dest memory address]```                              | [return] stored in specified address
- _ISLIT | ```_ISLIT [data]```                                            | inserts executable code at pointer                
- _ISSTR | ```_ISLIT [data]```                                            | inserts executable code at pointer
- _PRNT  | ```_PRNT [string or address]```                                | prints provided literal string                 
- _SPAR  | ```_SPAR [src address];[length]```                             | moves data at address to [param]                          
- _WAIT  | ```_WAIT```                                                    | Nothing; wait for keypress.
+ MACRO  | USAGE                                                              | RETURNS
+ ------ | ------------------------------------------------------------------ | ----------------------------------- 
+ _DUMP  | ```_DUMP [memory address];[# of bytes to dump]```                  | Nothing; dump to screen
+ _GRET  | ```_GRET [dest memory address]```                                  | [return] stored in specified address
+ _ISLIT | ```_ISLIT [data]```                                                | inserts executable code at pointer                
+ _ISSTR | ```_ISSTR [data]```                                                | inserts executable code at pointer
+ _PRNT  | ```_PRNT [string or address]```                                    | prints provided literal string                 
+ _SPAR  | ```_SPAR [src address];[length]```                                 | moves data at address to [param]                          
+ _WAIT  | ```_WAIT```                                                        | Nothing; wait for keypress.
  ADD16  |        
  BEEP   |        
  BLOAD  |        
@@ -475,16 +475,20 @@ Once Macros are mostly finished in how they are called, you can find how to use 
  CURU   |                           
  DBUFF  |        
  DELAY  |        
- DIM81  |        
- DIM82  |        
+ DIM81  | ```DIM81 [array address];[# of elements];[element byte length]```   | .Y = low byte of array addr
+ .      | .                                                                   |  .X = high byte of array addr
+ .      | .                                                                   | .A = # of elements
+ .      | .                                                                   | [RETURN] = total array size in bytes
+ .      | .                                                                   | [RETLEN] = length of [RETURN] val
+ DIM82  | ```DIM82 [array addr];[# of cols];[# of rows];[elem byte length]``` |
  DIV8   |        
  DIV16  |        
  DRIVE  |        
  DRWTS  |        
  FINP   |        
  FPRN   |        
- GET81  |        
- GET82  |        
+ GET81  | ```GET81 [array address];[element index]```                         |
+ GET82  | ```GET82 [array addr];[column index];[row index]```
  INP    |                           
  MFILL  |        
  MMOVE  |        
@@ -493,9 +497,9 @@ Once Macros are mostly finished in how they are called, you can find how to use 
  PBX    |                           
  PCR    |                           
  PDL    |                           
- PRN    |                           
- PUT81  |        
- PUT82  |        
+ PRN    |                    
+ PUT81  | ```PUT81 [src addr or literal][array addr];[element index]```       |    
+ PUT82  | ```PUT82 [src addr or lit];[array addr];[col index];[row index]```  |     
  RCPOS  |                           
  REM16  |        
  RND8   |        
