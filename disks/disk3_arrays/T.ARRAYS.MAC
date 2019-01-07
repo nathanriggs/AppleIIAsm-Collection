@@ -186,7 +186,7 @@ DIM82    MAC
 *  GET82 $300;#2;#3            *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-_GET82   MAC
+GET82    MAC
          LDA   #>]1       ; ARRAY ADDR
          PHA
          LDA   #<]1
@@ -217,7 +217,7 @@ _GET82   MAC
 *  PUT82 $300;$3A0;#2;#3       *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-_PUT82   MAC
+PUT82    MAC
          LDA   #>]1       ; SRC ADDR
          PHA
          LDA   #<]1
