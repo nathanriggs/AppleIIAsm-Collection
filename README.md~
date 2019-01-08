@@ -469,15 +469,15 @@ Once Macros are mostly finished in how they are called, you can find how to use 
  .      | .                                                                   | [RETURN] = sum
  .      | .                                                                   | [RETLEN] = length of sum (2 bytes)
  BEEP   | ```BEEP [number of beep calls]```                                   | Nothing; just speaker output   
- BLOAD  | ```BLOAD [dos command parameters]```                                | 
- BSAVE  | ```BSAVE [dos command parameters]```                                | 
- CMD    | ```CMD [dos command with parameters]```                             |
+ BLOAD  | ```BLOAD [dos command parameters]```                                | Nothing; just disk input
+ BSAVE  | ```BSAVE [dos command parameters]```                                | Nothing; just disk output
+ CMD    | ```CMD [dos command with parameters]```                             | Nothing, save for changes done by command
  CMP16  | ```CMP16 [word 1];[word 2]```                                       | See full description for flag changes.
  CURB   | ```CURB [spaces to move back]```                                    | Nothing
  CURD   | ```CURD [spaces to move down]```                                    | Nothing
  CURF   | ```CURF [spaces to move forward]```                                 | Nothing
  CURU   | ```CURU [spaces to move up]```                                      | Nothing
- DBUFF  | ```DBUFF [buffer address]```                                        |
+ DBUFF  | ```DBUFF [buffer address]```                                        | Nothing
  DELAY  | ```DELAY [number of milliseconds to delay]```                       | Nothing; just execution delay  
  DIM81  | ```DIM81 [array address];[# of elements];[element byte length]```   | [RETURN] = total array size in bytes
  .      | .                                                                   | [RETLEN] = length of [RETURN] val
@@ -491,10 +491,10 @@ Once Macros are mostly finished in how they are called, you can find how to use 
  .      | .                                                                   | .X = hibyte of quotient
  .      | .                                                                   | [RETURN] = quotient
  .      | .                                                                   | [RETLEN] = quotient length (2 bytes) 
- DRIVE  | ```DRIVE [drive number]```                                          |
- DRWTS  | ```DRWTS```                                                         |
- FINP   | ```FINP [adress to store string]```                                 |
- FPRN   | ```FPRN [literal string or address of string]```                    | 
+ DRIVE  | ```DRIVE [drive number]```                                          | Nothing
+ DRWTS  | ```DRWTS```                                                         | Nothing
+ FINP   | ```FINP [adress to store string]```                                 | Nothing
+ FPRN   | ```FPRN [literal string or address of string]```                    | Nothing 
  GET81  | ```GET81 [array address];[element index]```                         | .Y = lobyte of element addr
  .      | .                                                                   | .X = hibyte of element addr
  .      | .                                                                   | [RETURN] = value stored in element
@@ -547,14 +547,14 @@ Once Macros are mostly finished in how they are called, you can find how to use 
  .      | .                                                                   | [RETLEN] = return string length
  SDEL   | ```SDEL [string];[index];[length]```                                | .CARRY will be 0 if no errors; else, 1
  .      | .                                                                   | passed string will be altered!
- SECT   | ```SECT [sector number]```                                          | 
+ SECT   | ```SECT [sector number]```                                          | Nothing
  SETCX  | ```SETCX [col]```                                                   | Nothing
  SETCY  | ```SETCY [row]```                                                   | Nothing
- SETDR  | ```SETDR```                                                         | 
- SETDW  | ```SETDW```                                                         | 
+ SETDR  | ```SETDR```                                                         | Nothing 
+ SETDW  | ```SETDW```                                                         | Nothing 
  SINS   | ```SINS [parent string];[index];[max length];[substring to ins]```  | .CARRY = 0 if no errors; else, 1
  .      | .                                                                   | passed parent string will be altered!
- SLOT   | ```SLOT [slot number]```                                            | 
+ SLOT   | ```SLOT [slot number]```                                            | Nothing 
  SPOS   | ```SPOS [parent string];[substring]```                              | .A = index of substring if found; 0 if not
  .      | .                                                                   | [RETURN] = index of substring found; 0 if not
  .      | .                                                                   | [RETLEN] = byte length of [RETURN] (1)
@@ -565,9 +565,10 @@ Once Macros are mostly finished in how they are called, you can find how to use 
  .      | .                                                                   | [RETLEN] = result length (2 bytes)                
  TFILL  | ```TFILL [col start];[row start];[col end];[row end];[fill char]``` | Nothing Useful
  THLIN  | ```THLIN [col start];[col end];[row];[fill char]```                 | Nothing Useful
+ TMODE  | ```TMODE```                                                         | Nothing
  TONUM  | ```TONUM [string to convert to number, addr or literal]```          | [RETURN] = number equivalent of string
  .      | .                                                                   | [RETLEN] = byte length of number (2)
- TRACK  | ```TRACK [track number]```                                          | 
+ TRACK  | ```TRACK [track number]```                                          | Nothing 
  TOSTR  | ```TOSTR [number to convert to string]```                           | [RETURN] = string equivalent of number
  .      | .                                                                   | [RETLEN] = length of string returned (not yet)
  TVLIN  | ```TVLIN [row start];[row end];[column];[fill char]```              | Nothing Useful
