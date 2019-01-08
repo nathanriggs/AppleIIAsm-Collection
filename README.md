@@ -465,17 +465,19 @@ Once Macros are mostly finished in how they are called, you can find how to use 
  _SPAR  | ```_SPAR [src address];[length]```                                  | moves data at address to [param]                          
  _WAIT  | ```_WAIT```                                                         | Nothing; wait for keypress.
  ADD16  | ```ADD16 [word 1];[word 2] ```                                      | .Y = lobyte of sum
- .      |                                                                     | .X = hibyte of sum
+ .      | .                                                                   | .X = hibyte of sum
+ .      | .                                                                   | [RETURN] = sum
+ .      | .                                                                   | [RETLEN] = length of sum (2 bytes)
  BEEP   | ```BEEP [number of beep calls]```                                   | Nothing; just speaker output   
- BLOAD  |        
- BSAVE  |        
- CMD    |        
- CMP16  | ```CMP16 [word 1];[word 2]                                          | 
+ BLOAD  | ```BLOAD [dos command parameters]```                                | Nothing; just disk input
+ BSAVE  | ```BSAVE [dos command parameters]```                                | Nothing; just disk output
+ CMD    | ```CMD [dos command with parameters]```                             | Nothing, save for changes done by command
+ CMP16  | ```CMP16 [word 1];[word 2]```                                       | See full description for flag changes.
  CURB   | ```CURB [spaces to move back]```                                    | Nothing
  CURD   | ```CURD [spaces to move down]```                                    | Nothing
  CURF   | ```CURF [spaces to move forward]```                                 | Nothing
  CURU   | ```CURU [spaces to move up]```                                      | Nothing
- DBUFF  |        
+ DBUFF  | ```DBUFF [buffer address]```                                        | Nothing
  DELAY  | ```DELAY [number of milliseconds to delay]```                       | Nothing; just execution delay  
  DIM81  | ```DIM81 [array address];[# of elements];[element byte length]```   | [RETURN] = total array size in bytes
  .      | .                                                                   | [RETLEN] = length of [RETURN] val
@@ -483,12 +485,16 @@ Once Macros are mostly finished in how they are called, you can find how to use 
  .      | .                                                                   | [RETLEN] = length of [RETURN] val
  DIV8   | ```DIV8 [dividend byte];[divisor byte]```                           | .A = quotient (byte)
  .      |                                                                     | .X = remainder (byte)
+ .      | .                                                                   | [RETURN] = quotient
+ .      | .                                                                   | [RETLEN] = quotient length (1 byte)
  DIV16  | ```DIV16 [dividend word];[divisor word]```                          | .Y = lobyte of quotient
  .      | .                                                                   | .X = hibyte of quotient
- DRIVE  |        
- DRWTS  |        
- FINP   |        
- FPRN   |        
+ .      | .                                                                   | [RETURN] = quotient
+ .      | .                                                                   | [RETLEN] = quotient length (2 bytes) 
+ DRIVE  | ```DRIVE [drive number]```                                          | Nothing
+ DRWTS  | ```DRWTS```                                                         | Nothing
+ FINP   | ```FINP [adress to store string]```                                 | Nothing
+ FPRN   | ```FPRN [literal string or address of string]```                    | Nothing 
  GET81  | ```GET81 [array address];[element index]```                         | .Y = lobyte of element addr
  .      | .                                                                   | .X = hibyte of element addr
  .      | .                                                                   | [RETURN] = value stored in element
@@ -503,10 +509,14 @@ Once Macros are mostly finished in how they are called, you can find how to use 
  .      | .                                                                   | .X, .Y = length of string
  MFILL  | ```MFILL [address start];[length in bytes];[fill value]```          | Nothing useful       
  MMOVE  | ```MMOVE [src addr];[dest addr];[length in bytes]```                | Nothing useful
- MUL8   | ```MUL8 [multiplicand byte];[multiplier byte]                       | .Y = lobyte of product (word)
+ MUL8   | ```MUL8 [multiplicand byte];[multiplier byte]```                    | .Y = lobyte of product (word)
  .      | .                                                                   | .X = hibyte of product (word)
+ .      | .                                                                   | [RETURN] = quotient
+ .      | .                                                                   | [RETLEN] = quotient length (2 bytes)
  MUL16  | ```MUL16 [multiplicand word];[multiplier word]```                   | .Y = lobyte of product
  .      | .                                                                   | .X = hibyte of product
+ .      | .                                                                   | [RETURN] = product (24-bit; see desc)
+ .      | .                                                                   | [RETLEN] = product length (3 bytes)
  PBX    | ```PBX [button to read; PB0,PB1,PB2,PB3]```                         | .A = 1 if button pressed, else 0
  PCR    | ```PCR```                                                           | Nothing
  PDL    | ```PDL [paddle to read]```                                          | .Y = paddle state value, 0..256
@@ -521,26 +531,46 @@ Once Macros are mostly finished in how they are called, you can find how to use 
  REM16  | ```REM16 [dividend word];[divisor word]```                          | .Y = lobyte of remainder
  .      | .                                                                   | .X = hibyte of remainder
  RNDB   | ```RNDB [low boundary byte];[high boundary byte]```                 | .A = pseudorandom number between
- SCAT   |                           
- SCMP   |                           
+ .      | .                                                                   | [RETURN] = pseudorandom number between
+ .      | .                                                                   | [RETLEN] = length of number (1 byte)
+ SCAT   | ```SCAT [first string, lit or addr];[2nd string]```                 | .A = 1 if overflow err, else 0
+ .      | .                                                                   | .X = lenth of concatenated string
+ .      | .                                                                   | [RETURN] = concatenated string
+ .      | .                                                                   | [RETLEN] = concatenated length 
+ .      | .                                                                   | first string is replaced with concatenated!
+ SCMP   | ```SCMP [first string, lit or addr];[2nd string]```                 | See full description for flag changes.    
+ .      | .                                                                   | .Y = String 2 length
+ .      | .                                                                   | .X = String 1 Length                      
  SCPOS  | ```SCPOS [col];[row]```                                             | Nothing
- SCOP   |                           
- SDEL   |                           
- SECT   |        
+ SCPY   | ```SCPY [source string];[index];[length];[max length]```            | .CARRY will be 0 if no errors; else, 1
+ .      |                                                                     | [RETURN] = copied substring
+ .      | .                                                                   | [RETLEN] = return string length
+ SDEL   | ```SDEL [string];[index];[length]```                                | .CARRY will be 0 if no errors; else, 1
+ .      | .                                                                   | passed string will be altered!
+ SECT   | ```SECT [sector number]```                                          | Nothing
  SETCX  | ```SETCX [col]```                                                   | Nothing
  SETCY  | ```SETCY [row]```                                                   | Nothing
- SETDR  |        
- SETDW  |        
- SINS   |                           
- SLOT   |        
- SPOS   |                           
- SPRN   |   
+ SETDR  | ```SETDR```                                                         | Nothing 
+ SETDW  | ```SETDW```                                                         | Nothing 
+ SINS   | ```SINS [parent string];[index];[max length];[substring to ins]```  | .CARRY = 0 if no errors; else, 1
+ .      | .                                                                   | passed parent string will be altered!
+ SLOT   | ```SLOT [slot number]```                                            | Nothing 
+ SPOS   | ```SPOS [parent string];[substring]```                              | .A = index of substring if found; 0 if not
+ .      | .                                                                   | [RETURN] = index of substring found; 0 if not
+ .      | .                                                                   | [RETLEN] = byte length of [RETURN] (1)
+ SPRN   | ```SPRN [string address]```                                         | .A = string length 
  SUB16  | ```SUB16 [minuend word];[subtrahend word]```                        | .Y = lobyte of result
- .      |                                                                     | .X = hibyte of result                     
+ .      |                                                                     | .X = hibyte of result     
+ .      | .                                                                   | [RETURN] = result
+ .      | .                                                                   | [RETLEN] = result length (2 bytes)                
  TFILL  | ```TFILL [col start];[row start];[col end];[row end];[fill char]``` | Nothing Useful
  THLIN  | ```THLIN [col start];[col end];[row];[fill char]```                 | Nothing Useful
- TONUM  |                           
- TOSTR  |                           
+ TMODE  | ```TMODE```                                                         | Nothing
+ TONUM  | ```TONUM [string to convert to number, addr or literal]```          | [RETURN] = number equivalent of string
+ .      | .                                                                   | [RETLEN] = byte length of number (2)
+ TRACK  | ```TRACK [track number]```                                          | Nothing 
+ TOSTR  | ```TOSTR [number to convert to string]```                           | [RETURN] = string equivalent of number
+ .      | .                                                                   | [RETLEN] = length of string returned (not yet)
  TVLIN  | ```TVLIN [row start];[row end];[column];[fill char]```              | Nothing Useful
  ZLOAD  | ```ZLOAD [address where backup is stored]```                        | Nothing
  ZSAVE  | ```ZSAVE [address to backup at]```                                  | Nothing  
