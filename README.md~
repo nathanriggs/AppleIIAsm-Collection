@@ -20,6 +20,7 @@ A general purpose ASM libriary for the Apple II. Assembled in Merlin 8 Pro.
   * [Disk 5: STRINGS](#disk-5-strings)
   * [Disk 6: FILEIO](#disk-6-fileio)
 * [Future Disks](#future-disks)
+* ~~How to Use the Library~~
 * [Macro Subroutine Calls and Clobbers](#macro-subroutine-calls-and-clobbers)
 * [Macro Usage Cheat Sheet](#macro-usage-cheat-sheet)
 * ~~Detailed Descriptions: Macros~~
@@ -454,53 +455,64 @@ If a memory alteration is indicated by a [PASS], it means that the memory area t
 Once Macros are mostly finished in how they are called, you can find how to use them here. New versions, of course, always run the risk of changing something integral; This cheat sheet will be updated accordingly.
 
 
- MACRO  | USAGE                                                              | RETURNS
- ------ | ------------------------------------------------------------------ | ----------------------------------- 
- _DUMP  | ```_DUMP [memory address];[# of bytes to dump]```                  | Nothing; dump to screen
- _GRET  | ```_GRET [dest memory address]```                                  | [return] stored in specified address
- _ISLIT | ```_ISLIT [data]```                                                | inserts executable code at pointer                
- _ISSTR | ```_ISSTR [data]```                                                | inserts executable code at pointer
- _PRNT  | ```_PRNT [string or address]```                                    | prints provided literal string                 
- _SPAR  | ```_SPAR [src address];[length]```                                 | moves data at address to [param]                          
- _WAIT  | ```_WAIT```                                                        | Nothing; wait for keypress.
+ MACRO  | USAGE                                                               | RETURNS
+ ------ | ------------------------------------------------------------------- | ----------------------------------- 
+ _DUMP  | ```_DUMP [memory address];[# of bytes to dump]```                   | Nothing; dump to screen
+ _GRET  | ```_GRET [dest memory address]```                                   | [return] stored in specified address
+ _ISLIT | ```_ISLIT [data]```                                                 | inserts executable code at pointer                
+ _ISSTR | ```_ISSTR [data]```                                                 | inserts executable code at pointer
+ _PRNT  | ```_PRNT [string or address]```                                     | prints provided literal string                 
+ _SPAR  | ```_SPAR [src address];[length]```                                  | moves data at address to [param]                          
+ _WAIT  | ```_WAIT```                                                         | Nothing; wait for keypress.
  ADD16  |        
- BEEP   |        
+ BEEP   | ```BEEP [number of beep calls]```                                   | Nothing; just speaker output   
  BLOAD  |        
  BSAVE  |        
  CMD    |        
  CMP16  |        
- CURB   |                           
- CURD   |                           
- CURF   |                           
- CURU   |                           
+ CURB   | ```CURB [spaces to move back]```                                    | Nothing
+ CURD   | ```CURD [spaces to move down]```                                    | Nothing
+ CURF   | ```CURF [spaces to move forward]```                                 | Nothing
+ CURU   | ```CURU [spaces to move up]```                                      | Nothing
  DBUFF  |        
- DELAY  |        
- DIM81  | ```DIM81 [array address];[# of elements];[element byte length]```   | .Y = low byte of array addr
-        |                                                                     |  .X = high byte of array addr
-        |                                                                     | .A = # of elements
-        |                                                                     | [RETURN] = total array size in bytes
-        |                                                                     | [RETLEN] = length of [RETURN] val
- DIM82  | ```DIM82 [array addr];[# of cols];[# of rows];[elem byte length]``` |
+ DELAY  | ```DELAY [number of milliseconds to delay]```                       | Nothing; just execution delay  
+ DIM81  | ```DIM81 [array address];[# of elements];[element byte length]```   | [RETURN] = total array size in bytes
+ .      | .                                                                   | [RETLEN] = length of [RETURN] val
+ DIM82  | ```DIM82 [array addr];[# of cols];[# of rows];[elem byte length]``` | [RETURN] = total array size in bytes
+ .      | .                                                                   | [RETLEN] = length of [RETURN] val
  DIV8   |        
  DIV16  |        
  DRIVE  |        
  DRWTS  |        
  FINP   |        
  FPRN   |        
- GET81  | ```GET81 [array address];[element index]```                         |
- GET82  | ```GET82 [array addr];[column index];[row index]```
- INP    |                           
- MFILL  |        
- MMOVE  |        
+ GET81  | ```GET81 [array address];[element index]```                         | .Y = lobyte of element addr
+ .      | .                                                                   | .X = hibyte of element addr
+ .      | .                                                                   | [RETURN] = value stored in element
+ .      | .                                                                   | [RETLEN] = length of return value 
+ GET82  | ```GET82 [array addr];[column index];[row index]```                 | .Y = lobyte of element addr
+ .      | .                                                                   | .X = hibyte of element addr
+ .      | .                                                                   | [RETURN] = value stored in element
+ .      | .                                                                   | [RETLEN] = length of return value 
+ GKEY   | ```GKEY```                                                          | .A = key pressed
+ INP    | ```INP```                                                           | [RETURN] = string entered by user
+ .      | .                                                                   | [RETLEN] = string length (same as first byte of [RETURN], +1)
+ .      | .                                                                   | .X, .Y = length of string
+ MFILL  | ```MFILL [address start];[length in bytes];[fill value]```          | Nothing useful       
+ MMOVE  | ```MMOVE [src addr];[dest addr];[length in bytes]```                | Nothing useful
  MUL8   |        
  MUL16  |        
- PBX    |                           
- PCR    |                           
- PDL    |                           
- PRN    |                    
- PUT81  | ```PUT81 [src addr or literal][array addr];[element index]```       |    
- PUT82  | ```PUT82 [src addr or lit];[array addr];[col index];[row index]```  |     
- RCPOS  |                           
+ PBX    | ```PBX [button to read; PB0,PB1,PB2,PB3]```                         | .A = 1 if button pressed, else 0
+ PCR    | ```PCR```                                                           | Nothing
+ PDL    | ```PDL [paddle to read]```                                          | .Y = paddle state value, 0..256
+ PRN    | ```PRN [literal string or address]```                               | .Y = length of string, if literal
+ PUT81  | ```PUT81 [src addr or literal][array addr];[element index]```       | .Y = lobyte of element addr
+ .      | .                                                                   | .X = hibyte of element addr
+ .      | .                                                                   | .A = length of element in bytes
+ PUT82  | ```PUT82 [src addr or lit];[array addr];[col index];[row index]```  | .Y = lobyte of element addr
+ .      | .                                                                   | .X = hibyte of element addr
+ .      | .                                                                   | .A = length of element in bytes    
+ RCPOS  | ```RCPOS [col];[row]```                                             | .A = character at that position
  REM16  |        
  RND8   |        
  RND16  |        
@@ -508,25 +520,25 @@ Once Macros are mostly finished in how they are called, you can find how to use 
  RNDW   |        
  SCAT   |                           
  SCMP   |                           
- SCPOS  |                           
+ SCPOS  | ```SCPOS [col];[row]```                                             | Nothing
  SCOP   |                           
  SDEL   |                           
  SECT   |        
- SETCX  |                           
- SETCY  |                           
+ SETCX  | ```SETCX [col]```                                                   | Nothing
+ SETCY  | ```SETCY [row]```                                                   | Nothing
  SETDR  |        
  SETDW  |        
  SINS   |                           
  SLOT   |        
  SPOS   |                           
  SPRN   |                           
- TFILL  |                           
- THLIN  |                           
+ TFILL  | ```TFILL [col start];[row start];[col end];[row end];[fill char]``` | Nothing Useful
+ THLIN  | ```THLIN [col start];[col end];[row];[fill char]```                 | Nothing Useful
  TONUM  |                           
  TOSTR  |                           
- TVLIN  |                           
- ZLOAD  |         
- ZSAVE  |        
+ TVLIN  | ```TVLIN [row start];[row end];[column];[fill char]```              | Nothing Useful
+ ZLOAD  | ```ZLOAD [address where backup is stored]```                        | Nothing
+ ZSAVE  | ```ZSAVE [address to backup at]```                                  | Nothing  
  
 ---
 
