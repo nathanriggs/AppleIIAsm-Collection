@@ -1,30 +1,3 @@
-*
-         JMP   ENDVARS
-*
-*``````````````````````````````*
-* REQUIRED.LIB                 *
-*-                            -*
-* GLOBAL ROUTINES AND          *
-* VARIABLES EITHER USED BY THE *
-* LIBRARY OR PROVIDED FOR DEMO *
-* USE OR DEBUGGING PURPOSES.   *
-*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
-*
-********************************
-*                              *
-* GLOBAL ROUTINES              *
-*                              *
-********************************
-*
-*``````````````````````````````*
-* __GETRET:         GET RETURN *
-*-                            -*
-* COPIES THE DATA IN [RETURN]  *
-* TO THE SPECIFIED LOCATION.   *
-* LENGTH IS DETERMINED BY      *
-* VALUE OF RETLEN.             *
-*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
-*
 __GETRET
 *
          LDY   #255
@@ -44,16 +17,6 @@ __GETRET
          LDA   ADDR1
          PHA
          RTS
-*
-*``````````````````````````````*
-* __SETPARM:     SET PARAMETER *
-*-                            -*
-* COPIES DATA FROM SPECIFIED   *
-* ADDRESS TO THE [PARAM]       *
-* LOCATION FOR PASSING TO      *
-* A ROUTINE.                   *
-*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
-*
 __SETPARM
 *
          LDY   #255
@@ -73,16 +36,6 @@ __SETPARM
          LDA   ADDR1
          PHA
          RTS
-*
-*``````````````````````````````*
-* __DUMP:            DUMP DATA *
-*-                            -*
-* OUTPUTS DATA LOCATED AT THE  *
-* SPECIFIED ADDRESS IN HEX     *
-* FORMAT FOR SPECIFIED NUMBER  *
-* OF BYTES.                    *
-*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
-*
 __DUMP
 *
          PLA
@@ -154,9 +107,6 @@ __DUMP
          INY
          CPY   :LENGTH
          BNE   :LP
-*
-*LDA #$8D
-*JSR $FDF0
          LDA   :RET+1
          PHA
          LDA   :RET
@@ -168,15 +118,6 @@ __DUMP
 :RIGHT   DS    1
 :LEFT    DS    1
 :LENGTH  DS    1
-*
-*``````````````````````````````*
-* __P:     PRINT FOLLOWING ASC *
-*-                            -*
-* THIS IS THE XPRINT ROUTINE   *
-* FROM STDIO.LIB, BUT STRIPPED *
-* OF COMMENTS. FOR DEBUG.      *
-*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
-*
 __P
          PLA
          STA   ADDR1
@@ -198,19 +139,9 @@ __P
          LDA   ADDR1
          PHA
          RTS
-*
-*``````````````````````````````*
-* __W:    WAIT FOR KEYPRESS    *
-*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
-*
 __W
          JSR   $FD0C
          RTS
-*
-*``````````````````````````````*
-* __RDMP:     REGISTRY DUMP    *
-*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
-*
 __RDMP
          STA   :A
          STX   :X
@@ -348,30 +279,7 @@ __RDMP
 :CARRY   DS    1
 :ZERO    DS    1
 HEXTAB   ASC   "0123456789ABCDEF"
-*
-*
-********************************
-*                              *
-* GLOBAL VARIABLES             *
-*                              *
-********************************
-*
-** 256 BYTES DEDICATED TO RETURN
-** VALUES OF VARIABLE LENGTH; CAN BE
-** MODIFIED TO SUIT SMALLER OR LARGER
-** NEEDS.
-*
-*
 RETLEN   DS    1          ; RETURN VALUE BYTE LENGTH
 RETURN   DS    256
-*
-** 256 BYTE VALUE DEDICATED TO LARGE
-** OR VARIABLE LENGTH PARAMETERS. THIS
-** CAN ALSO BE CHANGED TO FIT SMALLER OR
-** LARGER BOUNDS.
-*
 PARLEN   DS    1
 PARAM    DS    256
-*
-ENDVARS
-*

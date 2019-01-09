@@ -172,3 +172,33 @@ ZLOAD    MAC
          PHA
          JSR   ZMLOAD
          <<<
+*
+*``````````````````````````````*
+* MSWAP :: SWAP MEMORY BLOCKS  *
+*-                            -*
+* SWAPS THE VALUES STORE IN    *
+* ONE LOCATION WITH ANOTHER    *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* ]1 = FIRST ADDRESS           *
+* ]2 = SECOND ADDRESS          *
+* ]3 = LENGTH IN BYTES (BYTE)  *
+*-                            -*
+* SAMPLE USAGE:                *
+*  MSWAP $300;$400;#$90        *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+MSWAP    MAC
+         LDA   #>]2
+         PHA
+         LDA   #<]2
+         PHA
+         LDA   #>]1
+         PHA
+         LDA   #<]1
+         PHA
+         LDA   ]3
+         PHA
+         JSR   MEMSWAP
+         <<<

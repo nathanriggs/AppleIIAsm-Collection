@@ -130,7 +130,7 @@ This disk is dedicated to common and useful subroutines that don't necessarily f
   * `MMOVE`: Move a block of memory to another block of memory.
   * `ZLOAD`: Retrieve previously save zero page values from a given address and restore them to the zero page. 
   * `ZSAVE`: Save the zero page memory locations not used by applesoft, dos, etc. to another memory location.
-  * ~~`MSWAP`~~
+  * `MSWAP`: Swap a memory range at one address with another.
     
 * required.mac
   * `_DUMP`: Dump the contents of a block of memory. This displays hex values only, and is primarily useful for debugging.
@@ -140,7 +140,7 @@ This disk is dedicated to common and useful subroutines that don't necessarily f
   * `_PRNT`: A standard print routine that mirrors that found in STDIO. This, too, is used mostly for debugging.
   * `_SPAR`: Set Parameter. Transfer the contents of one memory location or a literal to the [PARAM] register.
   * `_WAIT`: A simple routine that waits for a keypress. Again, useful for debugging.
-  * ~~`_RDMP`: Registry Dump.~~
+  * `_RDMP`: Registry Dump without halting execution.
   
 ### Disk 3: Arrays
 
@@ -463,6 +463,7 @@ Once Macros are mostly finished in how they are called, you can find how to use 
  _ISLIT | ```_ISLIT [data]```                                                 | inserts executable code at pointer                
  _ISSTR | ```_ISSTR [data]```                                                 | inserts executable code at pointer
  _PRNT  | ```_PRNT [string or address]```                                     | prints provided literal string                 
+ _RDUMP | ```_RDUMP```                                                        | nothing; outputs registry values
  _SPAR  | ```_SPAR [src address];[length]```                                  | moves data at address to [param]                          
  _WAIT  | ```_WAIT```                                                         | Nothing; wait for keypress.
  ADD16  | ```ADD16 [word 1];[word 2] ```                                      | .Y = lobyte of sum
@@ -510,6 +511,7 @@ Once Macros are mostly finished in how they are called, you can find how to use 
  .      | .                                                                   | .X, .Y = length of string
  MFILL  | ```MFILL [address start];[length in bytes];[fill value]```          | Nothing useful       
  MMOVE  | ```MMOVE [src addr];[dest addr];[length in bytes]```                | Nothing useful
+ MSWAP  | ```MSWAP [first address];[second address];[length]```               | Nothing 
  MUL8   | ```MUL8 [multiplicand byte];[multiplier byte]```                    | .Y = lobyte of product (word)
  .      | .                                                                   | .X = hibyte of product (word)
  .      | .                                                                   | [RETURN] = quotient

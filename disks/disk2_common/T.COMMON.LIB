@@ -729,4 +729,99 @@ ZMLOAD
 *
 :RETADR  DS    2
 *
+*``````````````````````````````*
+* MEMSWAP ::       MEMORY SWAP *
+*-                            -*
+* SWAPS THE VALUES STORED IN   *
+* TWO BLOCKS OF SEQUENTIAL     *
+* MEMORY.                      *
+*-                            -*
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  ????----  REG: AXYM  *
+*-                            -*
+* CYCLES: ???                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*                              *
+*  LDA #>$6A00                 *
+*  PHA                         *
+*  LDA #<$6A00                 *
+*  PHA                         *
+*  LDA #>$300                  *
+*  PHA                         *
+*  LDA #<$300                  *
+*  PHA                         *
+*  LDA #$100                   *
+*  PHA                         *
+*  JSR MEMSWAP                 *
+*-                            -*
+* ENTRY                        *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+* LOW BYTE OF FIRST ADDRESS    *
+* HIGH BYTE OF FIRST ADDRESS   *
+* LOBYTE OF SECOND ADDRESS     *
+* HIBYTE OF SECOND ADDRESS     *
+*-                            -*
+* EXIT                         *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+*                              *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+MEMSWAP
+*
+** GET RETURN ADDRESS
+*
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+*
+** GET VARIABLES
+*
+         PLA
+         STA   :LENGTH
+         PLA
+         STA   ADDR1
+         PLA
+         STA   ADDR1+1
+         PLA
+         STA   ADDR2
+         PLA
+         STA   ADDR2+1
+*
+         LDY   #255       ;  COUNTER
+:LP
+         INY
+         LDA   (ADDR1),Y
+         TAX              ; X CONTAINS ADDR1 VAL
+         LDA   (ADDR2),Y  ; A CONTAINS ADDR2 VAL
+         STA   (ADDR1),Y
+         TXA
+         STA   (ADDR2),Y
+         CPY   :LENGTH
+         BNE   :LP
+*
+** RESTORE RETURN ADDRESS
+*
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+*
+         RTS
+*
+** VARIABLES
+*
+:LENGTH  DS    1
+*
 COMMONX  RTS

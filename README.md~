@@ -12,6 +12,7 @@ A general purpose ASM libriary for the Apple II. Assembled in Merlin 8 Pro.
 ## Table of Contents
 * [Introduction](#introduction)
 * [FAQ](#faq)
+* ~~How to use this Documentation~~
 * [Disk Overviews](#disk-overviews)
   * [Disk 1: STDIO](#disk-1-stdio)
   * [Disk 2: COMMON](#disk-2-common-required)
