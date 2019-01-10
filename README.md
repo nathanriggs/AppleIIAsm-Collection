@@ -13,6 +13,9 @@ A general purpose ASM libriary for the Apple II. Assembled in Merlin 8 Pro.
 * [Introduction](#introduction)
 * [FAQ](#faq)
 * ~~How to use this Documentation~~
+* ~~Some included Utilities~~
+  * ~~MINIFY.BAS~~
+  * ~~MAKEEXEC.BAS~~
 * [Disk Overviews](#disk-overviews)
   * [Disk 1: STDIO](#disk-1-stdio)
   * [Disk 2: COMMON](#disk-2-common-required)

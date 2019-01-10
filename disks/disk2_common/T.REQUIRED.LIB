@@ -1,6 +1,4 @@
 *
-         JMP   ENDVARS
-*
 *``````````````````````````````*
 * REQUIRED.LIB                 *
 *-                            -*
@@ -372,6 +370,4 @@ RETURN   DS    256
 *
 PARLEN   DS    1
 PARAM    DS    256
-*
-ENDVARS
 *

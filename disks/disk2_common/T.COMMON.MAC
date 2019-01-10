@@ -6,8 +6,8 @@
 * CONTACT: NATHAN.RIGGS@       *
 *          OUTLOOK.COM         *
 *                              *
-* VERSION:   0.2.0             *
-* DATE:      12-DEC-2018       *
+* VERSION:   0.3.0             *
+* DATE:      10-JAN-2018       *
 * ASSEMBLER: MERLIN 8 PRO      *
 * LICENSE:   APACHE 2.0        *
 * OS:        DOS 3.3           *
@@ -31,6 +31,7 @@
 * DELAY :: DELAY IN MILLISECS  *
 * ZSAVE :: SAVE FREE ZERO PAGE *
 * ZLOAD :: LOAD SAVE ZERO PAGE *
+* MSWAP :: SWAP MEM RANGES     *
 *                              *
 *-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*
 *
@@ -51,14 +52,8 @@
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 MFILL    MAC
-         LDA   #>]1       ; STARTING POINT
-         PHA
-         LDA   #<]1
-         PHA
-         LDA   #>]2       ; # OF BYTES
-         PHA
-         LDA   #<]2
-         PHA
+         _ISLIT ]1
+         _ISLIT ]2
          LDA   ]3         ; FILL VALUE
          PHA
          JSR   MEMFILL
@@ -73,7 +68,7 @@ MFILL    MAC
 *                              *
 * ]1 = NUMBER OF RINGS         *
 *-                            -*
-* SAMPLE USAGE: BELL           *
+* SAMPLE USAGE: BEEP 10        *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 BEEP     MAC
@@ -99,18 +94,15 @@ BEEP     MAC
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 MMOVE    MAC
-         LDA   #>]1       ; SRC ADDR
+         LDA   #>]1
          PHA
          LDA   #<]1
          PHA
-         LDA   #>]2       ; DEST ADDR
+         LDA   #>]2
          PHA
          LDA   #<]2
          PHA
-         LDA   #>]3       ; # OF BYTES
-         PHA
-         LDA   #<]3
-         PHA
+         _ISLIT ]3
          JSR   MEMMOVE
          <<<
 *

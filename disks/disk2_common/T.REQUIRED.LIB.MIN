@@ -1,11 +1,9 @@
 __GETRET
-*
          LDY   #255
          PLA
          STA   ADDR1
          PLA
          STA   ADDR1+1
-*
 :LP
          INY
          LDA   RETURN,Y
@@ -18,13 +16,11 @@ __GETRET
          PHA
          RTS
 __SETPARM
-*
          LDY   #255
          PLA
          STA   ADDR1
          PLA
          STA   ADDR1+1
-*
 :LP
          INY
          LDA   (ADDR1),Y
@@ -37,7 +33,6 @@ __SETPARM
          PHA
          RTS
 __DUMP
-*
          PLA
          STA   :RET
          PLA
@@ -48,7 +43,6 @@ __DUMP
          STA   ADDR3
          PLA
          STA   ADDR3+1
-*
          LDA   #$8D
          JSR   $FDF0
          LDA   ADDR3+1
@@ -83,7 +77,6 @@ __DUMP
          JSR   $FDF0
          LDA   #160       ; SPC
          JSR   $FDF0
-*
          LDY   #0
 :LP
          LDA   (ADDR3),Y
@@ -111,9 +104,7 @@ __DUMP
          PHA
          LDA   :RET
          PHA
-*
          RTS
-*
 :RET     DS    2
 :RIGHT   DS    1
 :LEFT    DS    1
@@ -178,7 +169,6 @@ __RDMP
          JMP   :RDUMP
 :O1      LDA   #1
          STA   :OVERFLOW
-*
 :RDUMP
          _PRNT " ",8D8D
          _PRNT "REGISTRY DUMP",8D
@@ -266,9 +256,6 @@ __RDMP
 :OCLR    _PRNT "OVERFLOW: CLEAR",8D8D8D
 :FIN
          RTS
-*
-** DATA
-*
 :A       DS    1
 :X       DS    1
 :Y       DS    1

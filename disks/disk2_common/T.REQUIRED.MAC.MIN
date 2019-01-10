@@ -26,7 +26,6 @@ STRCONT
          STA   PARAM,Y
          CPY   PARLEN
          BNE   ]STRLP1
-*
          LDA   #>PARAM    ; GET HI
          PHA
          LDA   #<PARAM    ; GET LO
@@ -72,4 +71,3 @@ _WAIT    MAC
 _RDUMP   MAC
          JSR   __RDMP
          <<<
-*
