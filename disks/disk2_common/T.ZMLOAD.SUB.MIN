@@ -1,6 +1,4 @@
-*
 ZMLOAD
-*
          PLA
          STA   :RETADR
          PLA
@@ -9,9 +7,9 @@ ZMLOAD
          STA   ADDR1
          PLA
          STA   ADDR1+1
-         LDY   #2
-         LDA   (ADDR1),Y
-         STA   $08
+         LDY   #2         ; START 2 AHEAD
+         LDA   (ADDR1),Y  ; AND PUT ADDR1
+         STA   $08        ; AREA LAST
          INY
          LDA   (ADDR1),Y
          STA   $09

@@ -193,7 +193,7 @@ MEMMOVE
          CPY   #0
          BNE   :MR2       ; BR IF NOT DONE W THIS PAGE
          DEX
-         BNE   :MR1       BR IF NOT ALL PAGES MOVED
+         BNE   :MR1       ; BR IF NOT ALL PAGES MOVED
 :MREXIT
 *
 ** RESTORE RETURN ADDRESS

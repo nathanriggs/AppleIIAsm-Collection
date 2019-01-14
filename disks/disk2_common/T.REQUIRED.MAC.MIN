@@ -71,3 +71,24 @@ _WAIT    MAC
 _RDUMP   MAC
          JSR   __RDMP
          <<<
+_ERR     MAC
+         LDA   #>]1
+         PHA
+         LDA   #<]1
+         PHA
+         LDA   #>]2
+         PHA
+         LDA   #<]2
+         PHA
+         LDA   #>]3
+         PHA
+         LDA   #<]3
+         PHA
+         LDA   #>]4
+         PHA
+         LDA   #<]4
+         PHA
+         LDA   ]5
+         PHA
+         JSR   __ERR
+         <<<

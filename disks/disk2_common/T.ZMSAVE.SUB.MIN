@@ -1,18 +1,16 @@
-*
 ZMSAVE
-*
          LDX   ADDR1
          LDY   ADDR1+1
          PLA
-         STA   :RETADR
-         PLA
+         STA   :RETADR    ; LOCAL BECAUSE RETADDR
+         PLA              ; IS STORED ON ZERO PAGE
          STA   :RETADR+1
          PLA
          STA   ADDR1
          PLA
          STA   ADDR1+1
-         TYA
-         LDY   #1
+         TYA              ; STORE ADDR1 VALS
+         LDY   #1         ; FIRST
          STA   (ADDR1),Y
          LDY   #0
          TXA

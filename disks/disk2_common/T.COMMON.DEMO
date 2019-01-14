@@ -18,6 +18,7 @@
 *
          CYC   AVE
          EXP   ONLY
+         TR    ON
          DSK   COMMON.DEMO
          OBJ   $BFE0
          ORG   $6000
@@ -26,6 +27,7 @@
 *  TOP INCLUDES (HOOKS,MACROS) *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
+         PUT   REQUIRED.VARS
          USE   REQUIRED.MAC.MIN
          PUT   REQUIRED.HOOKS.MIN
          USE   COMMON.MAC.MIN
@@ -39,6 +41,7 @@
 ** IMPLIES: IT FILLS A BLOCK OF MEMORY
 ** WITH A PARTICULAR CHARACTER.
 *
+         _PRNT " ",8D8D
          MFILL #$300;#10;#0
          _PRNT "MFILL FILLS A PORTION OF MEMORY WITH",8D
          _PRNT "A SPECIFIED VALUE. ",8D8D
@@ -144,15 +147,6 @@
          _DUMP $320;#10
          _WAIT
 *
-** THE FOLLOWING ILLUSTRATES THE _RDUMP MACRO IN
-** THE REQUIRED LIBRARY.
-*
-         LDA   #$11
-         LDX   #$12
-         LDY   #$13
-         CLC
-         _RDUMP
-*
          JMP   REENTRY
 *
 *``````````````````````````````*
@@ -161,6 +155,15 @@
 *
 ** BOTTOM INCLUDES
 *
-         PUT   COMMON.LIB.MIN
          PUT   REQUIRED.LIB.MIN
 *
+** INDIVIDUAL SUBROUTINE INCLUDES
+*
+*  COMMON LIBRARY SUBROUTINES
+*
+         PUT   MEMFILL.SUB.MIN
+         PUT   MEMMOVE.SUB.MIN
+         PUT   DELAYMS.SUB.MIN
+         PUT   ZMSAVE.SUB.MIN
+         PUT   ZMLOAD.SUB.MIN
+         PUT   MEMSWAP.SUB.MIN

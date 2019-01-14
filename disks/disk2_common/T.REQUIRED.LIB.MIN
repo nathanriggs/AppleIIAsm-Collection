@@ -133,10 +133,10 @@ __P
 __W
          JSR   $FD0C
          RTS
-__RDMP
-         STA   :A
-         STX   :X
-         STY   :Y
+__RSAV
+         STA   ERRA
+         STX   ERRX
+         STY   ERRY
 :C       BCC   :C0
          BCS   :C1
 :Z       BEQ   :Z1
@@ -145,43 +145,45 @@ __RDMP
          BPL   :N0
 :O       BVC   :O0
          BVS   :O1
-         JMP   :RDUMP
+         JMP   :EXIT
 :C0      LDA   #0
-         STA   :CARRY
+         STA   ERRCARRY
          JMP   :Z
 :C1      LDA   #1
-         STA   :CARRY
+         STA   ERRCARRY
          JMP   :Z
 :Z1      LDA   #1
-         STA   :ZERO
+         STA   ERRZERO
          JMP   :N
 :Z0      LDA   #0
-         STA   :ZERO
+         STA   ERRZERO
          JMP   :N
 :N1      LDA   #1
-         STA   :NEGATIVE
+         STA   ERRNEG
          JMP   :O
 :N0      LDA   #0
-         STA   :NEGATIVE
+         STA   ERRNEG
          JMP   :O
 :O0      LDA   #0
-         STA   :OVERFLOW
-         JMP   :RDUMP
+         STA   ERROVF
+         JMP   :EXIT
 :O1      LDA   #1
-         STA   :OVERFLOW
-:RDUMP
+         STA   ERROVF
+:EXIT
+         RTS
+__RDMP
          _PRNT " ",8D8D
          _PRNT "REGISTRY DUMP",8D
          _PRNT "=============",8D
          _PRNT "A: "
-         LDA   :A
+         LDA   ERRA
          AND   #$F0             ; MASK RIGHT
          LSR
          LSR
          LSR
          LSR
          STA   :LEFT
-         LDA   :A
+         LDA   ERRA
          AND   #$0F             ; MASK LEFT
          STA   :RIGHT
          LDX   :LEFT
@@ -192,14 +194,14 @@ __RDMP
          JSR   $FDF0
          _PRNT " ",8D
          _PRNT "X: "
-         LDA   :X
+         LDA   ERRX
          AND   #$F0             ; MASK RIGHT
          LSR
          LSR
          LSR
          LSR
          STA   :LEFT
-         LDA   :X
+         LDA   ERRX
          AND   #$0F             ; MASK LEFT
          STA   :RIGHT
          LDX   :LEFT
@@ -210,14 +212,14 @@ __RDMP
          JSR   $FDF0
          _PRNT " ",8D
          _PRNT "Y: "
-         LDA   :Y
+         LDA   ERRY
          AND   #$F0             ; MASK RIGHT
          LSR
          LSR
          LSR
          LSR
          STA   :LEFT
-         LDA   :Y
+         LDA   ERRY
          AND   #$0F             ; MASK LEFT
          STA   :RIGHT
          LDX   :LEFT
@@ -230,43 +232,127 @@ __RDMP
          _PRNT "STATUS FLAGS",8D
          _PRNT "============",8D8D
          LDA   #0
-         CMP   :CARRY
+         CMP   ERRCARRY
          BEQ   :CARCLR
          _PRNT "CARRY: SET",8D
          JMP   :TESTN
 :CARCLR  _PRNT "CARRY: CLEAR",8D
 :TESTN   LDA   #0
-         CMP   :NEGATIVE
+         CMP   ERRNEG
          BEQ   :NEGCLR
          _PRNT "NEGATIVE: SET",8D
          JMP   :TESTZ
 :NEGCLR  _PRNT "NEGATIVE: CLEAR",8D
 :TESTZ   LDA   #0
-         CMP   :ZERO
+         CMP   ERRZERO
          BEQ   :ZCLR
          _PRNT "ZERO: SET",8D
          JMP   :TESTO
 :ZCLR    _PRNT "ZERO: CLEAR",8D
 :TESTO
          LDA   #0
-         CMP   :OVERFLOW
+         CMP   ERROVF
          BEQ   :OCLR
          _PRNT "OVERFLOW: SET",8D
          JMP   :FIN
 :OCLR    _PRNT "OVERFLOW: CLEAR",8D8D8D
 :FIN
          RTS
-:A       DS    1
-:X       DS    1
-:Y       DS    1
 :LEFT    DS    1
 :RIGHT   DS    1
-:OVERFLOW DS   1
-:NEGATIVE DS   1
-:CARRY   DS    1
-:ZERO    DS    1
 HEXTAB   ASC   "0123456789ABCDEF"
-RETLEN   DS    1          ; RETURN VALUE BYTE LENGTH
-RETURN   DS    256
-PARLEN   DS    1
-PARAM    DS    256
+__ERR
+         JSR   __RSAV
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+         PLA
+         STA   :DUMPLEN   ; LENGTH OF DUMP
+         PLA
+         STA   :DUMP      ; DUMP ADDRESS LO
+         PLA
+         STA   :DUMP+1    ; DUMP HI
+         PLA
+         STA   :DMPMSG
+         PLA
+         STA   :DMPMSG+1
+         PLA
+         STA   :MESG      ; ERROR MESSAGE ADDR LO
+         PLA
+         STA   :MESG+1    ; HI
+         PLA
+         STA   :SRID      ; SUBROUTINE ID ADDR LO
+         PLA
+         STA   :SRID+1    ; SUB ID HI
+         _PRNT " ",87878787878D8D
+         _PRNT "ERROR!",8D8D
+         _PRNT "SUBROUTINE: "
+         LDY   #0
+         LDA   :SRID
+         STA   ADDR1
+         LDA   :SRID+1
+         STA   ADDR1+1
+:LP1
+         LDA   (ADDR1),Y
+         BEQ   :LPX1
+         JSR   $FDF0
+         INY
+         BNE   :LP1
+:LPX1
+         _PRNT " ",8D
+         _PRNT "MESSAGE: "
+         LDY   #0
+         LDA   :MESG
+         STA   ADDR1
+         LDA   :MESG+1
+         STA   ADDR1+1
+:LP2
+         LDA   (ADDR1),Y
+         BEQ   :LPX2
+         JSR   $FDF0
+         INY
+         BNE   :LP2
+:LPX2
+         _PRNT " ",8D8D
+         _WAIT
+         LDY   #0
+         LDA   :DMPMSG
+         STA   ADDR1
+         LDA   :DMPMSG+1
+         STA   ADDR1+1
+:LP3
+         LDA   (ADDR1),Y
+         BEQ   :LPX3
+         JSR   $FDF0
+         INY
+         BNE   :LP3
+:LPX3
+         _PRNT " ",8D
+         LDA   :DUMP+1
+         PHA
+         LDA   :DUMP
+         PHA
+         LDA   :DUMPLEN
+         PHA
+         JSR   __DUMP
+         _WAIT
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+         _PRNT " ",8D8D
+         _WAIT
+         _RDUMP
+         _WAIT
+         LDA   ERRSTOP
+         CMP   #1
+         BEQ   :KILL
+         RTS
+:KILL
+         JMP   $3D0
+:DUMPLEN DS    1
+:DUMP    DS    2
+:DMPMSG  DS    2
+:MESG    DS    2
+:SRID    DS    2
