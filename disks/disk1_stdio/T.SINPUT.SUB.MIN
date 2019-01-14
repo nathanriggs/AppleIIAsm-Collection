@@ -1,0 +1,27 @@
+SINPUT
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+         LDX   #$00
+         JSR   GETLN
+         STX   :STRLEN    ; STORE STR LENGTH
+         CPX   #0
+         BEQ   :EXIT
+:INP_CLR
+         LDY   #0
+         LDA   :STRLEN    ; LENGTH OF STRING
+         STA   RETLEN,Y   ; PUT LENGTH
+:LOOP
+         LDA   KEYBUFF,Y  ; PUT STR INTO NEW LOC
+         STA   RETURN,Y
+         INY
+         CPY   :STRLEN    ; IF Y < STR LENGTH
+         BNE   :LOOP      ; LOOP; ELSE, CONTINUE
+:EXIT
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+         RTS
+:STRLEN  DS    1

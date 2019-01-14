@@ -36,47 +36,41 @@
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
 *                              *
-*   A = LOW BYTE OF ADDRESS    *
-*   X = UNCHANGED              *
-*   Y = LENGTH OF PRINTED      *
-*       STRING                 *
+*  A = LOW BYTE OF ADDRESS     *
+*  X = UNCHANGED               *
+*  Y = LENGTH OF STRING        *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 DPRINT
 *
 ** SAVE RETURN ADDRESS
 *
-                                PLA
-                                STA   :RETADR
-                                PLA
-                                STA   :RETADR+1
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
 *
 ** GET ADDRESS, STORE IN ZERO PAGE
 *
-                                PLA
-                                STA   ADDR1
-                                PLA
-                                STA   ADDR1+1
+         PLA
+         STA   ADDR1
+         PLA
+         STA   ADDR1+1
 *
-                                LDY   #$00
+         LDY   #$00
 :LOOP
-                                LDA   (ADDR1),Y
-                                BEQ   :EXIT
-                                JSR   COUT1
-                                INY
-                                BNE   :LOOP
+         LDA   (ADDR1),Y
+         BEQ   :EXIT
+         JSR   COUT1
+         INY
+         BNE   :LOOP
 :EXIT
 *
 ** RESTORE RETURN ADDRESS
 *
-                                LDA   :RETADR+1
-                                PHA
-                                LDA   :RETADR
-                                PHA
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
 *
-                                RTS
-*
-** DATA
-*
-:RETADR        DS            2
-*
+         RTS

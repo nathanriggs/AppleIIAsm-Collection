@@ -42,53 +42,90 @@
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
 *                              *
-*   A = 1 IF PRESSED, 0 IF NOT *
-*   X = UNCHANGED              *
-*   Y = GARBAGE                *
+*  A = 1 IF PRESSED, 0 IF NOT  *
+*  X = UNCHANGED               *
+*  Y = GARBAGE                 *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 * CHANGE THIS LATER TO ACCEPT ALL BUTTONS, 0-4
 *
-GBPX
+GPBX
 *
 ** SAVE RETURN ADDRESS
 *
-                                PLA
-                                STA   :RETADR
-                                PLA
-                                STA   :RETADR+1
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
 *
 ** GET PARAMETER
 *
-                                PLA
-                                STA   ADDR1      ; ZERO PAGE
-                                PLA
-                                STA   ADDR1+1
+         PLA
+         STA   ADDR1      ; ZERO PAGE
+         PLA
+         STA   ADDR1+1
 *
 *
-                                LDY   #$00
-                                LDA   (ADDR1),Y  ; IF BTN = PUSHED
-                                BMI   :1
-                                JMP   :0
+********************************
+*
+** ERROR CONTROL
+*
+********************************
+*
+         LDA   ERRCTRL
+         CMP   #1
+         BEQ   :CHKERR
+         JMP   :ERREND
+:CHKERR
+         LDA   ADDR1+1
+         CMP   #$C0       ; MAX COL + 1
+         BNE   :BADHI
+         LDA   ADDR1
+         CMP   #$64
+         BCS   :BADLO
+         LDA   ADDR1
+         CMP   #$60
+         BCC   :BADLO
+         JMP   :ERREND
+:BADHI
+         _ERR  :E_SID;:E_BHI;:E_DMP1;RETURN;#10
+         JMP   :ERREND
+:BADLO
+         _ERR  :E_SID;:E_BLO;:E_DMP1;RETURN;#10
+*
+********************************
+*
+:ERREND
+*
+********************************
+*
+*
+         LDY   #$00
+         LDA   (ADDR1),Y  ; IF BTN = PUSHED
+         BMI   :1
+         JMP   :0
 :1
-                                LDY   #$01       ; BTN PUSHED;A=1
-                                JMP   :EXIT
+         LDY   #$01       ; BTN PUSHED;A=1
+         JMP   :EXIT
 :0
-                                LDY   #$00       ; BTN NOT PUSHED;A=0
+         LDY   #$00       ; BTN NOT PUSHED;A=0
 *
 :EXIT
 *
 ** RESTORE RETURN ADDRESS
 *
-                                LDA   :RETADR+1
-                                PHA
-                                LDA   :RETADR
-                                PHA
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
 *
-                                TYA              ; BTN FLAG MOVE TO A
-                                RTS
+         TYA              ; BTN FLAG MOVE TO A
+         RTS
 *
 ** DATA
 *
-:RETADR        DS            2
+:E_SID   ASC   "GPBX (PBX MACRO)",00
+:E_DMP1  ASC   "DUMPING RETURN BLOCK...",00
+:E_BHI   ASC   "BAD HIGH BYTE--NOT A PADDLE BUTTON!.",00
+:E_BLO   ASC   "BAD LOW BYTE--NOT A PADDLE BUTTON",00
 *
