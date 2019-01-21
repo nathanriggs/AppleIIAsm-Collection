@@ -3,9 +3,9 @@
 *                              *
 *      -< STRINGS DEMO >-      *
 *                              *
-*       VERSION 00.02.00       *
+*       VERSION 00.03.00       *
 *                              *
-*         21-DEC-2018          *
+*         20-JAN-2019          *
 *                              *
 ********************************
 *                              *
@@ -17,9 +17,9 @@
 ** ASSEMBLER DIRECTIVES
 *
          CYC   AVE
+         TR    ON
          EXP   ONLY
          DSK   STRINGS.DEMO
-*
          OBJ   $BFE0
          ORG   $6000
 *
@@ -27,10 +27,10 @@
 *  TOP INCLUDES (PUTS, MACROS) *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-         USE   REQUIRED.MAC
-         PUT   REQUIRED.HOOKS
-*
-         USE   STRINGS.MAC
+         PUT   REQUIRED.VARS
+         USE   REQUIRED.MAC.MIN
+         PUT   REQUIRED.HOOKS.MIN
+         USE   STRINGS.MAC.MIN
          PUT   STRINGS.HOOKS
 *
 *
@@ -193,16 +193,32 @@ CONT2
 *
          JMP   REENTRY
 *
+ASTR     STR   "A"
+BSTR     STR   "B"
+LSTR     STR   "THIS IS A STRING."
+*
 *``````````````````````````````*
 *        BOTTOM INCLUDES       *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 ** BOTTOM INCLUDES
 *
-         PUT   STRINGS.LIB
-         PUT   SUBSTRINGS.LIB
-         PUT   REQUIRED.LIB
+         PUT   REQUIRED.LIB.MIN
 *
-ASTR     STR   "A"
-BSTR     STR   "B"
-LSTR     STR   "THIS IS A STRING."
+** INDIVIDUAL SUBROUTINE INCLUDES
+*
+** STRING SUBROUTINES
+*
+         PUT   NUM2STR.SUB.MIN
+         PUT   PRNSTR.SUB.MIN
+         PUT   STRCAT.SUB.MIN
+         PUT   STRCOMP.SUB.MIN
+         PUT   STR2NUM.SUB.MIN
+*
+** SUBSTRING SUBROUTINES
+*
+         PUT   SUBCOPY.SUB.MIN
+         PUT   SUBDEL.SUB.MIN
+         PUT   SUBINS.SUB.MIN
+         PUT   SUBPOS.SUB.MIN
+*

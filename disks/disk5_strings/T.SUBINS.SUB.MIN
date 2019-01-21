@@ -1,76 +1,8 @@
-*
-*``````````````````````````````*
-* SUBINS :: INSERT SUBSTRING   *
-*-                            -*
-* INSERT A SUBSTRING INTO      *
-* ANOTHER STRING.              *
-*-                            -*
-* CLOBBERS:                    *
-*                              *
-* FLAGS:  ????----  REG: AXYM  *
-*-                            -*
-* CYCLES: ???                  *
-* SIZE:                        *
-*-                            -*
-* USAGE:                       *
-*                              *
-* LDA #STR ; STRING TO INS TO  *
-* PHA                          *
-* LDA #<STR                    *
-* PHA                          *
-* LDA IND ; INDEX TO START INS *
-* PHA                          *
-* LDA MLEN ; MAX LENGTH OF STR *
-* PHA                          *
-* LDA #>SUB ; SUBSTRING TO INS *
-* PHA                          *
-* LDA #<SUB                    *
-* PHA                          *
-* JST SUBINS                   *
-*-                            -*
-* ENTRY                        *
-*                              *
-* TOP OF STACK                 *
-*                              *
-* LOW BYTE OF RETURN ADDRESS   *
-* HI BYTE OF RETURN ADDRESS    *
-* LO BYTE OF SUBSTRING ADDRESS *
-* HI BYTE OF SUBSTRING ADDRESS *
-* MAX LENGTH OF FINAL STRING   *
-* STARTING INDEX FOR INSERTION *
-* LO BYTE OF SRC STRING ADDR   *
-* HI BYTE OF SOURCE STR ADDR   *
-*-                            -*
-* EXIT                         *
-*                              *
-* TOP OF STACK                 *
-*                              *
-* LOW BYTE OF RETURN ADDRESS   *
-* HI BYTE OF RETURN ADDRESS    *
-*                              *
-* .Y = TRASH                   *
-* .X = TRASH                   *
-* .A = TRASH                   *
-*                              *
-* CARRY = 0 IF NO ERRORS; ELSE *
-* CARRY = 1                    *
-*-                            -*
-* ADAPTED FROM LEVANTHAL AND   *
-* WINTHROP'S /6502 ASSEMBLY    *
-* LANGUAGE ROUTINES/.          *
-*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
-*
 SUBINS
-*
-** GET RETURN ADDRESS
-*
          PLA
          TAY
          PLA
          TAX
-*
-** GET PARAMETERS
-*
          PLA
          STA   ADDR2
          PLA
@@ -83,23 +15,12 @@ SUBINS
          STA   ADDR1
          PLA
          STA   ADDR1+1
-*
-** RESTORE RETURN ADDRESS
-*
          TXA
          PHA
          TYA
          PHA
-*
-*
-** ASSUME NO ERRORS
-*
          LDA   #0
          STA   :SCERR     ; ASSUME NO ERR WILL BE FOUND
-*
-** GET SUBSTRING AND STRING LENGTHS
-** IF SUB LENGTH = 0 THEN EXIT NO ERROR
-*
          LDY   #0
          LDA   (ADDR1),Y
          STA   :S1LEN     ; GET LENGTH OF STRING
@@ -107,19 +28,10 @@ SUBINS
          STA   :S2LEN     ; GET LENGTH OF SUB
          BNE   :IDX0
          JMP   :OKEXIT    ; EXIT OF NO INSERT/ERR
-*
-** IF STARTING INDEX IS 0 THEN ERROR EXIT
-*
 :IDX0
          LDA   :SINDEX
          BNE   :CHKLEN    ; BR OF INDEX NOT 0
          JMP   :EREXIT    ; ELSE ERROR EXIT
-*
-** CHECK THAT THE RESULTING STRING AFTER THE
-** INSERTION FITS IN THE SOURCE STRING. IF NOT
-** THEN TRUNCATE THE SUBSTRING AND SET
-** THE TRUNCATION FLAG.
-*
 :CHKLEN
          LDA   :S2LEN     ; GET SUBSTR LENGTH
          CLC
@@ -128,23 +40,15 @@ SUBINS
          CMP   :MLEN      ;
          BCC   :IDXLEN    ; BR IF S1+S2 LEN < MAX LENGTH
          BEQ   :IDXLEN    ; BR IF EQUAL
-*
-** SUBSTRING DOES NOT FIT, SO TRUNCATE IT
-*
 :TRUNC
          LDA   :MLEN      ; SUBSTR LEN = MLEN - STR LEN
          SEC
          SBC   :S1LEN
          BCC   :EREXIT
          BEQ   :EREXIT    ; ERR IF MLEN < STR LEN OR 0
-                          ; (ORIGINAL STRING WAS TOO LONG)
          STA   :S2LEN
          LDA   #$0FF
          STA   :SCERR     ; INDICATE SUBSTR WAS TRUNCATED
-*
-** CHECK THAT INDEX IS WITHIN STRING. IF NOT, CONCAT
-** SUBSTR ONTO THE END OF THE STRING.
-*
 :IDXLEN
          LDA   :S1LEN
          CMP   :SINDEX    ;
@@ -159,32 +63,18 @@ SUBINS
          ADC   :S2LEN
          STA   :S1LEN     ; ADD LENGTHS TOGETHER
          JMP   :MVESUB    ; PERFORM MOVE, NOTHING ELSE TODO
-*
-** OPEN UP A SPACE IN THE SOURCE STRING FOR THE
-** SUBSTRING BY MOVING THE CHARACTERS FROM THE END
-** OF THE SOURCE STRING DOWN TO INDEX, UP BY
-** THE SIZE OF THE STRING.
-*
 :LENOK
-*
-** CALC NUMBER OF CHARS TO MOVE
-**  COUNT = STR LEN - START INDEX + 1
-*
          LDA   :S1LEN
          SEC
          SBC   :SINDEX
          TAX
          INX              ; X= NUM OF CHARS TO MOV
-*
-** SET THE SOURCE INDEX AND CALC DEST INDEX
-*
          LDA   :S1LEN
          STA   :SIDX      ; SRC ENDS AT ORIG STR END
          CLC
          ADC   :S2LEN
          STA   :SBIDX     ; DEST ENDS FURTHER BY SUB LEN
          STA   :S1LEN     ; SET NEW LENGTH TO THIS ALSO
-*
 :OPNLP
          LDY   :SIDX
          LDA   (ADDR1),Y
@@ -194,16 +84,11 @@ SUBINS
          DEC   :SBIDX     ; DE DEST IDX, COUNTER
          DEX
          BNE   :OPNLP     ; CONT UNTIL COUNTER = 0
-*
-** MOVE THE SUBSTR INTO THE OPEN AREA
-*
 :MVESUB
          LDA   #1
          STA   :SIDX
-                          ; START AT ONE IN THE SUBSTR
                           ; START AT INDEX IN THE STRING
          LDX   :S2LEN     ; X = NUM OF CHARS TO MOVE
-*
 :MVELP
          LDY   :SIDX
          LDA   (ADDR2),Y  ; GET NEXT CHAR
@@ -215,7 +100,6 @@ SUBINS
          BNE   :MVELP     ; CONT UNTIL COUNTER = 0
          LDA   :SCERR     ; GET ERROR FLAG
          BNE   :EREXIT    ; BR IF SUBSTR WAS TRUNCED
-*
 :OKEXIT
          CLC
          BCC   :EXIT
@@ -226,9 +110,6 @@ SUBINS
          LDY   #0
          STA   (ADDR1),Y
          RTS
-*
-** DATA
-*
 :S1LEN   DS    1
 :S2LEN   DS    1
 :SUBLEN  DS    1
@@ -237,4 +118,3 @@ SUBINS
 :SIDX    DS    1
 :SBIDX   DS    1
 :SCERR   DS    1
-*

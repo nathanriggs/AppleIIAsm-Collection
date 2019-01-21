@@ -1,69 +1,12 @@
-*
-*``````````````````````````````*
-* NUM2STR :: NUMBER TO STRING  *
-*-                            -*
-* CONVERTS A 16-BIT NUMBER TO  *
-* ITS STRING EQUIVALENT.       *
-*-                            -*
-* CLOBBERS:                    *
-*                              *
-* FLAGS:  ????----  REG: AXYM  *
-*-                            -*
-* CYCLES: ???                  *
-* SIZE:                        *
-*-                            -*
-* USAGE:                       *
-*                              *
-*   LDA #>11111 ; VALUE TO     *
-*   PHA         ; CONVERT      *
-*   LDA #<11111                *
-*   PHA                        *
-*   JSR NUM2STR                *
-*-                            -*
-* ENTRY                        *
-*                              *
-* TOP OF STACK                 *
-*                              *
-* LOW BYTE OF RETURN ADDRESS   *
-* HI BYTE OF RETURN ADDRESS    *
-* LO BYTE VALUE TO CONVERT     *
-* HI BYTE VALUE TO CONVERT     *
-*-                            -*
-* EXIT                         *
-*                              *
-* TOP OF STACK                 *
-*                              *
-* LOW BYTE OF RETURN ADDRESS   *
-* HI BYTE OF RETURN ADDRESS    *
-*                              *
-* .Y = COUNTER; TRASH          *
-* .X = COUNTER; TRASH          *
-* .A = LOW BYTE OF RET ADDR    *
-*                              *
-* [RETURN] = STRING VALUE      *
-* [RETLEN] = LENGTH OF STRING  *
-*-                            -*
-* ADAPTED FROM LEVANTHAL AND   *
-* WINTHROP'S /6502 ASSEMBLY    *
-* LANGUAGE ROUTINES/.          *
-*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
-*
 NUM2STR
-*
-** SAVE RETURN ADDRESS
-*
          PLA
          STA   RETADR
          PLA
          STA   RETADR+1
-*
-** GET PARAMETERS
-*
          PLA
          STA   :VALSTR
          PLA
          STA   :VALSTR+1
-*
          STA   :NGFLAG
          BPL   :GETBP     ; BR IF VAL IS POS
          LDA   #0
@@ -73,7 +16,6 @@ NUM2STR
          LDA   #0
          SBC   :VALSTR+1
          STA   :VALSTR+1
-*
 :GETBP
          LDA   #<RETURN
          STA   ADDR1      ; ADDRESS TO STORE STRING
@@ -82,28 +24,17 @@ NUM2STR
          LDA   #0         ; SET BUFFER TO EMPTY
          LDY   #0
          STA   (ADDR1),Y  ; BUFFER(0) = 0
-*
-** CONVERT VAL TO STRING
-*
 :CNVERT
-*
-** VALUE = VALUE DIV 10
-** MOD10 = VALUE MOD 10
-*
          LDA   #0
          STA   :MOD10
          STA   :MOD10+1
          LDX   #16
          CLC              ; CLEAR CARRY
-*
 :DVLOOP
          ROL   :VALSTR    ; SHIFT  CARRY INTO DIVBIT 0
          ROL   :VALSTR+1  ; WHICH WILL BE THE QUOTIENT
          ROL   :MOD10     ; + SHIFT DIV AT SAME TIME
          ROL   :MOD10+1
-*
-** A,Y = DIVIDEND - DIVISOR
-*
          SEC
          LDA   :MOD10
          SBC   #10
@@ -119,55 +50,31 @@ NUM2STR
          BNE   :DVLOOP
          ROL   :VALSTR    ; SHIFT IN LAST CARRY FOR Q
          ROL   :VALSTR+1
-*
-** CONCAT NEXT CHAR
-*
 :CONCH
          LDA   :MOD10
          CLC
          ADC   #$B0
-*
-** ADC #'0' ; CONVERT 0..9 TO ASCII 0-9
-*
          JSR   :CONCAT
-*
-** IF VALUE <> 0 THEN CONTINUE
-*
          LDA   :VALSTR
          ORA   :VALSTR+1
          BNE   :CNVERT    ; BR IF VALUE != 0
-*
 :EXIT
          LDA   :NGFLAG
          BPL   :POS       ; BR IF ORIG VAL POS
          LDA   #173       ; ELSE
          JSR   :CONCAT    ; PUT A MINUS SIGN IN FRONT
-*
 :POS
-*
-** RESTORE RETURN ADDRESS
-*
          LDA   RETADR+1
          PHA
          LDA   RETADR
          PHA
-*
          RTS              ; RETURN
-*
-********************************
-* CONCAT SUBROUTINE
-********************************
-*
 :CONCAT
          PHA              ; SAVE CHAR ON STACK
-*
-** MOVE BUFFER RIGHT ONE CHAR
-*
          LDY   #0
          LDA   (ADDR1),Y  ; GET CURRENT LENGTH
          TAY
          BEQ   :EXITMR    ; BR IF LENGTH=0
-*
 :MVELP
          LDA   (ADDR1),Y  ; GET NEXT CHAR
          INY
@@ -175,7 +82,6 @@ NUM2STR
          DEY
          DEY
          BNE   :MVELP     ; CONT UNTIL DONE
-*
 :EXITMR
          PLA              ; GET CHAR BACK FROM STACK
          LDY   #1
@@ -185,12 +91,7 @@ NUM2STR
          CLC
          ADC   #1         ; INC LENGTH BY ONE
          STA   (ADDR1),Y  ; UPDATE LENGTH
-*
          RTS
-*
-** DATA
-*
 :NGFLAG  DS    1
 :VALSTR  DS    2
 :MOD10   DS    2
-*
