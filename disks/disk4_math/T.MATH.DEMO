@@ -3,9 +3,9 @@
 *                              *
 *      -< MATH  DEMO >-        *
 *                              *
-*       VERSION 00.02.00       *
+*       VERSION 00.03.00       *
 *                              *
-*         12-DEC-2018          *
+*         20-JAN-2018          *
 *                              *
 ********************************
 *                              *
@@ -18,6 +18,7 @@
 *
          CYC   AVE
          EXP   ONLY
+         TR    ON
          DSK   MATH.DEMO
          OBJ   $BFE0
          ORG   $6000
@@ -26,10 +27,11 @@
 *  TOP INCLUDES (HOOKS,MACROS) *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
+         PUT   REQUIRED.VARS
+         PUT   REQUIRED.HOOKS.MIN
+         USE   REQUIRED.MAC.MIN
          PUT   MATH.HOOKS
-         USE   MATH.MAC
-         PUT   REQUIRED.HOOKS
-         USE   REQUIRED.MAC
+         USE   MATH.MAC.MIN
 *
 *``````````````````````````````*
 *      PROGRAM MAIN BODY       *
@@ -222,7 +224,7 @@
          _PRNT "00    01 02 03 04  05",8D8D8D
          LDA   #$84       ; = $80 + EXPONENT; -1 = $79
          STA   $300
-         LDA   #A0        ; MANTISSA
+         LDA   #$A0       ; MANTISSA
          STA   $301       ; STORED MOST SIGNIFICANT
          LDA   #00
          STA   $302
@@ -273,7 +275,23 @@
 *
 ** BOTTOM INCLUDES
 *
-         PUT   MATH8.LIB
-         PUT   MATH16.LIB
-         PUT   REQUIRED.LIB
+         PUT   REQUIRED.LIB.MIN
+*
+** INDIVIDUAL SUBROUTINE INCLUDES
+*
+** 8-BIT MATH SUBROUTINES
+*
+         PUT   MULT8.SUB.MIN
+         PUT   DIVD8.SUB.MIN
+         PUT   RAND8.SUB.MIN
+         PUT   RANDB.SUB.MIN
+*
+** 16-BIT MATH SUBROUTINES
+*
+         PUT   ADDIT16.SUB.MIN
+         PUT   SUBT16.SUB.MIN
+         PUT   COMP16.SUB.MIN
+         PUT   MULT16.SUB.MIN
+         PUT   DIVD16.SUB.MIN
+         PUT   RAND16.SUB.MIN
 *

@@ -1,4 +1,3 @@
-*
 *``````````````````````````````*
 * RANDB ::         RANDOM BYTE *
 *-                            -*
@@ -64,7 +63,18 @@ RANDB
          STA   :OLDMIN
          LDA   #255
          STA   :OLDMAX
-         JSR   RAND8      ; RANDOM BYTE 0..255
+         LDX   #8
+         LDA   RNDL+0
+:AA
+         ASL
+         ROL   RNDL+1
+         BCC   :BB
+         EOR   #$2D       ; MAGIC NUMBER
+:BB
+         DEX
+         BNE   :AA
+         STA   RNDL+0
+         CMP   #0
          STA   :OLDVAL
 *
 ** NEWVALUE = (((OLDVAL-NEWMIN) * (NEWMAX-NEWMIN) /

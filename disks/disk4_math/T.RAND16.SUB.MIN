@@ -1,6 +1,4 @@
-*
 RAND16
-*
          LDA   RNDL
          STA   :SEED
          LDA   RNDH
@@ -11,7 +9,7 @@ RAND16
          LDA   :SEED+1
          ROL
          BCC   :NOEOR
-:DOEOR
+:DOEOR                    ; HIGH BYTE IN A
          EOR   #>$0369
          STA   :SEED+1
          LDA   :SEED

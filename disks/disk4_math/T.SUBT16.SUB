@@ -1,10 +1,10 @@
-*
 *``````````````````````````````*
-* SUB16 :: SUBTRACT WORDS      *
+* SUBT16 ::     SUBTRACT WORDS *
 *-                            -*
 * SUBTRACT ONE 16BIT NUMBER    *
 * FROM ANOTHER, RETURNING THE  *
-* RESULT IN X (HI) AND Y (LOW) *
+* RESULT IN .Y (LOW), .X (HI). *
+* SIGNED OR UNSIGNED.          *
 *-                            -*
 * CLOBBERS:                    *
 *                              *
@@ -15,15 +15,15 @@
 *-                            -*
 * USAGE:                       *
 *                              *
-*        LDA #>1000 ; MINU     *
-*        PHA                   *
-*        LDA #<1000            *
-*        PHA                   *
-*        LDA #>500 ; SUBT      *
-*        PHA                   *
-*        LDA #<500             *
-*        PHA                   *
-*        JSR SUB16             *
+*  LDA #>1000 ; MINUEND        *
+*  PHA                         *
+*  LDA #<1000                  *
+*  PHA                         *
+*  LDA #>500 ; SUBTRAHEND      *
+*  PHA                         *
+*  LDA #<500                   *
+*  PHA                         *
+*  JSR SUBT16                  *
 *-                            -*
 * ENTRY                        *
 *                              *
@@ -43,35 +43,22 @@
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
 *                              *
-*   Y = RESULT LOW BYTE        *
-*   X = RESULT HIGH BYTE       *
-*   A = LOW BYTE OF RET ADDR   *
-*-                            -*
-* ADAPTED FROM LEVANTHAL AND   *
-* WINTHROP'S /6502 ASSEMBLY    *
-* LANGUAGE ROUTINES/.          *
-* AS SUCH, THIS MAY NOT FALL   *
-* UNDER THE APACHE 2.0 LICENSE *
-* AGREEMENT, SINCE THE BOOK    *
-* WAS WRITTEN BEFORE THE       *
-* LICENSE!                     *
+* .Y = RESULT LOW BYTE         *
+* .X = RESULT HIGH BYTE        *
+* .A = LOW BYTE OF RET ADDR    *
 *                              *
-* THAT SAID, LEVENTHAL WROTE   *
-* THAT THE PURPOSE OF THE BOOK *
-* WAS TO COPY THE SOURCE CODE, *
-* AS REINVENTING THE WHEEL IS  *
-* TEDIOUS, AND HE PLACED NO    *
-* RESTRICTIONS ON ITS USE.     *
+* [RETURN] = RESULT (2 BYTES)  *
+* [RETLEN] = 2 (RESULT LENGTH) *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-SUB16
+SUBT16
 *
 ** GET RETURN ADDRESS
 *
          PLA
-         STA   :RETADR
+         STA   RETADR
          PLA
-         STA   :RETADR+1
+         STA   RETADR+1
 *
 ** GET PARAMETERS
 *
@@ -90,21 +77,24 @@ SUB16
          SEC
          SBC   :SUBT
          TAY              ; LOW BYTE
+         STY   RETURN
          LDA   :MINU+1
          SBC   :SUBT+1
          TAX              ; HIGH BYTE
+         STX   RETURN+1
+         LDA   #2
+         STA   RETLEN
 *
-** RESTORE REUTNR ADDRESS
+** RESTORE RETURN ADDRESS
 *
-         LDA   :RETADR+1
+         LDA   RETADR+1
          PHA
-         LDA   :RETADR
+         LDA   RETADR
          PHA
 *
          RTS
 *
 ** DATA
 *
-:RETADR  DS    2
 :MINU    DS    2
 :SUBT    DS    2

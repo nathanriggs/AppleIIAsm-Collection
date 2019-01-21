@@ -1,21 +1,15 @@
-*
 *``````````````````````````````*
-* MUL16 :: MULTIPLY WORDS      *
+* MULT16 ::     MULTIPLY WORDS *
 *-                            -*
 * PERFORM MULTIPLICATION USING *
 * THE SHIFT AND ADD ALGORITHM  *
 *                              *
-* THIS ALGORITHM PRODUCES AN   *
-* UNSIGNED 32-BIT PRODUCT IN   *
-* HIPROD AND MLIER WITH HIPROD *
-* BEING THE HIGH WORD.         *
-*                              *
 * NOTE: WHILE THIS DOES PASS   *
 * THE FULL 32BIT PRODUCT BACK  *
-* VIA X AND Y, BUT THIS WOULD  *
+* VIA X AND Y, THIS WOULD      *
 * RETURN FALSE RESULTS IF ONE  *
 * OF THE PARAMETERS HAD BEEN   *
-* SIGNED. THIS, USUALLY ONLY   *
+* SIGNED. THUS, USUALLY ONLY   *
 * THE LOW WORD IS USED.        *
 *-                            -*
 * CLOBBERS:                    *
@@ -27,15 +21,15 @@
 *-                            -*
 * USAGE:                       *
 *                              *
-*        LDA #>1000            *
-*        PHA                   *
-*        LDA #<1000 ; MCAND    *
-*        PHA                   *
-*        LDA #>3               *
-*        PHA                   *
-*        LDA #<3 ; MLIER       *
-*        PHA                   *
-*        JSR MUL16 ; = 3000    *
+*  LDA #>1000                  *
+*  PHA                         *
+*  LDA #<1000 ; MCAND          *
+*  PHA                         *
+*  LDA #>3                     *
+*  PHA                         *
+*  LDA #<3 ; MLIER             *
+*  PHA                         *
+*  JSR MUL16 ; = 3000          *
 *-                            -*
 * ENTRY                        *
 *                              *
@@ -57,35 +51,26 @@
 * LOW BYTE OF PRODUCT          *
 * HIGH BYTE OF PRODUCT (16BIT) *
 *                              *
-*   Y = LOW BYTE OF HIGH WORD  *
-*   X = HIGH BYTE OF HIGH WORD *
-*   A = LOW BYTE OF RET ADDR   *
+* .Y = LOW BYTE OF HIGH WORD   *
+* .X = HIGH BYTE OF HIGH WORD  *
+* .A = LOW BYTE OF RET ADDR    *
+*                              *
+* [RETURN] = RESULT (2 BYTES)  *
+* [RETLEN] = 2 (RESULT LENGTH) *
 *-                            -*
 * ADAPTED FROM LEVANTHAL AND   *
 * WINTHROP'S /6502 ASSEMBLY    *
 * LANGUAGE ROUTINES/.          *
-* AS SUCH, THIS MAY NOT FALL   *
-* UNDER THE APACHE 2.0 LICENSE *
-* AGREEMENT, SINCE THE BOOK    *
-* WAS WRITTEN BEFORE THE       *
-* LICENSE!                     *
-*                              *
-* THAT SAID, LEVENTHAL WROTE   *
-* THAT THE PURPOSE OF THE BOOK *
-* WAS TO COPY THE SOURCE CODE, *
-* AS REINVENTING THE WHEEL IS  *
-* TEDIOUS, AND HE PLACED NO    *
-* RESTRICTIONS ON ITS USE.     *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-MUL16
+MULT16
 *
 ** GET RETURN ADDRESS
 *
          PLA
-         STA   :RETADR
+         STA   RETADR
          PLA
-         STA   :RETADR+1
+         STA   RETADR+1
 *
 ** GET PARAMETERS
 *
@@ -143,14 +128,20 @@ MUL16
 *
          LDA   :MLIER+1
          TAX
+         STX   RETURN+1
          LDA   :MLIER
          TAY
+         STY   RETURN
+         LDA   :HPROD
+         STA   RETURN+2
+         LDA   #2
+         STA   RETLEN
 *
 ** RESTORE RETURN ADDRESS
 *
-         LDA   :RETADR+1
+         LDA   RETADR+1
          PHA
-         LDA   :RETADR
+         LDA   RETADR
          PHA
 *
          LDA   :HPROD     ;24BIT
@@ -161,4 +152,4 @@ MUL16
 :MCAND   DS    3
 :MLIER   DS    3
 :HPROD   DS    2
-:RETADR  DS    2
+*

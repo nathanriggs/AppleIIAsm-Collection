@@ -1,0 +1,37 @@
+COMP16
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+         PLA
+         STA   :SUBT      ; SUBTRAHEND
+         PLA
+         STA   :SUBT+1
+         PLA
+         STA   :MINU      ; MINUEND
+         PLA
+         STA   :MINU+1
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+         LDA   :MINU
+         CMP   :SUBT      ; COMPARE LOW BYTES
+         BEQ   :EQUAL
+         LDA   :MINU+1
+         SBC   :SUBT+1    ; COMPARE HIGH BYTES
+         ORA   #1         ; MAKE Z=0, SINCE LOW
+                          ; BYTES ARE NOT EQUAL
+         BVS   :OVFLOW    ; MUST HANDLE OVERFLOW
+         RTS              ; EXIT
+:EQUAL
+         LDA   :MINU+1
+         SBC   :SUBT+1    ; UPPER BYTES
+         BVS   :OVFLOW
+         RTS              ; RETURN W FLAGS SET
+:OVFLOW
+         EOR   #$80       ; COMPLEMENT N FLAG
+         ORA   #1         ; IF OVERFLOW THEN THE
+         RTS
+:MINU    DS    2
+:SUBT    DS    2

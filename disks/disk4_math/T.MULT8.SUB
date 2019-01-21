@@ -1,14 +1,16 @@
-*
 *``````````````````````````````*
-* DIVD8 :: 8BIT DIVISION (8BR) *
+* MULT8 : 8BIT MULTIPLY (16BR) *
 *-                            -*
-* DIVIDE ONE 8BIT NUMBER BY    *
-* ANOTHER TO GET AN 8BIT       *
-* RESULT. UNSIGNED ONLY.       *
+* MULTIPLY TWO 8BIT NUMBERS TO *
+* GET  16BIT RESULT. NUMBERS   *
+* MUST BE UNSIGNED.            *
 *                              *
 * ORIGINAL AUTHOR IS WHITE     *
 * FLAME, AS SHARED ON          *
-* CODEBASE64. MINOR CHANGES.   *
+* CODEBASE64. I HAVE MADE SOME *
+* MINOR ALTERATIONS, BUT NOT   *
+* NEARLY ENOUGH TO CALL IT MY  *
+* OWN.                         *
 *-                            -*
 * CLOBBERS:                    *
 *                              *
@@ -19,11 +21,11 @@
 *-                            -*
 * USAGE:                       *
 *                              *
-*  LDA  #200                   *
+*  LDA  #100                   *
 *  PHA                         *
-*  PDA #10                     *
+*  PDA #200                    *
 *  PHA                         *
-*  JSR DIV8                    *
+*  JSR MUL8                    *
 *-                            -*
 * ENTRY                        *
 *                              *
@@ -34,15 +36,15 @@
 *-                            -*
 * EXIT                         *
 *                              *
-* .Y = REMAINDER               *
-* .X = UNCHANGED               *
-* .A = QUOTIENT                *
+* .Y = LOW BYTE OF PRODUCT     *
+* .X = HI BYTE OF PRODUCT      *
+* .A = PRODUCT LENGTH (2)      *
 *                              *
-* [RETURN] = QUOTIENT          *
-* [RETLEN] = 1 (QUOT LENGTH)   *
+* [RETURN] = PRODUCT           *
+* [RETLEN] = 2 (PRODUCT LEN)   *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-DIVD8
+MULT8
 *
 ** GET RETURN ADDRESS
 *
@@ -54,21 +56,35 @@ DIVD8
 ** GET PARAMETERS
 *
          PLA
-         STA   :DVEND
+         STA   :MUL1
          PLA
-         STA   :DVSOR
+         STA   :MUL2
+*
+** INIT
 *
          LDA   #$00
-         LDY   #8
-         ASL   :DVSOR
-:L1      ROL
-         CMP   :DVEND
-         BCC   :L2
-         SBC   :DVEND
-:L2      ROL   :DVSOR
-         DEY
-         BNE   :L1
-         STA   :REM
+         TAY
+         TAX
+         STY   :MUL1H
+         BEQ   :GOLOOP
+*
+:DOADD
+         CLC
+         ADC   :MUL1
+         TAY
+*
+         TXA
+         ADC   :MUL1H
+         TAX
+         TYA
+*
+:LP
+         ASL   :MUL1
+         ROL   :MUL1H
+:GOLOOP
+         LSR   :MUL2
+         BCS   :DOADD
+         BNE   :LP
 *
 ** RESTORE RETURN ADDRESS
 *
@@ -77,19 +93,16 @@ DIVD8
          LDA   RETADR
          PHA
 *
-** LOAD QUOTIENT INTO A, REMAINDER INTO X
-*
-         LDY   :REM       ; REMAINDER TO Y
-         LDA   #1
+         STY   RETURN
+         STX   RETURN+1
+         LDA   #2
          STA   RETLEN
-         LDA   :DVSOR
-         STA   RETURN
 *
          RTS
 *
 ** DATA
 *
-:REM     DS    1
-:DVEND   DS    1
-:DVSOR   DS    1
+:MUL1    DS    1
+:MUL2    DS    1
+:MUL1H   DS    1
 *

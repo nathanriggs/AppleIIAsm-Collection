@@ -1,12 +1,11 @@
-** RAND8
-*
+RAND8
          LDX   #8
          LDA   RNDL+0
 :A
-         ASL
+         ASL              ;SHIFT THE REG
          ROL   RNDL+1
          BCC   :B
-         EOR   #$2D
+         EOR   #$2D       ; APPLY XOR FEEDBACK
 :B
          DEX
          BNE   :A
@@ -14,5 +13,5 @@
          STA   RETURN
          LDY   #1
          STY   RETLEN
-         CMP   #0
+         CMP   #0         ; RELOAD FLAGS
          RTS

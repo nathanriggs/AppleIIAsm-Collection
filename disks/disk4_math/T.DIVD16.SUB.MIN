@@ -1,4 +1,3 @@
-*
 UDIVD16
          LDA   #0
          BEQ   UDIVMD
@@ -19,17 +18,17 @@ UDIVMD
          PLA
          STA   _DVEND+1
          JSR   UDIV
-         BCC   DIVOK
+         BCC   DIVOK      ; BR IF NO ERR
 DIVERR   JMP   EREXIT
 DIVOK    JMP   OKEXIT
 SDIVD16
-         LDA   #0
-         BEQ   SDIVMD
+         LDA   #0         ; RESULT IS QUOTIENT
+         BEQ   SDIVMD      ;   (INDEX=0)
 SREMD16
-         LDA   #2
+         LDA   #2         ; RES = REMAINDER (I=2)
          BNE   SDIVMD
 SDIVMD
-         STA   _RSLTI
+         STA   _RSLTI     ;RESULT INDEX;0=Q,2=R
          PLA
          STA   RETADR
          PLA
@@ -48,8 +47,8 @@ SDIVMD
          LDA   _DVEND+1
          STA   _SREMD
          LDA   _DVSOR+1
-         BPL   CHKDE
-         LDA   #0
+         BPL   CHKDE       ; BR IF ALREADY POS
+         LDA   #0         ; SUB DVSOR FROM ZERO
          SEC
          SBC   _DVSOR
          STA   _DVSOR
@@ -58,8 +57,8 @@ SDIVMD
          STA   _DVSOR+1
 CHKDE
          LDA   _DVEND+1
-         BPL   DODIV
-         LDA   #0
+         BPL   DODIV      ; BR IF DVEND IS POS
+         LDA   #0         ; SUB DVEND FROM ZERO
          SEC
          SBC   _DVEND
          STA   _DVEND
@@ -68,9 +67,9 @@ CHKDE
          STA   _DVEND+1
 DODIV
          JSR   UDIV
-         BCS   EREXIT
+         BCS   EREXIT     ; EXIT IF DIV BY 0
          LDA   _SQUOT
-         BPL   DOREM
+         BPL   DOREM      ; BR IF Q IS POS
          LDA   #0
          SEC
          SBC   _DVEND
@@ -80,7 +79,7 @@ DODIV
          STA   _DVEND+1
 DOREM
          LDA   _SREMD
-         BPL   OKEXIT
+         BPL   OKEXIT     ; BR IF REM IS POS
          LDA   #0
          SEC
          SBC   _DVEND+2
@@ -92,19 +91,19 @@ DOREM
 EREXIT
          LDA   #0
          STA   _DVEND
-         STA   _DVEND+1
+         STA   _DVEND+1   ;QUOTIENT = 0
          STA   _DVEND+2
-         STA   _DVEND+3
+         STA   _DVEND+3   ; REMAINDER=0
          STA   RETURN
          STA   RETURN+1
          LDA   #2
          STA   RETLEN
-         SEC
+         SEC              ; CARRY=1 IF ERROR
          BCS   DVEXIT
 OKEXIT
-         CLC
+         CLC              ; CARRY = 0, NO ERRORS
 DVEXIT
-         LDX   _RSLTI
+         LDX   _RSLTI     ;GET INDEX TO RESULT
          LDA   _DVEND,X
          TAY
          LDA   _DVEND+1,X
@@ -117,7 +116,6 @@ DVEXIT
          PHA
          LDA   RETADR
          PHA
-*
          RTS
 UDIV
          LDA   #0
@@ -125,35 +123,36 @@ UDIV
          STA   _DVEND+3
          LDA   _DVSOR
          ORA   _DVSOR+1
-         BNE   OKUDIV
+         BNE   OKUDIV     ; BR IF DVSOR NOT 0
          SEC
          RTS
 OKUDIV
-         LDX   #16
+         LDX   #16        ; LOOP THROUGH 16 BITS
 DIVLP
-         ROL   _DVEND
-         ROL   _DVEND+1
-         ROL   _DVEND+2
+         ROL   _DVEND     ;SHFT CARRY INTO BIT 0 OF DVEND
+         ROL   _DVEND+1   ;WHICH WILL BE THE QUOTIENT AND
+         ROL   _DVEND+2   ;SHFT DVEND AT THE SAME TIME
          ROL   _DVEND+3
 CHKLT
          SEC
          LDA   _DVEND+2
          SBC   _DVSOR
-         TAY
+         TAY              ; SAVE LOW BYTE IN Y
          LDA   _DVEND+3
-         SBC   _DVSOR+1
-         BCC   DECCNT
-         STY   _DVEND+2
-         STA   _DVEND+3
+         SBC   _DVSOR+1   ;SUB HIGHBYTES W RES IN A
+         BCC   DECCNT     ; BR IF DVEND < DVSOR AND CARRY
+         STY   _DVEND+2   ; ELSE
+         STA   _DVEND+3   ;VEN(1)=DVEND(1)-DVSOR
 DECCNT
          DEX
          BNE   DIVLP
-         ROL   _DVEND
+         ROL   _DVEND     ;SHFT IN LAST CAR FOR QUOT
          ROL   _DVEND+1
-         CLC
+         CLC              ; NO ERRORS, CLEAR CARRY
          RTS
-_DVSOR   DS    2
-_DVEND   DS    4
-_SQUOT   DS    1
-_SREMD   DS    1
-_RSLTI   DS    1
+_DVSOR   DS    2          ; DIVISOR
+_DVEND   DS    4          ; DIVIDEND[0] AND QUOTIENT
+                          ; DIVIDEND[1] AND REMAINDER
+_SQUOT   DS    1          ; SIGN OF QUOTIENT
+_SREMD   DS    1          ; SIGN OF REMAINDER
+_RSLTI   DS    1          ; RESULT INDEX

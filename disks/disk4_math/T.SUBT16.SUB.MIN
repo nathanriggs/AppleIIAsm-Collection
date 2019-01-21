@@ -1,6 +1,4 @@
-*
 SUBT16
-*
          PLA
          STA   RETADR
          PLA
@@ -8,19 +6,19 @@ SUBT16
          PLA
          STA   :SUBT
          PLA
-         STA   :SUBT+1
+         STA   :SUBT+1    ; SUBTRAHEND
          PLA
          STA   :MINU
          PLA
-         STA   :MINU+1
+         STA   :MINU+1    ; MINUEND
          LDA   :MINU
          SEC
          SBC   :SUBT
-         TAY
+         TAY              ; LOW BYTE
          STY   RETURN
          LDA   :MINU+1
          SBC   :SUBT+1
-         TAX
+         TAX              ; HIGH BYTE
          STX   RETURN+1
          LDA   #2
          STA   RETLEN

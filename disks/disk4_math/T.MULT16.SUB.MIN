@@ -1,6 +1,4 @@
-*
 MULT16
-*
          PLA
          STA   RETADR
          PLA
@@ -14,29 +12,32 @@ MULT16
          PLA
          STA   :MCAND+1
          LDA   #0
-         STA   :HPROD
+         STA   :HPROD     ; ZERO HIGH WORD
          STA   :HPROD+1
-         LDX   #17
-         CLC
+         LDX   #17        ; # OF BITS IN MPLIER
+                          ; PLUS 1. EXTRA LOOP IS
+                          ; TO MOVE LAST CARRY INTO
+                          ; THE PRODUCT.
+         CLC              ; CLEAR CARRY FOR 1ST TIME
+                          ; THROUGH LOOP.
 :MULLP
          ROR   :HPROD+1
          ROR   :HPROD
          ROR   :MLIER+1
          ROR   :MLIER
-         BCC   :DECCNT
-         CLC
+         BCC   :DECCNT    ; BR IF NEXT BIT OF
+         CLC              ; NEXT BIT=1 SO ADD MCAND
          LDA   :MCAND
          ADC   :HPROD
          STA   :HPROD
          LDA   :MCAND+1
          ADC   :HPROD+1
-         STA   :HPROD+1
+         STA   :HPROD+1   ; CARRY = OVERFLOW
 :DECCNT
          DEX
-         BNE   :MULLP
-
-         LDY   :HPROD
-         LDX   :HPROD+1
+         BNE   :MULLP     ; CONTINUE UNTIL DONE
+         LDY   :HPROD     ; LOW BYTE OF HIGH WORD
+         LDX   :HPROD+1   ; HIGH BYTE OF HIGH WORD
          LDA   :MLIER+1
          TAX
          STX   RETURN+1
@@ -51,7 +52,7 @@ MULT16
          PHA
          LDA   RETADR
          PHA
-         LDA   :HPROD
+         LDA   :HPROD     ;24BIT
          RTS
 :MCAND   DS    3
 :MLIER   DS    3

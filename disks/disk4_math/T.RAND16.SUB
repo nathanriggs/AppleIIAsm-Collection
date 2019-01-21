@@ -1,6 +1,5 @@
-*
 *``````````````````````````````*
-* RND16 : 16BIT RANDOM NUMBER  *
+* RAND16 : 16BIT RANDOM NUMBER *
 *-                            -*
 * GENERATE A 16BIT PSEUDO-     *
 * RANDOM NUMBER AND RETURN IT  *
@@ -8,10 +7,7 @@
 *                              *
 * ORIGINAL AUTHOR IS WHITE     *
 * FLAME, AS SHARED ON          *
-* CODEBASE64. I HAVE MADE SOME *
-* MINOR ALTERATIONS, BUT NOT   *
-* NEARLY ENOUGH TO CALL IT MY  *
-* OWN.                         *
+* CODEBASE64.                  *
 *-                            -*
 * CLOBBERS:                    *
 *                              *
@@ -30,9 +26,12 @@
 *-                            -*
 * EXIT                         *
 *                              *
-*   Y = HIGH BYTE OF PRODUCT   *
-*   X = LOW BYTE OF PRODUCT    *
-*   A = LOW BYTE OF PRODUCT    *
+* .Y = HIGH BYTE OF PRODUCT    *
+* .X = LOW BYTE OF PRODUCT     *
+* .A = LOW BYTE OF PRODUCT     *
+*                              *
+* [RETURN] = RESULT (2 BYTES)  *
+* [RETLEN] = 2 (RESULT LENGTH) *
 *-                            -*
 * NOTE: THERE ARE 2048 MAGIC   *
 * NUMBERS THAT COULD BE EOR'D  *
@@ -44,7 +43,7 @@
 * $41BB, $3D91, $B5E9, $FFEB   *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-RND16
+RAND16
 *
          LDA   RNDL
          STA   :SEED
@@ -77,8 +76,13 @@ RND16
          STA   :SEED+1
 :EXIT    LDX   :SEED+1
          LDY   :SEED
+         STY   RETURN
+         STX   RETURN+1
+         LDA   #2
+         STA   RETLEN
          RTS
 *
 ** DATA
 *
 :SEED    DS    2
+*

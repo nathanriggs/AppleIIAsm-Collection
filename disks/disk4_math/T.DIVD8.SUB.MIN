@@ -1,5 +1,4 @@
 DIVD8
-*
          PLA
          STA   RETADR
          PLA
@@ -23,8 +22,8 @@ DIVD8
          PHA
          LDA   RETADR
          PHA
-         LDY   :REM
-         LDA   #1
+         LDY   :REM       ; REMAINDER TO Y
+               LDA        #1
          STA   RETLEN
          LDA   :DVSOR
          STA   RETURN
