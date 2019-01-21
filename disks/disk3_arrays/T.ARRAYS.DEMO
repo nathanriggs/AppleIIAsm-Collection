@@ -3,9 +3,9 @@
 *                              *
 *      -< ARRAYS DEMO >-       *
 *                              *
-*       VERSION 00.02.00       *
+*       VERSION 00.03.00       *
 *                              *
-*         12-DEC-2018          *
+*         15-JAN-2019          *
 *                              *
 ********************************
 *                              *
@@ -18,6 +18,7 @@
 *
          CYC   AVE
          EXP   ONLY
+         TR    ON
          DSK   ARRAYS.DEMO
          OBJ   $BFE0
          ORG   $6000
@@ -26,9 +27,10 @@
 *  TOP INCLUDES (HOOKS,MACROS) *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-         PUT   REQUIRED.HOOKS
-         USE   REQUIRED.MAC
-         USE   ARRAYS.MAC
+         PUT   REQUIRED.VARS
+         PUT   REQUIRED.HOOKS.MIN
+         USE   REQUIRED.MAC.MIN
+         USE   ARRAYS.MAC.MIN
          PUT   ARRAYS.HOOKS
 *
 *``````````````````````````````*
@@ -42,249 +44,156 @@ ARRAY2   EQU   $4000
 ** LOCATION AND SETS UP THE DATA CONFIGURATION
 ** FOR A 1D ARRAY (ARRAY LENGTH, ELEMENT LENGTH, DATA)
 *
-** MACRO: DIM81 ADDRESS;ARRAY_SIZE;ELEMENT_LENGTH
-*
-         LDA   #>ARRAY1   ; HIGH LOCATION FOR ARRAY
-         PHA
-         LDA   #<ARRAY1   ; LOW LOCATION
-         PHA
-         LDA   #06        ; ARRAY LENGTH
-         PHA
-         LDA   #2         ; ELEMENT LENGTH
-         PHA
-         JSR   ADIM81
-*
-** NOW CHECK $300 TO SEE RESULT
-*
-         JSR   __P
-         HEX   8D8D
-         ASC   "1-DIMENSIONAL ARRAY AFTER INITIALIZING"
-         HEX   8D8D
-         ASC   "            "
-         ASC   "0     1     2     3     4     5         "
-         HEX   8D00
-         LDA   #>$300
-         PHA
-         LDA   #<$300
-         PHA
-         LDA   #14        ; ARRAY LENGTH + 2
-         PHA
-         JSR   __DUMP
-         JSR   __W
+** MACRO: DIM81 ADDRESS;ARRAY_SIZE;ELEMENT_LENGTH;FILL_VAL
 *
 ** NOTE THAT INDEXING STARTS AT 0, SO AN ARRAY
 ** OF TEN ELEMENTS WOULD BE LISTED AS 0..9
 *
-** APUT81 COPIES DATA FROM ONE SPECIFIED LOCATION
-** TO THE ELEMENT INDEXED IN AN ARRAY AT ANOTHER
-** LOCATION.
+         _PRNT " ",8D8D
+         _PRNT "THE DIM81 MACRO SIMPLY SETS",8D
+         _PRNT "UP A ONE-DIMENSIONAL ARRAY OF",8D
+         _PRNT "THE GIVEN SIZE WITH ELEMENTS OF",8D
+         _PRNT "A GIVEN LENGTH.",8D8D
+         _PRNT "DIM81 ARRAY1;#10;#1;#$AA RETURNS:",8D8D
+         DIM81 ARRAY1;#10;#1;#$AA
+         _DUMP ARRAY1;#2
+         _DUMP ARRAY1+2;#5
+         _DUMP ARRAY1+7;#5
+         _PRNT " ",8D8D
+         _WAIT
 *
-*** MACRO: PUT81 $SRC_ADDR;ARRAY_ADDR;INDEX
+** PUT81 PUTS THE VALUE AT A SPECIFIED ADDRESS
+** INTO THE ARRAY AT THE SPECIFIED INDEX.
 *
-         LDA   #$44
-         STA   ARRAY2
-         LDA   #$55
-         STA   ARRAY2+1
-         LDA   #>ARRAY2   ; ADDRESS TO COPY
-         PHA
-         LDA   #<ARRAY2
-         PHA
-         LDA   #>ARRAY1   ; ARRAY ADDRESS
-         PHA
-         LDA   #<ARRAY1
-         PHA
-         LDA   #2
-         PHA              ; INDEX
-         JSR   APUT81
-         JSR   __P
-         HEX   8D8D8D
-         ASC   "AFTER PUTTING #4455 AT INDEX 2"
-         HEX   8D00
-         LDA   #>ARRAY1
-         PHA
-         LDA   #<ARRAY1
-         PHA
-         LDA   #14
-         PHA
-         JSR   __DUMP
-         JSR   __W
+** MACRO: PUT81 SRC_ADDR;DEST_ARRAY;INDEX
 *
-** AGET81 RETURNS THE MEMORY ADDRESS WHERE
-** AN ELEMENT AT THE SPECIFIED INDEX IN
-** Y (LOW) AND X (HIGH), AS WELL AS COPIES
-** THAT ELEMENT TO THE [RETURN] LOCATION
+         _PRNT "THE PUT81 MACRO PUTS THE VALUE FOUND",8D
+         _PRNT "AT THE SPECIFIED ADDRESS AND THEN",8D
+         _PRNT "INSERTS IT INTO THE GIVEN ARRAY AND",8D
+         _PRNT "INDEX.",8D8D
+         _PRNT "SO, PUT81 $320;ARRAY1;#1 AND ",8D
+         _PRNT "PUT81 $321;ARRAY1;#2 RESULTS IN: ",8D8D
+         LDA   #$BB
+         STA   $320
+         LDA   #$CC
+         STA   $321
+         PUT81 $320;ARRAY1;#1
+         PUT81 $321;ARRAY1;#2
+         _DUMP ARRAY1;#2
+         _DUMP ARRAY1+2;#5
+         _DUMP ARRAY1+7;#5
+         _PRNT " ",8D8D
+         _WAIT
 *
-*** MACRO: GET81 $ARRAY_ADDRESS;INDEX
+         _PRNT "NOTE THAT IF YOUR ELEMENT SIZE",8D
+         _PRNT "IS ONE BYTE.ONLY ONE BYTE IS COPIED;",8D
+         _PRNT "IF TWO BYTES, THEN TWO ARE COPIED,",8D
+         _PRNT "AND SO ON. THUS THE FOLLOWING:",8D8D
+         _PRNT "DIM81 ARRAY2;#10;#2;#$EE",8D
+         _PRNT "PUT81 $320;ARRAY2;#8",8D8D
+         _PRNT "RESULTS IN THE FOLLOWING:",8D8D
+         DIM81 ARRAY2;#10;#2;#$EE
+         PUT81 $320;ARRAY2;#8
+         _DUMP ARRAY2;#02
+         _DUMP ARRAY2+2;#5
+         _DUMP ARRAY2+7;#5
+         _DUMP ARRAY2+12;#5
+         _DUMP ARRAY2+17;#5
+         _WAIT
+         _PRNT " ",8D8D
+         _PRNT "ALSO NOTE THAT BECAUSE ELEMENT SIZES",8D
+         _PRNT "CAN VARY FROM 1 BYTE TO 255 BYTES,",8D
+         _PRNT "ALLOWING LITERAL VALUES IS IMPRACTICAL.",8D
+         _PRNT "THUS, BE SURE TO UTILIZE A PORTION",8D
+         _PRNT "OF MEM FOR PASSING TO AND FROM ARRAY ",8D
+         _PRNT "SUBROUTINES. THE [PARAM] ADDR IS GOOD",8D
+         _PRNT "FOR THIS.",8D8D
+         _WAIT
 *
-         LDA   #>ARRAY1
-         PHA
-         LDA   #<ARRAY1
-         PHA
-         LDA   #02        ; INDEX CONTAINS #4455
-         PHA              ; OR "DU" INVERTED
-         JSR   AGET81
+         _PRNT " ",8D8D
 *
-         JSR   __P
-         HEX   8D8D
-         ASC   "RETURN VALUE OF GET81: "
-         HEX   00
-         LDA   RETURN
-         JSR   $FDF0      ; COUT1
-         LDA   RETURN+1
-         JSR   $FDF0
-         JSR   __P
-         HEX   8D00
-         JSR   __W
+** GET81 SIMPLY RETRIEVES THE VALUE IN AN
+** ARRAY AT THE GIVEN INDEXED ELEMENT IN
+** [RETURN].
 *
-** DIM82 CREATES AN 8BIT, 2D ARRAY AT THE
-** SPECIFIED LOCATION WITH THE LENGTH AND
-** HEIGHT PASSED VIA THE STACK
+** MACRO: GET81 ARRAY_ADDR;INDEX
 *
-** MACRO: DIM82 $ARRAY_ADDR;ROWS;COLUMNS;ELEMENT_LENGTH
+         _PRNT "THE GET81 MACRO GETS THE VALUE HELD",8D
+         _PRNT "IN THE GIVEN ELEMENT IN THE GIVEN",8D
+         _PRNT "ARRAY. THUS",8D8D
+         _PRNT "GET81 ARRAY2;#8 RETURNS:",8D8D
+         GET81 ARRAY2;#8
+         _DUMP RETURN;RETLEN
+         _PRNT " ",8D8D
+         _WAIT
 *
-         LDA   #>ARRAY2
-         PHA
-         LDA   #<ARRAY2   ; ARRAY ADDRESS
-         PHA
-         LDA   #4         ; X-DIMENSION
-         PHA
-         LDA   #4         ; Y-DIMESION
-         PHA
-         LDA   #1         ; ELEMENT SIZE
-         PHA
-         JSR   ADIM82
+** DIM82 CREATES A 2-DIMENSIONAL ARRAY WITH THE
+** SPECIFIED ELEMENT LENGTH AND X,Y DIMENSIONS
 *
-         JSR   __P
-         HEX   8D8D
-         ASC   "2-DIMENSIONAL ARRAY, FIRST INITIALIZED"
-         HEX   8D
-         HEX   00
-         LDA   #>ARRAY2
-         PHA
-         LDA   #<ARRAY2
-         PHA
-         LDA   #3
-         PHA
-         JSR   __DUMP
-         LDA   #>ARRAY2+3
-         PHA
-         LDA   #<ARRAY2+3
-         PHA
-         LDA   #4
-         PHA
-         JSR   __DUMP
-         LDA   #>ARRAY2+7
-         PHA
-         LDA   #<ARRAY2+7
-         PHA
-         LDA   #4
-         PHA
-         JSR   __DUMP
-         LDA   #>ARRAY2+11
-         PHA
-         LDA   #<ARRAY2+11
-         PHA
-         LDA   #4
-         PHA
-         JSR   __DUMP
-         LDA   #>ARRAY2+15
-         PHA
-         LDA   #<ARRAY2+15
-         PHA
-         LDA   #4
-         PHA
-         JSR   __DUMP
-         JSR   __W
+** MACRO: DIM82 ARRAY_ADDR;X_DIM;Y_DIM;ELEM_LENGTH
 *
-** APUT82 PUTS THE DATA STORED IN ONE LOCATION
-** INTO THE ARRAY AT THE SPECIFIED INDEX X,Y.
+         DIM82 ARRAY2;#10;#10;#1;#$2D
+         _PRNT "DIM82 CREATES AN ARRAY LIKE DIM81,",8D
+         _PRNT "BUT IN 2-DIMENSIONS INSTEAD OF ONE.",8D8D
+         _PRNT "THUS DIM82 ARRAY2;#10;#10;#1;#$2D RETURNS: ",8D8D
+         _DUMP ARRAY2;#03
+         _DUMP ARRAY2+03;#10
+         _DUMP ARRAY2+13;#10
+         _DUMP ARRAY2+23;#10
+         _DUMP ARRAY2+33;#10
+         _DUMP ARRAY2+43;#10
+         _DUMP ARRAY2+53;#10
+         _DUMP ARRAY2+63;#10
+         _DUMP ARRAY2+73;#10
+         _DUMP ARRAY2+83;#10
+         _DUMP ARRAY2+93;#10
+         _PRNT " ",8D8D
+         _WAIT
 *
-** MACRO: PUT82 SRC_ADDR;ARRAY_ADDR;ROW_INDEX;COLUMN_INDEX
+** THE PUT82 MACRO MIRRORS PUT81, BUT IN 2 DIMENSIONS.
+** IN SHORT, IT SIMPLY PUTS THE STRING OF BYTES
+** FOUND AT SOURCE_ADDR THAT CORRELATE TO THE ARRAY'S
+** ELEMENT LENGTH INTO THE SPECIFIED X,Y INDEX.
 *
-         LDA   #180
-         STA   ARRAY1
-
-         LDA   #>ARRAY1   ; SRC
-         PHA
-         LDA   #<ARRAY1
-         PHA
-         LDA   #>ARRAY2   ; DEST
-         PHA
-         LDA   #<ARRAY2
-         PHA
-         LDA   #2         ; X INDEX
-         PHA
-         LDA   #3
-         PHA              ; Y INDEX
-         JSR   APUT82
+** MACRO: PUT82 SOURCE_ADDR;ARRAY_ADDR;X_INDEX;Y_INDEX
 *
-         JSR   __P
-         HEX   8D8D
-         ASC   "2D ARRAY AFTER PUTTING '04' AT LOCATION 2,3"
-         HEX   8D
-         HEX   00
-         LDA   #>ARRAY2
-         PHA
-         LDA   #<ARRAY2
-         PHA
-         LDA   #3
-         PHA
-         JSR   __DUMP
-         LDA   #>ARRAY2+3
-         PHA
-         LDA   #<ARRAY2+3
-         PHA
-         LDA   #4
-         PHA
-         JSR   __DUMP
-         LDA   #>ARRAY2+7
-         PHA
-         LDA   #<ARRAY2+7
-         PHA
-         LDA   #4
-         PHA
-         JSR   __DUMP
-         LDA   #>ARRAY2+11
-         PHA
-         LDA   #<ARRAY2+11
-         PHA
-         LDA   #4
-         PHA
-         JSR   __DUMP
-         LDA   #>ARRAY2+15
-         PHA
-         LDA   #<ARRAY2+15
-         PHA
-         LDA   #4
-         PHA
-         JSR   __DUMP
-         JSR   __W
+         _PRNT "PUT82 ACTS LIKE PUT81, BUT IN TWO",8D
+         _PRNT "DIMENSIONS. ",8D8D
+         _PRNT "SO: PUT82 $320;ARRAY2;#1;#5 RETURNS",8D8D
+         LDA   #$0F
+         STA   $320
+         LDA   #$FF
+         STA   $321
+         PUT82 $320;ARRAY2;#01;#05
+         _DUMP ARRAY2;#03
+         _DUMP ARRAY2+03;#10
+         _DUMP ARRAY2+13;#10
+         _DUMP ARRAY2+23;#10
+         _DUMP ARRAY2+33;#10
+         _DUMP ARRAY2+43;#10
+         _DUMP ARRAY2+53;#10
+         _DUMP ARRAY2+63;#10
+         _DUMP ARRAY2+73;#10
+         _DUMP ARRAY2+83;#10
+         _DUMP ARRAY2+93;#10
+         _PRNT " ",8D8D
+         _WAIT
 *
-** AGET82 GETS THE MEMORY LOCATION OF THE ELEMENT
-** STORED AT INDEX X,Y IN THE GIVEN ARRAYS AND
-** RETURNS IT IN Y (LOW) AND X (HIGH); DATA
-** IN ELEMENT IS ALSO COPIED TO [RETURN]
+** FINALLY, GET82 GETS THE VALUE AT A GIVEN X,Y
+** INDEX AND PLACES IT IN [RETURN] WITH THE
+** ELEMENT LENGTH IN [RETLEN].
 *
-** MACRO: GET82 $ARRAY_ADDR;ROW_INDEX;COLUMN_INDEX
+** MACRO: GET82 ARRAY_ADDR;X_INDEX;Y_INDEX
 *
-         LDA   #>ARRAY2
-         PHA
-         LDA   #<ARRAY2
-         PHA
-         LDA   #2         ; X INDEX
-         PHA
-         LDA   #3         ; Y INDEX
-         PHA
-         JSR   AGET82
+         _PRNT "LIKEWISE, GET82 ACTS LIKE GET81,",8D
+         _PRNT "BUT IN TWO DIMENSIONS. ",8D8D
+         _PRNT "THUS: GET82 ARRAY2;#1;#5 RETURNS:",8D8D
+         GET82 ARRAY2;#1;#5
+         _DUMP RETURN;RETLEN
+         _WAIT
 *
-         LDA   RETURN
-         JSR   __P
-         HEX   8D8D
-         ASC   "VALUE AT 2,3 VIA AGET82: "
-         HEX   00
-         LDA   RETURN
-         JSR   $FDF0
-         JSR   __W
+         _PRNT " ",8D8D
+         _PRNT "FIN.",8D8D8D
 *
          JMP   REENTRY
 *
@@ -292,7 +201,19 @@ ARRAY2   EQU   $4000
 * BOTTOM INCLUDES (ROUTINES)   *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-         PUT   ARRAYS81.LIB
-         PUT   ARRAYS82.LIB
-         PUT   REQUIRED.LIB
+         PUT   REQUIRED.LIB.MIN
+*
+** INDIVIDUAL SUBROUTINE INCLUDES
+*
+** 8-BIT 1-DIMENSIONAL ARRAY SUBROUTINES
+*
+         PUT   ADIM81.SUB.MIN
+         PUT   AGET81.SUB.MIN
+         PUT   APUT81.SUB.MIN
+*
+** 8-BIT 2-DIMENSIONAL ARRAY SUBROUTINES
+*
+         PUT   ADIM82.SUB.MIN
+         PUT   AGET82.SUB.MIN
+         PUT   APUT82.SUB.MIN
 *

@@ -67,6 +67,8 @@ DIM81    MAC
          PHA
          LDA   ]3         ; ELEMENT LENGTH
          PHA
+         LDA   ]4
+         PHA              ; FILL VAL
          JSR   ADIM81
          <<<
 *
@@ -150,6 +152,7 @@ PUT81    MAC
 * ]2 = X DIMENSION             *
 * ]3 = Y DIMENSION             *
 * ]4 = ELEMENT SIZE            *
+* ]5 = FILL VALUE              *
 *-                            -*
 * SAMPLE USAGE:                *
 *   DIM82 $300;#4;#4;#1        *
@@ -165,6 +168,8 @@ DIM82    MAC
          LDA   ]3         ; Y DIM
          PHA
          LDA   ]4         ; ELEMENT LENGTH
+         PHA
+         LDA   ]5         ; FILL VAL
          PHA
          JSR   ADIM82
          <<<

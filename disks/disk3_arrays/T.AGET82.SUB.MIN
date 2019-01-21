@@ -1,0 +1,157 @@
+AGET82
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+         PLA
+         STA   :YIDX
+         PLA
+         STA   :XIDX
+         PLA
+         STA   ADDR1
+         PLA
+         STA   ADDR1+1
+         DEC   :XIDX
+         DEC   :YIDX
+         LDY   #2
+         LDA   (ADDR1),Y  ; ELEMENT LENGTH
+         STA   :MCAND     ; ELEMENT LENGTH
+         STA   :ELEN
+         DEY
+         LDA   (ADDR1),Y  ; Y LENGTH
+         STA   :YLEN
+         DEY
+         LDA   (ADDR1),Y  ; X LENGTH
+         STA   :XLEN
+         LDA   #0
+         STA   :MCAND+1
+         LDA   ERRCTRL
+         CMP   #1
+         BEQ   :CHKERR
+         JMP   :ERREND
+:CHKERR
+         LDA   :XIDX      ; IF X > MAX LEN
+         CLC
+         ADC   #1
+         CMP   :XLEN
+         BCS   :XOVF
+         JMP   :ERRCONT1
+:XOVF
+         _ERR  :E_SID;:E_XOVF;:E_DUMP;:XIDX;#15
+:ERRCONT1
+         LDA   :YIDX      ; IF Y > MAX LEN
+         CLC
+         ADC   #1
+         CMP   :YLEN
+         BCS   :YOVF
+         JMP   :ERRCONT2
+:YOVF
+         _ERR  :E_SID;:E_YOVF;:E_DUMP;:XIDX;#15
+:ERRCONT2
+         LDA   :XIDX      ; IF INDEX IS 0, ERR
+         CMP   #255
+         BEQ   :XOVF
+:ERRCONT3
+         LDA   :YIDX
+         CMP   #255
+         BEQ   :YOVF
+:ERREND
+         LDA   #0
+         TAY
+         STY   SCRATCH
+         BEQ   :ENTLP
+:DOADD
+         CLC
+         ADC   :YIDX
+         TAX
+         TYA
+         ADC   SCRATCH
+         TAY
+         TXA
+:LP
+         ASL   :YIDX
+         ROL   SCRATCH
+:ENTLP
+         LSR   :YLEN
+         BCS   :DOADD
+         BNE   :LP
+         STX   :MLIER
+         STY   :MLIER+1
+         CLC
+         LDA   :MLIER
+         ADC   :XIDX
+         STA   :MLIER
+         BCC   :CONTADD
+         LDA   :MLIER+1
+         ADC   #1
+         STA   :MLIER+1
+:CONTADD
+         LDA   #0
+         STA   :PROD+2
+         STA   :PROD+3
+         LDX   #$10
+:SHIFTR  LSR   :MLIER+1
+         ROR   :MLIER
+         BCC   :ROTR
+         LDA   :PROD+2
+         CLC
+         ADC   :MCAND
+         STA   :PROD+2
+         LDA   :PROD+3
+         ADC   :MCAND+1
+:ROTR
+         ROR
+         STA   :PROD+3
+         ROR   :PROD+2
+         ROR   :PROD+1
+         ROR   :PROD
+         DEX
+         BNE   :SHIFTR
+         CLC
+         INC   :PROD      ; INCREASE BY 3
+         INC   :PROD
+         INC   :PROD
+         BCC   :NOCAR
+         INC   :PROD+1
+:NOCAR
+         CLC
+         LDA   :PROD
+         ADC   ADDR1
+         STA   :PROD
+         LDA   :PROD+1
+         ADC   ADDR1+1
+         STA   :PROD+1
+         LDY   :PROD
+         LDX   :PROD+1
+         STY   ADDR1
+         STX   ADDR1+1
+         LDY   #0
+:RLP
+         LDA   (ADDR1),Y
+         STA   RETURN,Y
+         INY
+         CPY   :ELEN
+         BNE   :RLP
+         LDA   :ELEN
+         STA   RETLEN
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+         LDA   RETLEN
+         LDY   ADDR1
+         LDX   ADDR1+1
+         RTS
+:XIDX    DS    2
+:YIDX    DS    2
+:XLEN    DS    1
+:YLEN    DS    1
+:PROD    DS    4
+:MLIER   DS    2
+:MCAND   DS    2
+:ELEN    DS    1
+:E_SID   ASC   "AGET82 (GET82 MACRO)",00
+:E_DUMP  ASC   ":XIDX(2) :YIDX(2) :XLEN(1) :YLEN(1)"
+         ASC   ":PROD(4) :MLIER(2) :MCAND(2) :ELEN(1)",00
+:E_XOVF  ASC   "X-OVERFLOW! X IS > MAXIMUM OR IS 0.",00
+:E_YOVF  ASC   "Y-OVERFLOW! Y IS > MAX OR IS 0.",00

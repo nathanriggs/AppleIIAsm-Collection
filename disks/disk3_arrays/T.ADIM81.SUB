@@ -31,6 +31,8 @@
 *  PHA                         *
 *  LDA  #2 ; ELEMENT SIZE      *
 *  PHA                         *
+*  LDA  #$AA ; FILL VALUE      *
+*  PHA                         *
 *  JSR  DIM81                  *
 *-                            -*
 * ENTRY                        *
@@ -39,6 +41,7 @@
 *                              *
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
+* FILL VALUE                   *
 * ELEMENT SIZE                 *
 * ARRAY SIZE                   *
 * LOW BYTE OF ARRAY ADDRESS    *
@@ -61,10 +64,6 @@
 *
 ADIM81
 *
-** FIRST, CLEAR BLOCK OF MEM TO BE USED
-**  THEN MUL [:ASIZE] BY [:ESIZE], AND ADD 2 TO
-** GET TOTAL MEMORY USED BY ARRAY
-*
 ** SAVE RETURN ADDRESS
 *
          PLA
@@ -75,13 +74,15 @@ ADIM81
 ** GET PARAMETERS
 *
          PLA
+         STA   :FILL      ; FILL VALUE
+         PLA
          STA   :ESIZE     ; ELEMENT SIZE
          STA   :ESZBAK
          PLA
          STA   :ASIZE     ; ARRAY SIZE
          STA   :ASZBAK
          PLA
-         STA   ADDR1
+         STA   ADDR1      ; ARRAY ADDRESS
          PLA
          STA   ADDR1+1
          LDY   #0
@@ -124,7 +125,7 @@ ADIM81
 *
 ** FILL WHOLE PAGES FIRST
 *
-         LDA   #0         ; FILL VALUE
+         LDA   :FILL      ; FILL VALUE
          LDX   :MSIZE+1
          BEQ   :PART      ; IF NO WHOLE PAGES, JUST PART
          LDY   #0
@@ -192,4 +193,5 @@ ADIM81
 :ESIZE   DS    1
 :ASZBAK  DS    1
 :ESZBAK  DS    1
+:FILL    DS    1
 *
