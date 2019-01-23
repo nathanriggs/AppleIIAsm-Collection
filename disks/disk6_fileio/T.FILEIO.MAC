@@ -7,8 +7,8 @@
 * CONTACT: NATHAN.RIGGS@       *
 *          OUTLOOK.COM         *
 *                              *
-* VERSION:   0.2.0             *
-* DATE:      22-DEC-2018       *
+* VERSION:   0.3.0             *
+* DATE:      23-JAN-2019       *
 * ASSEMBLER: MERLIN 8 PRO      *
 * OS:        DOS 3.3           *
 * LICENSE:   APACHE 2.0        *
@@ -25,7 +25,7 @@
 *                              *
 * BSAVE : BINARY SAVE          *
 * BLOAD : BINARY LOAD          *
-* TMODE : TEXT FILE OP MODE    *
+* AMODE : TURN ON APPLESOFT    *
 * CMD : EXECUTE DOS COMMAND    *
 * FPRN : PRINT TO FILE         *
 * FINP : INPUT LINE FROM FILE  *
@@ -79,7 +79,7 @@ BSAVE    MAC
          <<<
 *
 *``````````````````````````````*
-* TMODE : INIT TXTFILE OP MODE *
+* AMODE : INIT TXTFILE OP MODE *
 *-                            -*
 * FOOLS DOS INTO THINKING THAT *
 * WE ARE IN INDIRECT MODE TO   *
@@ -87,11 +87,14 @@ BSAVE    MAC
 * WRITE OPERATIONS.            *
 *-                            -*
 * SAMPLE USAGE:                *
-*   TMODE                      *
+*   AMODE                      *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-TMODE    MAC
-         JSR   TXTMODE
+AMODE    MAC
+         LDA   #1
+         STA   $AAB6      ; DOS LANG FLAG
+         STA   $75+1      ; NOT IN DIRECT MODE
+         STA   $33        ; NOT IN DIRECT MODE
          <<<
 *
 *``````````````````````````````*

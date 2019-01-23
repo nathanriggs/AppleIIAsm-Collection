@@ -1,10 +1,10 @@
-*
 *``````````````````````````````*
-* BINLOAD ::       BINARY LOAD *
+* FPSTR : PRINT STRING TO FILE *
 *-                            -*
-* SIMPLY BLOADS INTO MEMORY AS *
-* SPECIFIED BY THE STRING      *
-* PASSED AS A PARAMETER.       *
+* PRINTS THE SPECIFIED STRING  *
+* AT GIVEN LOCATION TO THE     *
+* FILE OPEN AND SET TO BE      *
+* WRITTEN.                     *
 *-                            -*
 * CLOBBERS:                    *
 *                              *
@@ -15,11 +15,6 @@
 *-                            -*
 * USAGE:                       *
 *                              *
-*   LDA #>SADDR ; STRING ADDR  *
-*   PHA                        *
-*   LDA #<SADDR                *
-*   PHA                        *
-*   JSR BINLOAD                *
 *-                            -*
 * ENTRY                        *
 *                              *
@@ -27,8 +22,6 @@
 *                              *
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
-* LO BYTE OF STRING ADDRESS    *
-* HI BYTE OF STRING ADDRESS    *
 *-                            -*
 * EXIT                         *
 *                              *
@@ -37,14 +30,14 @@
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
 *                              *
-* .Y = UNCHANGED               *
-* .X = UNCHANGED               *
-* .A = CLOBBERED; TRASH        *
+* .Y = CLOBBERED               *
+* .X = CLOBBERED               *
+* .A = CLOBBERED               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-BINLOAD
+FPSTR
 *
-** GET RETURN ADDRESS
+** SAVE RETURN ADDRESS
 *
          PLA
          STA   RETADR
@@ -54,45 +47,20 @@ BINLOAD
 ** GET PARAMETERS
 *
          PLA
-         STA   ADDR2      ; CMD STRING ADDR
+         STA   ADDR1
          PLA
-         STA   ADDR2+1
-*
-         LDA   #$8D
-         JSR   FCOUT
-         LDA   #$84       ; CTRL-D
-         JSR   FCOUT
-         LDA   #$C2       ; B
-         JSR   FCOUT
-         LDA   #$CC       ; L
-         JSR   FCOUT
-         LDA   #$CF       ; O
-         JSR   FCOUT
-         LDA   #$C1       ; A
-         JSR   FCOUT
-         LDA   #$C4       ; D
-         JSR   FCOUT
-         LDA   #$A0       ; [SPACE]
-         JSR   FCOUT
-*
-** NOW SEND STRING TO COUT
+         STA   ADDR1+1
 *
          LDY   #0
-         LDA   (ADDR2),Y
+         LDA   (ADDR1),Y
          STA   :SLEN
-         LDY   #1
 :LP
-         LDA   (ADDR2),Y
-         JSR   FCOUT
          INY
-         CPY   :SLEN
-         BCC   :LP
-         BEQ   :LP
-*
-** NOW PRESS RETURN AND PRAY
-*
-         LDA   #$8D
+         LDA   (ADDR1),Y
          JSR   FCOUT
+         CPY   :SLEN
+         BNE   :LP
+:EXIT
 *
 ** RESTORE RETURN ADDRESS
 *

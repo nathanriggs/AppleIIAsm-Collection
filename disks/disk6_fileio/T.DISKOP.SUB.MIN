@@ -1,6 +1,4 @@
-*
 DISKOP
-*
 :CLEAR
          LDA   #00
          STA   IOB_EVOL

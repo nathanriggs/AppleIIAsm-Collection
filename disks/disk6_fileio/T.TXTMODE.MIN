@@ -1,9 +1,0 @@
-*
-TXTMODE
-*
-         LDA   #$40
-         STA   LANG
-         STA   CURLIN+1
-         LDA   #$06
-         STA   PROMPT
-         RTS

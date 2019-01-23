@@ -1,6 +1,5 @@
-*
 *``````````````````````````````*
-* BLOAD :: BINARY LOAD         *
+* BINLOAD ::       BINARY LOAD *
 *-                            -*
 * SIMPLY BLOADS INTO MEMORY AS *
 * SPECIFIED BY THE STRING      *
@@ -19,7 +18,7 @@
 *   PHA                        *
 *   LDA #<SADDR                *
 *   PHA                        *
-*   JSR BLOAD                  *
+*   JSR BINLOAD                *
 *-                            -*
 * ENTRY                        *
 *                              *
@@ -37,13 +36,12 @@
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
 *                              *
-*   Y = UNCHANGED              *
-*   X = UNCHANGED              *
-*   A = CLOBBERED; TRSAH       *
+* .Y = UNCHANGED               *
+* .X = UNCHANGED               *
+* .A = CLOBBERED; TRASH        *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-*
-BLOAD
+BINLOAD
 *
 ** GET RETURN ADDRESS
 *
@@ -58,6 +56,50 @@ BLOAD
          STA   ADDR2      ; CMD STRING ADDR
          PLA
          STA   ADDR2+1
+*
+** FIRST, TELL DOS TO GO INTO APPLESOFT MODE
+*
+         LDA   #1
+         STA   $AAB6      ; DOS LANG FLAG
+         STA   $75+1      ; NOT IN DIRECT MODE
+         STA   $33        ; NOT IN DIRECT MODE
+*
+********************************
+*
+*  ERROR CONTROL
+*
+********************************
+*
+         LDA   ERRCTRL
+         CMP   #1
+         BEQ   :CHKERR0
+         JMP   :ERREND
+:CHKERR0
+*
+** NOW TURN ON ONERR
+*
+         LDA   #$FF       ; TURN ON LOCAL ERR HANDLING
+         STA   $D8
+*
+** NOW SET ONERR ADDR TO :CHKERR ROUTINE
+*
+         LDA   #<:CHKERR
+         STA   $9D5A          ; DOS ERROR HANDLING ADDR
+         LDA   #>:CHKERR
+         STA   $9D5B
+         JMP   :ERREND
+:CHKERR
+         LDY   #0
+         STY   $D8        ; RESUME NORMAL ERR CTRL
+         _ERR  :E_SID;:E_MSG;:E_DUMP;ADDR2;#2
+         BRK
+*
+********************************
+*
+:ERREND
+*
+********************************
+*
 *
          LDA   #$8D
          JSR   FCOUT
@@ -107,4 +149,8 @@ BLOAD
 ** DATA
 *
 :SLEN    DS    1
+*
+:E_SID   ASC   "BINLOAD (BLOAD MACRO)",00
+:E_DUMP  ASC   "DUMPING STRING ADDRESS...",00
+:E_MSG   ASC   "INPUT/OUTPUT ERROR!!!",00
 *

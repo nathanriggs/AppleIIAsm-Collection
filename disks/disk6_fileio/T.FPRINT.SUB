@@ -1,11 +1,10 @@
-*
 *``````````````````````````````*
-* FPSTR : PRINT STRING TO FILE *
+* FPRINT : JUST PRINTS TO COUT *
 *-                            -*
-* PRINTS THE SPECIFIED STRING  *
-* AT GIVEN LOCATION TO THE     *
-* FILE OPEN AND SET TO BE      *
-* WRITTEN.                     *
+* PRINTS A STRING TO A TEXT    *
+* FILE THAT IS SPECIFIED IN AN *
+* ASC THAT FOLLOWS THE JSR TO  *
+* THE SUBROUTINE.              *
 *-                            -*
 * CLOBBERS:                    *
 *                              *
@@ -16,6 +15,18 @@
 *-                            -*
 * USAGE:                       *
 *                              *
+*  JSR CMD                     *
+*  ASC "OPEN TEXT1"            *
+*  HEX 8D00                    *
+*  JSR CMD                     *
+*  ASC "WRITE TEXT1"           *
+*  HEX 8D00                    *
+*  JSR FPRINT                  *
+*  ASC "THIS IS A TEST."       *
+*  HEX 8D00                    *
+*  JSR CMD                     *
+*  ASC "CLOSE TEXT1"           *
+*  HEX 8D00                    *
 *-                            -*
 * ENTRY                        *
 *                              *
@@ -32,47 +43,38 @@
 * HI BYTE OF RETURN ADDRESS    *
 *                              *
 * .Y = CLOBBERED               *
-* .X = CLOBBERED               *
+* .X = UNCHANGED               *
 * .A = CLOBBERED               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-FPSTR
+FPRINT
 *
-** SAVE RETURN ADDRESS
+** GET RETURN ADDRESS
 *
          PLA
          STA   RETADR
          PLA
          STA   RETADR+1
 *
-** GET PARAMETERS
+** NOW SEND STRING TO COUT
 *
-         PLA
-         STA   ADDR1
-         PLA
-         STA   ADDR1+1
-*
-         LDY   #0
-         LDA   (ADDR1),Y
-         STA   :SLEN
+         LDY   #$01       ; POINT TO NEXT INSTR
 :LP
-         INY
-         LDA   (ADDR1),Y
+         LDA   (RETADR),Y
+         BEQ   :DONE
          JSR   FCOUT
-         CPY   :SLEN
+         INY
          BNE   :LP
-:EXIT
-*
-** RESTORE RETURN ADDRESS
-*
+:DONE
+         CLC              ; RESTORE INSTR POINTER
+         TYA
+         ADC   RETADR
+         STA   RETADR
          LDA   RETADR+1
+         ADC   #$00
          PHA
          LDA   RETADR
          PHA
 *
          RTS
-*
-** DATA
-*
-:SLEN    DS    1
 *

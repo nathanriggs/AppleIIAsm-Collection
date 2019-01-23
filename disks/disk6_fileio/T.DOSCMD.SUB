@@ -1,11 +1,10 @@
-*
 *``````````````````````````````*
-* FPRINT : JUST PRINTS TO COUT *
+* DOSCMD : EXECUTE DOS COMMAND *
 *-                            -*
-* PRINTS A STRING TO A TEXT    *
-* FILE THAT IS SPECIFIED IN AN *
-* ASC THAT FOLLOWS THE JSR TO  *
-* THE SUBROUTINE.              *
+* EXECUTES A DOS COMMAND THAT  *
+* IS PASSED VIA AN ASC THAT    *
+* FOLLOWS THE JSR TO THE       *
+* ROUTINE.                     *
 *-                            -*
 * CLOBBERS:                    *
 *                              *
@@ -16,17 +15,8 @@
 *-                            -*
 * USAGE:                       *
 *                              *
-*  JSR CMD                     *
-*  ASC "OPEN TEXT1"            *
-*  HEX 8D00                    *
-*  JSR CMD                     *
-*  ASC "WRITE TEXT1"           *
-*  HEX 8D00                    *
-*  JSR FPRINT                  *
-*  ASC "THIS IS A TEST."       *
-*  HEX 8D00                    *
-*  JSR CMD                     *
-*  ASC "CLOSE TEXT1"           *
+*  JSR DOSCMD                  *
+*  ASC "CATALOG"               *
 *  HEX 8D00                    *
 *-                            -*
 * ENTRY                        *
@@ -43,13 +33,12 @@
 * LOW BYTE OF RETURN ADDRESS   *
 * HI BYTE OF RETURN ADDRESS    *
 *                              *
-*   Y = CLOBBERED              *
-*   X = UNCHANGED              *
-*   A = CLOBBERED              *
+* .Y = CLOBBERED               *
+* .X = UNCHANGED               *
+* .A = UNCHANGED               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-*
-FPRINT
+DOSCMD
 *
 ** GET RETURN ADDRESS
 *
@@ -57,6 +46,18 @@ FPRINT
          STA   RETADR
          PLA
          STA   RETADR+1
+*
+         LDA   #$8D
+         JSR   FCOUT
+         LDA   #$84       ; CTRL-D
+         JSR   FCOUT
+*
+** FIRST, ENTER APPLESOFT MODE
+*
+         LDA   #1
+         STA   $AAB6      ; DOS LANG FLAG
+         STA   $75+1      ; NOT DIRECT MODE
+         STA   $33        ; NOT DIRECT MODE
 *
 ** NOW SEND STRING TO COUT
 *

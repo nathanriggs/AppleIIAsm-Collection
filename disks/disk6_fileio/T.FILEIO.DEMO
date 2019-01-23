@@ -3,9 +3,9 @@
 *                              *
 *      -< FILEIO  DEMO >-      *
 *                              *
-*       VERSION 00.02.00       *
+*       VERSION 00.03.00       *
 *                              *
-*         22-DEC-2018          *
+*         21-JAN-2019          *
 *                              *
 ********************************
 *                              *
@@ -18,8 +18,8 @@
 *
          CYC   AVE
          EXP   ONLY
+         TR    ON
          DSK   FILEIO.DEMO
-*
          OBJ   $BFE0
          ORG   $6000
 *
@@ -27,10 +27,10 @@
 *  TOP INCLUDES (HOOKS,MACROS) *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-         USE   REQUIRED.MAC
-         PUT   REQUIRED.HOOKS
-*
-         USE   FILEIO.MAC
+         PUT   REQUIRED.VARS
+         USE   REQUIRED.MAC.MIN
+         PUT   REQUIRED.HOOKS.MIN
+         USE   FILEIO.MAC.MIN
          PUT   FILEIO.HOOKS
 *
 *``````````````````````````````*
@@ -79,6 +79,7 @@ LP
          _WAIT
          _DUMP $800;#$100
          _WAIT
+         _PRNT " ",8D8D
          _PRNT "BSAVE 'TEST,A$800,L$100'...."
          BSAVE "TEST,A$800,L$100"
          _PRNT "DONE!",8D8D
@@ -113,6 +114,16 @@ LP2
          CMD   "CATALOG"
          _WAIT
 *
+** IF WE ARE TO READ OR WRITE FILES, WE HAVE TO FOOL
+** THE COMPUTER TO THINK IT'S IN APPLESOFT MODE. THIS
+** IS ACCOMPLISHED WITH THE AMODE MACRO. WITH BINSAVE
+** AND BINLOAD, THIS IS ALREADY DONE, SO TECHNICALLY
+** WE DON'T HAVE TO DO IT HERE. HOWEVER, THE CMD
+** ROUTINE DOESN'T SET IT UP AUTOMATICALLY, SO BE SURE
+** TO INCLUDE THIS BEFORE OPENING TEXT FILES.
+*
+         AMODE
+*
          _PRNT " ",8D8D8D
          _PRNT "TYPICALLY, THE CMD MACRO IS ALSO",8D
          _PRNT "USED FOR PREPARING TO READ OR WRITE",8D
@@ -138,7 +149,6 @@ LP2
          _PRNT "THE ASCII IS.",8D8D
          _PRNT "FPRN 'ALL IS WELL THAT ENDS WELL.'",8D
          _PRNT "FPRN RETORT",8D8D
-         TMODE
          CMD   "OPEN T.TEXTFILE"
          CMD   "WRITE T.TEXTFILE"
          FPRN  "ALL IS WELL THAT ENDS WELL."
@@ -245,12 +255,23 @@ LP2
 *
          JMP   REENTRY
 *
+RETORT   STR   "IF YOU ARE RICH, ANYHOW..."
+*
 *``````````````````````````````*
 *        BOTTOM INCLUDES       *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-         PUT   FILEIO.LIB
-         PUT   REQUIRED.LIB
+         PUT   REQUIRED.LIB.MIN
 *
-RETORT   STR   "IF YOU ARE RICH, ANYHOW..."
+** INDIVIDUAL SUBROUTINES
+*
+** FILEIO SUBROUTINES
+*
+         PUT   BINLOAD.SUB.MIN
+         PUT   BINSAVE.SUB.MIN
+         PUT   DISKOP.SUB.MIN
+         PUT   DOSCMD.SUB.MIN
+         PUT   FINPUT.SUB.MIN
+         PUT   FPRINT.SUB.MIN
+         PUT   FPSTR.SUB.MIN
 *
