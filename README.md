@@ -2,6 +2,9 @@
 
 A general purpose ASM libriary for the Apple II. Assembled in Merlin 8 Pro.
 
+---
+## Warning!
+Currently, this documentation does not reflect the most recent updates to the code (0.3.0). This is the next issue to be addressed.
 
 
 
