@@ -1,0 +1,41 @@
+MULT8
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+         PLA
+         STA   :MUL1
+         PLA
+         STA   :MUL2
+         LDA   #$00
+         TAY
+         TAX
+         STY   :MUL1H
+         BEQ   :GOLOOP
+:DOADD
+         CLC
+         ADC   :MUL1
+         TAY
+         TXA
+         ADC   :MUL1H
+         TAX
+         TYA
+:LP
+         ASL   :MUL1
+         ROL   :MUL1H
+:GOLOOP
+         LSR   :MUL2
+         BCS   :DOADD
+         BNE   :LP
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+         STY   RETURN
+         STX   RETURN+1
+         LDA   #2
+         STA   RETLEN
+         RTS
+:MUL1    DS    1
+:MUL2    DS    1
+:MUL1H   DS    1

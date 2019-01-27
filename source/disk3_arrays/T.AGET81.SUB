@@ -1,0 +1,203 @@
+*
+*``````````````````````````````*
+* AGET81 :   GET ARRAY ELEMENT *
+*                      ADDRESS *
+*-                            -*
+* GETS THE SPECIFIED ELEMENT   *
+* OF THE ARRAY AND COPIES IT   *
+* TO MEMORY DEDICATED TO       *
+* RETURN VALUES.               *
+*-                            -*
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  ????----  REG: AXYM  *
+*-                            -*
+* CYCLES: ???                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*                              *
+*  LDA #>$300 ;HI ARADDR       *
+*  PHA                         *
+*  LDA #<$300 ; LOW            *
+*  PHA                         *
+*  LDA #5 ; INDEX              *
+*  PHA                         *
+*  JSR AGET81                  *
+*-                            -*
+* ENTRY                        *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+* INDEX OF ELEMENT TO GET      *
+* ADDRESS OF ARRAY LO BYTE     *
+* ADDRESS OF ARRAY HI BYTE     *
+*-                            -*
+* EXIT                         *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+*                              *
+* .Y = LOBYTE OF ELEMENT ADDR  *
+* .X = HIBYTE OF ELEMENT ADDR  *
+* .A = LENGTH OF RETURN VAL    *
+*                              *
+* [RETURN] VALUE FOUND AT      *
+* SPECIFIED INDEX              *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+AGET81
+*
+** SAVE RETURN ADDRESS
+*
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+*
+** GET PARAMETERS
+*
+         PLA
+         STA   :IDX
+         DEC   :IDX
+         PLA
+         STA   ADDR1
+         PLA
+         STA   ADDR1+1
+         LDA   #0
+         STA   :IDX+1
+*
+** GET ELEMENT SIZE, ARRAY SIZE
+*
+         LDY   #1         ; ELEMENT SIZE LOC
+         LDA   (ADDR1),Y
+         STA   :ESIZE
+         STA   RETLEN     ; LENGTH OF RETURN VALUE
+         DEY
+         LDA   (ADDR1),Y
+         STA   :ALEN
+*
+********************************
+*
+*  ERROR CONTROL
+*
+********************************
+*
+         LDA   ERRCTRL
+         CMP   #1
+         BEQ   :CHKERR
+         JMP   :ERREND
+:CHKERR
+         LDA   :IDX       ; IF IDX > ARRAY LENGTH
+         CMP   :ALEN
+         BCS   :OVF
+         JMP   :ERREND
+:OVF
+         _ERR  :E_SID;:E_OVF1;:E_DUMP;:RES;#6
+*
+********************************
+*
+:ERREND
+*
+********************************
+*
+** FIRST, MUL INDEX BY ELEMENT SIZE,
+** THEN ADD TWO TO GET THE PROPER ADDRESS.
+*
+         LDY   #0
+         LDA   #0
+         TAY
+         STY   SCRATCH
+         BEQ   :ENTLP
+*
+:DOADD
+         CLC
+         ADC   :IDX
+         TAX
+         TYA
+         ADC   SCRATCH
+         TAY
+         TXA
+:LP
+         ASL   :IDX
+         ROL   SCRATCH
+:ENTLP
+         LSR   :ESIZE
+         BCS   :DOADD
+         BNE   :LP
+*
+** INDEX STORED AT X (LOW) AND Y (HIGH)
+*
+         STX   :IDX
+         STY   :IDX+1
+*
+** ADD 2 TO INDEX
+*
+         CLC
+         LDA   #2
+         ADC   :IDX
+         STA   :RES
+         LDA   #0
+         ADC   :IDX+1
+         STA   :RES+1
+*
+** NOW ADD THAT TO BASE ARRAY ADDRESS
+** TO GET ADDRESS OF INDEX VALUE
+*
+         CLC
+         LDA   :RES
+         ADC   ADDR1      ; LOW OF ARRAY ADDRESS
+         STA   :RES
+         LDA   :RES+1
+         ADC   ADDR1+1
+         STA   :RES+1
+*
+** NOW MOVE SPECIFIED ELEMENT DATA TO THE
+** MEMORY LOCATION DEDICATED TO RETURN VALUES
+*
+         LDY   #0
+         LDA   :RES
+         STA   ADDR1
+         LDA   :RES+1
+         STA   ADDR1+1
+:LDLOOP
+         LDA   (ADDR1),Y
+         STA   RETURN,Y
+         INY
+         CPY   RETLEN
+         BCC   :LDLOOP    ; IF .Y <= RETLEN
+         BEQ   :LDLOOP    ; KEEP LOOPING
+*
+*
+** RESTORE RETURN ADDRESS
+*
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+*
+** ADDRESS TO ARRAY ELEMENT IS STORED
+** IN .Y (LOW BYTE), .X (HIGH BYTE)
+*
+** LENGTH OF RETURN VALUE IS STORED IN .A
+*
+         LDY   :RES
+         LDX   :RES+1
+         LDA   RETLEN
+         RTS
+*
+** DATA
+*
+:RES     DS    2
+:IDX     DS    2
+:ESIZE   DS    1
+:ALEN    DS    1
+*
+:E_SID   ASC   "AGET81 (GET81 MACRO)",00
+:E_DUMP  ASC   "DUMPING RES(2) IDX(2) ESIZE(1) ALEN(1)",00
+:E_OVF1  ASC   "OUT OF BOUNDS! INDEX > ARRAY LENGTH",00
+*

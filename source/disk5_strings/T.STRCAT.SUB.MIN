@@ -1,0 +1,94 @@
+STRCAT
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+         PLA
+         STA   :MLEN      ; MAXIMUM CONCAT LENGTH
+         PLA
+         STA   ADDR2      ; STRING 1 ADDRESS
+         PLA              ; IN ZERO PAGE
+         STA   ADDR2+1
+         PLA
+         STA   ADDR1      ; STRING 2 ADDRESS
+         PLA              ; IN ZERO PAGE
+         STA   ADDR1+1
+         LDY   #0
+         LDA   (ADDR1),Y  ; GET CUR LGTH OF S1, STORE
+         STA   :S1LEN
+         STA   :S1IND
+         INC   :S1IND     ; START CONCAT AT END OF S1
+         LDA   (ADDR2),Y  ; GET LENGTH OF S2, STORE
+         STA   :S2LEN
+         LDA   #1
+         STA   :S2IND     ; START CONCAT AT BEGIN OF S2
+         LDA   :S2LEN     ; GET S2 LENGTH
+         CLC
+         ADC   :S1LEN     ; ADD TO LENGTH OF S1
+         STA   :S3LEN     ; STORE CONCAT LENGTH
+         BCS   :TOOLONG   ; BR IF LENGTH > 255
+         CMP   :MLEN      ; CHECK AGAINST MAX LENGTH
+         BEQ   :LENOK     ; BR IF LENGTH < MAX
+         BCC   :LENOK
+:TOOLONG
+         LDA   #$0FF
+         STA   :SOVF      ; INDICATE OVERFLOW
+         LDA   :MLEN
+         SEC
+         SBC   :S1LEN
+         BCC   :EXIT
+         STA   :SCNT      ; ORIG STR WAS TOO LONG
+         LDA   :MLEN
+         STA   :S1LEN     ; SET STR1 LENGTH TO MAX
+         JMP   :DOCAT
+:LENOK
+         STA   :S1LEN
+         LDA   #0         ; SAVE SUM OF 2 LENGTHS
+         STA   :SOVF      ; INDICATE NO OVERFLOW
+         LDA   :S2LEN
+         STA   :SCNT      ; COUNT = LENGTH OF STRING 2
+:DOCAT
+         LDA   :SCNT
+         BEQ   :EXIT      ; EXIT IF NO BYTES LEFT
+:CATLP
+         LDY   :S2IND
+         LDA   (ADDR2),Y  ; GET NEXT BYTE FROM S2
+         LDY   :S1IND
+         STA   (ADDR1),Y  ; MOVE IT TO END OF STR 1
+         INC   :S1IND     ;INC STRING 1 INDEX
+         INC   :S2IND     ; INC STRING 2 INDEX
+         DEC   :SCNT      ; DECREMENT COUNTER
+         BNE   :CATLP     ; CONT UNTIL __SCNT = 0
+:EXIT
+         LDA   :S1LEN
+         LDY   #0
+         STA   (ADDR1),Y
+         LDA   :SOVF
+         ROR   A
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+         LDY   #0
+         LDA   (ADDR1),Y  ; LENGTH OF STRING
+         STA   RETLEN
+         LDA   #1
+:RLP
+         LDA   (ADDR1),Y
+         STA   RETURN,Y
+         CPY   RETLEN
+         INY
+         BNE   :RLP
+         LDA   RETLEN
+         LDY   #0
+         STA   (ADDR1),Y
+         LDX   :S3LEN     ; RETURN FINAL LENGTH
+         RTS
+:S3LEN   DS    1
+:S1LEN   DS    1
+:S1IND   DS    1
+:S2LEN   DS    1
+:S2IND   DS    1
+:MLEN    DS    1
+:SCNT    DS    1
+:SOVF    DS    1

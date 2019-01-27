@@ -1,0 +1,65 @@
+SCMP     MAC
+         _ISSTR ]1
+         _ISSTR ]2
+         JSR   STRCMP
+         <<<
+SCAT     MAC
+         _ISSTR ]1
+         _ISSTR ]2
+         LDA   ]3         ; MAX SIZE; BYTE
+         PHA
+         JSR   STRCAT
+         <<<
+SPRN     MAC
+         LDA   #>]1       ; ADDRESS OF STRING
+         PHA
+         LDA   #<]1
+         PHA
+         JSR   PRNSTR
+         <<<
+TOSTR    MAC
+         _ISLIT ]1
+         JSR   NUM2STR
+         <<<
+TONUM    MAC
+         _ISSTR ]1
+         JSR   STR2NUM
+         <<<
+SPOS     MAC
+         _ISSTR ]1
+         _ISSTR ]2
+         JSR   SUBPOS
+         <<<
+SCPY     MAC
+         _ISSTR ]1
+         LDA   ]2         ; STARTING INDEX
+         PHA
+         LDA   ]3         ; SUBSTRING LENGTH
+         PHA
+         LDA   ]4         ; MAX LENGTH OF SUBSTR
+         PHA
+         JSR   SUBCOPY
+         <<<
+SDEL     MAC
+         LDA   #>]1       ; STRING ADDRESS
+         PHA
+         LDA   #<]1
+         PHA
+         LDA   ]2         ; INDEX BYTE
+         PHA
+         LDA   ]3         ; LENGTH
+         PHA
+         JSR   SUBDEL
+         <<<
+SINS     MAC
+         LDA   #>]1       ; PARENT STRING
+         PHA
+         LDA   #<]1
+         PHA
+         LDA   ]2         ; INDEX
+         PHA
+         LDA   ]3         ; MAXIMUM LENGTH
+         PHA
+         _ISSTR ]4
+         JSR   SUBINS
+         <<<

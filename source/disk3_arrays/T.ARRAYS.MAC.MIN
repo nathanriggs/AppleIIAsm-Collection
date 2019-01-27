@@ -1,0 +1,76 @@
+DIM81    MAC
+         LDA   #>]1       ; ARRAY ADDR
+         PHA
+         LDA   #<]1
+         PHA
+         LDA   ]2         ; ARRAY LENGTH
+         PHA
+         LDA   ]3         ; ELEMENT LENGTH
+         PHA
+         LDA   ]4
+         PHA              ; FILL VAL
+         JSR   ADIM81
+         <<<
+GET81    MAC
+         LDA   #>]1       ; ARRAY ADDR
+         PHA
+         LDA   #<]1
+         PHA
+         LDA   ]2         ; ELEM INDEX
+         PHA
+         JSR   AGET81
+         <<<
+PUT81    MAC
+         LDA   #>]1
+         PHA              ; SRC ADDR
+         LDA   #<]1
+         PHA
+         LDA   #>]2       ; DEST ARRAY
+         PHA
+         LDA   #<]2
+         PHA
+         LDA   ]3         ; DEST INDEX
+         PHA
+         JSR   APUT81
+         <<<
+DIM82    MAC
+         LDA   #>]1       ; ARRAY ADDR
+         PHA
+         LDA   #<]1
+         PHA
+         LDA   ]2         ; X DIM
+         PHA
+         LDA   ]3         ; Y DIM
+         PHA
+         LDA   ]4         ; ELEMENT LENGTH
+         PHA
+         LDA   ]5         ; FILL VAL
+         PHA
+         JSR   ADIM82
+         <<<
+GET82    MAC
+         LDA   #>]1       ; ARRAY ADDR
+         PHA
+         LDA   #<]1
+         PHA
+         LDA   ]2         ; X INDEX
+         PHA
+         LDA   ]3         ; Y INDEX
+         PHA
+         JSR   AGET82
+         <<<
+PUT82    MAC
+         LDA   #>]1       ; SRC ADDR
+         PHA
+         LDA   #<]1
+         PHA
+         LDA   #>]2       ; ARRAY ADDR
+         PHA
+         LDA   #<]2
+         PHA
+         LDA   ]3         ; X INDEX
+         PHA
+         LDA   ]4         ; Y INDEX
+         PHA
+         JSR   APUT82
+         <<<

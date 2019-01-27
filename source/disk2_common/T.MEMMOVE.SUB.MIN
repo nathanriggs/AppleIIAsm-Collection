@@ -1,0 +1,101 @@
+MEMMOVE
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+         PLA
+         STA   :MVELEN
+         PLA
+         STA   :MVELEN+1
+         PLA
+         STA   ADDR2      ; ZERO PAGE POINTER
+         PLA
+         STA   ADDR2+1
+         PLA
+         STA   ADDR1
+         PLA
+         STA   ADDR1+1
+         LDA   ADDR2      ;CALC DEST-SRC
+         SEC
+         SBC   ADDR1
+         TAX
+         LDA   ADDR2+1
+         SBC   ADDR1+1    ; MOD 64K AUTOMATIC
+                          ; -- DISCARD CARRY
+         TAY
+         TXA              ; CMP WITH # OF BYTES TO MOVE
+         CMP   :MVELEN
+         TYA
+         SBC   :MVELEN+1
+         BCS   :DOLEFT    ; BRANCH IF NO OVERLAP
+         JSR   :MVERHT
+         JMP   :EXIT
+:DOLEFT
+         JSR   :MVELEFT
+:EXIT
+         JMP   :MREXIT
+:MVELEFT
+         LDY   #0         ; ZERO INDEX
+         LDX   :MVELEN+1  ; X=# OF FULL PP TO MOVE
+         BEQ   :MLPART    ; IF X=0, DO PARTIAL PAGE
+:MLPAGE
+         LDA   (ADDR1),Y
+         STA   (ADDR2),Y  ;MOVE ONE BYTE
+         INY              ; NEXT BYTE
+         BNE   :MLPAGE    ; CONT UNTIL 256B MOVED
+         INC   ADDR1+1    ; ADV TO NEXT SRC PAGE
+         INC   ADDR2+1    ; ADV NEXT DEST PAGE
+         DEX              ; DEC PAGE COUNT
+         BNE   :MLPAGE    ; CONT UNTIL ALL FULL
+                          ; PAGES ARE MOVED
+:MLPART
+         LDX   :MVELEN    ; GET LENGTH OF LAST PAGE
+         BEQ   :MLEXIT    ; BR IF LENGTH OF LAST
+                          ; PAGE = 0
+                          ; REG Y IS 0
+:MLLAST
+         LDA   (ADDR1),Y
+         STA   (ADDR2),Y  ; MOVE BYTE
+         INY              ; NEXT BYTE
+         DEX              ; DEC COUNTER
+         BNE   :MLLAST    ; CONT UNTIL LAST P DONE
+:MLEXIT
+         JMP   :MREXIT
+:MVERHT
+         LDA   :MVELEN+1
+         CLC
+         ADC   ADDR1+1
+         STA   ADDR1+1    ;POINT TO LAST P OF SRC
+         LDA   :MVELEN+1
+         CLC
+         ADC   ADDR2+1
+         STA   ADDR2+1    ; POINT TO LAST P OF DEST
+         LDY   :MVELEN    ;GET LENGTH OF LAST PAGE
+         BEQ   :MRPAGE    ; IF Y=0 DO THE FULL PAGES
+:MR0
+         DEY              ; BACK UP Y TO NEXT BYTE
+         LDA   (ADDR1),Y
+         STA   (ADDR2),Y  ; MOVE BYTE
+         CPY   #0
+         BNE   :MR0       ; BR IF NOT DONE W LAST P
+:MRPAGE
+         LDX   :MVELEN+1  ; GET BYTE OF COUNT AS P CT
+         BEQ   :MREXIT    ; BR IF HYBYTE = 0 (NO FULL P)
+:MR1
+         DEC   ADDR1+1    ; BACK UP TO PREV SRC PAGE
+         DEC   ADDR2+1    ; AND DEST
+:MR2
+         DEY              ; BACK UP Y TO NEXT BYTE
+         LDA   (ADDR1),Y
+         STA   (ADDR2),Y  ; MOVE BYTE
+         CPY   #0
+         BNE   :MR2       ; BR IF NOT DONE W THIS PAGE
+         DEX
+         BNE   :MR1       ; BR IF NOT ALL PAGES MOVED
+:MREXIT
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+         RTS
+:MVELEN  DS    2

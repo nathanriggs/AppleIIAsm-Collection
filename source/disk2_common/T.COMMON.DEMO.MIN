@@ -1,0 +1,82 @@
+         CYC   AVE
+         EXP   ONLY
+         DSK   COMMON.DEMO
+         OBJ   $BFE0
+         ORG   $6000
+         USE   REQUIRED.MAC.MIN
+         PUT   REQUIRED.HOOKS.MIN
+         USE   COMMON.MAC.MIN
+         PUT              COMMON.HOOKS.MIN
+         MFILL #$300;#10;#0
+         _PRNT "MFILL FILLS A PORTION OF MEMORY WITH",8D
+         _PRNT "A SPECIFIED VALUE. ",8D8D
+         _DUMP $300;#10
+         _WAIT
+         _PRNT " ",8D8D
+         _PRNT "MMOVE COPIES A SPAN OF MEMORY",8D
+         _PRNT "FROM A SOURCE TO A DESTINATION ADDRESS.",8D8D
+         _PRNT "SO MOVING $300 TO $320 RESULTS IN:",8D8D
+         MMOVE $300;$320;#10
+         _DUMP $320;#10
+         _WAIT
+         _PRNT " ",8D8D
+         _PRNT "DELAY DELAYS A SPECIFIED NUMBER OF",8D
+         _PRNT "MILLISECONDS. 250 MILLISECONDS = 1/4 SECOND.",8D8D
+         DELAY #250       ;  TIME IN MILLISECONDS
+         BEEP  1
+         _PRNT "1/4 SECOND",8D
+         DELAY #250
+         BEEP  2
+         _PRNT "1/4 SECOND",8D
+         DELAY #250
+         BEEP  3
+         _PRNT "1/4 SECOND",8D
+         DELAY #250
+         BEEP  4
+         _PRNT "1/4 SECOND",8D
+         _PRNT " ",8D8D
+         _WAIT
+         LDA   #01
+         STA   $06
+         LDA   #02
+         STA   $07
+         LDA   #03
+         STA   $08
+         LDA   #04
+         STA   $09
+         ZSAVE $300
+         _PRNT " ",8D8D
+         _PRNT "ZSAVE SAVES THE STATE OF THE ZERO PAGE ",8D
+         _PRNT "ADDRESSES THAT ARE NOT USED BY DOS,",8D
+         _PRNT "APPLESOFT,PRODOS OR INTEGER BASIC.",8D8D
+         _PRNT "SO THE BACKED UP ZERO PAGE AT $300 IS:",8D8D
+         _DUMP $300;#18
+         _PRNT " ",8D8D
+         _PRNT "18 BYTES ARE USED.",8D8D
+         _WAIT
+         ZLOAD $300
+         _PRNT " ",8D8D
+         _PRNT "YOU CAN THEN RESTORE THE FREE ZERO PAGE",8D
+         _PRNT "LOCATIONS WITH ZLOAD. THERE ISN'T ANY",8D
+         _PRNT "MEANINGFUL OUTPUT TO PUT HERE TO ",8D
+         _PRNT "ILLUSTRATE THAT, SO USE YOUR IMAGINATION!",8D8D
+         _WAIT
+         _PRNT "THE MSWAP MACRO SWAPS A LENGTH",8D
+         _PRNT "OF MEMORY FROM ONE LOCATION",8D
+         _PRNT "TO ANOTHER. SO, BEFORE SWAP:",8D8D
+         _DUMP $300;#10
+         _DUMP $320;#10
+         MSWAP $300;$320;#10
+         _PRNT " ",8D
+         _PRNT "AND AFTER SWAP: ",8D8D
+         _DUMP $300;#10
+         _DUMP $320;#10
+         _WAIT
+         LDA   #$11
+         LDX   #$12
+         LDY   #$13
+         CLC
+         _RDUMP
+         JMP   REENTRY
+         PUT   COMMON.LIB.MIN
+         PUT   REQUIRED.LIB.MIN

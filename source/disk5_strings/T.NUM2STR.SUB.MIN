@@ -1,0 +1,97 @@
+NUM2STR
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+         PLA
+         STA   :VALSTR
+         PLA
+         STA   :VALSTR+1
+         STA   :NGFLAG
+         BPL   :GETBP     ; BR IF VAL IS POS
+         LDA   #0
+         SEC
+         SBC   :VALSTR
+         STA   :VALSTR
+         LDA   #0
+         SBC   :VALSTR+1
+         STA   :VALSTR+1
+:GETBP
+         LDA   #<RETURN
+         STA   ADDR1      ; ADDRESS TO STORE STRING
+         LDA   #>RETURN+1
+         STA   ADDR1+1
+         LDA   #0         ; SET BUFFER TO EMPTY
+         LDY   #0
+         STA   (ADDR1),Y  ; BUFFER(0) = 0
+:CNVERT
+         LDA   #0
+         STA   :MOD10
+         STA   :MOD10+1
+         LDX   #16
+         CLC              ; CLEAR CARRY
+:DVLOOP
+         ROL   :VALSTR    ; SHIFT  CARRY INTO DIVBIT 0
+         ROL   :VALSTR+1  ; WHICH WILL BE THE QUOTIENT
+         ROL   :MOD10     ; + SHIFT DIV AT SAME TIME
+         ROL   :MOD10+1
+         SEC
+         LDA   :MOD10
+         SBC   #10
+         TAY              ; SAVE LOWB IN REG Y
+         LDA   :MOD10+1
+         SBC   #0         ; SUBTRACT CARRY
+         BCC   :DECCNT    ; BR IF DEND < DIVISOR
+         STY   :MOD10     ; ELSE
+         STA   :MOD10+1   ; NXT BIT OF Q IS A ONE AND SET
+                          ; DIVIDEND = DEND - DIVISOR
+:DECCNT
+         DEX
+         BNE   :DVLOOP
+         ROL   :VALSTR    ; SHIFT IN LAST CARRY FOR Q
+         ROL   :VALSTR+1
+:CONCH
+         LDA   :MOD10
+         CLC
+         ADC   #$B0
+         JSR   :CONCAT
+         LDA   :VALSTR
+         ORA   :VALSTR+1
+         BNE   :CNVERT    ; BR IF VALUE != 0
+:EXIT
+         LDA   :NGFLAG
+         BPL   :POS       ; BR IF ORIG VAL POS
+         LDA   #173       ; ELSE
+         JSR   :CONCAT    ; PUT A MINUS SIGN IN FRONT
+:POS
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+         RTS              ; RETURN
+:CONCAT
+         PHA              ; SAVE CHAR ON STACK
+         LDY   #0
+         LDA   (ADDR1),Y  ; GET CURRENT LENGTH
+         TAY
+         BEQ   :EXITMR    ; BR IF LENGTH=0
+:MVELP
+         LDA   (ADDR1),Y  ; GET NEXT CHAR
+         INY
+         STA   (ADDR1),Y  ; STORE IT
+         DEY
+         DEY
+         BNE   :MVELP     ; CONT UNTIL DONE
+:EXITMR
+         PLA              ; GET CHAR BACK FROM STACK
+         LDY   #1
+         STA   (ADDR1),Y  ; STORE THE CHAR
+         LDY   #0
+         LDA   (ADDR1),Y  ; GET LENGTH BYTE
+         CLC
+         ADC   #1         ; INC LENGTH BY ONE
+         STA   (ADDR1),Y  ; UPDATE LENGTH
+         RTS
+:NGFLAG  DS    1
+:VALSTR  DS    2
+:MOD10   DS    2
