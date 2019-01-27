@@ -15,10 +15,9 @@ Currently, this documentation does not reflect the most recent updates to the co
 ## Table of Contents
 * [Introduction](#introduction)
 * [FAQ](#faq)
+* ~~The MERLIN Assembler: Quirks and Caveats~~
 * ~~How to use this Documentation~~
-* ~~Some included Utilities~~
-  * ~~MINIFY.BAS~~
-  * ~~MAKEEXEC.BAS~~
+* ~~How to Use the Library~~
 * [Disk Overviews](#disk-overviews)
   * [Disk 1: STDIO](#disk-1-stdio)
   * [Disk 2: COMMON](#disk-2-common-required)
@@ -26,8 +25,18 @@ Currently, this documentation does not reflect the most recent updates to the co
   * [Disk 4: MATH](#disk-4-math)
   * [Disk 5: STRINGS](#disk-5-strings)
   * [Disk 6: FILEIO](#disk-6-fileio)
+  * ~~[Disk 7: CONVERSION]~~
+  * ~~[Disk 8: LORES]~~
+  * ~~[Disk 9: SOUND]~~
+  * ~~[Disk 10: 80COL]~~
+  * ~~[Disk 11: HIRES]~~
+  * ~~[Disk 12: DBLLORES]~~
+  * ~~[Disk 13: DBLHIRES]~~
+  * ~~[Disk 14: OTHERIO]~~
+  * [Disk 15: UTILITIES]
+  * [Disk 16: INTEGRATED DEMOS]
+  * [Disk 20: MINIFIED ROUTINES DISK A]
 * [Future Disks](#future-disks)
-* ~~How to Use the Library~~
 * [Macro Subroutine Calls and Clobbers](#macro-subroutine-calls-and-clobbers)
 * [Macro Usage Cheat Sheet](#macro-usage-cheat-sheet)
 * ~~Detailed Descriptions: Macros~~
@@ -238,145 +247,142 @@ This disk is dedicated to routines and macros that involve file manipulation and
 
 The following disks are in pre-production/planning, and will be part of future versions of the library. I am currently focusing on the six core disks to make sure everything works seamlessly and functions the same across different subroutine calls, which is taking time to sort out. Once production of each of these disks begins, I'll be moving them from this section to the actual disks section.
 
-CONVERSIONS DISK
-* convert.mac: Library for converting between different data types.
-  * `HX2CHR`: Hex value to character notation.
-  * `TOSTR`: Integer value to character equivalent.
-  * `TONUM`: Character string number to hexcode equivalent.
-  * `HX2DEC`: Hexadecimal value to decimal value string.
-  * `HX2BIN`: Hexademial value to binary string.
-  * `BIN2HX`: binary string to hex value.
-  * `DEC2HX`: decimal string to hex value. Not much different than `TONUM`
-  * `HR2LR`: Hi-resolution to low-resolution conversion.
-  * `LR2HR`: Low-resolution to high-resolution conversion.
-  * `LS2STR`: a string that ends in #$00 coverted to the string data type (length byte first, then string)
+~~Disk 7: Conversion~~
+* ~~convert.mac: Library for converting between different data types.~~
+  * ~~`HX2CHR`: Hex value to character notation.~~
+  * ~~`TOSTR`: Integer value to character equivalent.~~
+  * ~~`TONUM`: Character string number to hexcode equivalent.~~
+  * ~~`HX2DEC`: Hexadecimal value to decimal value string.~~
+  * ~~`HX2BIN`: Hexademial value to binary string.~~
+  * ~~`BIN2HX`: binary string to hex value.~~
+  * ~~`DEC2HX`: decimal string to hex value. Not much different than `TONUM`~~
+  * ~~`HR2LR`: Hi-resolution to low-resolution conversion.~~
+  * ~~`LR2HR`: Low-resolution to high-resolution conversion.~~
+  * ~~`LS2STR`: a string that ends in #$00 coverted to the string data type (length byte first, then string)~~  
   
+~~Disk 8: LoRes~~  
+  * ~~lores.mac: Library for fast(er) graphics in low resolution mode.~~
+  * ~~`LHLIN`: Low resolution horizontal line.~~
+  * ~~`LVLIN`: Low resolution vertical line.~~
+  * ~~`LLINE`: Low resolution line from x1,y1 to x2,y2.~~
+  * ~~`LCIRC`: Low resolution circle at position x,y with a radius of r.~~
+  * ~~`LSQR`: Low resolution square at position x,y with a width of w.~~
+  * ~~`LBLIT`: Low resolution sprite blitting macro.~~
+  * ~~`LCOLR`: Change low resolution color.~~
+  * ~~`LGET`: Get color of low-resolution screen at x,y.~~
+  * ~~`LPUT`: plot a low resolution block at x,y on the screen.~~
+  * ~~`LCHAR`: plot a text character on the low resolution screen at x,y.~~
+  * ~~`LPRN`: plot a string of characters on the low resolution screen at x,y.~~
+  * ~~`LINV`: Invert colors on the low resolution screen.~~
+
+~~Disk 9: Sound~~
+* ~~sound.mac: Music and sound effects library for the internal speaker (not add-on cards like Mockingboard). Note that this is not really for "real-time" music generation while doing something else, as that would involve counting the cycles in loops that a library would not necessarily have access to. In the future, I may try to create a library that does this, but it would still be pretty limited and the main execution would have to follow a very rigid format. I may also create a library that takes advantage of the Mockingboard.~~
+  * ~~`STONE`: Play a tone at the specified megahertz for a specified duration of milliseconds.~~
+  * ~~`SNOTE`: Play a specified musical note at the specified octave for a specified duration in milliseconds.~~
+  * ~~`SWAIT`: See the `DELAY` Macro, as this is simply a slightly modified version for music timing.~~
+  * ~~`SDRUM`: Send a sharp sound to the speaker that emulates the nois of a bass drum.~~
+  * ~~`SHATC`: Send a short click that emulates a closed hi hat.~~
+  * ~~`SHATO`: Send a long bout of noise to emulate an open hi hat.~~
+  * ~~`SSTAT`: Send static to the speaker for a specified number of milliseconds.~~
+  * ~~`SARPG`: Send a series of Arpeggio notes to the speaker to emulate multiple notes at once or chords.~~
+  * ~~`SASC`: Play a series of tones between a low and high mhz, ascending at a given rate.~~
+  * ~~`SDESC`: Play a series of tones between a high and low mhz, descending at a given rate.~~
+  * ~~`SENV`: Rudimentary envelope for notes achieved by manipulating octave frequencies.~~
+  * ~~`SQKEY`: Set the keypress to signal the library to halt playing a note.~~
+  * ~~`SPLOD`: a sound effect resembling an explosion sound. Customizeable via parameters.~~
+  * ~~`SPLAY`: play a sequence of given notes found at a given memory address. Follows same sequence as `SNOTE` parameters, ending with #00.~~
+  * ~~`SALRM`: play an alarm sound.~~
+  * ~~`SLAZE`: play a lazer sound at a specific frequency.~~
   
-LORES DISK
-* lores.mac: Library for fast(er) graphics in low resolution mode.
-  * `LHLIN`: Low resolution horizontal line.
-  * `LVLIN`: Low resolution vertical line.
-  * `LLINE`: Low resolution line from x1,y1 to x2,y2.
-  * `LCIRC`: Low resolution circle at position x,y with a radius of r.
-  * `LSQR`: Low resolution square at position x,y with a width of w.
-  * `LBLIT`: Low resolution sprite blitting macro.
-  * `LCOLR`: Change low resolution color.
-  * `LGET`: Get color of low-resolution screen at x,y.
-  * `LPUT`: plot a low resolution block at x,y on the screen.
-  * `LCHAR`: plot a text character on the low resolution screen at x,y.
-  * `LPRN`: plot a string of characters on the low resolution screen at x,y.
-  * `LINV`: Invert colors on the low resolution screen.
+~~Disk 10: 80Col~~
+* ~~stdio80.mac: stdio library for 80-column output. Most of these will be identical to the routines on the stdio disk.~~
+  * ~~`80CB`: Move Cursor Backward by [n] spaces~~
+  * ~~`80CD`: Move Cursor Down by [n] spaces~~
+  * ~~`80CF`: Move Cursor Forward by [n] spaces~~
+  * ~~`80CU`: Move Cursor Up by [n] spaces~~
+  * ~~`80INP`: String Input Macro~~
+  * ~~`80PBX`: Read State of Paddle Button [x]~~
+  * ~~`80PCR`: Print Carraige Return~~
+  * ~~`80PDL`: Read Current Paddle State~~
+  * ~~`80PRN`: Flexible (screen) Printing routine~~
+  * ~~`80RCP`: Read Cursor Position~~
+  * ~~`80SCP`: Set Cursor position at [x],[y]~~
+  * ~~`80SCX`: Set Cursor Horizontal Position~~
+  * ~~`80SCY`: Set Cursor Vertical Position~~
+  * ~~`80TFIL`: Text Fill square [x1],[x2],[y1],[y2] with Character [n]~~
+  * ~~`80THLN`: Text Horizontal Line Fill with Character [n]~~
+  * ~~`80TVLN`: Text Vertical Line Fill with Character [n]~~
+* ~~80to40.mac: a simple set of macros that calls the 80-column macros when 40-column macros are invoked. Obviously, the 40-column stdio.mac cannot be used simultaneously.~~
 
-HIRES DISK
-* hires.mac: Library for fast(er) graphics in high resolution mode.
-  * `HHLIN`: High resolution horizontal line.
-  * `HVLIN`: High resolution vertical line.
-  * `HLINE`: High resolution line from x1,y1 to x2,y2.
-  * `HCIRC`: High resolution circle at position x,y with a radius of r.
-  * `HSQR`: High resolution square at position x,y with a width of w.
-  * `HBLIT`: High resolution sprite blitting macro.
-  * `HCOLR`: Change High resolution color.
-  * `HGET`: Get color of high-resolution screen at x,y.
-  * `HPUT`: plot a high resolution block at x,y on the screen.
-  * `HCHAR`: plot a text character on the high resolution screen at x,y.
-  * `HPRN`: plot a string of characters on the high resolution screen at x,y.
+~~Disk 11: HiRes~~
+* ~~hires.mac: Library for fast(er) graphics in high resolution mode.~~
+  * ~~`HHLIN`: High resolution horizontal line.~~
+  * ~~`HVLIN`: High resolution vertical line.~~
+  * ~~`HLINE`: High resolution line from x1,y1 to x2,y2.~~
+  * ~~`HCIRC`: High resolution circle at position x,y with a radius of r.~~
+  * ~~`HSQR`: High resolution square at position x,y with a width of w.~~
+  * ~~`HBLIT`: High resolution sprite blitting macro.~~
+  * ~~`HCOLR`: Change High resolution color.~~
+  * ~~`HGET`: Get color of high-resolution screen at x,y.~~
+  * ~~`HPUT`: plot a high resolution block at x,y on the screen.~~
+  * ~~`HCHAR`: plot a text character on the high resolution screen at x,y.~~
+  * ~~`HPRN`: plot a string of characters on the high resolution screen at x,y.~~
 
-DOUBLE LORES DISK
-* dlres.mac: library for double low resolution graphics. Only available on IIe (with 80col card), //c, and IIgs.
-  * `DLHLN`: Double Low resolution horizontal line.
-  * `DLVLN`: Double Low resolution vertical line.
-  * `DLLNE`: Double Low resolution line from x1,y1 to x2,y2.
-  * `DLCRC`: Double Low resolution circle at position x,y with a radius of r.
-  * `DLSQR`: Double Low resolution square at position x,y with a width of w.
-  * `DLBLT`: Double Low resolution sprite blitting macro.
-  * `DLCLR`: Change Double low resolution color.
-  * `DLGET`: Get color of Double low-resolution screen at x,y.
-  * `DLPUT`: plot a Double low resolution block at x,y on the screen.
-  * `DLCHR`: plot a text character on the Double low resolution screen at x,y.
-  * `DLPRN`: plot a string of characters on the Double resolution screen at x,y.
+~~Disk 12: DblLoRes~~
+* ~~dlres.mac: library for double low resolution graphics. Only available on IIe (with 80col card), //c, and IIgs.~~
+  * ~~`DLHLN`: Double Low resolution horizontal line.~~
+  * ~~`DLVLN`: Double Low resolution vertical line.~~
+  * ~~`DLLNE`: Double Low resolution line from x1,y1 to x2,y2.~~
+  * ~~`DLCRC`: Double Low resolution circle at position x,y with a radius of r.~~
+  * ~~`DLSQR`: Double Low resolution square at position x,y with a width of w.~~
+  * ~~`DLBLT`: Double Low resolution sprite blitting macro.~~
+  * ~~`DLCLR`: Change Double low resolution color.~~
+  * ~~`DLGET`: Get color of Double low-resolution screen at x,y.~~
+  * ~~`DLPUT`: plot a Double low resolution block at x,y on the screen.~~
+  * ~~`DLCHR`: plot a text character on the Double low resolution screen at x,y.~~
+  * ~~`DLPRN`: plot a string of characters on the Double resolution screen at x,y.~~
 
-DOUBLE HIRES DISK
-* dhres.mac: library for double high resolution graphics. Note that this is only available on the IIe (with 80col card), //c, and IIgs.
-  * `DHHLN`: Double high resolution horizontal line.
-  * `DHVLN`: Double high resolution vertical line.
-  * `DHLNE`: Double high resolution line from x1,y1 to x2,y2.
-  * `DHCRC`: Double high resolution circle at position x,y with a radius of r.
-  * `DHSQR`: Double high resolution square at position x,y with a width of w.
-  * `DHBLT`: Double high resolution sprite blitting macro.
-  * `DHCLR`: Change Double high resolution color.
-  * `DHGET`: Get color of Double high-resolution screen at x,y.
-  * `DHPUT`: plot a Double high resolution block at x,y on the screen.
-  * `DHCHR`: plot a text character on the Double high resolution screen at x,y.
-  * `DHPRN`: plot a string of characters on the Double high resolution screen at x,y.
+~~Disk 13: DblHiRes~~
+* ~~dhres.mac: library for double high resolution graphics. Note that this is only available on the IIe (with 80col card), //c, and IIgs.~~
+  * ~~`DHHLN`: Double high resolution horizontal line.~~
+  * ~~`DHVLN`: Double high resolution vertical line.~~
+  * ~~`DHLNE`: Double high resolution line from x1,y1 to x2,y2.~~
+  * ~~`DHCRC`: Double high resolution circle at position x,y with a radius of r.~~
+  * ~~`DHSQR`: Double high resolution square at position x,y with a width of w.~~
+  * ~~`DHBLT`: Double high resolution sprite blitting macro.~~
+  * ~~`DHCLR`: Change Double high resolution color.~~
+  * ~~`DHGET`: Get color of Double high-resolution screen at x,y.~~
+  * ~~`DHPUT`: plot a Double high resolution block at x,y on the screen.~~
+  * ~~`DHCHR`: plot a text character on the Double high resolution screen at x,y.~~
+  * ~~`DHPRN`: plot a string of characters on the Double high resolution screen at x,y.~~
   
-SOUND DISK
-* sound.mac: Music and sound effects library for the internal speaker (not add-on cards like Mockingboard). Note that this is not really for "real-time" music generation while doing something else, as that would involve counting the cycles in loops that a library would not necessarily have access to. In the future, I may try to create a library that does this, but it would still be pretty limited and the main execution would have to follow a very rigid format. I may also create a library that takes advantage of the Mockingboard.
-  * `STONE`: Play a tone at the specified megahertz for a specified duration of milliseconds.
-  * `SNOTE`: Play a specified musical note at the specified octave for a specified duration in milliseconds.
-  * `SWAIT`: See the `DELAY` Macro, as this is simply a slightly modified version for music timing.
-  * `SDRUM`: Send a sharp sound to the speaker that emulates the nois of a bass drum.
-  * `SHATC`: Send a short click that emulates a closed hi hat.
-  * `SHATO`: Send a long bout of noise to emulate an open hi hat.
-  * `SSTAT`: Send static to the speaker for a specified number of milliseconds.
-  * `SARPG`: Send a series of Arpeggio notes to the speaker to emulate multiple notes at once or chords.
-  * `SASC`: Play a series of tones between a low and high mhz, ascending at a given rate.
-  * `SDESC`: Play a series of tones between a high and low mhz, descending at a given rate.
-  * `SENV`: Rudimentary envelope for notes achieved by manipulating octave frequencies.
-  * `SQKEY`: Set the keypress to signal the library to halt playing a note.
-  * `SPLOD`: a sound effect resembling an explosion sound. Customizeable via parameters.
-  * `SPLAY`: play a sequence of given notes found at a given memory address. Follows same sequence as `SNOTE` parameters, ending with #00.
-  * `SALRM`: play an alarm sound.
-  * `SLAZE`: play a lazer sound at a specific frequency.
+~~Disk 14: OtherIO~~
+* ~~library for interfacing with a printer.~~
+  * ~~`PINIT`: Printer Detect and Initialize.~~
+  * ~~`PPRNC`: Print a single Character on the Printer.~~
+  * ~~`PPRNL`: Print a line of text on the printer.~~
+  * ~~`PPUT`: Print a single dot on the printer.~~
+  * ~~`PLBLK`: Print a block of low-res graphics at a given memory location to the printer.~~
+  * ~~`PHBLK`: Print a block of high resolution graphics at a given memory location on the printer.~~  
+* ~~library for sending and receiving data over the serial port~~
+  * ~~`SSEND`: Serial send bit/byte.~~
+  * ~~`SRECV`: Serial Receive bit/byte.~~
+  * ~~`SLSTN`: Listen to serial and wait for data for continuing.~~
   
-80COL DISK
-* stdio80.mac: stdio library for 80-column output. Most of these will be identical to the routines on the stdio disk.
-  * `80CB`: Move Cursor Backward by [n] spaces
-  * `80CD`: Move Cursor Down by [n] spaces
-  * `80CF`: Move Cursor Forward by [n] spaces
-  * `80CU`: Move Cursor Up by [n] spaces
-  * `80INP`: String Input Macro
-  * `80PBX`: Read State of Paddle Button [x]
-  * `80PCR`: Print Carraige Return
-  * `80PDL`: Read Current Paddle State
-  * `80PRN`: Flexible (screen) Printing routine
-  * `80RCP`: Read Cursor Position
-  * `80SCP`: Set Cursor position at [x],[y]
-  * `80SCX`: Set Cursor Horizontal Position
-  * `80SCY`: Set Cursor Vertical Position
-  * `80TFIL`: Text Fill square [x1],[x2],[y1],[y2] with Character [n]
-  * `80THLN`: Text Horizontal Line Fill with Character [n]
-  * `80TVLN`: Text Vertical Line Fill with Character [n]
-* 80to40.mac: a simple set of macros that calls the 80-column macros when 40-column macros are invoked. Obviously, the 40-column stdio.mac cannot be used simultaneously.
+~~Disk 15: Utilities~~
+* ~~builder.bas: A utility that automatically builds custom libraries by copying routines from the appropriate disks, commented or minified.~~
+* ~~makeexec.bas~~
+* ~~minify.bas~~
+* ~~BUILDER~~
+* ~~MAKEEXEC~~
+* ~~MINIFY~~
 
-PRINTER IO
-* library for interfacing with a printer.
-  * `PINIT`: Printer Detect and Initialize.
-  * `PPRNC`: Print a single Character on the Printer.
-  * `PPRNL`: Print a line of text on the printer.
-  * `PPUT`: Print a single dot on the printer.
-  * `PLBLK`: Print a block of low-res graphics at a given memory location to the printer.
-  * `PHBLK`: Print a block of high resolution graphics at a given memory location on the printer.
-  
-SERIAL IO
-* library for sending and receiving data over the serial port
-  * `SSEND`: Serial send bit/byte.
-  * `SRECV`: Serial Receive bit/byte.
-  * `SLSTN`: Listen to serial and wait for data for continuing.
-  
-CUSTOM LIBRARY BUILDER DISK
-* builder.bas: A utility that automatically builds custom libraries by copying routines from the appropriate disks, commented or minified.
-
-
-INTEGRATED DEMO DISK(S)
-* disk(s) with demos that show more complicated usage of the libraries, integrating them as each demo needs. The first of these demos will be a roguelike text game, accompanied by all the development utilities.
-  * Item Editor (bas)
-  * Settings Editor (bas)
-  * NPC Editor (bas)
-  * Character Editor (bas)
-  * Enemy Editor (bas)
-  * Map Key Editor (bas)
-  * Room contours editor (asm)
-  * Rogue Game (asm)
+~~Disk 16: Integrated_Demos~~
+* ~~disk(s) with demos that show more complicated usage of the libraries, integrating them as each demo needs.~~  
+  * ~~MAKEMAZE~~
+  * ~~READFILE~~
+  * ~~SKIDOWN~~
+  * ~~GAMEOFLIFE~~
 
 ---
 ## Macro Subroutine Calls and Clobbers
