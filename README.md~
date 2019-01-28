@@ -47,7 +47,7 @@ Currently, this documentation does not reflect the most recent updates to the co
 
 This is a general purpose library in 6502 Assembly for the Apple II. I am learning both Git and Assembly for the first time as I create, update and maintain this, so expect some mishaps: wasted CPU cycles, weird documentation, accidental catastrophes, and so on. I am using Merlin 8 Pro (DOS 3.3) for this project, but this should be fairly easy to convert to other assemblers as well as other 6502-based systems.
 
-Ultimately, my aim is to create a large enough collection of routines to address any domain of development for the Apple II family in Assembly. I will be heavily relying on texts like Roger Wagner and Chris Torrence's _Assembly Lines_ and Lance Leventhal's _6502 Assembly Language Routines_, as well as a plethora of online sources. I'll do my best to acknowledge when a routine is inspired by (or mostly copied from) another source, and will exclude them from the Apache License 2.0 when necessary. If you find your own source here, but would rather it not be here, please reach out to me and I'll remove it immediately.
+Ultimately, my aim is to create a large enough collection of routines to address any domain of development for the Apple II family in Assembly.  I'll do my best to acknowledge when a routine is inspired by (or mostly copied from) another source, and will exclude them from the Apache License 2.0 when necessary; I hope to replace anything of this sort with original work as I learn. If you find your own source here, but would rather it not be here, please reach out to me and I'll remove it immediately.
 
 ---
 ## FAQ
@@ -107,13 +107,13 @@ That's great! Create a branch, I guess, and I'll merge if it makes sense! It sho
 ---
 ## Disk Overviews
 
-Each disk contains a single Macro (.mac) file, one or more subroutine libraries related to the overarching theme of the disk, and a "minified" version of the required.mac and required.lib files that the entire library relies upon. Additionally, each library has a correlating .hooks file for declaring variables used in that library's operations, as well as individual copies of each subroutine for compiling custom libraries for any given project and a demo program. Currently, there are also "minified" versions of each library and subroutine that have no comments as well, but these may be transferred to their own disk(s) in the future if disk space becomes a major concern. 
+Each disk contains a single Macro (.mac) file, one or more subroutine files related to the overarching theme of the disk, and a "minified" version of the mac and subroutine files that the entire library relies upon. Additionally, each library has a correlating .hooks file for declaring variables used in that library's operations, as well as individual copies of each subroutine for compiling custom libraries for any given project and a demo program. There are also "minified" versions of each subroutine that have no comments as well.
 
-In the following descriptions, we'll be listing the .mac contents that are relevant to the theme of the disk only, as many of the macros are calls to single subroutines and it would be redundant to list those as well. A table in section XXX lists the calls each macro makes to each subroutine, and the required.mac macros are listed in Disk 2 only.
+In the following descriptions, we'll be listing the .mac contents that are relevant to the theme of the disk only, as many of the macros are calls to single subroutines and it would be redundant to list those as well. A table in section XXX lists the calls each macro makes to each subroutine, and the required.mac macros and required.lib subroutines are listed in Disk 2 only.
 
 ### Disk 1: STDIO
 
-This disk is dedicated to Standard Input/Output operations, and a couple non-standard ones. Note that this is for 40-column mode only in order to keep compatibility with earlier hardware, and focuses on screen output alone in order to help with execution speed. Additionally, this focuses on input from the most-used peripherals: the keyboard and game paddles. Libraries for 80-column mode, as well as input and output from and to other devices, will be added later on.
+This disk is dedicated to Standard Input/Output operations, and a couple non-standard ones. Note that this is for 40-column mode only in order to keep compatibility with earlier hardware, and focuses on screen output alone in order to help with execution speed. However, most of these subroutines will work in 80col mode, with the exception of those that use DMA. Additionally, this focuses on input from the most-used peripherals: the keyboard and game paddles. Libraries for 80-column mode, as well as input and output from and to other devices, will be added later on.
 
 * stdio.mac
   * [`CURB`](#macro-curb): Move Cursor Backward by [n] spaces
@@ -369,16 +369,32 @@ The following disks are in pre-production/planning, and will be part of future v
   * ~~`SRECV`: Serial Receive bit/byte.~~
   * ~~`SLSTN`: Listen to serial and wait for data for continuing.~~
   
-~~Disk 15: Utilities~~
+~~Disk 15: Sort~~
+  * ~~BSORT: Bubble Sort~~
+  * ~~ISORT: Insertion Sort~~
+  * ~~MSORT: Merge Sort~~
+  * ~~QSORT: Quick Sort~~
+  * ~~SSORT: Selection Sort~~
+  
+~~Disk 16: Search~~
+  * ~~BSRCH: Binary Search~~
+    
+~~Disk 17: Lists_Trees~~
+    
+~~Disk 18: Utilities~~
 * ~~builder.bas: A utility that automatically builds custom libraries by copying routines from the appropriate disks, commented or minified.~~
 * ~~makeexec.bas~~
 * ~~minify.bas~~
+* ~~BUILDER~~
+* ~~MAKEEXEC~~
+* ~~MINIFY~~
 
-~~Disk 16: Integrated_Demos~~
+~~Disk 19: Integrated_Demos~~
 * ~~disk(s) with demos that show more complicated usage of the libraries, integrating them as each demo needs.~~  
   * ~~MAKEMAZE~~
   * ~~READFILE~~
   * ~~SKIDOWN~~
+  * ~~GAMEOFLIFE~~
 
 ---
 ## Macro Subroutine Calls and Clobbers
@@ -389,73 +405,79 @@ If a memory alteration is indicated by a [PASS], it means that the memory area t
 
  MACRO  | SUBROUTINES CALLED         | FLAGS ALTERED | REGS ALTERED | MEM ALTERED  
  ------ | -------------------------- |:-------------:|:------------:| ----------- 
- _DUMP  |                            |               |              |                   
- _GRET  |                            |               |              |                   
- _ISLIT |                            |               |              |                   
- _ISSTR |                            |               |              |                   
- _PRNT  |                            |               |              |                   
- _SPAR  |                            |               |              |                   
- _WAIT  |                            |               |              |                   
- ADD16  |                            |               |              |
- BEEP   |                            |               |              |
- BLOAD  |                            |               |              |
- BSAVE  |                            |               |              |
- CMD    |                            |               |              |
- CMP16  |                            |               |              |
- CURB   |                            |               |              |                   
- CURD   |                            |               |              |                   
- CURF   |                            |               |              |                   
- CURU   |                            |               |              |                   
- DBUFF  |                            |               |              |
- DELAY  |                            |               |              |
- DIM81  |                            |               |              |
- DIM82  |                            |               |              |
- DIV8   |                            |               |              |
- DIV16  |                            |               |              |
- DRIVE  |                            |               |              |
- DRWTS  |                            |               |              |
- FINP   |                            |               |              |
- FPRN   |                            |               |              |
- GET81  |                            |               |              |
- GET82  |                            |               |              |
- INP    |                            |               |              |                   
- MFILL  |                            |               |              |
- MMOVE  |                            |               |              |
- MUL8   |                            |               |              |
- MUL16  |                            |               |              |
- PBX    |                            |               |              |                   
- PCR    |                            |               |              |                   
- PDL    |                            |               |              |                   
- PRN    |                            |               |              |                   
- PUT81  |                            |               |              |
- PUT82  |                            |               |              |
- RCPOS  |                            |               |              |                   
- REM16  |                            |               |              |
- RND8   |                            |               |              |
- RND16  |                            |               |              |
- RNDB   |                            |               |              |
- RNDW   |                            |               |              |
- SCAT   |                            |               |              |                   
- SCMP   |                            |               |              |                   
- SCPOS  |                            |               |              |                   
- SCOP   |                            |               |              |                   
- SDEL   |                            |               |              |                   
- SECT   |                            |               |              |
- SETCX  |                            |               |              |                   
- SETCY  |                            |               |              |                   
- SETDR  |                            |               |              |
- SETDW  |                            |               |              |
- SINS   |                            |               |              |                   
- SLOT   |                            |               |              |
- SPOS   |                            |               |              |                   
- SPRN   |                            |               |              |                   
- TFILL  |                            |               |              |                   
- THLIN  |                            |               |              |                   
- TONUM  |                            |               |              |                   
- TOSTR  |                            |               |              |                   
- TVLIN  |                            |               |              |                   
- ZLOAD  |                            |               |              | 
- ZSAVE  |                            |               |              |
+ _DUMP  | __DUMP                     |               |              |                   
+ _ERR   | __ERR                      |               |              |
+ _GRET  | __GETRET                   |               |              |                   
+ _ISLIT | None                       |               |              |                   
+ _ISSTR | None                       |               |              |                   
+ _PRNT  | __P                        |               |              |                   
+ _RDUMP | __RDMP                     |               |              | 
+ _SPAR  | __SETPARM                  |               |              |                   
+ _WAIT  | __W                        |               |              |                   
+ ADD16  | ADDIT16                    |               |              |
+ AMODE  | None                       |               |              |
+ BEEP   | None (BELL)                |               |              |
+ BLOAD  | BINLOAD                    |               |              |
+ BSAVE  | BINSAVE                    |               |              |
+ CMD    | DOSCMD                     |               |              |
+ CMP16  | COMP16                     |               |              |
+ CURB   | CURSBAK                    |               |              |                   
+ CURD   | CURSDN                     |               |              |                   
+ CURF   | CURSFOR                    |               |              |                   
+ CURU   | CURSUP                     |               |              |                   
+ DBUFF  | None                       |               |              |
+ DELAY  | DELAYMS                    |               |              |
+ DIM81  | ADIM81                     |               |              |
+ DIM82  | ADIM82                     |               |              |
+ DIV8   | DIVD8                      |               |              |
+ DIV16  | SDIV16,UDIV16              |               |              |
+ DRIVE  | None                       |               |              |
+ DRWTS  | DISKOP                     |               |              |
+ FINP   | FINPUT                     |               |              |
+ FPRN   | FPRINT,FPSTR               |               |              |
+ GET81  | AGET81                     |               |              |
+ GET82  | AGET82                     |               |              |
+ GKEY   | None (GETKEY)              |               |              | 
+ INP    | SINPUT                     |               |              |                   
+ MFILL  | MEMFILL                    |               |              |
+ MMOVE  | MEMMOVE                    |               |              |
+ MSWAP  | MEMSWAP                    |               |              |
+ MUL8   | MULT8                      |               |              |
+ MUL16  | MULT16                     |               |              |
+ PBX    | GPBX                       |               |              |                   
+ PCR    | None (COUT1)               |               |              |                   
+ PDL    | None (PREAD)               |               |              |                   
+ PRN    | XPRINT,DPRINT              |               |              |                   
+ PUT81  | APUT81                     |               |              |
+ PUT82  | APUT82                     |               |              |
+ RCPOS  | None (GBASCALC)            |               |              |                   
+ REM16  | SREMD16,UREMD16            |               |              |
+ RND16  | RAND16                     |               |              |
+ RNDB   | RANDB                      |               |              |
+ SCAT   | STRCAT                     |               |              |                   
+ SCMP   | STRCMP                     |               |              |                   
+ SCPOS  | None (VTAB)                |               |              |                   
+ SCPY   | SUBCOPY                    |               |              |                   
+ SDEL   | SUBDEL                     |               |              |                   
+ SECT   | None                       |               |              |
+ SETCX  | None (VTAB)                |               |              |                   
+ SETCY  | None (VTAB)                |               |              |                   
+ SETDR  | None                       |               |              |
+ SETDW  | None                       |               |              |
+ SINS   | SUBINS                     |               |              |                   
+ SLOT   | None                       |               |              |
+ SPOS   | SUBPOS                     |               |              |                   
+ SPRN   | PRNSTR                     |               |              |                   
+ SUB16  | SUBT16                     |               |              |
+ TFILL  | TFILLA                     |               |              |                   
+ THLIN  | THLINE                     |               |              |                   
+ TPUT   | TXTPUT                     |               |              |
+ TONUM  | STR2NUM                    |               |              |                   
+ TOSTR  | NUM2STR                    |               |              |                   
+ TRACK  | None                       |               |              |
+ TVLIN  | TVLINE                     |               |              |                   
+ ZLOAD  | ZMLOAD                     |               |              | 
+ ZSAVE  | ZMSAVE                     |               |              |
  
 ---
 
@@ -467,6 +489,7 @@ Once Macros are mostly finished in how they are called, you can find how to use 
  MACRO  | USAGE                                                               | RETURNS
  ------ | ------------------------------------------------------------------- | ----------------------------------- 
  _DUMP  | ```_DUMP [memory address];[# of bytes to dump]```                   | Nothing; dump to screen
+ _ERR   | ```_ERR [calling rout];[err msg];[dump msg];[dump loc];[dmplen]```  | prints various error messages and information
  _GRET  | ```_GRET [dest memory address]```                                   | [return] stored in specified address
  _ISLIT | ```_ISLIT [data]```                                                 | inserts executable code at pointer                
  _ISSTR | ```_ISSTR [data]```                                                 | inserts executable code at pointer
@@ -579,6 +602,7 @@ Once Macros are mostly finished in how they are called, you can find how to use 
  TMODE  | ```TMODE```                                                         | Nothing
  TONUM  | ```TONUM [string to convert to number, addr or literal]```          | [RETURN] = number equivalent of string
  .      | .                                                                   | [RETLEN] = byte length of number (2)
+ TPUT   | ```TPUT [xpos];[ypos];[fill character]```                           | Nothing 
  TRACK  | ```TRACK [track number]```                                          | Nothing 
  TOSTR  | ```TOSTR [number to convert to string]```                           | [RETURN] = string equivalent of number
  .      | .                                                                   | [RETLEN] = length of string returned (not yet)
