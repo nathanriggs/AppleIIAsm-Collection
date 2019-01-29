@@ -3,10 +3,8 @@
 A general purpose ASM libriary for the Apple II. Assembled in Merlin 8 Pro.
 
 ---
-## Warning!
-Currently, this documentation does not reflect the most recent updates to the code (0.3.0). This is the next issue to be addressed.
-
-
+## ATTENTION
+This documentation currently reflects version 0.3.1 only.
 
 
 
@@ -131,6 +129,7 @@ This disk is dedicated to Standard Input/Output operations, and a couple non-sta
   * [`SETCY`](#macro-setcy): Set Cursor Vertical Position
   * [`TFILL`](#macro-tfill): Text Fill square [x1],[x2],[y1],[y2] with Character [n]
   * [`THLIN`](#macro-thlin): Text Horizontal Line Fill with Character [n]
+  * [`TPUT`](#macro-tput): Direct memory text plotting routine
   * [`TVLIN`](#macro-tvlin): Text Vertical Line Fill with Character [n]
 
   
@@ -149,6 +148,7 @@ This disk is dedicated to common and useful subroutines that don't necessarily f
     
 * required.mac
   * `_DUMP`: Dump the contents of a block of memory. This displays hex values only, and is primarily useful for debugging.
+  * `_ERR`: Error handling routine. Generally only called from routine libraries.
   * `_GRET`: Get Return. Transfer the contents of the [RETURN] register to another memory location.
   * `_ISLIT`: Is Literal. Tests a parameter to see if it is a literal value or an address. 
   * `_ISSTR`: Is String. Tests a parameter to see if it is a literal string. 

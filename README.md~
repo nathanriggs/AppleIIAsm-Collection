@@ -131,6 +131,7 @@ This disk is dedicated to Standard Input/Output operations, and a couple non-sta
   * [`SETCY`](#macro-setcy): Set Cursor Vertical Position
   * [`TFILL`](#macro-tfill): Text Fill square [x1],[x2],[y1],[y2] with Character [n]
   * [`THLIN`](#macro-thlin): Text Horizontal Line Fill with Character [n]
+  * [`TPUT`](#macro-tput): Direct memory text plotting routine
   * [`TVLIN`](#macro-tvlin): Text Vertical Line Fill with Character [n]
 
   
@@ -149,6 +150,7 @@ This disk is dedicated to common and useful subroutines that don't necessarily f
     
 * required.mac
   * `_DUMP`: Dump the contents of a block of memory. This displays hex values only, and is primarily useful for debugging.
+  * `_ERR`: Error handling routine. Generally only called from routine libraries.
   * `_GRET`: Get Return. Transfer the contents of the [RETURN] register to another memory location.
   * `_ISLIT`: Is Literal. Tests a parameter to see if it is a literal value or an address. 
   * `_ISSTR`: Is String. Tests a parameter to see if it is a literal string. 
@@ -383,18 +385,23 @@ The following disks are in pre-production/planning, and will be part of future v
     
 ~~Disk 18: Utilities~~
 * ~~builder.bas: A utility that automatically builds custom libraries by copying routines from the appropriate disks, commented or minified.~~
-* ~~makeexec.bas~~
-* ~~minify.bas~~
+* makeexec.bas
+* minify.bas
 * ~~BUILDER~~
 * ~~MAKEEXEC~~
 * ~~MINIFY~~
 
-~~Disk 19: Integrated_Demos~~
-* ~~disk(s) with demos that show more complicated usage of the libraries, integrating them as each demo needs.~~  
-  * ~~MAKEMAZE~~
+Disk 19: Integrated_Demos
+* disk(s) with demos that show more complicated usage of the libraries, integrating them as each demo needs. 
+  * MAKEMAZE: A fairly simple maze creation demo. Can only create square mazes.
   * ~~READFILE~~
   * ~~SKIDOWN~~
   * ~~GAMEOFLIFE~~
+
+Disk 20: MiniDisk A
+
+A disk with minified versions of the source files of disks 1-7. This is primarily used by the library-building utility.
+
 
 ---
 ## Macro Subroutine Calls and Clobbers
