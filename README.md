@@ -4,7 +4,7 @@ A general purpose ASM libriary for the Apple II. Assembled in Merlin 8 Pro.
 
 ---
 ## ATTENTION
-This documentation currently reflects version 0.3.1 only.
+This documentation currently reflects version 0.3.1 only. Since then, there have been massive changes. I am currently committed to heavy testing of every subroutine and fixing bugs as they are found, as well as changing how literals and nonliterals are processed by the entire library (thus the long period of silence). Once this is finished, and a working demo of the library builder is done, the next official version will be released. After that, documentation will be updated, both internal and external, and will then reflect the official 0.5.0 release. This will still be considered "unstable" due to the fact that this is still a pre-release, but it should be stable enough to expect few errors to have made it through the revision process.
 
 
 
