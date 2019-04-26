@@ -17,7 +17,7 @@
 ** ASSEMBLER DIRECTIVES
 *
          CYC   AVE
-         EXP   ONLY
+         EXP   OFF
          TR    ON
          DSK   ARRAYS.DEMO
          OBJ   $BFE0
@@ -27,11 +27,11 @@
 *  TOP INCLUDES (HOOKS,MACROS) *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-         PUT   REQUIRED.VARS
-         PUT   REQUIRED.HOOKS.MIN
-         USE   REQUIRED.MAC.MIN
-         USE   ARRAYS.MAC.MIN
-         PUT   ARRAYS.HOOKS
+         PUT   MIN.VARS.REQUIRED
+         PUT   MIN.HOOKS.REQUIRED
+         USE   MIN.MAC.REQUIRED
+         USE   MIN.MAC.ARRAYS
+         PUT   MIN.HOOKS.ARRAYS
 *
 *``````````````````````````````*
 *      PROGRAM MAIN BODY       *
@@ -54,11 +54,11 @@ ARRAY2   EQU   $4000
          _PRNT "UP A ONE-DIMENSIONAL ARRAY OF",8D
          _PRNT "THE GIVEN SIZE WITH ELEMENTS OF",8D
          _PRNT "A GIVEN LENGTH.",8D8D
-         _PRNT "DIM81 ARRAY1;#10;#1;#$AA RETURNS:",8D8D
-         DIM81 ARRAY1;#10;#1;#$AA
-         _DUMP ARRAY1;#2
-         _DUMP ARRAY1+2;#5
-         _DUMP ARRAY1+7;#5
+         _PRNT "DIM81 #ARRAY1;#10;#1;#$AA RETURNS:",8D8D
+         DIM81 #ARRAY1;#10;#1;#$AA
+         DUMP  #ARRAY1;#2
+         DUMP  #ARRAY1+2;#5
+         DUMP  #ARRAY1+7;#5
          _PRNT " ",8D8D
          _WAIT
 *
@@ -71,17 +71,17 @@ ARRAY2   EQU   $4000
          _PRNT "AT THE SPECIFIED ADDRESS AND THEN",8D
          _PRNT "INSERTS IT INTO THE GIVEN ARRAY AND",8D
          _PRNT "INDEX.",8D8D
-         _PRNT "SO, PUT81 $320;ARRAY1;#1 AND ",8D
-         _PRNT "PUT81 $321;ARRAY1;#2 RESULTS IN: ",8D8D
+         _PRNT "SO, PUT81 #$320;#ARRAY1;#1 AND ",8D
+         _PRNT "PUT81 #$321;#ARRAY1;#2 RESULTS IN: ",8D8D
          LDA   #$BB
          STA   $320
          LDA   #$CC
          STA   $321
-         PUT81 $320;ARRAY1;#1
-         PUT81 $321;ARRAY1;#2
-         _DUMP ARRAY1;#2
-         _DUMP ARRAY1+2;#5
-         _DUMP ARRAY1+7;#5
+         PUT81 #$320;#ARRAY1;#1
+         PUT81 #$321;#ARRAY1;#2
+         DUMP  #ARRAY1;#2
+         DUMP  #ARRAY1+2;#5
+         DUMP  #ARRAY1+7;#5
          _PRNT " ",8D8D
          _WAIT
 *
@@ -92,13 +92,13 @@ ARRAY2   EQU   $4000
          _PRNT "DIM81 ARRAY2;#10;#2;#$EE",8D
          _PRNT "PUT81 $320;ARRAY2;#8",8D8D
          _PRNT "RESULTS IN THE FOLLOWING:",8D8D
-         DIM81 ARRAY2;#10;#2;#$EE
-         PUT81 $320;ARRAY2;#8
-         _DUMP ARRAY2;#02
-         _DUMP ARRAY2+2;#5
-         _DUMP ARRAY2+7;#5
-         _DUMP ARRAY2+12;#5
-         _DUMP ARRAY2+17;#5
+         DIM81 #ARRAY2;#10;#2;#$EE
+         PUT81 #$320;#ARRAY2;#8
+         DUMP  #ARRAY2;#02
+         DUMP  #ARRAY2+2;#5
+         DUMP  #ARRAY2+7;#5
+         DUMP  #ARRAY2+12;#5
+         DUMP  #ARRAY2+17;#5
          _WAIT
          _PRNT " ",8D8D
          _PRNT "ALSO NOTE THAT BECAUSE ELEMENT SIZES",8D
@@ -122,8 +122,8 @@ ARRAY2   EQU   $4000
          _PRNT "IN THE GIVEN ELEMENT IN THE GIVEN",8D
          _PRNT "ARRAY. THUS",8D8D
          _PRNT "GET81 ARRAY2;#8 RETURNS:",8D8D
-         GET81 ARRAY2;#8
-         _DUMP RETURN;RETLEN
+         GET81 #ARRAY2;#8
+         DUMP  #RETURN;RETLEN
          _PRNT " ",8D8D
          _WAIT
 *
@@ -132,21 +132,21 @@ ARRAY2   EQU   $4000
 *
 ** MACRO: DIM82 ARRAY_ADDR;X_DIM;Y_DIM;ELEM_LENGTH
 *
-         DIM82 ARRAY2;#10;#10;#1;#$2D
+         DIM82 #ARRAY2;#10;#10;#1;#$2D
          _PRNT "DIM82 CREATES AN ARRAY LIKE DIM81,",8D
          _PRNT "BUT IN 2-DIMENSIONS INSTEAD OF ONE.",8D8D
          _PRNT "THUS DIM82 ARRAY2;#10;#10;#1;#$2D RETURNS: ",8D8D
-         _DUMP ARRAY2;#03
-         _DUMP ARRAY2+03;#10
-         _DUMP ARRAY2+13;#10
-         _DUMP ARRAY2+23;#10
-         _DUMP ARRAY2+33;#10
-         _DUMP ARRAY2+43;#10
-         _DUMP ARRAY2+53;#10
-         _DUMP ARRAY2+63;#10
-         _DUMP ARRAY2+73;#10
-         _DUMP ARRAY2+83;#10
-         _DUMP ARRAY2+93;#10
+         DUMP  #ARRAY2;#03
+         DUMP  #ARRAY2+03;#10
+         DUMP  #ARRAY2+13;#10
+         DUMP  #ARRAY2+23;#10
+         DUMP  #ARRAY2+33;#10
+         DUMP  #ARRAY2+43;#10
+         DUMP  #ARRAY2+53;#10
+         DUMP  #ARRAY2+63;#10
+         DUMP  #ARRAY2+73;#10
+         DUMP  #ARRAY2+83;#10
+         DUMP  #ARRAY2+93;#10
          _PRNT " ",8D8D
          _WAIT
 *
@@ -164,18 +164,19 @@ ARRAY2   EQU   $4000
          STA   $320
          LDA   #$FF
          STA   $321
-         PUT82 $320;ARRAY2;#01;#05
-         _DUMP ARRAY2;#03
-         _DUMP ARRAY2+03;#10
-         _DUMP ARRAY2+13;#10
-         _DUMP ARRAY2+23;#10
-         _DUMP ARRAY2+33;#10
-         _DUMP ARRAY2+43;#10
-         _DUMP ARRAY2+53;#10
-         _DUMP ARRAY2+63;#10
-         _DUMP ARRAY2+73;#10
-         _DUMP ARRAY2+83;#10
-         _DUMP ARRAY2+93;#10
+         PUT82 #$320;#ARRAY2;#0;#0
+         PUT82 #$320;#ARRAY2;#1;#5
+         DUMP  #ARRAY2;#03
+         DUMP  #ARRAY2+03;#10
+         DUMP  #ARRAY2+13;#10
+         DUMP  #ARRAY2+23;#10
+         DUMP  #ARRAY2+33;#10
+         DUMP  #ARRAY2+43;#10
+         DUMP  #ARRAY2+53;#10
+         DUMP  #ARRAY2+63;#10
+         DUMP  #ARRAY2+73;#10
+         DUMP  #ARRAY2+83;#10
+         DUMP  #ARRAY2+93;#10
          _PRNT " ",8D8D
          _WAIT
 *
@@ -188,8 +189,126 @@ ARRAY2   EQU   $4000
          _PRNT "LIKEWISE, GET82 ACTS LIKE GET81,",8D
          _PRNT "BUT IN TWO DIMENSIONS. ",8D8D
          _PRNT "THUS: GET82 ARRAY2;#1;#5 RETURNS:",8D8D
-         GET82 ARRAY2;#1;#5
-         _DUMP RETURN;RETLEN
+         GET82 #ARRAY2;#1;#05
+         DUMP  #RETURN;RETLEN
+         _WAIT
+*
+** DIM161 CREATES A 16-BIT, 1-DIMENSIONAL ARRAY.
+*
+         _PRNT " ",8D8D
+         _PRNT "DIM161 CREATES A 16-BIT, 1D",8D
+         _PRNT "ARRAY WITH A MAXIMUM ELEMENT",8D
+         _PRNT "LENGTH OF 1 BYTE (255).",8D8D
+         _PRNT "SO, DIM161 ARRAY2;#300;#1;#$66",8D
+         _PRNT "RETURNS:",8D8D
+         DIM161 #ARRAY2;#300;#1;#$66
+         DUMP  #ARRAY2;#255
+         _WAIT
+         LDA   #$0F
+         STA   $300
+         LDA   #$0F
+         STA   $301
+         _PRNT " ",8D8D
+         PUT161 #$300;#ARRAY2;#300
+         _PRNT " ",8D8D
+         _PRNT "PUT161 PUTS A VALUE PROVIDED",8D
+         _PRNT "AT A GIVEN MEMORY ADDRESS",8D
+         _PRNT "INTO THE SPECIFIED 16-BIT",8D
+         _PRNT "ARRAY AT THE GIVEN INDEX.",8D8D
+         _PRNT "PUT161 $300;ARRAY2;#300 RETURNS:",8D8D
+         DUMP #ARRAY2;#255
+         DUMP  #ARRAY2+255;#50
+         _WAIT
+*
+         _PRNT " ",8D8D
+         _PRNT "AND GET161, EXPECTEDLY, GETS THE ",8D
+         _PRNT "VALUE STORED IN AN ARRAY AT",8D
+         _PRNT "THE GIVEN ELEMENT.",8D8D
+         _PRNT "SO, GET81 ARRAY2;#300 RETURNS:",8D8D
+
+         GET161 #ARRAY2;#300
+         _PRNT " ",8D8D
+         DUMP  #RETURN;RETLEN
+*
+         _WAIT
+*
+** 16-BIT, 2D ARRAYS
+*
+** ADIM162 CREATES A 2D ARRAY WITH ELEMENTS
+** OF N(BYTE) LENGTH. IF X * Y + 5 > #$FFFF,
+** ERROR IS RETURNED.
+*
+         DIM162 #ARRAY2;#300;#2;#1;#$3F
+         _PRNT " ",8D8D
+         _PRNT "THE DIM162 MACRO CREATES A",8D
+         _PRNT "TWO DIMENSIONAL, 16-BIT ARRAY",8D
+         _PRNT "WITH THE SPECIFIED ROWS AND",8D
+         _PRNT "COLUMNS AND ELEMENT LENGTH.",8D8D
+         _PRNT "SO DIM162 ARRAY2;#300;#2;#1;#$3F",8D
+         _PRNT "RETURNS: ",8D8D
+         _WAIT
+         DUMP  #ARRAY2;#200
+         DUMP  #ARRAY2+200;#200
+         _WAIT
+         DUMP  #ARRAY2+400;#200
+         DUMP  #ARRAY2+600;#10
+         _WAIT
+*
+** PUT162
+*
+         _PRNT " ",8D8D8D8D
+         _PRNT "LIKE MACROS ABOVE, PUT162",8D
+         _PRNT "PUTS A GIVEN VALUE INTO THE ",8D
+         _PRNT "SPECIFIED INDEX OF A 16BIT, 3D ARRAY.",8D8D
+         _PRNT "THE FOLLOWING LOOPS THROUGH X AND Y,",8D
+         _PRNT "FILLING THE ARRAYS WITH 0-300 IN EACH ROW.",8D8D
+         _WAIT
+*
+         LDA   #0
+         STA   XCNT
+         STA   YCNT
+         STA   XCNT+1
+         STA   YCNT+1
+*
+STARTLP
+         PUT162 #XCNT;#ARRAY2;XCNT;YCNT
+         CLC
+         LDA   XCNT
+         ADC   #1
+         BCC   CONTX
+         INC   XCNT+1
+CONTX
+         STA   XCNT
+         LDA   XCNT
+         CMP   #<300      ; NOTE THAT THIS DOESN'T
+         BNE   STARTLP    ; FILL THE WHOLE ARRAY,
+*                           SINCE WE'RE USING A BYTE
+         CLC              ; LOOP
+         LDA   YCNT
+         ADC   #1
+         BCC   CONT
+         INC   YCNT+1
+CONT
+         STA   YCNT
+         CMP   #3
+         BNE   STARTLP
+*
+         DUMP  #ARRAY2;#200
+         DUMP  #ARRAY2+200;#200
+         _WAIT
+         DUMP  #ARRAY2+400;#200
+         DUMP  #ARRAY2+600;#10
+         _WAIT
+*
+** GET162
+*
+         _PRNT " ",8D8D
+         _PRNT "GET162, LIKE ITS SISTER ROUTINES,",8D
+         _PRNT "GETS A VALUE FROM A 16BIT,2D",8D
+         _PRNT "ARRAY AND STORES IT IN RETURN.",8D8D
+         _PRNT "THUS GET162 ARRAY2;#100;#0 RETURNS: ",8D8D
+         GET162 #ARRAY2;#100;#0
+         DUMP  #RETURN;RETLEN
          _WAIT
 *
          _PRNT " ",8D8D
@@ -201,19 +320,33 @@ ARRAY2   EQU   $4000
 * BOTTOM INCLUDES (ROUTINES)   *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-         PUT   REQUIRED.LIB.MIN
+         PUT   MIN.LIB.REQUIRED
 *
 ** INDIVIDUAL SUBROUTINE INCLUDES
 *
 ** 8-BIT 1-DIMENSIONAL ARRAY SUBROUTINES
 *
-         PUT   ADIM81.SUB.MIN
-         PUT   AGET81.SUB.MIN
-         PUT   APUT81.SUB.MIN
+         PUT   MIN.SUB.ADIM81
+         PUT   MIN.SUB.AGET81
+         PUT   MIN.SUB.APUT81
 *
 ** 8-BIT 2-DIMENSIONAL ARRAY SUBROUTINES
 *
-         PUT   ADIM82.SUB.MIN
-         PUT   AGET82.SUB.MIN
-         PUT   APUT82.SUB.MIN
+         PUT   MIN.SUB.ADIM82
+         PUT   MIN.SUB.AGET82
+         PUT   MIN.SUB.APUT82
 *
+** 16-BIT 1-DIMENSIONAL ARRAYS
+*
+         PUT   MIN.SUB.ADIM161
+         PUT   MIN.SUB.APUT161
+         PUT   MIN.SUB.AGET161
+*
+** 16-BIT 2-DIMENSIONAL ARRAYS
+*
+         PUT   MIN.SUB.ADIM162
+         PUT   MIN.SUB.APUT162
+         PUT   MIN.SUB.AGET162
+*
+XCNT     DS    2
+YCNT     DS    2

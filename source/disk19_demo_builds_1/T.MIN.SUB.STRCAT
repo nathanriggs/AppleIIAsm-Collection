@@ -1,0 +1,95 @@
+STRCAT
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+         PLA
+         STA   :MLEN      
+         PLA
+         STA   ADDR2      
+         PLA              
+         STA   ADDR2+1
+         PLA
+         STA   ADDR1      
+         PLA              
+         STA   ADDR1+1
+         LDY   #0
+         LDA   (ADDR1),Y  
+         STA   :S1LEN
+         STA   :S1IND
+         INC   :S1IND     
+         LDA   (ADDR2),Y  
+         STA   :S2LEN
+         LDA   #1
+         STA   :S2IND     
+         LDA   :S2LEN     
+         CLC
+         ADC   :S1LEN     
+         STA   :S3LEN     
+         BCS   :TOOLONG   
+         CMP   :MLEN      
+         BEQ   :LENOK     
+         BCC   :LENOK
+:TOOLONG
+         LDA   #$0FF
+         STA   :SOVF      
+         LDA   :MLEN
+         SEC
+         SBC   :S1LEN
+         BCC   :EXIT
+
+         STA   :SCNT      
+         LDA   :MLEN
+         STA   :S1LEN     
+         JMP   :DOCAT
+:LENOK
+         STA   :S1LEN
+         LDA   #0         
+         STA   :SOVF      
+         LDA   :S2LEN
+         STA   :SCNT      
+:DOCAT
+         LDA   :SCNT
+         BEQ   :EXIT      
+:CATLP
+         LDY   :S2IND
+         LDA   (ADDR2),Y  
+         LDY   :S1IND
+         STA   (ADDR1),Y  
+         INC   :S1IND     ;INC STRING 1 INDEX
+         INC   :S2IND     
+         DEC   :SCNT      
+         BNE   :CATLP     
+:EXIT
+         LDA   :S1LEN
+         LDY   #0
+         STA   (ADDR1),Y
+         LDA   :SOVF
+         ROR   A
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+         LDY   #0
+         LDA   (ADDR1),Y  
+         STA   RETLEN
+         LDA   #1
+:RLP
+         LDA   (ADDR1),Y
+         STA   RETURN,Y
+         CPY   RETLEN
+         INY
+         BNE   :RLP
+         LDA   RETLEN
+         LDY   #0
+         STA   (ADDR1),Y
+         LDX   :S3LEN     
+         RTS
+:S3LEN   DS    1
+:S1LEN   DS    1
+:S1IND   DS    1
+:S2LEN   DS    1
+:S2IND   DS    1
+:MLEN    DS    1
+:SCNT    DS    1
+:SOVF    DS    1

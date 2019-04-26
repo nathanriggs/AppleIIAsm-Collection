@@ -1,0 +1,10 @@
+*
+*-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*
+*                              *
+*   ARRAYS.HOOKS.PUT           *
+*                              *
+*=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-*
+*
+ARRMAX   EQU   8192       ; MAXIMUM # OF BYTES
+                          ; AN ARRAY CAN USE
+*

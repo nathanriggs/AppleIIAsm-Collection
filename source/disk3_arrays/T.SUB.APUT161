@@ -1,0 +1,213 @@
+*
+*``````````````````````````````*
+* APUT161: PUT DATA INTO ARRAY *
+*                      ELEMENT *
+*-                            -*
+* COPIES FROM SOURCE LOCATION  *
+* AND PUTS IT IN MEMLOC FOR    *
+* DESIRED ELEMENT.             *
+*-                            -*
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  ????----  REG: AXYM  *
+*-                            -*
+* CYCLES: ???                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*                              *
+*-                            -*
+* ENTRY                        *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+* INDEX OF PUT ELEMENT         *
+* LOW BYTE OF DESTINATION ADDR *
+* HI BYTE OF DESTINATION ADDR  *
+* LO BYTE OF SOURCE ADDRESS    *
+* HI BYTE OF SOURCE ADDRESS    *
+*-                            -*
+* EXIT                         *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+*                              *
+* .Y = LOBYTE OF ELEMENT ADDR  *
+* .X = HIBYTE OF ELEMENT ADDR  *
+* .A = BYTE LENGTH OF ELEMENT  *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+APUT161
+*
+** SAVE RETURN ADDRESS
+*
+         PLA
+         STA   RETADR     ; LOCAL RETURN ADDRESS STORAGE
+         PLA              ; BECAUSE OF CALLING AGET81
+         STA   RETADR+1
+*
+** GET PARAMETERS
+*
+         PLA
+         STA   :AIDX
+         STA   :IDX
+         PLA
+         STA   :AIDX+1
+         STA   SCRATCH
+         PLA
+         STA   ADDR4      ; ARRAY ADDRESS; USES ADDR4
+                          ; BECAUSE CALL TO AGET81 USES
+                          ; ADDR1
+         PLA
+         STA   ADDR4+1
+         PLA
+         STA   ADDR3      ; ADDRESS OF DATA TO BE
+                          ; COPIED TO ELEMENT
+         PLA
+         STA   ADDR3+1
+*
+** GET ARRAY'S SIZE, ELEMENT SIZE
+*
+         LDY   #0
+         LDA   (ADDR4),Y
+         STA   :ASIZE
+         LDY   #1
+         LDA   (ADDR4),Y
+         STA   :ASIZE+1
+         INY
+         LDA   (ADDR4),Y
+         STA   :ESIZE
+         STA   :ESIZEBAK
+*
+********************************
+*
+*  ERROR CONTROL
+*
+********************************
+*
+         LDA   ERRCTRL
+         CMP   #1
+         BEQ   :CHKERR
+         JMP   :ERREND
+:CHKERR
+         LDA   :IDX+1           ; IF IDX > ARRAY LENGTH
+         CMP   :ASIZE+1
+         BCS   :OVFHI
+         JMP   :ERREND
+:OVFHI
+         LDA   :IDX
+         CMP   :ASIZE
+         BCS   :OVF
+         JMP   :ERREND
+:OVF
+         _ERR  #:E_SID;#:E_OVF1;#:E_DUMP;#:ESIZE;#9
+*
+********************************
+*
+:ERREND
+*
+********************************
+*
+** FIRST, MUL INDEX BY ELEM SIZE, THEN ADD
+** TWO TO GET THE ELEMENT ADDRESS.
+*
+         LDY   #0
+         LDA   #0
+         BEQ   :ENTLPA
+:DOADD
+         CLC
+         ADC   :AIDX
+         TAX
+         TYA
+         ADC   SCRATCH
+         TAY
+         TXA
+:LPA
+         ASL   :AIDX
+         ROL   SCRATCH
+:ENTLPA
+         LSR   :ESIZE
+         BCS   :DOADD
+         BNE   :LPA
+*
+** STORE INDEX VALUE
+*
+         STX   :IDX
+         STY   :IDX+1
+*
+** NOW ADD 3 TO RESULT
+*
+         CLC
+         LDA   #3
+         ADC   :IDX
+         STA   :RES
+         BCS   :ADDHI
+         JMP   :XADD
+:ADDHI
+         LDA   #1
+         ADC   :IDX+1
+         STA   :IDX+1
+:XADD
+         LDA   :IDX+1
+         STA   :RES+1
+*
+         CLC
+         LDA   :RES
+         ADC   ADDR4
+         STA   :RES
+         BCS   :ADD1HI
+         JMP   :XADD2
+:ADD1HI
+         INC   :RES+1
+:XADD2
+         LDA   :RES+1
+         ADC   ADDR4+1
+         STA   :RES+1
+*
+         STA   ADDR2+1
+         LDA   :RES
+         STA   ADDR2
+*
+** COPY FROM SRC ADDR3 TO ELEMENT LOCATION ADDR
+*
+         LDY   #0
+:LP
+         LDA   (ADDR3),Y
+         STA   (ADDR2),Y
+         INY
+         CPY   :ESIZEBAK
+         BNE   :LP
+*
+** RESTORE RETURN ADDRESS
+*
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+*
+** RETURN ELEMENT ADDRESS AND SIZE
+** IN REGISTERS
+*
+         LDX   ADDR2+1
+         LDY   ADDR2
+         LDA   :ESIZE
+         RTS
+*
+** DATA
+*
+:ESIZE   DS    1
+:ESIZEBAK DS   1
+:ASIZE   DS    2
+:AIDX    DS    2
+:IDX     DS    2
+:RES     DS    2
+*
+:E_SID   ASC   "APUT161 (PUT161 MACRO),",00
+:E_DUMP  ASC   "DUMPING :ESIZE(1) :ESIZEBAK(1) :ASIZE(2)"
+         ASC   ":AIDX(2) :IDX(2) :RES(2)",00
+:E_OVF1  ASC   "OUT OF BOUNDS! INDEX > ARRAY LENGTH",00
+*

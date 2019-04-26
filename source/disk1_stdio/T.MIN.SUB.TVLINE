@@ -1,0 +1,66 @@
+TVLINE
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+         PLA
+         STA   :F         
+         PLA
+         STA   :X         
+         PLA
+         STA   :Y2        
+         PLA
+         STA   :Y1        
+         LDA   ERRCTRL
+         CMP   #1
+         BEQ   :CHKERR
+         JMP   :ERREND
+:CHKERR
+         LDA   :Y1
+         CMP   :Y2
+         BCS   :ERRTOOHI  
+         LDA   :Y2
+         CMP   #24
+         BCS   :ERRYOVF   
+         LDA   :X
+         CMP   #40        
+         BCS   :ERRXOVF
+         LDA   :Y1
+         CMP   #24        
+         BCS   :ERRYOVF
+         JMP   :ERREND
+:ERRTOOHI
+         _ERR  #:E_SID;#:E_YHI;#:E_DMP1;#:X;#4
+         JMP   :ERREND
+:ERRXOVF
+         _ERR  #:E_SID;#:E_XOF;#:E_DMP1;#:X;#4
+         JMP   :ERREND
+:ERRYOVF
+         _ERR  #:E_SID;#:E_YOF;#:E_DMP1;#:X;#4
+         JMP   :ERREND
+:ERREND
+         LDA   :Y1
+         LDY   :X
+:LOOP
+         JSR   $F847      
+         LDA   :F
+         STA   ($26),Y    
+         INC   :Y1
+         LDA   :Y1
+         CMP   :Y2        
+         BNE   :LOOP      ; LOOP
+:EXIT
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+         RTS
+:X       DS    1
+:Y1      DS    1
+:Y2      DS    1
+:F       DS    1
+:E_SID   ASC   "TVLINE (TVLIN MACRO)",00
+:E_DMP1  ASC   "DUMPING X(1) Y1(1) Y2(1) F(1)",00
+:E_YHI   ASC   "Y1 MUST BE LOWER THAN Y2.",00
+:E_XOF   ASC   "X > # OF AVAILABLE COLUMNS.",00
+:E_YOF   ASC   "Y > # OF AVAILABLE ROWS",00

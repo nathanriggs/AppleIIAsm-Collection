@@ -1,0 +1,146 @@
+*
+********************************
+*                              *
+*      -< CONVERT DEMO >-      *
+*                              *
+*       VERSION 00.03.00       *
+*                              *
+*         06-FEB-2019          *
+*                              *
+********************************
+*                              *
+*       NATHAN D. RIGGS        *
+*   NATHAN.RIGGS@OUTLOOK.COM   *
+*                              *
+********************************
+*
+** ASSEMBLER DIRECTIVES
+*
+         CYC   AVE
+         TR    ON
+         EXP   ONLY
+         DSK   CONVERT.DEMO
+         OBJ   $BFE0
+         ORG   $6000
+*
+*``````````````````````````````*
+*  TOP INCLUDES (PUTS, MACROS) *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+         PUT   MIN.VARS.REQUIRED
+         USE   MIN.MAC.REQUIRED
+         PUT   MIN.HOOKS.REQUIRED
+         USE   MIN.MAC.CONVERT
+*PUT HOOKS.CONVERT
+*
+*
+*``````````````````````````````*
+*      PROGRAM MAIN BODY       *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+** INTASC MACRO
+*
+** USAGE: INTASC [LITERAL OR ADDRESS]
+*
+         _PRNT " ",8D8D
+         _PRNT "THE INTASC MACRO CONVERTS",8D
+         _PRNT "A HEXADECIMAL WORD (2 BYTES)",8D
+         _PRNT "INTO THE CORRESPONDING SIGNED",8D
+         _PRNT "OR UNSIGNED DECIMAL STRING.",8D8D
+         _PRNT "THUS, INTASC #$FF RETURNS:",8D8D
+         INTASC #$FF
+         DUMP  #RETURN;#4
+         _WAIT
+*
+** ASCINT MACRO
+*
+** USAGE: ASCINT [STRING OR STRING ADDRESS]
+*
+         _PRNT " ",8D8D
+         _PRNT "ASCINT DOES THE OPPOSITE OF ",8D
+         _PRNT "INTASC; IT TURNS A STRING OF",8D
+         _PRNT "DECIMAL INTEGERS INTO ITS ",8D
+         _PRNT "CORRESPONDING TWO-BYTE VALUE.",8D8D
+         _PRNT "SO, ASCINT '255' RETURNS:",8D8D
+         ASCINT "255"
+         DUMP  #RETURN;RETLEN
+         _WAIT
+*
+** HEXASC MACRO
+*
+** USAGE: HEXASC [LITERAL NUMBER OR ADDRESS OF BYTE]
+*
+         _PRNT " ",8D8D
+         _PRNT "THE HEXASC MACRO CONVERTS A BYTE",8D
+         _PRNT "IN MEMORY TO ITS CORRESPONDING",8D
+         _PRNT "HEX VALUE AS A STRING.",8D8D
+         _PRNT "THEREFORE, HEXASC #$FF RETURNS: ",8D8D
+         HEXASC #$FF
+         DUMP  #RETURN;RETLEN
+         _WAIT
+*
+** ASCHEX MACRO
+*
+** USAGE: ASCHEX [STRING OR ADDRESS]
+*
+         _PRNT " ",8D8D
+         _PRNT "THE ASCHEX MACRO DOES THE",8D
+         _PRNT "OPPOSITE OF HEXASC: IT TURNS A",8D
+         _PRNT "HEXADECIMAL STRING INTO ITS ",8D
+         _PRNT "VALUE EQUIVALENT.    ",8D8D
+         _PRNT "SO, ASCHEX 'EE' RETURNS:",8D8D
+         ASCHEX "EE"
+         DUMP  #RETURN;RETLEN
+         _WAIT
+*
+** BINASC MACRO
+*
+** USAGE: BINASC [LITERAL OR ADDRESS]
+*
+         _PRNT " ",8D8D
+         _PRNT "BINASC TAKES A VALUE AND THEN",8D
+         _PRNT "RETURNS A BINARY STRING OF THE",8D
+         _PRNT "BYTE.",8D8D
+         _PRNT "THUS BINASC #$0F RETURNS:",8D8D
+         BINASC #$0F
+         DUMP  #RETURN;#8
+         _WAIT
+*
+** ASCBIN MACRO
+*
+** USAGE: ASCBIN [BINARY STRING OR ADDRESS]
+*
+         _PRNT "AND ASCBIN DOES THE OPPOSITE:",8D
+         _PRNT "IT TAKES A BINARY STRING (8 DIGITS)",8D
+         _PRNT "AND RETURNS ITS CORRESPONDING VALUE.",8D8D
+         _PRNT "THUS, ASCBIN '00001111' RETURNS:",8D8D
+         ASCBIN "00001111"
+         DUMP  #RETURN;#1
+         _WAIT
+*
+         _PRNT " ",8D8D8D
+         _PRNT "FIN.",8D8D8D
+*
+*
+*
+         JMP   REENTRY
+*
+*``````````````````````````````*
+*        BOTTOM INCLUDES       *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+** BOTTOM INCLUDES
+*
+         PUT   MIN.LIB.REQUIRED
+*
+** INDIVIDUAL SUBROUTINE INCLUDES
+*
+** STRING SUBROUTINES
+*
+         PUT   MIN.SUB.HEX2INTASC
+         PUT   MIN.SUB.INTASC2HEX
+         PUT   MIN.SUB.HEX2BINASC
+         PUT   MIN.SUB.BINASC2HEX
+         PUT   MIN.SUB.HEX2HEXASC
+         PUT   MIN.SUB.HEXASC2HEX
+*

@@ -1,0 +1,91 @@
+TFILLA
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+         PLA
+         STA   :F
+         PLA
+         STA   :Y2
+         PLA
+         STA   :X2
+         PLA
+         STA   :YC
+         STA   :Y1
+         PLA
+         STA   :XC
+         STA   :X1
+         LDA   ERRCTRL
+         CMP   #1
+         BEQ   :CHKERR
+         JMP   :ERREND
+:CHKERR
+         LDA   :X1
+         CMP   :X2        
+         BCS   :X1HI
+         LDA   :Y1
+         CMP   :Y2
+         BCS   :Y1HI      
+         LDA   :X1
+         CMP   #40
+         BCS   :XOVF
+         LDA   :X2
+         CMP   #40
+         BCS   :XOVF
+         LDA   :Y1
+         CMP   #24
+         BCS   :YOVF
+         LDA   :Y2
+         CMP   #24
+         BCS   :YOVF
+         JMP   :ERREND
+:X1HI
+         _ERR  #:E_SID;#:E_X1H;#:E_DMP1;#:X1;#7
+         JMP   :ERREND
+:Y1HI
+         _ERR  #:E_SID;#:E_Y1H;#:E_DMP1;#:X1;#7
+         JMP   :ERREND
+:XOVF
+         _ERR  #:E_SID;#:E_XOF;#:E_DMP1;#:X1;#7
+         JMP   :ERREND
+:YOVF
+         _ERR  #:E_SID;#:E_YOF;#:E_DMP1;#:X1;#7
+:ERREND
+:LP1
+         LDA   :YC
+         LDY   :XC
+         JSR   $F847      
+         LDA   :F
+         STA   ($26),Y
+         LDA   :YC
+         INY
+         STY   :XC
+         CPY   :X2
+         BNE   :LP1
+
+         LDA   :X1
+         STA   :XC
+         INC   :YC
+         LDA   :YC
+         CMP   :Y2
+         BNE   :LP1
+:EXIT
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+         RTS
+:X1      DS    1
+:X2      DS    1
+:Y1      DS    1
+:Y2      DS    1
+:XC      DS    1
+:YC      DS    1
+:F       DS    1
+:E_SID   ASC   "TFILLA (TFILL MACRO)",00
+:E_DMP1  ASC   "DUMPING X1(1) X2(1) Y1(1) Y2(1)"
+         ASC   "XC(1) YC(1) F(1)",00
+:E_X1H   ASC   "X1 MUST BE LOWER THAN X2.",00
+:E_Y1H   ASC   "Y1 MUST BE LOWER THAN Y2.",00
+:E_XOF   ASC   "X <> MIN/MAX COLUMNS.",00
+:E_YOF   ASC   "Y <> MIN/MAX ROWS",00

@@ -1,0 +1,136 @@
+PRN      MAC
+         IF    ",]1   ; --- IF PARAM=STRING
+         JSR   XPRINT     ; SPECIAL PRINT
+         ASC   ]1         ; PUT STRING HERE
+         HEX   00         ; STRING TERMINATE
+         ELSE             ; ELSE, PARAM IS
+                          ; MEMORY LOCATION
+         _ISLIT ]1
+         JSR   DPRINT
+         FIN
+         <<<
+INP      MAC
+         JSR   SINPUT
+         <<<
+GKEY     MAC
+         JSR   GETKEY
+         LDY   #0
+         STY   STROBE
+         <<<
+SCPOS    MAC
+         LDX   ]1
+         LDY   ]2
+         STX   CURSH
+         STY   CURSV
+         JSR   VTAB
+         <<<
+SETCX    MAC
+         LDX   ]1
+         STX   CURSH
+         JSR   VTAB
+         <<<
+SETCY    MAC
+         LDY   ]1
+         STY   CURSV
+         JSR   VTAB
+         <<<
+CURF     MAC
+         LDA   ]1
+         JSR   CURSFOR
+         <<<
+CURB     MAC
+         LDA   ]1
+         JSR   CURSBAK
+         <<<
+CURU     MAC
+         LDA   ]1
+         JSR   CURSUP
+         <<<
+CURD     MAC
+         LDA   ]1
+         JSR   CURSDN
+         <<<
+RCPOS    MAC
+         LDA   ]1         ; ROW
+         LDY   ]2         ; COLUMN
+         JSR   $F847      ; GBASCALC ROUTINE
+         LDA   ($26),Y    ; LOW OF ADDR OF CHAR
+         <<<
+PDL      MAC              ; GET PADDLE VALUE
+         LDX   ]1         
+         JSR   PREAD      ; PADDLE READING STORED IN Y
+         <<<
+PBX      MAC
+         _ISLIT ]1
+         JSR   GPBX
+         <<<
+TVLIN    MAC
+         LDA   ]1         ; Y START
+         PHA
+         LDA   ]2         ; Y END
+         PHA
+         LDA   ]3         ; X POSITION
+         PHA
+         LDA   ]4         ; CHARACTER
+         PHA
+         JSR   TVLINE
+         <<<
+THLIN    MAC
+         LDA   ]1         ; X START
+         PHA
+         LDA   ]2         ; X END
+         PHA
+         LDA   ]3         ; Y POS
+         PHA
+         LDA   ]4         ; FILL CHAR
+         PHA
+         JSR   THLINE
+         <<<
+TFILL    MAC
+         LDA   ]1         ; LEFT BOUNDARY
+         PHA
+         LDA   ]2         ; TOP BOUNDARY
+         PHA
+         LDA   ]3         ; RIGHT BOUNDARY
+         PHA
+         LDA   ]4         ; BOTTOM BOUNDARY
+         PHA
+         LDA   ]5         ; FILL CHAR
+         PHA
+         JSR   TFILLA
+         <<<
+TPUT     MAC
+         LDA   ]1
+         PHA
+         LDA   ]2
+         PHA
+         LDA   ]3
+         PHA
+         JSR   TXTPUT
+         <<<
+DIE80    MAC
+         LDA   #21
+         JSR   COUT
+         <<<
+COL80    MAC
+         LDA   #18
+         JSR   COUT
+         <<<
+COL40    MAC
+         LDA   #17
+         JSR   COUT
+         <<<
+MTXT0    MAC
+         LDA   #24
+         JSR   COUT
+         <<<
+MTXT1    MAC
+         LDA   #27
+         JSR   COUT
+         <<<
+WAIT     MAC
+]WTLP    LDA   $C000
+         BPL   ]WTLP
+         AND   #$7F
+         STA   $C010
+         <<<

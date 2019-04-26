@@ -1,0 +1,1110 @@
+********************************
+*                              *
+* MENU SYSTEM SUBROUTINES      *
+*                              *
+*------------------------------*
+*                              *
+* CONTAINS:                    *
+*                              *
+*   SETMNAME                   *
+*   GETMNAME                   *
+*   SETMLEN                    *
+*   GETMLEN                    *
+*   SETLABW                    *
+*   GETLABW                    *
+*   SETOPTW                    *
+*   GETOPTW                    *
+*   SETBKEY                    *
+*   GETBKEY                    *
+*   SETMHOOK                   *
+*   GETMHOOK                   *
+*   SETMOPT                    *
+*   GETMOPT                    *
+*   SETMLBL                    *
+*   SETSLCT                    *
+*   GETSLCT                    *
+*   READSLCT                   *
+*   MENRESET                   *
+*   MENCOPY                    *
+*   MENREAD                    *
+*   MENSAVE                    *
+*   MENLOAD                    *
+*   MENDISP                    *
+*                              *
+*------------------------------*
+*                              *
+* USES:                        *
+*       MAC.FILIO              *
+*       MIN.SUB.BINSAVE        *
+*       MIN.SUB.STRCAT         *
+*       MIN.SUB.BINLOAD        *
+*       MIN.SUB.HEX2ASC        *
+*                              *
+********************************
+*
+********************************
+*                              *
+* VARIABLES                    *
+*                              *
+********************************
+*
+         JMP   ENDVARS    ; PUT AT TOP BECAUSE
+                          ; OF NO FORWARD REF
+]MRETURN DS    2,0
+]MRET2   DS    2,0
+]MRET3   DS    2,0
+]INDEX   DS    2,0
+]OINDEX  DS    2,0
+]TMP     DS    6,0
+]TMPS    DS    80,0
+]YPOS    DS    1,0
+]XPOS    DS    1,0
+]YMARG   DS    1,0
+]XMARG   DS    1,0
+*
+]THEMENU
+*
+** HEADER
+*
+]LCOUNT  DS    1,0
+]LWIDTH  DS    1,0
+]OWIDTH  DS    1,0
+]BKEY    DS    1,0
+]MNAME   DS    80,0
+*
+* LABELS SECTION
+*
+]LABELS  DS    800,0      ; EACH LABEL 39 CHARS WIDE
+*
+** OPTIONS SECTION
+*
+]OPTIONS DS    1000,0     ; EACH OPTION CAN BE NO GREATER
+                          ; THAN 49 CHARS LONG
+*
+** SELECTIONS SECTION
+*
+]SELECT  DS    20,0       ; HOLDS NUMBER OF SELECTION
+                          ; IN THE GIVEN OPTION
+*
+** TYPES SECTION
+*
+** 01 = MULTIPLE CHOICE
+** 02 = BOOLEAN SWITCH
+** 03 = TEXTBOX ENTRY
+** 04 - 09 = NOTHING YET
+** 10 = JUMP TO HOOK
+*
+]TYPES   DS    20,0
+*
+** HOOKS TABLE
+*
+]HOOKS   DS    40,0       ; EACH HOOK 2 BYTES
+*
+]ENDMEN  DS    2,0
+*
+ENDVARS
+*
+********************************
+*                              *
+* SETMNAME: SET THE MENU NAME  *
+*                              *
+********************************
+*
+SETMNAME
+*
+** GET PARAMETERS
+*
+         PLA
+         STA   ]MRETURN
+         PLA
+         STA   ]MRETURN+1
+*
+         PLA
+         STA   ADDR4
+         PLA
+         STA   ADDR4+1
+*
+** COPY FROM SOURCE TO ]MNAME
+*
+         LDY   #255
+:LP1
+         INY
+         TYA
+         TAX
+         LDA   (ADDR4),Y
+         STA   ]MNAME,X
+         CPY   ]MNAME
+         BNE   :LP1
+*
+         LDA   ]MRETURN+1
+         PHA
+         LDA   ]MRETURN
+         PHA
+*
+         RTS
+*
+********************************
+*                              *
+* GETMNAME: GET MENU NAME AND  *
+*           PUT IT IN RETURN   *
+*                              *
+********************************
+*
+GETMNAME
+*
+         LDY   #255
+:LP1
+         INY
+         LDA   ]MNAME,Y
+         STA   RETURN,Y
+         CPY   ]MNAME
+         BNE   :LP1
+         STY   RETLEN
+         RTS
+*
+********************************
+*                              *
+* SETMLEN                      *
+*                              *
+********************************
+*
+SETMLEN
+*
+         PLA
+         TAX
+         PLA
+         TAY
+         PLA
+         STA   ]LCOUNT
+         TYA
+         PHA
+         TXA
+         PHA
+         RTS
+*
+********************************
+*                              *
+* GETMLEN: GET MENU LENGTH     *
+*          AND PUT IN RETURN   *
+*                              *
+********************************
+*
+GETMLEN
+*
+         LDA   #1
+         STA   RETLEN
+         LDA   ]LCOUNT
+         STA   RETURN
+         RTS
+*
+********************************
+*                              *
+* SETLABW                      *
+*                              *
+********************************
+*
+SETLABW
+*
+         PLA
+         TAX
+         PLA
+         TAY
+         PLA
+         STA   ]LWIDTH
+         TYA
+         PHA
+         TXA
+         PHA
+         RTS
+*
+********************************
+*                              *
+* GETLABW: GET LABEL WIDTH     *
+*          AND PUT IN RETURN   *
+*                              *
+********************************
+*
+GETLABW
+*
+         LDA   #1
+         STA   RETLEN
+         LDA   ]LWIDTH
+         STA   RETURN
+         RTS
+*
+********************************
+*                              *
+* SETOPTW: SET OPTION WIDTH    *
+*                              *
+********************************
+*
+SETOPTW
+*
+         PLA
+         TAX
+         PLA
+         TAY
+         PLA
+         STA   ]OWIDTH
+         TYA
+         PHA
+         TXA
+         PHA
+         RTS
+*
+********************************
+*                              *
+* GETOPTW: GET OPTION WIDTH    *
+*          AND PUT IN RETURN   *
+*                              *
+********************************
+*
+GETOPTW
+*
+         LDA   #1
+         STA   RETLEN
+         LDA   ]OWIDTH
+         STA   RETURN
+         RTS
+*
+********************************
+*                              *
+* SETBKEY: SET KEY TO EXIT     *
+*                              *
+********************************
+*
+SETBKEY
+*
+         PLA
+         TAX
+         PLA
+         TAY
+         PLA
+         STA   ]BKEY
+         TYA
+         PHA
+         TXA
+         PHA
+         RTS
+*
+********************************
+*                              *
+* GETBKEY: GET EXIT KEY CODE   *
+*          AND PUT IN RETURN   *
+*                              *
+********************************
+*
+GETBKEY
+*
+         LDA   #1
+         STA   RETLEN
+         LDA   ]BKEY
+         STA   RETURN
+*
+********************************
+*                              *
+* SETMHOOK: SET MENU ITEM HOOK *
+*                              *
+********************************
+*
+SETMHOOK
+*
+** GET PARAMETERS
+*
+         LDA   #0
+         STA   ADDR4
+         STA   ADDR4+1
+         PLA
+         STA   ]MRETURN
+         PLA
+         STA   ]MRETURN+1
+         PLA
+         STA   ]TMP
+         PLA
+         STA   ]TMP+1
+         PLA
+         STA   ]INDEX
+*
+         ASL              ; MUL BY 2
+         CLC
+         ADC   #]HOOKS
+         BCC   :C1
+         LDY   #>]HOOKS
+         INY
+         STY   ADDR4+1
+:C1
+         STA   ADDR4
+*
+         LDY   #0
+         LDA   ]TMP
+         STA   (ADDR4),Y
+         LDA   ]TMP+1
+         INY
+         STA   (ADDR4),Y
+         LDA   ]MRETURN+1
+         PHA
+         LDA   ]MRETURN
+         PHA
+         RTS
+*
+********************************
+*                              *
+* GETMHOOK: GET A MENU HOOK    *
+*          AMD STORE IN RETURN *
+*                              *
+********************************
+*
+GETMHOOK
+*
+         LDA   #0
+         STA   ADDR4
+         STA   ADDR4+1
+         PLA
+         TAX
+         PLA
+         TAY
+         PLA
+         STA   ]INDEX
+         TYA
+         PHA
+         TXA
+         PHA
+*
+         LDA   ]INDEX
+         ASL              ; MUL BY 2
+         CLC
+         ADC   #]HOOKS
+         BCC   :C1
+         LDY   #>]HOOKS
+         INY
+         STY   ADDR4+1
+:C1
+         STA   ADDR4
+         LDY   #2
+         STY   RETLEN
+         LDY   #0
+         LDA   (ADDR4),Y
+         STA   RETURN,Y
+         INY
+         LDA   (ADDR4),Y
+         STA   RETURN,Y
+         RTS
+*
+********************************
+*                              *
+* SETMOPT                      *
+*                              *
+* SET A GIVEN MENU ITEM'S      *
+* AVAILABLE OPTIONS.           *
+*                              *
+********************************
+*
+SETMOPT
+*
+** GET PARAMETERS
+*
+         PLA
+         STA   ]MRETURN
+         PLA
+         STA   ]MRETURN+1
+*
+         PLA
+         STA   ADDR4      ; STRING ADDRESS
+         PLA
+         STA   ADDR4+1
+*
+         PLA
+         STA   ]INDEX
+*
+** FIRST, MUL ]INDEX BY 50 TO GET MEMLOC
+*
+         LDY   #0
+         STY   ]TMP
+         STY   ]TMP+1
+         LDY   #0
+*
+         LDA   ]INDEX
+         CMP   #0
+         BNE   :LP1
+         JMP   :XLP1
+*
+:LP1
+         INY
+         LDA   ]TMP
+         CLC
+         ADC   #50
+         BCC   :CLP
+         INC   ]TMP+1
+:CLP
+         STA   ]TMP
+         CPY   ]INDEX
+         BNE   :LP1
+:XLP1
+*
+** NOW ADD TO BASE ADDRESS OF OPTIONS
+*
+         LDA   #]OPTIONS
+         CLC
+         ADC   ]TMP
+         STA   ]TMP
+         STA   ADDR3
+         CLC
+         LDA   #>]OPTIONS
+         CLC
+         ADC   ]TMP+1
+         STA   ]TMP+1
+         STA   ADDR3+1
+*
+* NOW COPY OPTIONS STRING TO OPTIONS LOCATION
+*
+         LDY   #255
+         LDX   #255
+:CPLP
+         INY
+         INX
+         LDA   (ADDR4),Y
+         STA   (ADDR3),Y
+         CPY   ]TMP
+         BNE   :CPLP
+*
+         LDA   ]MRETURN+1
+         PHA
+         LDA   ]MRETURN
+         PHA
+         RTS
+*
+********************************
+*                              *
+* GETMOPT                      *
+*                              *
+* GET A GIVEN MENU ITEM'S      *
+* AVAILABLE OPTIONS IN RETURN  *
+*                              *
+********************************
+*
+GETMOPT
+*
+** GET PARAMETERS
+*
+         PLA
+         STA   ]MRETURN
+         PLA
+         STA   ]MRETURN+1
+*
+         PLA
+         STA   ]INDEX
+*
+** FIRST, MUL ]INDEX BY 50 TO GET MEMLOC
+*
+         LDY   #0
+         STY   ]TMP
+         STY   ]TMP+1
+         LDY   #0
+*
+         LDA   ]INDEX
+         CMP   #0
+         BNE   :LP1
+         JMP   :XLP1
+*
+:LP1
+         INY
+         LDA   ]TMP
+         CLC
+         ADC   #50
+         BCC   :CLP
+         INC   ]TMP+1
+:CLP
+         STA   ]TMP
+         CPY   ]INDEX
+         BNE   :LP1
+:XLP1
+*
+** NOW ADD TO BASE ADDRESS OF OPTIONS
+*
+         LDA   #]OPTIONS
+         CLC
+         ADC   ]TMP
+         STA   ]TMP
+         STA   ADDR3
+         CLC
+         LDA   #>]OPTIONS
+         CLC
+         ADC   ]TMP+1
+         STA   ]TMP+1
+         STA   ADDR3+1
+*
+** NOW COPY OPTIONS STRING TO OPTIONS LOCATION
+*
+         LDY   #255
+         LDX   #255
+:CPLP
+         INY
+         INX
+         LDA   (ADDR3),Y
+         STA   RETURN,X
+         CPY   ]TMP
+         BNE   :CPLP
+         STY   RETLEN
+*
+         LDA   ]MRETURN+1
+         PHA
+         LDA   ]MRETURN
+         PHA
+         RTS
+*
+********************************
+*                              *
+* SETMLBL                      *
+*                              *
+* SET A GIVEN MENU ITEM'S      *
+* LABEL.                       *
+*                              *
+********************************
+*
+SETMLBL
+*
+** GET PARAMETERS
+*
+         PLA
+         STA   ]MRETURN
+         PLA
+         STA   ]MRETURN+1
+*
+         PLA
+         STA   ADDR4      ; STRING ADDRESS
+         PLA
+         STA   ADDR4+1
+*
+         PLA
+         STA   ]INDEX
+*
+** FIRST, MUL ]INDEX BY 40 TO GET MEMLOC
+*
+         LDY   #0
+         STY   ]TMP
+         STY   ]TMP+1
+         LDY   #0
+*
+         LDA   ]INDEX
+         CMP   #0
+         BNE   :LP1
+         JMP   :XLP1
+*
+:LP1
+         INY
+         LDA   ]TMP
+         CLC
+         ADC   #40
+         BCC   :CLP
+         INC   ]TMP+1
+:CLP
+         STA   ]TMP
+         CPY   ]INDEX
+         BNE   :LP1
+:XLP1
+*
+** NOW ADD TO BASE ADDRESS OF LABELS
+*
+         LDA   #]LABELS
+         CLC
+         ADC   ]TMP
+         STA   ]TMP
+         STA   ADDR3
+         CLC
+         LDA   #>]LABELS
+         CLC
+         ADC   ]TMP+1
+         STA   ]TMP+1
+         STA   ADDR3+1
+*
+* NOW COPY OPTIONS STRING TO LABELS LOCATION
+*
+         LDY   #255
+         LDX   #255
+:CPLP
+         INY
+         INX
+         LDA   (ADDR4),Y
+         STA   (ADDR3),Y
+         CPY   ]TMP
+         BNE   :CPLP
+*
+         LDA   ]MRETURN+1
+         PHA
+         LDA   ]MRETURN
+         PHA
+         RTS
+*
+*
+********************************
+*                              *
+* SETSLCT                      *
+*                              *
+* SET THE SELECTION AMONG THE  *
+* GIVEN OPTIONS AT ENTRY [X]   *
+*                              *
+********************************
+*
+SETSLCT
+*
+         LDA   #0
+         STA   ADDR4+1
+         STA   ADDR4
+         STA   ]INDEX+1
+         PLA
+         STA   ]MRETURN
+         PLA
+         STA   ]MRETURN+1
+*
+         PLA
+         STA   ]OINDEX
+         PLA
+         STA   ]INDEX
+*
+** GET MEMLOC FOR SELECTION BYTE
+*
+         CLC
+         ADC   #<]SELECT
+         STA   ADDR4
+         LDA   ]INDEX+1
+         CLC
+         ADC   #>]SELECT
+         STA   ADDR4+1
+*
+** NOW PUT OINDEX INTO MEMLOC
+*
+         LDA   ]OINDEX
+         LDY   #0
+         STA   (ADDR4),Y
+*
+         LDA   ]MRETURN+1
+         PHA
+         LDA   ]MRETURN
+         PHA
+         RTS
+*
+********************************
+*                              *
+* GETSLCT                      *
+*                              *
+* GET THE SELECTION AMONG THE  *
+* GIVEN OPTIONS AT ENTRY [X]   *
+*                              *
+********************************
+*
+GETSLCT
+*
+         LDA   #0
+         STA   ADDR4+1
+         STA   ADDR4
+         STA   ]INDEX+1
+         PLA
+         STA   ]MRETURN
+         PLA
+         STA   ]MRETURN+1
+*
+         PLA
+         STA   ]INDEX
+*
+** GET MEMLOC FOR SELECTION BYTE
+*
+         CLC
+         ADC   #<]SELECT
+         STA   ADDR4
+         LDA   ]INDEX+1
+         CLC
+         ADC   #>]SELECT
+         STA   ADDR4+1
+*
+** NOW PUT SELECTION NUMBER IN RETURN
+*
+         LDY   #0
+         LDA   (ADDR4),Y
+         STA   RETURN
+         LDA   #1
+         STA   RETLEN
+*
+         LDA   ]MRETURN+1
+         PHA
+         LDA   ]MRETURN
+         PHA
+         RTS
+*
+********************************
+*                              *
+* READSLCT                     *
+*                              *
+* GET THE TEXT OF THE GIVEN    *
+* OPTION AND PUT IN [RETURN]   *
+*                              *
+********************************
+*
+READSLCT
+*
+         LDA   #0
+         STA   ADDR4+1
+         STA   ADDR4
+         STA   ]INDEX+1
+         PLA
+         STA   ]MRET2
+         PLA
+         STA   ]MRET2+1
+*
+         PLA
+         STA   ]OINDEX
+         PLA
+         STA   ]INDEX
+*
+** GET OPTIONS STRING, PUT IN RETURN
+*
+         MNGOP ]INDEX
+*
+** NOW FIND DESIGNATED ENTRY; IN OPTIONS, EACH
+** ENTRY IS DELIMITED BY A # SIGN
+*
+         LDA   #0
+         LDX   #255
+         TAY
+*
+:LP1
+         INY
+         LDA   RETURN,Y
+         CMP   #"#"
+         BNE   :LP1
+         INX
+         CPX   ]OINDEX
+         BNE   :LP1       ; .X HOLDS ENTRY NUMBER
+                          ; .Y HOLDS SUBSTRING START
+         LDX   #255
+:LP2
+         INY
+         INX
+         LDA   RETURN,Y
+         CMP   #"#"
+         BEQ   :XLP2
+         STA   ]TMPS,X
+         JMP   :LP2
+:XLP2
+*
+** NOW COPY STRING TO RETURN
+*
+         STX   RETURN     ; STRING LENGTH
+         LDY   #255
+         LDX   #0
+:LP3
+         INY
+         INX
+         LDA   ]TMPS,Y
+         STA   RETURN,X
+         CPY   RETURN
+         BNE   :LP3
+*
+         LDA   ]MRET2+1
+         PHA
+         LDA   ]MRET2
+         PHA
+         RTS
+*
+********************************
+*                              *
+* MENRESET                     *
+*                              *
+********************************
+*
+MENRESET
+*
+         LDA   #<]THEMENU
+         STA   ADDR4
+         LDA   #>]THEMENU
+         STA   ADDR4+1
+*
+:CLP
+         LDA   ADDR4
+         CLC
+         ADC   #1
+         BCC   :CCLP
+         INC   ADDR4+1
+:CCLP
+         STA   ADDR4
+         LDA   #0
+         TAY
+         STA   (ADDR4),Y
+         LDA   ADDR4+1
+         CMP   #>]ENDMEN
+         BNE   :CLP       ; TEST HIBYTE
+         LDA   ADDR4
+         CMP   #<]ENDMEN  ; TEST LOBYTE
+         BNE   :CLP
+         RTS
+*
+********************************
+*                              *
+* MENCOPY                      *
+*                              *
+********************************
+*
+MENCOPY
+*
+         PLA
+         STA   ]MRETURN
+         PLA
+         STA   ]MRETURN+1
+*
+         PLA
+         STA   ADDR3      ; DESTINATION ADDR
+         PLA
+         STA   ADDR3+1
+*
+         LDA   #]THEMENU
+         STA   ADDR4
+         LDA   #>]THEMENU
+         STA   ADDR4+1
+*
+:CLP
+         CLC
+         LDA   ADDR3
+         ADC   #1
+         BCC   :CCLP0
+         INC   ADDR3+1
+:CCLP0
+         STA   ADDR3
+         CLC
+         LDA   ADDR4
+         ADC   #1
+         BCC   :CCLP
+         INC   ADDR4+1
+:CCLP
+         STA   ADDR4
+         LDY   #0
+         LDA   (ADDR4),Y
+         STA   (ADDR3),Y
+         LDA   ADDR4+1
+         CMP   #>]ENDMEN
+         BNE   :CLP       ; TEST HIBYTE
+         LDA   ADDR4
+         CMP   #<]ENDMEN  ; TEST LOBYTE
+         BNE   :CLP
+*
+         LDA   ]MRETURN+1
+         PHA
+         LDA   ]MRETURN
+         PHA
+         RTS
+*
+********************************
+*                              *
+* MENREAD                      *
+*                              *
+********************************
+*
+MENREAD
+*
+         PLA
+         STA   ]MRETURN
+         PLA
+         STA   ]MRETURN+1
+*
+         PLA
+         STA   ADDR3      ; DESTINATION ADDR
+         PLA
+         STA   ADDR3+1
+*
+         LDA   #]THEMENU
+         STA   ADDR4
+         LDA   #>]THEMENU
+         STA   ADDR4+1
+*
+:CLP
+         CLC
+         LDA   ADDR3
+         ADC   #1
+         BCC   :CCLP0
+         INC   ADDR3+1
+:CCLP0
+         STA   ADDR3
+         CLC
+         LDA   ADDR4
+         ADC   #1
+         BCC   :CCLP
+         INC   ADDR4+1
+:CCLP
+         STA   ADDR4
+         LDY   #0
+         LDA   (ADDR3),Y
+         STA   (ADDR4),Y
+         LDA   ADDR4+1
+         CMP   #>]ENDMEN
+         BNE   :CLP       ; TEST HIBYTE
+         LDA   ADDR4
+         CMP   #<]ENDMEN  ; TEST LOBYTE
+         BNE   :CLP
+*
+         LDA   ]MRETURN+1
+         PHA
+         LDA   ]MRETURN
+         PHA
+         RTS
+*
+********************************
+*                              *
+* MENSAVE (1966 CUR)           *
+*                              *
+********************************
+*
+MENSAVE
+*
+         PLA
+         STA   ]MRETURN
+         PLA
+         STA   ]MRETURN+1
+*
+         PLA
+         STA   ADDR4
+         PLA
+         STA   ADDR4+1    ; NAME STRING LOC
+*
+** FIRST, COPY STRING TO ]TMPS
+*
+         LDY   #255
+:SLP
+         INY
+         LDA   (ADDR4),Y
+         STA   ]TMPS,Y
+         CPY   ]TMPS
+         BNE   :SLP
+*
+         LDA   #4
+         STA   ]TMP
+         HEXASC #>]THEMENU
+         LDA   RETURN
+         STA   ]TMP+1
+         LDA   RETURN+1
+         STA   ]TMP+2
+         HEXASC #<]THEMENU
+         LDA   RETURN
+         STA   ]TMP+3
+         LDA   RETURN+1
+         STA   ]TMP+4
+*
+         SCAT  #]TMPS;",A$";#79
+         GRET  #]TMPS
+         SCAT  #]TMPS;#]TMP;#79
+         GRET  #]TMPS
+         SCAT  #]TMPS;",L1966";#79
+         GRET  #]TMPS
+         BSAVE #]TMPS
+*
+         LDA   ]MRETURN+1
+         PHA
+         LDA   ]MRETURN
+         PHA
+         RTS
+*
+********************************
+*                              *
+* MENLOAD                      *
+*                              *
+********************************
+*
+MENLOAD
+*
+         PLA
+         STA   ]MRETURN
+         PLA
+         STA   ]MRETURN+1
+         PLA
+         STA   ADDR4
+         PLA
+         STA   ADDR4+1    ; FILENAME ADDR
+*
+** FIRST, COPY STRING TO ]TMPS
+*
+         LDY   #255
+:SLP
+         INY
+         LDA   (ADDR4),Y
+         STA   ]TMPS,Y
+         CPY   ]TMPS
+         BNE   :SLP
+*
+         BLOAD #]TMPS
+*
+         LDA   ]MRETURN+1
+         PHA
+         LDA   ]MRETURN
+         PHA
+         RTS
+*
+********************************
+*                              *
+* MENDISP                      *
+*                              *
+********************************
+*
+MENDISP
+*
+         PLA
+         STA   ]MRETURN
+         PLA
+         STA   ]MRETURN+1
+         PLA
+         STA   ]YPOS
+         PLA
+         STA   ]XPOS
+*
+** FIND CENTER, PRINT MENU TITLE
+*
+         LDA   ]LWIDTH
+         CLC
+         ADC   ]OWIDTH
+         STA   ]TMP
+         LSR   ]TMP
+         LDA   ]MNAME
+         STA   ]TMP+1
+         LSR   ]TMP+1
+         LDA   ]TMP
+         SEC
+         SBC   ]TMP+1
+         CLC
+         ADC   ]XPOS
+         STA   ]TMP       ; MIDPOINT FOR TITLE
+*
+         SCPOS ]TMP;]YPOS
+         SPRN  #]MNAME
+*
+         LDA   ]XPOS
+         CLC
+         ADC   #3
+         STA   ]XMARG
+         LDA   ]YPOS
+         CLC
+         ADC   #3
+         STA   ]YMARG
+         SCPOS #]XMARG;#]YMARG
+         LDA   #0
+         CLC
+         ADC   #<]LABELS
+         STA   ]INDEX
+         LDA   #>]LABELS
+         STA   ]INDEX+1
+         LDY   #255
+:LP1
+         INY
+         SCPOS ]XMARG;]YMARG
+         INC   ]YMARG
+         SPRN  #]INDEX
+         LDA   #]INDEX
+         CLC
+         ADC   #40
+         BCC   :NOHI
+         INC   ]INDEX+1
+:NOHI
+         STA   ]INDEX
+         CPY   ]LCOUNT
+         BNE   :LP1
+*
+         LDA   ]MRETURN+1
+         PHA
+         LDA   ]MRETURN
+         PHA
+         RTS

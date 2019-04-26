@@ -1,0 +1,292 @@
+*
+*``````````````````````````````*
+* AGET162 : PUT DATA INTO ELEM *
+*-                            -*
+* THIS PUTS DATA FROM ONE ADDR *
+* INTO THE ADDRESS OF AN ARRAY *
+* WITH THE INDEX OF [:XIDX],   *
+* [:YIDX].                     *
+*-                            -*
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  ????----  REG: AXYM  *
+*-                            -*
+* CYCLES: ???                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*                              *
+*  LDA #>$300 ; SOURCE DATA    *
+*  PHA                         *
+*  LDA #<$300                  *
+*  PHA                         *
+*  LDA #>$3A0 ; DEST ARRAY     *
+*  PHA                         *
+*  LDA #<$3A0                  *
+*  PHA                         *
+*  LDA #2 ; ELEM X INDEX       *
+*  PHA                         *
+*  LDA #3 ; ELEM Y INDEX       *
+*  PHA                         *
+*  JSR APUT82                  *
+*-                            -*
+* ENTRY                        *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+* ELEMENT Y INDEX              *
+* ELEMENT X INDEX              *
+* LOW BYTE OF DESTINATION ADDR *
+* HI BYTE OF DESTINATION ADDR  *
+* LO BYTE OF SOURCE ADDRESS    *
+* HI BYTE OF SOURCE ADDRESS    *
+*-                            -*
+* EXIT                         *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+*                              *
+* .Y = LOBYTE ELEMENT ADDRESS  *
+* .X = HIBYTE ELEMENT ADDRESS  *
+* .A = ELEMENT BYTE LENGTH     *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+AGET162
+*
+** SAVE RETURN ADDRESS
+*
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+*
+** GET PARAMETERS
+*
+         PLA
+         STA   :YIDX      ; Y INDEX
+         PLA
+         STA   :YIDX+1
+         PLA
+         STA   :XIDX      ; X INDEX
+         PLA
+         STA   :XIDX+1
+         PLA
+         STA   ADDR4      ; ADDRESS OF ARRAY
+         PLA
+         STA   ADDR4+1
+*
+** GET ARRAY SIZES
+*
+         LDY   #4
+         LDA   (ADDR4),Y
+         STA   :ESIZE
+         LDY   #0
+         LDA   (ADDR4),Y
+         STA   :XLEN
+         LDY   #1
+         LDA   (ADDR4),Y
+         STA   :XLEN+1
+         LDY   #2
+         LDA   (ADDR4),Y
+         STA   :YLEN
+         LDY   #3
+         LDA   (ADDR4),Y
+         STA   :YLEN+1
+         LDY   #0
+*
+********************************
+*
+*  ERROR CONTROL
+*
+********************************
+*
+         LDA   ERRCTRL
+         CMP   #1
+         BEQ   :CHKERR
+         JMP   :ERREND
+:CHKERR
+         LDA   :XIDX
+         CMP   :XLEN
+         BCC   :ECONT1
+         LDA   :XIDX+1
+         CMP   :XLEN+1
+         BEQ   :ECONT1
+         BCC   :ECONT1
+         _ERR  #:E_SID;#:E_XOVF;#:E_DUMP;#:ESIZE;#20
+:ECONT1
+         LDA   :YIDX
+         CMP   :YLEN
+         BCC   :ECONT2
+         LDA   :YIDX+1
+         CMP   :YLEN+1
+         BEQ   :ECONT2
+         BCC   :ECONT2
+         _ERR  #:E_SID;#:E_YOVF;#:E_DUMP;#:ESIZE;#20
+:ECONT2
+*
+********************************
+*
+:ERREND
+*
+********************************
+*
+** MULTIPLY Y-INDEX BY Y-LENGTH
+*
+         LDA   :YIDX
+         STA   :MLIER
+         LDA   :YIDX+1
+         STA   :MLIER+1
+         LDA   :YLEN
+         STA   :MCAND
+         LDA   :YLEN+1
+         STA   :MCAND+1
+         LDA   #00
+         STA   :PROD
+         STA   :PROD+1
+         STA   :PROD+2
+         STA   :PROD+3
+         LDX   #$10
+:SHIFT_R
+         LSR   :MLIER+1
+         ROR   :MLIER
+         BCC   :ROT_R
+         LDA   :PROD+2
+         CLC
+         ADC   :MCAND
+         STA   :PROD+2
+         LDA   :PROD+3
+         ADC   :MCAND+1
+:ROT_R
+         ROR
+         STA   :PROD+3
+         ROR   :PROD+2
+         ROR   :PROD+1
+         ROR   :PROD
+         DEX
+         BNE   :SHIFT_R
+*
+** NOW MULTIPLY XIDX BY ELEMENT SIZE
+*
+         LDA   :PROD
+         STA   :PBAK
+         LDA   :PROD+1
+         STA   :PBAK+1
+         LDA   :XIDX
+         STA   :MLIER
+         LDA   :XIDX+1
+         STA   :MLIER+1
+         LDA   :ESIZE
+         STA   :MCAND
+         LDA   #0
+         STA   :MCAND+1
+*
+         STA   :PROD
+         STA   :PROD+1
+         STA   :PROD+2
+         STA   :PROD+3
+         LDX   #$10
+:SHIFTR  LSR   :MLIER+1
+         ROR   :MLIER
+         BCC   :ROTR
+         LDA   :PROD+2
+         CLC
+         ADC   :MCAND
+         STA   :PROD+2
+         LDA   :PROD+3
+         ADC   :MCAND+1
+:ROTR
+         ROR
+         STA   :PROD+3
+         ROR   :PROD+2
+         ROR   :PROD+1
+         ROR   :PROD
+         DEX
+         BNE   :SHIFTR
+*
+** NOW ADD X * ESIZE TO RUNNING PRODUCT
+*
+         CLC
+         LDA   :PROD
+         ADC   :PBAK
+         STA   :PROD
+         LDA   :PROD+1
+         ADC   :PBAK+1
+         STA   :PROD+1
+*
+** NOW ADD 5
+*
+         CLC
+         LDA   :PROD      ; INCREASE BY 5
+         ADC   #5
+         STA   :PROD
+         BCC   :ADD3D
+         INC   :PROD+1
+:ADD3D
+*
+** NOW ADD BASE ADDRESS OF ARRAY TO GET
+** THE ADDRESS OF THE INDEX VALUE
+*
+         CLC
+         LDA   :PROD
+         ADC   ADDR4
+         STA   :PROD
+         STA   ADDR2
+         LDA   :PROD+1
+         ADC   ADDR4+1
+         STA   :PROD+1
+         STA   ADDR2+1
+*
+** RETURN ADDRESS IN Y(LOW) AND X(HIGH)
+*
+         LDY   #0
+         LDX   #0
+*
+** COPY FROM SRC ADDR TO DEST ADDR
+*
+:CLP
+         LDA   (ADDR2),Y
+         STA   RETURN,Y
+         INY
+         CPY   :ESIZE
+         BNE   :CLP
+         LDA   :ESIZE
+         STA   RETLEN
+*
+** RESTORE RETURN ADDRESS
+*
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+*
+** RETURN ELEMENT ADDRESS AND SIZE
+*
+         LDX   ADDR2+1
+         LDY   ADDR2
+         LDA   :ESIZE
+*
+         RTS
+*
+** DATA
+*
+:ESIZE   DS    2
+:XIDX    DS    2
+:YIDX    DS    2
+:MCAND   DS    2
+:MLIER   DS    2
+:PROD    DS    4
+:PBAK    DS    2
+:XLEN    DS    2
+:YLEN    DS    2
+*
+:E_SID   ASC   "AGET162 (GET162 MACRO)",00
+:E_DUMP  ASC   ":ESIZE(2) XIDX(2) YIDX(2) MCAND(2) "
+         ASC   "MCAND(2) MLIER(2) PROD(4) PBAK(2) "
+         ASC   "XLEN(2) YLEN(2)",00
+:E_XOVF  ASC   "OUT OF BOUNDS! X > MAXIMUM",00
+:E_YOVF  ASC   "OUT OF BOUNDS! Y > MAX",00
+*

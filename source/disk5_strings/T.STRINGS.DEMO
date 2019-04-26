@@ -27,12 +27,11 @@
 *  TOP INCLUDES (PUTS, MACROS) *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-         PUT   REQUIRED.VARS
-         USE   REQUIRED.MAC.MIN
-         PUT   REQUIRED.HOOKS.MIN
-         USE   STRINGS.MAC.MIN
-         PUT   STRINGS.HOOKS
-*
+         PUT   MIN.VARS.REQUIRED
+         USE   MIN.MAC.REQUIRED
+         PUT   MIN.HOOKS.REQUIRED
+         USE   MIN.MAC.STRINGS
+         PUT   MIN.HOOKS.STRINGS
 *
 *``````````````````````````````*
 *      PROGRAM MAIN BODY       *
@@ -89,8 +88,8 @@ CONT2
          _PRNT "FIRST GIVEN STRING. EITHER PARAMETER",8D
          _PRNT "MAY BE A LITERAL STRING, BUT NEVER BOTH.",8D8D
          _PRNT "SCAT 'WTF IS ';ASTR;#50 RETURNS: ",8D8D
-         SCAT  "WTF IS ";ASTR;#50
-         SPRN  RETURN
+         SCAT  "WTF IS ";#ASTR;#50
+         SPRN  #RETURN
          _PRNT " ",8D8D8D
          _WAIT
 *
@@ -102,39 +101,7 @@ CONT2
          _PRNT "ROUTINE, AS IT CAN ONLY HANDLE",8D
          _PRNT "A STRING ADDRESS.",8D8D
          _PRNT "SPRN BSTR RETURNS: "
-         SPRN  BSTR
-         _PRNT " ",8D8D8D
-         _WAIT
-         _PRNT " ",8D8D8D
-         _PRNT "TOSTR CONVERTS A 16-BIT INTEGER INTO",8D
-         _PRNT "ITS STRING EQUIVALENT. THIS CAN",8D
-         _PRNT "EITHER BE A LITERAL OR AN ADDRESS."
-         _PRNT " ",8D8D
-         _PRNT "TOSTR #5000 RETURNS: "
-         TOSTR #5000
-         SPRN  RETURN
-         _PRNT " ",8D8D
-         _PRNT "TOSTR $300 RETURNS "
-         LDA   #$FF
-         STA   $300
-         STA   $301
-         TOSTR $300
-         SPRN  RETURN
-         _PRNT " ",8D8D
-         _PRNT "NOTE THAT $FFFF RETURNS -1 BECAUSE",8D
-         _PRNT "THE TOSTR ROUTINE ASSUMES A ",8D
-         _PRNT "SIGNED VALUE. "
-         _PRNT " ",8D8D8D
-         _WAIT
-*
-         _PRNT " ",8D8D8D
-         _PRNT "AND THE TONUM MACRO DOES THE",8D
-         _PRNT "OPPOSITE: IT RETURNS A 16-BIT ",8D
-         _PRNT "INTEGER VALUE CONERTED FROM ITS",8D
-         _PRNT "STRING EQUIVALENT. THUS:",8D8D
-         _PRNT "TONUM '255' RETURNS:",8D
-         TONUM "255"
-         _DUMP RETURN;RETLEN
+         SPRN  #BSTR
          _PRNT " ",8D8D8D
          _WAIT
 *
@@ -145,12 +112,11 @@ CONT2
          _PRNT "A SUBSTRING WITHIN ANOTHER",8D
          _PRNT "STRING.",8D8D
          _PRNT "SPOS 'THIS IS A STRING';ASTR RETURNS: "
-         SPOS  "THIS IS A STRING";ASTR
+         SPOS  "THIS IS A STRING";#ASTR
          STA   $300
          LDA   #0
          STA   $301       ; CLEAR HI BYTE
-         TOSTR $300
-         SPRN  RETURN
+         DUMP  #RETURN;#1
          _PRNT " ",8D8D8D
 *
          _PRNT " ",8D8D8D
@@ -160,7 +126,7 @@ CONT2
          _PRNT "THE SUBSTRING IN [RETURN].",8D8D
          _PRNT "SCPY 'ABCDEFGHIJK';#2;#4;#50 RETURNS: "
          SCPY  "ABCDEFGHIJK";#2;#4;#$FF
-         SPRN  RETURN
+         SPRN  #RETURN
          _PRNT " ",8D8D8D
          _WAIT
 *
@@ -172,8 +138,8 @@ CONT2
          _PRNT "ALTERS THE STRING PASSED TO IT.",8D8D
          _PRNT "IF LSTR HOLDS 'THIS IS A STRING.'",8D
          _PRNT "THEN SDEL LSTR;#1;#7 RETURNS: ",8D8D
-         SDEL  LSTR;#1;#7
-         SPRN  LSTR
+         SDEL  #LSTR;#1;#7
+         SPRN  #LSTR
          _PRNT " ",8D8D8D8D
          _WAIT
 *
@@ -185,11 +151,10 @@ CONT2
          _PRNT "A LITERAL, THE SUBSTRING ITSELF CAN BE.",8D8D
          _PRNT "THUS SINS LSTR;#1;#50;'THIS IS NOT'",8D
          _PRNT "RETURNS: ",8D
-         SINS  LSTR;#1;#50;"THIS IS NOT"
-         SPRN  LSTR
+         SINS  #LSTR;#1;#50;"THIS IS NOT"
+         SPRN  #LSTR
          _PRNT " ",8D8D8D8D
          _WAIT
-
 *
          JMP   REENTRY
 *
@@ -203,22 +168,20 @@ LSTR     STR   "THIS IS A STRING."
 *
 ** BOTTOM INCLUDES
 *
-         PUT   REQUIRED.LIB.MIN
+         PUT   MIN.LIB.REQUIRED
 *
 ** INDIVIDUAL SUBROUTINE INCLUDES
 *
 ** STRING SUBROUTINES
 *
-         PUT   NUM2STR.SUB.MIN
-         PUT   PRNSTR.SUB.MIN
-         PUT   STRCAT.SUB.MIN
-         PUT   STRCOMP.SUB.MIN
-         PUT   STR2NUM.SUB.MIN
+         PUT   MIN.SUB.PRNSTR
+         PUT   MIN.SUB.STRCAT
+         PUT   MIN.SUB.STRCOMP
 *
 ** SUBSTRING SUBROUTINES
 *
-         PUT   SUBCOPY.SUB.MIN
-         PUT   SUBDEL.SUB.MIN
-         PUT   SUBINS.SUB.MIN
-         PUT   SUBPOS.SUB.MIN
+         PUT   MIN.SUB.SUBCOPY
+         PUT   MIN.SUB.SUBDEL
+         PUT   MIN.SUB.SUBINS
+         PUT   MIN.SUB.SUBPOS
 *

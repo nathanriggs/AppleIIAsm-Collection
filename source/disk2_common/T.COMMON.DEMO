@@ -27,11 +27,11 @@
 *  TOP INCLUDES (HOOKS,MACROS) *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-         PUT   REQUIRED.VARS
-         USE   REQUIRED.MAC.MIN
-         PUT   REQUIRED.HOOKS.MIN
-         USE   COMMON.MAC.MIN
-         PUT   COMMON.HOOKS.MIN
+         PUT   MIN.VARS.REQUIRED
+         USE   MIN.MAC.REQUIRED
+         PUT   MIN.HOOKS.REQUIRED
+         USE   MIN.MAC.COMMON
+         PUT   MIN.HOOKS.COMMON
 *
 *``````````````````````````````*
 *      PROGRAM MAIN BODY       *
@@ -45,7 +45,7 @@
          MFILL #$300;#10;#0
          _PRNT "MFILL FILLS A PORTION OF MEMORY WITH",8D
          _PRNT "A SPECIFIED VALUE. ",8D8D
-         _DUMP $300;#10
+         DUMP  #$300;#10
          _WAIT
 *
 ** MMOVE ALSO DOES WHAT IT SAYS: IT MOVES
@@ -58,8 +58,8 @@
          _PRNT "MMOVE COPIES A SPAN OF MEMORY",8D
          _PRNT "FROM A SOURCE TO A DESTINATION ADDRESS.",8D8D
          _PRNT "SO MOVING $300 TO $320 RESULTS IN:",8D8D
-         MMOVE $300;$320;#10
-         _DUMP $320;#10
+         MMOVE #$300;#$320;#10
+         DUMP  #$320;#10
          _WAIT
 *
 ** DELAY RUNS THROUGH CYCLES OF THE
@@ -108,14 +108,14 @@
          STA   $08
          LDA   #04
          STA   $09
-         ZSAVE $300
+         ZSAVE #$300
 *
          _PRNT " ",8D8D
          _PRNT "ZSAVE SAVES THE STATE OF THE ZERO PAGE ",8D
          _PRNT "ADDRESSES THAT ARE NOT USED BY DOS,",8D
          _PRNT "APPLESOFT,PRODOS OR INTEGER BASIC.",8D8D
          _PRNT "SO THE BACKED UP ZERO PAGE AT $300 IS:",8D8D
-         _DUMP $300;#18
+         DUMP  #$300;#18
          _PRNT " ",8D8D
          _PRNT "18 BYTES ARE USED.",8D8D
          _WAIT
@@ -123,7 +123,7 @@
 ** YOU CAN RESTORE THE ZERO PAGE TO ITS
 ** PRIOR STATE BY THEN CALLING ZLOAD.
 *
-         ZLOAD $300
+         ZLOAD #$300
 *
          _PRNT " ",8D8D
          _PRNT "YOU CAN THEN RESTORE THE FREE ZERO PAGE",8D
@@ -138,13 +138,13 @@
          _PRNT "THE MSWAP MACRO SWAPS A LENGTH",8D
          _PRNT "OF MEMORY FROM ONE LOCATION",8D
          _PRNT "TO ANOTHER. SO, BEFORE SWAP:",8D8D
-         _DUMP $300;#10
-         _DUMP $320;#10
-         MSWAP $300;$320;#10
+         DUMP  #$300;#10
+         DUMP  #$320;#10
+         MSWAP #$300;#$320;#10
          _PRNT " ",8D
          _PRNT "AND AFTER SWAP: ",8D8D
-         _DUMP $300;#10
-         _DUMP $320;#10
+         DUMP  #$300;#10
+         DUMP  #$320;#10
          _WAIT
 *
          JMP   REENTRY
@@ -155,15 +155,15 @@
 *
 ** BOTTOM INCLUDES
 *
-         PUT   REQUIRED.LIB.MIN
+         PUT   MIN.LIB.REQUIRED
 *
 ** INDIVIDUAL SUBROUTINE INCLUDES
 *
 *  COMMON LIBRARY SUBROUTINES
 *
-         PUT   MEMFILL.SUB.MIN
-         PUT   MEMMOVE.SUB.MIN
-         PUT   DELAYMS.SUB.MIN
-         PUT   ZMSAVE.SUB.MIN
-         PUT   ZMLOAD.SUB.MIN
-         PUT   MEMSWAP.SUB.MIN
+         PUT   MIN.SUB.MEMFILL
+         PUT   MIN.SUB.MEMMOVE
+         PUT   MIN.SUB.DELAYMS
+         PUT   MIN.SUB.ZMSAVE
+         PUT   MIN.SUB.ZMLOAD
+         PUT   MIN.SUB.MEMSWAP

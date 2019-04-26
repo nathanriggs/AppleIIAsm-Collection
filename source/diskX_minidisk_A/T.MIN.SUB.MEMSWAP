@@ -1,0 +1,86 @@
+MEMSWAP
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+         PLA
+         STA   :LENGTH
+         PLA
+         STA   ADDR1
+         STA   :A1
+         PLA
+         STA   ADDR1+1
+         STA   :A1+1
+         PLA
+         STA   ADDR2
+         STA   :A2
+         PLA
+         STA   ADDR2+1
+         STA   :A2+1
+         LDA   ERRCTRL
+         CMP   #1
+         BEQ   :CHKERR
+         JMP   :ERREND
+:CHKERR
+         LDA   ADDR2+1    
+         CMP   ADDR1+1
+         BCS   :CHKLO     
+         JMP   :A1GTA2    
+:CHKLO
+         LDA   ADDR2
+         CMP   ADDR1
+         BCS   :A2GTA1
+         JMP   :A1GTA2
+:A2GTA1
+         LDA   ADDR2      ;CALC DEST-SRC
+         SEC
+         SBC   ADDR1
+         TAX
+         LDA   ADDR2+1
+         SBC   ADDR1+1    
+                          
+         TAY
+         TXA   
+         CMP   :LENGTH
+         TYA
+         SBC   :LENGTH+1
+         BCS   :ERREND    
+         JMP   :OVF
+:A1GTA2
+         LDA   ADDR1
+         SEC
+         SBC   ADDR2
+         TAX
+         LDA   ADDR1+1
+         SBC   ADDR2+1
+         TAY
+         TXA
+         CMP   :LENGTH
+         TYA
+         SBC   :LENGTH+1
+         BCS   :ERREND
+:OVF
+         _ERR  #:E_SID;#:E_OVF;#:E_DUMP;#:LENGTH;#6
+:ERREND
+         LDY   #255       
+:LP
+         INY
+         LDA   (ADDR1),Y
+         TAX   
+         LDA   (ADDR2),Y  
+         STA   (ADDR1),Y
+         TXA
+         STA   (ADDR2),Y
+         CPY   :LENGTH
+         BNE   :LP
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+         RTS
+:LENGTH  DS    2
+:A1      DS    2
+:A2      DS    2
+:E_SID   ASC   "MEMSWAP (MSWAP MACRO)",00
+:E_DUMP  ASC   "DUMPING LENGTH (2) A1(2) A2(2)",00
+:E_OVF   ASC   "OVERFLOW! ADDRESSES OVERLAP.",00

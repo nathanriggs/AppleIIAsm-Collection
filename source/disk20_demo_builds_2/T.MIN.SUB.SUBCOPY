@@ -1,0 +1,101 @@
+SUBCOPY
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+         PLA
+         STA   :MLEN
+         PLA
+         STA   :SCNT
+         STA   RETLEN
+         PLA
+         STA   :SINDEX
+         PLA
+         STA   ADDR1
+         PLA
+         STA   ADDR1+1
+         LDA   #<RETURN
+         STA   ADDR2
+         LDA   #>RETURN
+         STA   ADDR2+1
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+         LDA   #0
+         STA   :S2LEN     
+         STA   :SCERR     
+         LDA   :SCNT
+         BEQ   :OKEXIT    
+
+         LDA   :MLEN
+         BEQ   :EREXIT    
+
+         LDA   :SINDEX
+         BEQ   :EREXIT    
+         LDY   #0
+         LDA   (ADDR1),Y  ;
+         STA   :S1LEN     
+         CMP   :SINDEX    
+         BCC   :EREXIT    
+         LDA   :SINDEX
+         CLC
+         ADC   :SCNT
+         BCS   :RECALC
+         TAX   
+         DEX
+         CPX   :S1LEN
+         BCC   :CNT10K    
+         BEQ   :CNT10K    
+:RECALC
+         LDA   :S1LEN     
+         SEC
+         SBC   :SINDEX
+         STA   :SCNT
+         INC   :SCNT      
+         LDA   #$0FF
+         STA   :SCERR     
+:CNT10K
+         LDA   :SCNT
+         CMP   :MLEN      
+         BCC   :CNT20K    
+         BEQ   :CNT20K    
+         LDA   :MLEN
+         STA   :SCNT      
+         LDA   #$0FF
+         STA   :SCERR     
+:CNT20K
+         LDX   :SCNT      
+         BEQ   :EREXIT    
+         LDA   #1         
+         STA   :S2LEN     
+         
+:MVLP
+         LDY   :SINDEX
+         LDA   (ADDR1),Y  
+         LDY   :S2LEN
+         STA   (ADDR2),Y  
+         INC   :SINDEX    
+         INC   :S2LEN     
+         DEX   
+         BNE   :MVLP      
+         DEC   :S2LEN     
+         LDA   :SCERR     
+         BNE   :EREXIT    
+:OKEXIT
+         CLC
+         BCC   :EXIT
+:EREXIT
+         SEC
+:EXIT
+         LDA   :S2LEN
+         LDY   #0
+         STA   (ADDR2),Y
+         STA   RETLEN
+         RTS
+:S1LEN   DS    1
+:S2LEN   DS    1
+:MLEN    DS    1
+:SCNT    DS    1
+:SINDEX  DS    1
+:SCERR   DS    1

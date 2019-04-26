@@ -1,0 +1,383 @@
+********************************
+*                              *
+* TYPE :: OUTPUT FILE CONTENTS *
+*                              *
+********************************
+*
+** ASSEMBLER DIRECTIVES
+*
+         CYC   AVE
+         EXP   ONLY       ; TURN OFF LATER
+         DSK   RDF
+         TR    ON
+         OBJ   $BFE0
+         ORG   $7000
+*
+********************************
+*                              *
+* HEADER, HOOKS AND MACROS     *
+*                              *
+********************************
+*
+         PUT   MIN.VARS.REQUIRED
+         USE   MIN.MAC.STRINGS
+         USE   MIN.MAC.REQUIRED
+         USE   MIN.MAC.FILEIO
+         USE   MIN.MAC.STDIO
+         PUT   MIN.HOOKS.REQUIRED
+         PUT   MIN.HOOKS.STDIO
+         PUT   MIN.HOOKS.FILEIO
+         PUT   MIN.HOOKS.STRINGS
+*
+********************************
+*                              *
+* MAIN PROGRAM LOOP            *
+*                              *
+********************************
+*
+LISTING  EQU   $2000
+BYTES    EQU   08
+*
+         JSR   INIT
+         JSR   OPENFILE
+*
+         JMP   REENTRY
+*
+********************************
+*                              *
+* INIT                         *
+*                              *
+********************************
+*
+INIT
+*
+         AMODE
+         LDA   #$00
+         STA   $D8
+*
+         LDA   #00
+         STA   TFOUND
+         RTS
+*
+*
+********************************
+*                              *
+* OPENFILE                     *
+*                              *
+********************************
+*
+OPENFILE
+*
+         JSR   GETNAME
+         JSR   CHKEXIST
+         JSR   CHKTYPE
+         JSR   OPENIT
+         RTS
+*
+*****
+***** GETNAME
+*****
+*
+GETNAME
+*
+         PRN   " ",8D8D
+         PRN   "FILE TO PRINT: "
+         INP
+         GRET  FNAME
+         RTS
+*
+*****
+***** CHKEXIST
+*****
+*
+CHKEXIST
+         ERRH  :NOEXIST
+         SCAT  "VERIFY ";FNAME;#100
+         CMD   RETURN
+         RTS
+*
+:NOEXIST
+         PRN   " ",8D8D
+         LDA   #7
+         JSR   COUT
+         PRN   "ERROR: FILE DOESN'T EXIST",8D8D
+         PLA
+         PLA
+         JMP   REENTRY
+*
+*****
+***** CHKTYPE
+*****
+*
+CHKTYPE
+         ERRH  :TXTF
+         SCAT  "BLOAD ";FNAME;#100
+         GRET  BLOAD1
+         SCAT  BLOAD1;",A$2000";#100
+         CMD   RETURN
+         LDA   #$FF
+         STA   FTYPE
+         LDA   TFOUND
+         CMP   #$FF
+         BEQ   :TTYPE
+         RTS
+:TTYPE
+         LDA   #0
+         STA   FTYPE
+         RTS
+:TXTF
+         LDA   #$FF
+         STA   TFOUND
+         LDA   #$00
+         STA   $D8
+         RTS
+*
+*****
+***** OPENIT
+*****
+*
+OPENIT
+         LDA   FTYPE
+         CMP   #0
+         BEQ   :GOTXT
+         JMP   :HEXDISP
+:GOTXT
+         JMP   :TXTDISP
+:HEXDISP
+*
+** CODE WAS ALREADY BLOADED, SO NOW
+** JUST FIND THE ADDRESS IT'S AT
+*
+         LDA   $AA72      ; LOADING ADDRESS OF FILE
+         STA   LDADDR
+         LDA   $AA73
+         STA   LDADDR+1
+         PRN   " ",8D8D
+*
+         LDA   $AA60      ; LOADING LENGTH
+         STA   LDLEN
+         LDA   $AA61
+         STA   LDLEN+1
+         PRN   "LENGTH: (LOW BYTE, HIGH BYTE)",8D
+         DUMP  LDLEN;#2
+         PRN   " ",8D
+         _WAIT
+*
+:BEGHEXOUT
+         LDA   #0
+         STA   CNT1
+         LDA   #<LISTING
+         STA   LINE
+         LDA   #>LISTING
+         STA   LINE+1
+:HEXLP1
+*
+*DUMP LINE;#BYTES
+*
+*
+         LDA   LINE
+         STA   ADDR3
+         LDA   LINE+1
+         STA   ADDR3+1
+*
+         LDA   ADDR3+1
+         AND   #$F0
+         LSR
+         LSR
+         LSR
+         LSR
+         TAX
+         LDA   HEXTAB,X
+         JSR   COUT
+*
+         LDA   ADDR3+1
+         AND   #$0F
+         TAX
+         LDA   HEXTAB,X
+         JSR   COUT
+*
+         LDA   ADDR3
+         AND   #$F0
+         LSR
+         LSR
+         LSR
+         LSR
+         TAX
+         LDA   HEXTAB,X
+         JSR   COUT
+         LDA   ADDR3
+         AND   #$0F
+         TAX
+         LDA   HEXTAB,X
+         JSR   COUT
+*
+         LDA   #186       ; ":"
+         JSR   COUT
+         LDA   #160       " "
+         JSR   COUT
+*
+         LDY   #0
+:DLP
+         LDA   (ADDR3),Y
+         AND   #$F0
+         LSR
+         LSR
+         LSR
+         LSR
+         STA   LEFT
+         LDA   (ADDR3),Y
+         AND   #$0F
+         STA   RIGHT
+         LDX   LEFT
+         LDA   HEXTAB,X
+         JSR   COUT
+         LDX   RIGHT
+         LDA   HEXTAB,X
+         JSR   COUT
+         LDA   #160
+         JSR   COUT
+         INY
+         CPY   #BYTES
+         BNE   :DLP
+*
+         PRN   " ",8D
+*
+         INC   CNT1
+         LDA   CNT1
+         CMP   #20
+         BNE   :NOWAIT
+         _WAIT
+         LDA   #0
+         STA   CNT1
+:NOWAIT
+         LDA   LINE
+         CLC
+         ADC   #BYTES
+         BCC   :NOADDHI
+         INC   LINE+1
+:NOADDHI
+*
+** NOW CHECK IF <= BINARY LENGTH
+*
+         STA   LINE
+*
+         LDA   LISTING
+         ADC   LDLEN
+         STA   TEMP
+         LDA   LISTING+1
+         ADC   LDLEN+1
+         STA   TEMP+1
+*
+         LDA   LINE+1
+         CMP   TEMP+1
+         BNE   :RELOOP
+         LDA   LINE
+         CMP   TEMP
+         BEQ   :RELOOP
+         BCS   :QUITLP
+:RELOOP
+         JMP   :HEXLP1
+:QUITLP
+         RTS
+:TXTDISP
+         ERRH  :BASIC
+         SCAT  "OPEN ";FNAME;#100
+         CMD   RETURN
+         SCAT  "READ ";FNAME;#100
+         CMD   RETURN
+         ERRH  :TXTDONE
+         LDY   #0
+         STY   CNT2
+:TLP0
+         LDY   #1
+         STY   CNT1
+:TLP1
+         GKEY
+         LDY   CNT1
+*AND #$0F
+         STA   LINE,Y
+         CMP   #$8D       ; IS IT RETURN CHAR?
+         BEQ   :TCONT
+         CPY   #255
+         BEQ   :TCONT
+         INC   CNT1
+         JMP   :TLP1
+:TCONT
+         INC   CNT2
+         LDY   CNT1
+         STY   LINE       ; STORE LENGTH
+         SPRN  LINE
+         LDY   CNT2
+         CPY   #20
+         BNE   :TCON
+:KW
+         LDA   $C000      ; CHECK FOR KEYPRESS
+         BPL   :KW        ; KEEP WAITING
+         AND   #$7F       ; TURN OFF BIT 7
+         STA   $C010      ; CLEAR KEYBOARD STROBE
+         LDY   #0
+         STY   CNT2
+:TCON
+         JMP   :TLP0
+:TXTDONE
+         SCAT  "CLOSE ";FNAME;#100
+         CMD   RETURN
+         PLA
+         JMP   REENTRY
+*
+*** BASIC LISTING
+*
+:BASIC
+         CMD   "CLOSE"
+         PRN   "TYPE [LIST] TO READ",8D
+         PRN   "THE BASIC LISTING.",8D8D
+         SCAT  "LOAD ";FNAME;#100
+         JMP   REENTRY
+*
+********************************
+*                              *
+* VARIABLES                    *
+*                              *
+********************************
+*
+FTYPE    DS    2
+TFOUND   DS    1
+FNAME    DS    50
+CNT1     DS    2
+CNT2     DS    1
+TEMP     DS    2
+LDADDR   DS    2
+LDLEN    DS    2
+LEFT     DS    1
+RIGHT    DS    2
+LINE     DS    256
+BLOAD1   DS    256
+BLOAD2   DS    256
+*
+********************************
+*                              *
+*  LOW-LEVEL ROUTINES          *
+*                              *
+********************************
+*
+         PUT   MIN.LIB.REQUIRED
+*
+** INDIVIDUAL SUBROUTINES
+*
+*** FILEIO
+*
+         PUT   MIN.SUB.FPRINT
+         PUT   MIN.SUB.DOSCMD
+         PUT   MIN.SUB.FPSTR
+*
+*** STDIO
+*
+         PUT   MIN.SUB.DPRINT
+         PUT   MIN.SUB.XPRINT
+         PUT   MIN.SUB.SINPUT
+*
+*** STRINGS
+*
+         PUT   MIN.SUB.STRCAT
+         PUT   MIN.SUB.PRNSTR
+*

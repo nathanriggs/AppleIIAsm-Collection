@@ -1,0 +1,26 @@
+SINPUT
+         LDX   #$00
+         JSR   GETLN
+         STX   :STRLEN    
+         CPX   #0
+         BEQ   :ZEXIT
+:INP_CLR
+         LDY   #0
+         LDA   :STRLEN    
+         STA   RETLEN     
+         STA   RETURN     
+         INC   RETLEN
+:LOOP
+         LDA   KEYBUFF,Y  
+         INY
+         STA   RETURN,Y
+         CPY   :STRLEN    
+         BNE   :LOOP      ; LOOP
+         JMP   :EXIT
+:ZEXIT
+         LDA   #0
+         STA   RETLEN
+         STA   RETURN
+:EXIT
+         RTS
+:STRLEN  DS    1

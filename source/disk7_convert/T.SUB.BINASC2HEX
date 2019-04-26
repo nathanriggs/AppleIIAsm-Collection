@@ -1,0 +1,240 @@
+*``````````````````````````````*
+* BINASC2HEX ::                *
+*                              *
+*-                            -*
+*-                            -*
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  ????----  REG: AXYM  *
+*-                            -*
+* CYCLES: ???                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*                              *
+*-                            -*
+* ENTRY                        *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+*-                            -*
+* EXIT                         *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+*                              *
+* .Y = COUNTER; TRASH          *
+* .X = COUNTER; TRASH          *
+* .A = LOW BYTE OF RET ADDR    *
+*                              *
+* [RETURN] = STRING VALUE      *
+* [RETLEN] = LENGTH OF STRING  *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+BINASC2HEX
+*
+** SAVE RETURN ADDRESS
+*
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+*
+** GET PARAMETERS
+*
+         PLA
+         STA   ADDR1      ; ADDRESS OF STRING
+         PLA
+         STA   ADDR1+1
+*
+** CHECK HIGH NIBBLE
+*
+         JSR   :TESTNIB
+         LDA   :NIB
+         STA   :HINIB
+*
+** NOW TEST SECOND HALF OF BYTE STRING
+*
+         LDA   ADDR1
+         CLC
+         ADC   #4
+         BCC   :NOADD
+         INC   ADDR1+1
+:NOADD
+         STA   ADDR1
+         JSR   :TESTNIB
+         LDA   :NIB
+         STA   :LONIB
+*
+** NOW JOIN HINIB AND LONIB
+*
+         LDA   :HINIB
+         ORA   :LONIB
+         STA   RETURN
+         LDA   #1
+         STA   RETLEN
+*
+** RESTORE RETURN ADDRESS
+*
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+*
+         RTS              ; RETURN
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+** TESTNIB SUBROUTINE THAT TRANSLATES A BINARY
+** NIBBLE INTO ITS HEX EQUIVALENT
+*
+:TESTNIB
+         LDY   #0
+         LDA   (ADDR1),Y  ; STRING STORED HERE
+         CMP   #'0'
+         BEQ   :_07       ; NIBBLE BETWEEN 0 AND 7
+         JMP   :_8F       ; ELSE BETWEEN 8 AND F
+:_07
+         LDY   #1
+         LDA   (ADDR1),Y
+         CMP   #'0'
+         BEQ   :_03       ; NIBBLE BETWEEN 0 AND 3
+         JMP   :_47       ; ELSE BETWEEN 4 AND 7
+:_03
+         LDY   #2
+         LDA   (ADDR1),Y
+         CMP   #'0'
+         BEQ   :_01       ; NIBBLE BETWEEN 0 AND 1
+         JMP   :_23       ; ELSE EITHER 2 OR 3
+:_01
+         LDY   #3
+         LDA   (ADDR1),Y
+         CMP   #'0'
+         BEQ   :_00       ; FIRST NIBBLE IS 0
+         LDA   #1         ; ELSE IT IS 1
+         STA   :NIB
+         RTS
+:_00     LDA   #0
+         STA   :NIB
+         RTS
+:_23     LDY   #3
+         LDA   (ADDR1),Y
+         CMP   #'0'
+         BEQ   :_02       ; FIRST NIBBLE IS 2
+         LDA   #3         ; ELSE IT IS 3
+         STA   :NIB
+         RTS
+:_02     LDA   #$2
+         STA   :NIB
+         RTS
+:_47
+         LDY   #2
+         LDA   (ADDR1),Y
+         CMP   #'0'
+         BEQ   :_45       ; FIRST NIBBLE IS 4 OR 5
+         JMP   :_67       ; ELSE 6 OR 7
+:_45
+         LDY   #3
+         LDA   (ADDR1),Y
+         CMP   #'0'
+         BEQ   :_4        ; FIRST NIB IS 4
+         LDA   #$5        ; ELSE IT IS 5
+         STA   :NIB
+         RTS
+:_4      LDA   #$4
+         STA   :NIB
+         RTS
+:_67
+         LDY   #3
+         LDA   (ADDR1),Y
+         CMP   #'0'
+         BEQ   :_6        ; FIRST NIB IS 6
+         LDA   #$7        ; ELSE IT IS 7
+         STA   :NIB
+         RTS
+:_6      LDA   #$6
+         STA   :NIB
+         RTS
+*
+:_8F
+         LDY   #1
+         LDA   (ADDR1),Y
+         CMP   #'0'
+         BEQ   :_8B       ; NIB BETWEEN 8 AND B
+         JMP   :_CF       ; OTHERWISE BETWEEN C AND F
+:_8B
+         LDY   #2
+         LDA   (ADDR1),Y
+         CMP   #'0'
+         BEQ   :_89
+         JMP   :_AB       ; BETWEEN A AND B
+:_89
+         LDY   #3
+         LDA   (ADDR1),Y
+         CMP   #'0'
+         BEQ   :_8
+         LDA   #9         ; ELSE, IS 9
+         STA   :NIB
+         RTS
+:_8      LDA   #$8
+         STA   :NIB
+         RTS
+:_AB
+         LDY   #3
+         LDA   (ADDR1),Y
+         CMP   #'0'
+         BEQ   :_A        ; IF 0, THEN = A
+         LDA   #$B        ; OTHERWISE, IT'S B
+         STA   :NIB
+         RTS
+:_A      LDA   #$A
+         STA   :NIB
+         RTS
+:_CF
+         LDY   #2
+         LDA   (ADDR1),Y
+         CMP   #'0'
+         BEQ   :_CD       ; BETWEEN C AND D
+         JMP   :_EF       ; OTHERWISE, BETWEEN E AND F
+:_CD
+         LDY   #3
+         LDA   (ADDR1),Y
+         CMP   #'0'
+         BEQ   :_C        ; IT'S C
+         LDA   #$D        ; OTHERWISE, IT'S D
+         STA   :NIB
+         RTS
+:_C      LDA   #$C
+         STA   :NIB
+         RTS
+:_EF
+         LDY   #3
+         LDA   (ADDR1),Y
+         CMP   #'0'
+         BEQ   :_E        ; IT'S E
+         LDA   #$F        ; OTHERWISE, F
+         STA   :NIB
+         RTS
+:_E      LDA   #$E
+         STA   :NIB
+         RTS
+*
+*
+*
+*
+** DATA
+*
+:HINIB   DS    1
+:LONIB   DS    1
+:NIB     DS    1

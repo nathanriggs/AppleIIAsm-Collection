@@ -1,0 +1,50 @@
+GPBX
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+         PLA
+         STA   ADDR1      
+         PLA
+         STA   ADDR1+1
+         LDA   ERRCTRL
+         CMP   #1
+         BEQ   :CHKERR
+         JMP   :ERREND
+:CHKERR
+         LDA   ADDR1+1
+         CMP   #$C0       
+         BNE   :BADHI
+         LDA   ADDR1
+         CMP   #$64
+         BCS   :BADLO
+         LDA   ADDR1
+         CMP   #$60
+         BCC   :BADLO
+         JMP   :ERREND
+:BADHI
+         _ERR  #:E_SID;#:E_BHI;#:E_DMP1;#RETURN;#10
+         JMP   :ERREND
+:BADLO
+         _ERR  #:E_SID;#:E_BLO;#:E_DMP1;#RETURN;#10
+:ERREND
+         LDY   #$00
+         LDA   (ADDR1),Y  
+         BMI   :1
+         JMP   :0
+:1
+         LDY   #$01       ; BTN PUSHED;A=1
+         JMP   :EXIT
+:0
+         LDY   #$00       ; BTN NOT PUSHED;A=0
+:EXIT
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+         TYA   
+         RTS
+:E_SID   ASC   "GPBX (PBX MACRO)",00
+:E_DMP1  ASC   "DUMPING RETURN BLOCK...",00
+:E_BHI   ASC   "BAD HIGH BYTE--NOT A PADDLE BUTTON!.",00
+:E_BLO   ASC   "BAD LOW BYTE--NOT A PADDLE BUTTON",00

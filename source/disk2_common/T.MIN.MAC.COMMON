@@ -1,0 +1,37 @@
+MFILL    MAC
+         _ISLIT ]1
+         _ISLIT ]2
+         LDA   ]3         
+         PHA
+         JSR   MEMFILL
+         <<<
+BEEP     MAC
+         LUP   ]1
+         JSR   BELL
+         --^
+         <<<
+MMOVE    MAC
+         _ISLIT ]1
+         _ISLIT ]2
+         _ISLIT ]3
+         JSR   MEMMOVE
+         <<<
+DELAY    MAC
+         LDY   ]1
+         JSR   DELAYMS
+         <<<
+ZSAVE    MAC
+         _ISLIT ]1
+         JSR   ZMSAVE
+         <<<
+ZLOAD    MAC
+         _ISLIT ]1
+         JSR   ZMLOAD
+         <<<
+MSWAP    MAC
+         _ISLIT ]2
+         _ISLIT ]1
+         LDA   ]3
+         PHA
+         JSR   MEMSWAP
+         <<<

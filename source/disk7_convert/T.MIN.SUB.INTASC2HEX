@@ -1,0 +1,119 @@
+INTASC2HEX
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+         PLA
+         STA   ADDR1      
+         PLA   
+         STA   ADDR1+1
+         LDY   #0
+         LDA   (ADDR1),Y
+         TAX              ; GET LENGITH
+         LDA   #1
+         STA   :NINDEX    
+         LDA   #0
+         STA   :NACCUM    
+         STA   :NACCUM+1
+         STA   :SNGFLAG   
+         TXA
+         BNE   :INIT1     
+                          
+         JMP   :EREXIT    
+                          
+:INIT1
+         LDY   :NINDEX
+         LDA   (ADDR1),Y
+         CMP   #173
+         BNE   :PLUS      
+         LDA   #$0FF
+         STA   :SNGFLAG   
+         INC   :NINDEX
+         DEX              
+         BEQ   :EREXIT    
+                          
+         JMP   :CNVERT
+:PLUS
+         CMP   #'+'
+         BNE   :CHKDIG    
+
+         INC   :NINDEX
+         DEX              ; DEC COUNT
+         BEQ   :EREXIT    
+                          
+:CNVERT
+         LDY   :NINDEX
+         LDA   (ADDR1),Y
+                          
+:CHKDIG
+         CMP   #$B0       
+         BMI   :EREXIT    
+         CMP   #$BA       ; '9'+1
+         BPL   :EREXIT    
+         PHA              
+         ASL   :NACCUM
+         ROL   :NACCUM+1  
+         LDA   :NACCUM
+         LDY   :NACCUM+1  
+         ASL   :NACCUM
+         ROL   :NACCUM+1
+         ASL   :NACCUM
+         ROL   :NACCUM+1  
+         CLC
+         ADC   :NACCUM    
+         STA   :NACCUM
+         TYA
+         ADC   :NACCUM+1
+         STA   :NACCUM+1  
+         PLA              
+         SEC
+         SBC   #$B0
+         CLC              
+         ADC   :NACCUM
+         STA   :NACCUM
+         BCC   :D2B1      
+         INC   :NACCUM+1  
+:D2B1
+         INC   :NINDEX    ;INC TO NEXT CHARACTER
+         DEX
+         BNE   :CNVERT    
+         LDA   :SNGFLAG
+         BPL   :OKEXIT    
+         LDA   #0         
+         SEC
+         SBC   :NACCUM
+         STA   :NACCUM
+         LDA   #0
+         SBC   :NACCUM+1
+         STA   :NACCUM+1
+:OKEXIT
+         CLC
+         BCC   :EXIT
+:EREXIT
+         SEC
+         LDA   ERRCTRL
+         CMP   #1
+         BEQ   :CHKERR
+         JMP   :ERREND
+:CHKERR
+         _ERR  :E_SID;:E_MSG;:E_DUMP;:NACCUM;#4
+:ERREND
+:EXIT
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+         LDX   :NACCUM+1
+         LDY   :NACCUM
+         STY   RETURN
+         STX   RETURN+1
+         LDA   #1
+         STA   RETLEN
+         LDA   :NINDEX
+         RTS
+:NACCUM  DS    2
+:SNGFLAG DS    1
+:NINDEX  DS    1
+:E_SID   ASC   "STR2NUM (S2N MACRO)",00
+:E_MSG   ASC   "ERR! NO DATA, OR NOT A NUMERAL VALUE",00
+:E_DUMP  ASC   "DUMPING :NACCUM(2) :SNGFLAG(1) :NINDEX(1)",00

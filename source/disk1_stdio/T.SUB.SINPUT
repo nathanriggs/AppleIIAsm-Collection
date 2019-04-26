@@ -1,0 +1,75 @@
+*
+*``````````````````````````````*
+* SINPUT ::      SPECIAL INPUT *
+*                              *
+* INPUTS A STRING OF TEXT VIA  *
+* MONITOR HOOKS. MAX 255 CHARS *
+*-                            -*
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  ???-----  REG: AXYM  *
+*-                            -*
+* CYCLES: ???                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*        JSR   SINPUT          *
+*-                            -*
+* ENTRY                        *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+* LOW BYTE OF INPUT ADDRESS    *
+* HI BYTE OF INPUT ADDRESS     *
+*-                            -*
+* EXIT                         *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+*                              *
+*   A = LOW BYTE OF ADDRESS    *
+*   X = LENGTH OF STRING       *
+*   Y = LENGTH OF STRING       *
+*                              *
+* [RETURN] = STRING TYPED      *
+* [RETLEN] = LENGTH OF STRING  *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+SINPUT
+*
+** SAVE RETURN ADDRESS
+*
+         LDX   #$00
+         JSR   GETLN
+         STX   :STRLEN    ; STORE STR LENGTH
+         CPX   #0
+         BEQ   :ZEXIT
+*
+:INP_CLR
+         LDY   #0
+         LDA   :STRLEN    ; LENGTH OF STRING
+         STA   RETLEN     ; PUT LENGTH + 1 HERE
+         STA   RETURN     ; STRING LENGTH FIRST BYTE
+         INC   RETLEN
+:LOOP
+         LDA   KEYBUFF,Y  ; PUT STR INTO NEW LOC
+         INY
+         STA   RETURN,Y
+         CPY   :STRLEN    ; IF Y < STR LENGTH
+         BNE   :LOOP      ; LOOP; ELSE, CONTINUE
+         JMP   :EXIT
+:ZEXIT
+         LDA   #0
+         STA   RETLEN
+         STA   RETURN
+:EXIT
+         RTS
+*
+** DATA
+*
+:STRLEN  DS    1
+*

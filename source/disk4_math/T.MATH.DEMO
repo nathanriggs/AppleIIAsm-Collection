@@ -27,11 +27,11 @@
 *  TOP INCLUDES (HOOKS,MACROS) *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-         PUT   REQUIRED.VARS
-         PUT   REQUIRED.HOOKS.MIN
-         USE   REQUIRED.MAC.MIN
-         PUT   MATH.HOOKS
-         USE   MATH.MAC.MIN
+         PUT   MIN.VARS.REQUIRED
+         PUT   MIN.HOOKS.REQUIRED
+         USE   MIN.MAC.REQUIRED
+         PUT   MIN.HOOKS.MATH
+         USE   MIN.MAC.MATH
 *
 *``````````````````````````````*
 *      PROGRAM MAIN BODY       *
@@ -54,7 +54,7 @@
          STA   $303
          JSR   RAND8
          STA   $304
-         _DUMP $300;#5
+         DUMP  #$300;#5
          _WAIT
 *
          _PRNT " ",8D8D
@@ -71,7 +71,7 @@
          STA   $303
          RNDB  #$A0;#$AF
          STA   $304
-         _DUMP $300;#5
+         DUMP  #$300;#5
          _WAIT
 *
          _PRNT " ",8D8D
@@ -85,12 +85,12 @@
          LDA   #10
          STA   $300
          MUL8  #10;$300
-         _DUMP RETURN;#2
+         DUMP  #RETURN;#2
          _WAIT
          _PRNT " ",8D8D
          _PRNT ":: MUL8 #100;#100 RETURNS (L,H):",8D
          MUL8  #100;#100
-         _DUMP RETURN;#2
+         DUMP  RETURN;#2
          _PRNT " ",8D8D
          _WAIT
 *
@@ -100,15 +100,15 @@
          _PRNT "ALL VALUES ARE UNSIGNED.",8D8D
          DIV8  #100;#10
          _PRNT ":: DIV8 #100;#10 RETURNS:",8D8D
-         _DUMP RETURN;#1
+         DUMP  #RETURN;#1
          _WAIT
          _PRNT "::DIV8 #200;#33 RETURNS",8D8D
          DIV8  #200;#33
          STY   $300       ; REMAINDER IN .Y
-         _DUMP RETURN;#1
+         DUMP  #RETURN;#1
          _PRNT " ",8D8D
          _PRNT "WITH A REMAINDER OF: ",8D
-         _DUMP $300;#1
+         DUMP  #$300;#1
          _PRNT " ",8D8D
          _WAIT
 *
@@ -129,7 +129,7 @@
          _PRNT "THE ADD16 MACRO ADDS TWO",8D
          _PRNT "16-BIT VALUES, SIGNED OR UNSIGNED.",8D8D
          _PRNT "ADD16 #3000;#2000 RETURNS: ",8D8D
-         _DUMP RETURN;RETLEN
+         DUMP  #RETURN;RETLEN
          _PRNT " ",8D8D
          _WAIT
 *
@@ -140,7 +140,7 @@
          _PRNT "SIGNED OR UNSIGNED.",8D8D
          _PRNT "SUB16 #5000;#3000 RETURNS: ",8D8D
          SUB16 #5000;#3000 ; 5000 - 3000
-         _DUMP RETURN;RETLEN
+         DUMP  #RETURN;RETLEN
          _PRNT " ",8D8D
          _WAIT
 *
@@ -148,7 +148,7 @@
          _PRNT "16-BIT NUMBERS, SIGNED OR NOT.",8D8D
          _PRNT "MUL16 #500;#500 RETURNS: ",8D8D
          MUL16 #500;#500
-         _DUMP RETURN;RETLEN
+         DUMP  #RETURN;RETLEN
          _PRNT " ",8D8D
          _WAIT
 *
@@ -159,7 +159,7 @@
          _PRNT "OTHERWISE, IT IS UNSIGNED.",8D8D
          _PRNT "DIV16 #25000;#500;U RETURNS:",8D8D
          DIV16 #25000;#500;U
-         _DUMP RETURN;RETLEN
+         DUMP  #RETURN;RETLEN
          _PRNT " ",8D8D
          _WAIT
 *
@@ -169,7 +169,7 @@
          _PRNT "SIGNIFY WHETHER IT IS SIGNED (S).",8D8D
          _PRNT "REM16 #5000;#333;U RETURNS:",8D8D
          REM16 #5000;#333;U
-         _DUMP RETURN;RETLEN
+         DUMP  #RETURN;RETLEN
          _PRNT " ",8D8D
          _WAIT
 *
@@ -187,7 +187,7 @@
          LUP   5
          _PRNT "RND16 RETURNS:",8D8D
          RND16
-         _DUMP RETURN;RETLEN
+         DUMP  #RETURN;RETLEN
          _PRNT " ",8D8D
          _WAIT
          --^
@@ -232,7 +232,7 @@
          STA   $304
          LDA   #$FF
          STA   $305       ; FF= NEGATIVE, 0 = POSITIVE
-         _DUMP $300;#6
+         DUMP  #$300;#6
 *
 ** 25E10^-1 = 2.5
 *
@@ -259,7 +259,7 @@
          _PRNT "FPADD MACRO TO SEE THE RESULT.",8D8D
          _PRNT "FPADD $300;$310 RETURNS:",8D8D
          FPADD $300;$310
-         _DUMP RETURN;RETLEN
+         DUMP  #RETURN;RETLEN
 *
 ********************************
 *
@@ -275,23 +275,23 @@
 *
 ** BOTTOM INCLUDES
 *
-         PUT   REQUIRED.LIB.MIN
+         PUT   MIN.LIB.REQUIRED
 *
 ** INDIVIDUAL SUBROUTINE INCLUDES
 *
 ** 8-BIT MATH SUBROUTINES
 *
-         PUT   MULT8.SUB.MIN
-         PUT   DIVD8.SUB.MIN
-         PUT   RAND8.SUB.MIN
-         PUT   RANDB.SUB.MIN
+         PUT   MIN.SUB.MULT8
+         PUT   MIN.SUB.DIVD8
+         PUT   MIN.SUB.RAND8
+         PUT   MIN.SUB.RANDB
 *
 ** 16-BIT MATH SUBROUTINES
 *
-         PUT   ADDIT16.SUB.MIN
-         PUT   SUBT16.SUB.MIN
-         PUT   COMP16.SUB.MIN
-         PUT   MULT16.SUB.MIN
-         PUT   DIVD16.SUB.MIN
-         PUT   RAND16.SUB.MIN
+         PUT   MIN.SUB.ADDIT16
+         PUT   MIN.SUB.SUBT16
+         PUT   MIN.SUB.COMP16
+         PUT   MIN.SUB.MULT16
+         PUT   MIN.SUB.DIVD16
+         PUT   MIN.SUB.RAND16
 *

@@ -1,0 +1,391 @@
+********************************
+*                              *
+* ASSEMBLY LISTING MINIFIER    *
+*                              *
+* A PROGRAM THAT REMOVES       *
+* COMMENTS FROM ASSEMBLY CODE. *
+*                              *
+********************************
+*
+** ASSEMBLER DIRECTIVES
+*
+         CYC   AVE
+         EXP   OFF
+         DSK   MINIFY
+         TR    ON
+         OBJ   $BFE0
+         ORG   $7000
+*
+********************************
+*                              *
+* HEADER, HOOKS AND MACROS     *
+*                              *
+********************************
+*
+         PUT   MIN.VARS.REQUIRED
+         USE   MIN.MAC.REQUIRED
+         PUT   MIN.HOOKS.REQUIRED
+         USE   MIN.MAC.STDIO
+         PUT   MIN.HOOKS.STDIO
+         USE   MIN.MAC.FILEIO
+         PUT   MIN.HOOKS.FILEIO
+         USE   MIN.MAC.STRINGS
+         PUT   MIN.HOOKS.STRINGS
+*
+********************************
+*                              *
+* MAIN PROGRAM LOOP            *
+*                              *
+********************************
+*
+BEGIN
+*
+         JSR   INIT
+         JSR   GETNAMES
+         JSR   DELMIN
+         JMP   FCOPY
+*
+         JMP   REENTRY
+*
+********************************
+*                              *
+* INIT                         *
+*                              *
+********************************
+*
+INIT
+*
+** RESET ERROR HANDLING
+*
+         AMODE
+         LDA   #$00
+         STA   $D8
+*
+         LDA   #21        ; SEND ^U TO COUT TO
+         JSR   COUT       ; ENSURE 40COL MODE
+         LDA   #00
+         STA   ADDT
+         STA   WRITEOFF
+         RTS
+*
+********************************
+*                              *
+* GETNAMES                     *
+*                              *
+********************************
+*
+GETNAMES
+*
+         JSR   HOME
+         PRN   "ASSEMBLY CODE MINIFIER",8D
+         PRN   "======================",8D8D
+         PRN   "THIS PROGRAM STRIPS A",8D
+         PRN   "PROGRAM OF ITS COMMENTS",8D
+         PRN   "AND STORES THE RESULTING",8D
+         PRN   "FILE WIN A MIN. PREFIX.",8D8D
+*
+:QUERY
+         PRN   "FILE TO MINIFY ",8D
+         PRN   "(RETURN FOR CATALOG): "
+         INP
+         LDA   RETLEN
+         CMP   #0         ; IF NOT JUST CR, THEN
+         BNE   :NAMES     ; GO TO NAMES
+         CMD   "CATALOG" ; OTHERWISE, CAT
+         PRN   " ",8D
+         JMP   :QUERY
+:NAMES
+         GRET  SNAME
+         GRET  DNAME
+*
+** NEED TO CHECK IF STARTING WITH T.; IF SO, INSERT
+** MIN. AFTER T. OTHERWISE, JUST PREFIX.
+*
+         SPOS  SNAME;"T."
+         LDA   RETURN
+         CMP   #1         ; IF STRING BEGINS WITH "T."
+         BNE   :CONTN     ; DELETE T. FROM STRING
+         SDEL  DNAME;#1;#2
+         LDA   #$FF
+         STA   ADDT
+:CONTN
+         SCAT  "MIN.";DNAME;#30
+         LDA   RETLEN
+         GRET  DNAME ; SCAT PUTS LENGTH BYTE
+                          ; IN RETURN AS WELL AS RETLEN
+*
+** NOW ADD BACK "T." PREFIX IF NEEDED
+*
+         LDA   ADDT
+         CMP   #$FF
+         BNE   SKIPT
+         SCAT  "T.";DNAME;#30
+         GRET  DNAME
+SKIPT
+         RTS
+*
+********************************
+*                              *
+* DELMIN                       *
+*                              *
+********************************
+*
+DELMIN
+*
+** HIJACK ERROR HANDLING
+*
+         LDA   #$FF
+         STA   $D8
+*
+** SET ERROR CONTROL TO CONTINUE
+** FILE TO DELETE DOESN'T EXIST
+*
+         LDA   #<:DELCONT
+         STA   $9D5A
+         LDA   #>:DELCONT
+         STA   $9D5B
+*
+         SCAT  "DELETE ";DNAME;#50 ; DELETE PREVIOUS IF EXISTS
+         CMD   RETURN
+*
+:DELCONT
+         RTS
+*
+********************************
+*                              *
+* MAIN FILE COPY LOOP          *
+*                              *
+********************************
+*
+FCOPY
+*
+         PRN   "MINIFYING...",8D8D
+*
+         JSR   SETFILEERR
+         JSR   OPENFILES
+*
+** THE FOLLOWING LOOP ENDS WHEN
+** THE END OF THE SOURCE FILE
+** IS REACHED, PROMPTING AN ERROR
+** THAT GETS HANDLED BY FCLOSE
+*
+:COPYLOOP
+         JSR   READSRC
+         JSR   CHKCOMMENT
+         JSR   WRITEDEST
+:LOOPEND JMP   :COPYLOOP
+*
+********************************
+*                              *
+* SETFILEERR                   *
+*                              *
+********************************
+*
+SETFILEERR
+*
+** SET ERROR CONTROL TO FILE CLOSING ROUTINE
+*
+         LDA   #<FCLOSE
+         STA   $9D5A
+         LDA   #>FCLOSE
+         STA   $9D5B
+         RTS
+*
+********************************
+*                              *
+* OPENFILES                    *
+*                              *
+********************************
+*
+OPENFILES
+*
+** OPEN SOURCE AND DESTINATION FILES
+*
+         SCAT  "OPEN ";SNAME;#80
+         CMD   RETURN
+         SCAT  "OPEN ";DNAME;#80
+         CMD   RETURN
+         RTS
+*
+********************************
+*                              *
+* READSRC                      *
+*                              *
+********************************
+*
+READSRC
+*
+** CLEAR BUFFER POINTER, SET TO READ SOURCE
+*
+         LDA   #1
+         STA   CCNT
+         SCAT  "READ ";SNAME;#80
+         CMD   RETURN
+:LP
+         GKEY             ; ASCII CHAR STORED IN .A
+         LDY   CCNT
+         STA   LINE,Y
+         CMP   #$8D       ; IS THIS A CARRIAGE RETURN?
+         BEQ   :XLP       ; YES, EXIT LOOP
+         INC   CCNT       ; INCREASE BUFFER POINTER
+         JMP   :LP        ; KEEP ON READING
+:XLP
+         LDA   CCNT
+         STA   LINE
+         RTS
+*
+********************************
+*                              *
+* CHKCOMMENT                   *
+*                              *
+********************************
+*
+CHKCOMMENT
+*
+** NOW CHECK IF LINE BEGINS WITH *
+*
+         LDA   LINE+1
+         CMP   #170       ; * CHARACTER
+         BNE   :SEMITEST
+         LDA   #$FF
+         STA   WRITEOFF
+*
+:SEMITEST
+*
+** NOW TEST FOR SUBSTRING " ; "
+*
+         LDA   LINE       ; START AT END OF STRING
+         STA   CCNT
+         DEC   CCNT
+*
+:SEMILP
+         LDY   CCNT
+         LDA   LINE,Y
+         CMP   #$BB       ; ";" CHARACTER
+         BEQ   :SEMIF
+         CPY   #0
+         BEQ   :XSEMILP
+         DEC   CCNT
+         JMP   :SEMILP
+*
+:SEMIF
+         LDY   CCNT
+         INY
+         LDA   LINE,Y
+         CMP   #$20       ; IS NEXT CHAR A SPACE?
+         BNE   :XSEMILP
+         LDA   #$8D
+         LDY   CCNT
+         STA   LINE,Y
+:XSEMILP
+         RTS
+*
+********************************
+*                              *
+* WRITEDEST                    *
+*                              *
+********************************
+*
+WRITEDEST
+*
+         LDA   WRITEOFF
+         CMP   #$FF
+         BEQ   :XWLP
+*
+** CLEAR COUNTER, SET TO WRITE DEST
+*
+         LDA   #1
+         STA   CCNT
+         SCAT  "WRITE ";DNAME;#80
+         CMD   RETURN
+*
+:WLP                      ; WRITE LOOP
+         LDY   CCNT
+         LDA   LINE,Y
+         CMP   #$8D       ; WAS IT A CR?
+         BEQ   :XWLP      ; YEP, EXIT LOOP
+         JSR   FCOUT      ; PRINT TO FILE
+         INC   CCNT
+         JMP   :WLP
+:XWLP
+         LDA   #00
+         STA   WRITEOFF
+         RTS
+*
+********************************
+*                              *
+* FCLOSE                       *
+*                              *
+********************************
+*
+FCLOSE
+*
+** NOW CLOSE SOURCE AND DESTINATION FILES
+** AFTER END OF FILE ERROR
+*
+         SCAT  "CLOSE ";SNAME;#80
+         CMD   RETURN
+*
+         SCAT  "CLOSE ";DNAME;#80
+         CMD   RETURN
+*
+         PRN   "DONE!",8D8D
+         PRN   "WOULD YOU LIKE TO MINIFY ANOTHER? "
+         INP
+         LDA   RETURN+1
+         CMP   #217       ; 'Y' LETTER
+         BNE   FIN
+         PLA
+         PLA
+         PLA
+         JMP   BEGIN
+FIN
+*
+         PLA
+         PLA
+         JMP   REENTRY
+*
+********************************
+*                              *
+* VARIABLES                    *
+*                              *
+********************************
+*
+SNAME    DS    40         ; SOURCE FILE NAME
+DNAME    DS    40         ; DEST FILE NAME
+CCNT     DS    2          ; SECOND COUNTER
+TEMP     DS    2
+WRITEOFF DS    2
+ADDT     HEX   00
+LINE     DS    200
+*
+********************************
+*                              *
+*  LOW-LEVEL ROUTINES          *
+*                              *
+********************************
+*
+         PUT   MIN.LIB.REQUIRED
+*
+** INDIVIDUAL SUBROUTINES
+*
+*** STRINGS
+*
+         PUT   MIN.SUB.STRCAT
+         PUT   MIN.SUB.SUBPOS
+         PUT   MIN.SUB.PRNSTR
+         PUT   MIN.SUB.SUBDEL
+*
+*** STDIO
+*
+         PUT   MIN.SUB.DPRINT
+         PUT   MIN.SUB.XPRINT
+         PUT   MIN.SUB.SINPUT
+*
+*** FILEIO
+*
+         PUT   MIN.SUB.DOSCMD
+         PUT   MIN.SUB.FINPUT
+         PUT   MIN.SUB.FPRINT
+         PUT   MIN.SUB.FPSTR
+*

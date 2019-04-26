@@ -1,0 +1,37 @@
+DOSCMD
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+         PLA
+         STA   ADDR1
+         PLA
+         STA   ADDR1+1
+         LDA   #1
+         STA   $AAB6      
+         STA   $75+1      
+         STA   $33        
+         LDA   #$8D
+         JSR   FCOUT
+         LDA   #$84       
+         JSR   FCOUT
+         LDY   #0
+         LDA   (ADDR1),Y
+         STA   :SLEN
+         LDY   #$01       
+:LP
+         LDA   (ADDR1),Y
+         JSR   FCOUT
+         INY
+         CPY   :SLEN
+         BCC   :LP
+         BEQ   :LP
+:DONE
+         LDA   #$8D
+         JSR   FCOUT
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+         RTS
+:SLEN    DS    1

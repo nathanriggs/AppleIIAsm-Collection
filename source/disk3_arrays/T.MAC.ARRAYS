@@ -1,0 +1,382 @@
+*
+*-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*
+*                              *
+* ARRAYS.MAC                   *
+*                              *
+* AUTHOR:  NATHAN RIGGS        *
+* CONTACT: NATHAN.RIGGS@       *
+*          OUTLOOK.COM         *
+*                              *
+* VERSION:   0.2.0             *
+* DATE:      10-DEC-2018       *
+* ASSEMBLER: MERLIN 8 PRO      *
+* LICENSE:   APACHE 2.0        *
+* OS:        DOS 3.3           *
+*                              *
+*------------------------------*
+*                              *
+* THIS IS A MACRO LIBRARY FOR  *
+* THE 8BIT ARRAY LIBRARIES,    *
+* ARRAYS81.LIB & ARRAYS82.LIB. *
+* THESE ARE 8BIT 1D AND 2D     *
+* ARRAY LIBS, RESPECTIVELY.    *
+*                              *
+*------------------------------*
+*                              *
+* LIST OF MACROS               *
+*                              *
+* DIM81: DIM 1D, 8BIT ARRAY    *
+* GET81: GET ELEMENT IN 8BIT,  *
+*        1D ARRAY.             *
+* PUT81: PUT VALUE INTO ARRAY  *
+*        AT SPECIFIED INDEX    *
+* DIM82: DIM A 2D, 8BIT ARRAY  *
+* GET82: GET ELEMENT IN 8BIT,  *
+*        2D ARRAY              *
+* PUT82: PUT VALUE INTO ARRAY  *
+*        AT SPECIFIED INDEX    *
+*                              *
+*-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*
+*
+*``````````````````````````````*
+* DIM81 :  INIT 1D, 8BIT ARRAY *
+*-                            -*
+* INITS A 1-DIMENSIONAL ARRAY  *
+* BY CLEARING MEMORY IT WILL   *
+* SPAN ACROSS AND PUTTING THE  *
+* INDEXING INFORMATION AS THE  *
+* ARRAY HEADER (0 = ARRAY      *
+* LENGTH, 1 = ELEMEN LENGTH).  *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* ]1 = ARRAY ADDRESS           *
+* ]2 = ARRAY BYTE LENGTH       *
+* ]3 = ELEMENT BYTE LENGTH     *
+*-                            -*
+* SAMPLE USAGE:                *
+*  DIM81 $300;#10;#2           *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+DIM81    MAC
+         _ISLIT ]1
+         LDA   ]2         ; ARRAY LENGTH
+         PHA
+         LDA   ]3         ; ELEMENT LENGTH
+         PHA
+         LDA   ]4
+         PHA              ; FILL VAL
+         JSR   ADIM81
+         <<<
+*
+*``````````````````````````````*
+* GET81 :    GET ARRAY ELEMENT *
+*          FROM 1D, 8BIT ARRAY *
+*-                            -*
+* GETS THE VALUE HELD IN AN    *
+* ARRAY AT THE SPECIFIED       *
+* ELEMENT. THAT VALUE IS PUT   *
+* INTO [RETURN], WITH THE      *
+* LENGTH IN [RETLEN]. THE      *
+* ELEMENT ADDRESS IS PUT IN    *
+* .Y (LOW) AND .X (HIGH).      *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* ]1 = ARRAY ADDRESS           *
+* ]2 = ELEMENT INDEX           *
+*-                            -*
+* SAMPLE USAGE:                *
+*   GET81 $300;#5              *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+GET81    MAC
+         _ISLIT ]1
+         LDA   ]2         ; ELEM INDEX
+         PHA
+         JSR   AGET81
+         <<<
+*
+*``````````````````````````````*
+* PUT81 :    PUT ARRAY ELEMENT *
+*          IN 1D, 8BIT ARRAY   *
+*-                            -*
+* COPIES DATA FROM ONE MEMORY  *
+* LOCATION (]1) AND PUTS IT    *
+* IN THE SPECIFIED ARRAY (]2)  *
+* AT THE SPECIFIED INDEX (]3). *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* ]1 = SOURCE ADDRESS          *
+* ]2 = ARRAY ADDRESS           *
+* ]3 = ELEMENT INDEX           *
+*-                            -*
+* SAMPLE USAGE:                *
+*   PUT81 $300;$3A0;#5         *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+PUT81    MAC
+         _ISLIT ]1
+         _ISLIT ]2
+         LDA   ]3         ; DEST INDEX
+         PHA
+         JSR   APUT81
+         <<<
+*
+*``````````````````````````````*
+* DIM82 :  INIT 12, 8BIT ARRAY *
+*-                            -*
+* INITS AN 8BIT 2D ARRAY AT    *
+* SPECIFIED LOCATION WITH THE  *
+* DIMENSIONS OF X,Y. ARRAY     *
+* BEGINS WITH A 4 BYTE HEADER  *
+* WITH THE ARRAY LENGTH, X     *
+* DIM, Y DIM, AND ELEM LENGTH. *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* ]1 = ARRAY ADDRESS           *
+* ]2 = X DIMENSION             *
+* ]3 = Y DIMENSION             *
+* ]4 = ELEMENT SIZE            *
+* ]5 = FILL VALUE              *
+*-                            -*
+* SAMPLE USAGE:                *
+*   DIM82 $300;#4;#4;#1        *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+DIM82    MAC
+         _ISLIT ]1
+         LDA   ]2         ; X DIM
+         PHA
+         LDA   ]3         ; Y DIM
+         PHA
+         LDA   ]4         ; ELEMENT LENGTH
+         PHA
+         LDA   ]5         ; FILL VAL
+         PHA
+         JSR   ADIM82
+         <<<
+*
+*``````````````````````````````*
+* GET82 :    GET ARRAY ELEMENT *
+*          FROM 2D, 8BIT ARRAY *
+*-                            -*
+* RETURNS THE MEMORY LOCATION  *
+* OF AN X,Y INDEX IN THE ARRAY *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* ]1 = ARRAY ADDRESS           *
+* ]2 = X INDEX                 *
+* ]3 = Y INDEX                 *
+*-                            -*
+* SAMPLE USAGE:                *
+*  GET82 $300;#2;#3            *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+GET82    MAC
+         _ISLIT ]1
+         LDA   ]2         ; X INDEX
+         PHA
+         LDA   ]3         ; Y INDEX
+         PHA
+         JSR   AGET82
+         <<<
+*
+*``````````````````````````````*
+* PUT82 :    PUT ARRAY ELEMENT *
+*            IN 2D, 8BIT ARRAY *
+*-                            -*
+* COPIES DATA FROM SOURCE LOC  *
+* TO THE MEMLOC OF INDEX X,Y   *
+* IN THE SPECIFIED ARRAY.      *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* ]1 =  SOURCE ADDRESS         *
+* ]2 =  DEST ARRAY ADDRESS     *
+* ]3 =  ELEMENT X INDEX        *
+* ]4 =  Y INDEX                *
+*-                            -*
+* SAMPLE USAGE:                *
+*  PUT82 $300;$3A0;#2;#3       *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+PUT82    MAC
+         _ISLIT ]1
+         _ISLIT ]2
+         LDA   ]3         ; X INDEX
+         PHA
+         LDA   ]4         ; Y INDEX
+         PHA
+         JSR   APUT82
+         <<<
+*
+*``````````````````````````````*
+* DIM161 : INIT 1D, 16BIT ARRY *
+*-                            -*
+* INITS A 1-DIMENSIONAL ARRAY  *
+* BY CLEARING MEMORY IT WILL   *
+* SPAN ACROSS AND PUTTING THE  *
+* INDEXING INFORMATION AS THE  *
+* ARRAY HEADER (0 = ARRAY      *
+* LENGTH, 1 = ELEMEN LENGTH).  *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* ]1 = ARRAY ADDRESS           *
+* ]2 = ARRAY BYTE LENGTH       *
+* ]3 = ELEMENT BYTE LENGTH     *
+*-                            -*
+* SAMPLE USAGE:                *
+*  DIM81 $300;#10;#2           *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+DIM161   MAC
+         _ISLIT ]1
+         _ISLIT ]2
+         LDA   ]3         ; ELEMENT LENGTH
+         PHA
+         LDA   ]4
+         PHA              ; FILL VAL
+         JSR   ADIM161
+         <<<
+*
+*``````````````````````````````*
+* PUT161 :   PUT ARRAY ELEMENT *
+*          IN 1D, 16 BIT ARRAY *
+*-                            -*
+* COPIES DATA FROM ONE MEMORY  *
+* LOCATION (]1) AND PUTS IT    *
+* IN THE SPECIFIED ARRAY (]2)  *
+* AT THE SPECIFIED INDEX (]3). *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* ]1 = SOURCE ADDRESS          *
+* ]2 = ARRAY ADDRESS           *
+* ]3 = ELEMENT INDEX           *
+*-                            -*
+* SAMPLE USAGE:                *
+*   PUT81 $300;$3A0;#5         *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+PUT161   MAC
+         _ISLIT ]1
+         _ISLIT ]2
+         _ISLIT ]3
+         JSR   APUT161
+         <<<
+*
+*``````````````````````````````*
+* GET161 :   GET ARRAY ELEMENT *
+*        FROM 1D, 16 BIT ARRAY *
+*-                            -*
+* COPIES DATA FROM ARRAY AT    *
+* GIVEN ELEMENT AND PUTS IT    *
+* IN THE [RETURN].             *
+*                              *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* ]1 = SOURCE ADDRESS          *
+* ]2 = ARRAY ADDRESS           *
+* ]3 = ELEMENT INDEX           *
+*-                            -*
+* SAMPLE USAGE:                *
+*   PUT81 $300;$3A0;#5         *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+GET161   MAC
+         _ISLIT ]1
+         _ISLIT ]2
+         JSR   AGET161
+         <<<
+*
+*``````````````````````````````*
+* DIM162 : INIT 2D 16BIT ARRAY *
+*-                            -*
+* INITS A 16BIT 2D ARRAY AT    *
+* SPECIFIED LOCATION WITH THE  *
+* DIMENSIONS OF X,Y. ARRAY     *
+* BEGINS WITH A 4 BYTE HEADER  *
+* WITH THE ARRAY LENGTH, X     *
+* DIM, Y DIM, AND ELEM LENGTH. *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* ]1 = ARRAY ADDRESS           *
+* ]2 = X DIMENSION             *
+* ]3 = Y DIMENSION             *
+* ]4 = ELEMENT SIZE            *
+* ]5 = FILL VALUE              *
+*-                            -*
+* SAMPLE USAGE:                *
+*   DIM82 $300;#4;#4;#1        *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+DIM162   MAC
+         _ISLIT ]1
+         _ISLIT ]2        ; X DIM
+         _ISLIT ]3        ; Y DIM
+         LDA   ]4         ; ELEMENT LENGTH
+         PHA
+         LDA   ]5         ; FILL VAL
+         PHA
+         JSR   ADIM162
+         <<<
+*
+*``````````````````````````````*
+* PUT162 :   PUT ARRAY ELEMENT *
+*            IN 2D, 8BIT ARRAY *
+*-                            -*
+* COPIES DATA FROM SOURCE LOC  *
+* TO THE MEMLOC OF INDEX X,Y   *
+* IN THE SPECIFIED ARRAY.      *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* ]1 =  SOURCE ADDRESS         *
+* ]2 =  DEST ARRAY ADDRESS     *
+* ]3 =  ELEMENT X INDEX        *
+* ]4 =  Y INDEX                *
+*-                            -*
+* SAMPLE USAGE:                *
+*  PUT82 $300;$3A0;#2;#3       *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+PUT162   MAC
+         _ISLIT ]1
+         _ISLIT ]2
+         _ISLIT ]3        ; X INDEX
+         _ISLIT ]4        ; Y INDEX
+         JSR   APUT162
+         <<<
+*
+*
+*``````````````````````````````*
+* GET162 :   GET ARRAY ELEMENT *
+*            IN 2D 16BIT ARRAY *
+*-                            -*
+* COPIES DATA FROM INDEXED LOC *
+* TO RETURN                    *
+*-                            -*
+* PARAMETERS:                  *
+*                              *
+* ]1 =   ARRAY ADDRESS         *
+* ]2 =  ELEMENT X INDEX        *
+* ]3 =  Y INDEX                *
+*-                            -*
+* SAMPLE USAGE:                *
+*  PUT82 $300;$3A0;#2;#3       *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+GET162   MAC
+         _ISLIT ]1
+         _ISLIT ]2        ; X INDEX
+         _ISLIT ]3        ; Y INDEX
+         JSR   AGET162
+         <<<
+*

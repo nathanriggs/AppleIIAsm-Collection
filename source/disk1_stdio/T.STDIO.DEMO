@@ -27,11 +27,11 @@
 *  TOP INCLUDES (HOOKS,MACROS) *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-         PUT   REQUIRED.VARS
-         PUT   REQUIRED.HOOKS.MIN
-         USE   REQUIRED.MAC.MIN
-         USE   STDIO.MAC.MIN
-         PUT   STDIO.HOOKS.MIN
+         PUT   MIN.VARS.REQUIRED
+         PUT   MIN.HOOKS.REQUIRED
+         USE   MIN.MAC.REQUIRED
+         USE   MIN.MAC.STDIO
+         PUT   MIN.HOOKS.STDIO
 *
 *``````````````````````````````*
 *      PROGRAM MAIN BODY       *
@@ -93,7 +93,7 @@
          PCR
          PCR
          PRN   "YOU WROTE: ",8D8D
-         PRN   RETURN
+         PRN RETURN
          PCR
          PCR
          _WAIT
@@ -263,19 +263,19 @@ PBLP
 *        BOTTOM INCLUDES       *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-         PUT   REQUIRED.LIB.MIN
+         PUT   MIN.LIB.REQUIRED
 *
 ** INDIVIDUAL SUBROUTINE INCLUDES
 *
 *  STDIO SUBROUTINES
 *
-         PUT   XPRINT.SUB.MIN
-         PUT   DPRINT.SUB.MIN
-         PUT   THLINE.SUB.MIN
-         PUT   TVLINE.SUB.MIN
-         PUT   CURSORUDBF.SUB.MIN
-         PUT   TFILLA.SUB.MIN
-         PUT   SINPUT.SUB.MIN
-         PUT   GPBX.SUB.MIN
-         PUT   TXTPUT.SUB.MIN
+         PUT   MIN.SUB.XPRINT
+         PUT   MIN.SUB.DPRINT
+         PUT   MIN.SUB.THLINE
+         PUT   MIN.SUB.TVLINE
+         PUT   MIN.SUB.CURSORUDBF
+         PUT   MIN.SUB.TFILLA
+         PUT   MIN.SUB.SINPUT
+         PUT   MIN.SUB.GPBX
+         PUT   MIN.SUB.TXTPUT
 *

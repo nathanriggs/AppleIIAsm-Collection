@@ -27,11 +27,11 @@
 *  TOP INCLUDES (HOOKS,MACROS) *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-         PUT   REQUIRED.VARS
-         USE   REQUIRED.MAC.MIN
-         PUT   REQUIRED.HOOKS.MIN
-         USE   FILEIO.MAC.MIN
-         PUT   FILEIO.HOOKS
+         PUT   MIN.VARS.REQUIRED
+         USE   MIN.MAC.REQUIRED
+         PUT   MIN.HOOKS.REQUIRED
+         USE   MIN.MAC.FILEIO
+         PUT   MIN.HOOKS.FILEIO
 *
 *``````````````````````````````*
 *      PROGRAM MAIN BODY       *
@@ -77,7 +77,7 @@ LP
          CPY   #$100
          BNE   LP
          _WAIT
-         _DUMP $800;#$100
+         DUMP  #$800;#$100
          _WAIT
          _PRNT " ",8D8D
          _PRNT "BSAVE 'TEST,A$800,L$100'...."
@@ -92,7 +92,7 @@ LP2
          INY
          CPY   #$100
          BNE   LP2
-         _DUMP $800;#$100
+         DUMP  #$800;#$100
 *
          _PRNT " ",8D8D
          _PRNT "NOW WE CAN BLOAD TEST TO GET $800",8D
@@ -102,7 +102,7 @@ LP2
          BLOAD "TEST"
          _PRNT " ",8D8D
          _PRNT "DONE!",8D8D
-         _DUMP $0800;#$100
+         DUMP  #$0800;#$100
          _PRNT " ",8D8D
          _WAIT
 *
@@ -152,7 +152,7 @@ LP2
          CMD   "OPEN T.TEXTFILE"
          CMD   "WRITE T.TEXTFILE"
          FPRN  "ALL IS WELL THAT ENDS WELL."
-         FPRN  RETORT
+         FPRN  #RETORT
          CMD   "CLOSE T.TEXTFILE"
          _PRNT " ",8D8D8D
          _PRNT "PUTS THE LITERAL PHRASE AND A PHRASE",8D
@@ -177,12 +177,12 @@ LP2
          _PRNT "CMD 'CLOSE T.TEXTFILE'",8D8D
          CMD   "OPEN T.TEXTFILE"
          CMD   "READ T.TEXTFILE"
-         FINP  RETURN
-         FINP  PARAM
+         FINP  #RETURN
+         FINP  #PARAM
          CMD   "CLOSE T.TEXTFILE"
          _WAIT
-         _DUMP RETURN;RETURN
-         _DUMP PARAM;PARAM
+         DUMP  #RETURN;RETURN
+         DUMP  #PARAM;PARAM
          _WAIT
 *
          _PRNT " ",8D8D
@@ -261,17 +261,16 @@ RETORT   STR   "IF YOU ARE RICH, ANYHOW..."
 *        BOTTOM INCLUDES       *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-         PUT   REQUIRED.LIB.MIN
+         PUT   MIN.LIB.REQUIRED
 *
 ** INDIVIDUAL SUBROUTINES
 *
 ** FILEIO SUBROUTINES
 *
-         PUT   BINLOAD.SUB.MIN
-         PUT   BINSAVE.SUB.MIN
-         PUT   DISKOP.SUB.MIN
-         PUT   DOSCMD.SUB.MIN
-         PUT   FINPUT.SUB.MIN
-         PUT   FPRINT.SUB.MIN
-         PUT   FPSTR.SUB.MIN
-*
+         PUT   MIN.SUB.BINLOAD
+         PUT   MIN.SUB.BINSAVE
+         PUT   MIN.SUB.DISKOP
+         PUT   MIN.SUB.DOSCMD
+         PUT   MIN.SUB.FINPUT
+         PUT   MIN.SUB.FPRINT
+         PUT   MIN.SUB.FPSTR

@@ -1,0 +1,412 @@
+********************************
+*                              *
+* POPUP SUBROUTINE FOR BUILDER *
+*                              *
+*------------------------------*
+*                              *
+* THIS ROUTINE CREATES A TEXT  *
+* WINDOW AT A GIVE POSITION    *
+* AND SIZE, THEN OUTPUTS THE   *
+* CONTENTS OF A TEXT FILE TO   *
+* THE WINDOW. THIS ALLOWS FOR  *
+* MORE THAN ONE PAGE OF TEXT.  *
+*                              *
+* USES:                        *
+*       MAC.FILIO              *
+*       MAC.STRINGS            *
+*       MIN.SUB.CMD            *
+*       MIN.SUB.CONCAT         *
+*                              *
+********************************
+*
+POPUP
+*
+** GET PARAMETERS
+*
+         PLA
+         STA   _JUMPTO    ; CALLBACK ADDRESS
+         PLA
+         STA   _JUMPTO+1
+         PLA
+         STA   _RFILE     ; SOURCE FILE
+         PLA
+         STA   _RFILE+1
+         PLA
+         STA   _HEIGHT    ; WINDOW HEIGHT
+         PLA
+         STA   _WIDTH     ; WINDOW WIDTH
+         PLA
+         STA   _YPOS      ; Y POSITION
+         PLA
+         STA   _XPOS      ; X POSITION
+*
+********************************
+*                              *
+* MAIN SUBROUTINE LOOP         *
+*                              *
+********************************
+*
+         JSR   _INIT      ; RESET VARS
+         JSR   _SETVARS   ; SET DIMENSIONS
+         JSR   _MAKEWIN   ; PRINT EMPTY WINDOW
+         JSR   _OPENF     ; OPEN SOURCE FILE
+         JMP   _BEGREAD   ; READ AND OUTPUT
+*
+********************************
+*                              *
+* _INIT                        *
+*                              *
+*------------------------------*
+*                              *
+* INITIALIZE ANY VARIABLES IN  *
+* CASE OF A REPEATED RUN.      *
+*                              *
+********************************
+*
+_INIT
+*
+FCHAR    EQU   "*"        ; CHARACTER FOR WINDOW BORDER
+*
+         LDA   #0         ; CLEAR FILE CLOSED FLAG
+         STA   _CLOSED
+         RTS
+*
+********************************
+*                              *
+* _SETVARS                     *
+*                              *
+*------------------------------*
+*                              *
+* SETS VARIABLES RELATING TO   *
+* POSITION, SIZE, AND MARGINS  *
+* OF THE WINDOW.               *
+*                              *
+********************************
+*
+_SETVARS
+*
+         LDA   _XPOS      ; GET X POSITION
+         CLC
+         ADC   _WIDTH     ; ADD WINDOW WIDTH
+         STA   _X2        ; STORE AS WINDOW MAX POS
+         LDA   _YPOS
+         ADC   _HEIGHT    ; DO THE SAME WITH Y POSITION
+         STA   _Y2
+*
+         LDA   _XPOS      ; GET X POSITION
+         CLC
+         ADC   #1         ; ADD 1 FOR LEFT MARGIN
+         STA   _LBOUND
+         LDA   _YPOS      ; GET Y POSITION
+         CLC
+         ADC   #2         ; ADD 2 FOR TOP MARGIN
+         STA   _TBOUND
+         LDA   _X2        ; GET WINDOW X MAX
+         SEC
+         SBC   #1         ; SUBTRACT 1 FOR RIGHT MARGIN
+         STA   _RBOUND
+         LDA   _Y2        ; GET WINDOW Y MAX
+         SEC
+         SBC   #7         ; SUBTRACT 7 FOR BOTTOM
+         STA   _BBOUND    ; MARGIN AND CONTROL PANEL
+         CLC
+         ADC   #2         ; ADD 2 TO THAT TO GET
+         STA   _CTRLSEP   ; Y POSITION OF SEPARATOR
+         CLC
+         ADC   #2         ; ADD 2 TO THAT TO GET
+         STA   _CTRLTXT   ; Y POSITION OF PANEL TEXT
+         LDA   _WIDTH
+         SEC
+         SBC   #4         ; SUBTRACT 4 FROM TOTAL WIDTH
+         STA   _TXTWIDTH  ; FOR ADJUSTABLE INNER WINDOW
+         LDA   _BBOUND
+         SBC   #1         ; SUBTRACT 1 FROM TOTAL HEIGHT
+         STA   _TXTHEIGHT ; FOR ADJUSTABLE INNER WINDOW
+         RTS
+*
+********************************
+*                              *
+* _MAKEWIN                     *
+*                              *
+*------------------------------*
+*                              *
+* DRAW WINDOW A GIVEN SIZE AND *
+* COORDINATES.                 *
+*                              *
+********************************
+*
+_MAKEWIN
+*
+         TFILL _XPOS;_YPOS;_X2;_Y2;#FCHAR ; FILL WINDOW AREA
+*
+         DEC   _X2        ; DECREASE X2 AND Y2 FOR
+         DEC   _Y2        ; CLEARING INNER WINDOW
+         INC   _XPOS      ; INCREASE XPOS AND YPOS FOR
+         INC   _YPOS      ; CLEARING INNER WINDOW
+*
+         TFILL _XPOS;_YPOS;_X2;_Y2;#$A0 ; " " ; CLEAR INNER
+*
+         THLIN _XPOS;_X2;_CTRLSEP;#FCHAR ; DRAW CONTROL SEPARATOR
+         SCPOS _LBOUND;_CTRLTXT ; CURSOR AT PANEL TEXT AREA
+         PRN   "  SPACE = CONT, ESC = QUIT"
+*
+         SCPOS _LBOUND;_TBOUND ; SET CURSOR TO TOP LEFT OF WIN
+*
+         RTS
+*
+********************************
+*                              *
+* _OPENF                       *
+*                              *
+*------------------------------*
+*                              *
+* OPEN THE SOURCE FILE AND SET *
+* FOR READING.                 *
+*                              *
+********************************
+*
+_OPENF
+*
+         LDA   _RFILE     ; GET FILENAME ADDRESS
+         STA   ADDR3
+         LDA   _RFILE+1
+         STA   ADDR3+1
+         LDY   #0
+         LDA   (ADDR3),Y  ; GET LENGTH OF STRING
+         STA   _LNLEN
+         INC   _LNLEN     ; INCREASE LENGTH BY 1 (?)
+         LDY   #255       ; SET COUND TO OVERFLOW TO 0
+*
+** NOW GET FILENAME STRING
+*
+:CSLP
+         INY
+         LDA   (ADDR3),Y
+         STA   _RFS,Y     ; COPY FN STRING TO NEW ADDR
+         CPY   _LNLEN
+         BCC   :CSLP
+         BEQ   :CSLP
+*
+         SCAT  "OPEN ";#_RFS;#100 ; CONCAT FILENAME TO OPEN
+         CMD   #RETURN    ; EXECUTE COMMAND IN RETURN
+*
+         SCAT  "READ ";#_RFS;#100 ; CONCAT TO READ
+         CMD   #RETURN    ; EXECUTE
+*
+         ERRH  #_LASTRUN  ; WHEN FILE END IS REACHED,
+*                         ; EXEC _LASTRUN ROUTINE
+         RTS
+*
+********************************
+*                              *
+* _BEGREAD                     *
+*                              *
+*------------------------------*
+*                              *
+* BEGIN READING AND OUTPUTTING *
+* FILE TO THE WINDOW.          *
+*                              *
+* NOTE THAT THIS SUBROUTINE    *
+* IS SUPERBLY INEFFICIENT, AND *
+* WILL BE DRASTICALLY REVISED  *
+* IN FUTURE ITERATIONS.        *
+*                              *
+********************************
+*
+_BEGREAD
+*
+         LDA   #255       ; RESET COUNTER
+         STA   _CNT
+_FSTART                   ; JMP HERE FOR NEXT PAGE
+         LDA   _TBOUND
+         STA   _LINENO    ; RESET LINE NUMBER
+         LDA   _LBOUND
+         STA   _CNT2      ; RESET XPOS
+         STA   _CBAK      ; RESET XPOS BACKUP
+:RFLP                     ; (R)EAD (F)ILE (L)OO(P)
+         GKEY             ; GET CHAR FROM FILE
+         INC   _CNT       ; INCREASE COUNTER
+         LDY   _CNT
+         STA   _LINE,Y    ; STORE CHARACTER IN _LINE
+         LDA   _CNT
+         CMP   _TXTWIDTH  ; IF LINE LENGTH =< MAX TEXT WIDTH
+         BCC   :RFLP      ; CONTINUE LOOPING
+         BEQ   :RFLP
+                          ; OTHERWISE
+         LDA   _LINENO    ; IF LINENO < MAX LINES
+         CMP   _TXTHEIGHT
+         BCC   :GOPRN     ; CONTINUE PRINTING
+**
+         LDA   #"-"       ; "-"
+         JSR   COUT1
+         JMP   _PWAIT     ; OTHERWISE, WAIT FOR INPUT
+*
+:GOPRN
+         LDA   _LINE ; PRINT VERY FIRST CHAR OF LINE
+         LDY   #0
+         JSR   COUT
+         LDA   #255       ; RESET COUNTER
+         STA   _CNT
+         LDA   _CBAK      ; MOVE PREVIOUS CNT2 VALUE
+         STA   _CNT2      ; BACK INTO CNT2
+         SCPOS _CBAK;_TBOUND     ; RESET CURSOR POSITION
+:PLP
+         INC   _CNT       ; INCREASE COUNTER
+         INC   _CNT2      ; INCREASE CURSOR POS COUNTER
+         LDY   _CNT
+         LDA   _LINE,Y
+         CMP   #$8D       ; IF CURRENT CHAR != [RETURN]
+         BNE   :CPLP      ; THEN SKIP INCREASING LINE COUNT
+:LINPLUS                  ; ELSE,
+         INC   _LINENO    ; INCREASE LINE COUNT
+         LDA   _LBOUND    ; RESET XPOS
+         STA   _CNT2
+:CPLP
+         SCPOS _CNT2;_LINENO ; SET NEXT CURSOR POSITION
+*
+** NOW TEST FOR WORD WRAPPING
+*
+         LDA   _TXTWIDTH  ; ADD TXTWIDTH TO LEFT BOUND
+         ADC   _LBOUND    ; AND SUBTRACT CNT2 TO GET
+         SBC   _CNT2      ; CURRENT SPACES LEFT
+         CMP   #4         ; IF SPACE LEFT > 4
+         BCS   :NOWRAP    ; DON'T BOTHER CHECKING FOR WRAP
+         LDY   _CNT       ; OTHERWISE,
+         LDA   _LINE,Y    ; IF CURRENT CHAR ISN'T A SPACE
+         CMP   #$A0       ; THEN SKIP WRAPPING
+         BNE   :NOWRAP
+         INC   _LINENO    ; ELSE INCREASE LINENO
+         LDA   _LBOUND    ; RESET XPOS
+         STA   _CNT2
+         STA   _CBAK
+*
+:NOWRAP
+*
+         LDA   _CNT2      ; LOAD XPOS
+         STA   _CBAK      ; BACKUP
+         SBC   _LBOUND    ; SUBTRACT LEFT BOUND
+         CMP   _TXTWIDTH  ; IF RESULT IS != TEXTWIDTH
+         BCC   :CPLPCONT  ; SKIP INCREASING LINE NUMBER
+         BEQ   :CPLPCONT
+         INC   _LINENO    ; ELSE, INCREASE LINENO
+         LDA   _LBOUND    ; RESET XPOS
+         STA   _CNT2      ; STORE NEW EXPOS
+         STA   _CBAK      ; BACKUP
+:CPLPCONT
+         LDY   _CNT       ; LOAD NEXT CHAR
+         LDA   _LINE,Y
+         JSR   COUT       ; PRINT TO CURRENT POSITION
+         LDA   _CNT
+         CMP   _TXTWIDTH  ; IF CNT <= TEXTWIDTH
+         BEQ   :PLP       ; RETURN TO PRINTING LOOP
+         BCC   :PLP
+*
+         LDY   _CNT
+         INY
+         LDA   _LINE,Y
+         STA   _LCHAR
+         LDA   #255
+         STA   _CNT       ; OTHEWISE, RESET COUNTER
+*WAIT
+         JMP   :RFLP      ; JUMP TO READING LOOP
+*
+_LASTRUN
+         LDA   _LCHAR
+         JSR   COUT
+         LDA   _CBAK      ; LOAD LAST XPOS AND STORE
+         STA   _CNT2      ; BACK INTO CNT2
+         INC   _CNT2
+         LDA   _CNT       ; BACKUP CNT TO LCNT
+         STA   _LCNT
+         LDA   #255       ; RESET CNT
+         STA   _CNT
+:LASTLP                   ; (LAST)(L)OO(P)
+         INC   _CNT
+         INC   _CNT2      ; INCREASE COUNTER, XPOS
+         SCPOS _CNT2;_LINENO   ; SET NEXT CURSOR POSITION
+         LDY   _CNT
+         LDA   _LINE,Y    ; GET NEXT CHAR
+         JSR   COUT       ; PRINT TO SCREEN
+         CMP   #$8D       ; IF CHAR <> [RETURN]
+         BNE   :CONTLAST  ; SKIP LINENO INCREASE
+         INC   _LINENO    ; OTHERWISE, INCREASE LINENO
+         LDA   #255       ; RESET XPOS
+         ADC   _LBOUND
+         STA   _CNT2
+:CONTLAST
+         LDY   _CNT       ; IF CNT < BACKED UP CONT
+         CPY   _LCNT      ; THEN CONTINUE LAST LOOP
+         BCC   :LASTLP    ; OTHERWISE, IF FILE STILL OPEN
+         LDA   #$FF       ; THEN CLOSE IT
+         STA   _CLOSED
+         SCAT  "CLOSE ";#_RFS;#100
+         CMD   #RETURN
+*
+********************************
+*                              *
+* _PWAIT                       *
+*                              *
+*------------------------------*
+*                              *
+* WAIT FOR APPROPRIATE KEY TO  *
+* BE PRESSED, THEN CONTINUE    *
+* READING OR EXIT WINDOW.      *
+*                              *
+********************************
+*
+_PWAIT
+         WAIT             ; WAIT FOR A KEYPRESS
+         CMP   #$1B       ; IF KEY IS [ESC]
+         BEQ   :QUITPOP   ; EXIT WINDOW TO CALLBACK
+         CMP   #$20       ; IF KEY IS [SPACE]
+         BEQ   :LOADNEXT  ; LOAD NEXT PAGE OF FILE
+         JMP   _PWAIT     ; REPEAT
+:QUITPOP
+         LDA   _JUMPTO    ; LOAD ADDRESS TO RETURN TO
+         STA   ADDR4
+         LDA   _JUMPTO+1
+         STA   ADDR4+1
+         JMP   (ADDR4)    ; INDIRECT JUMP TO IT
+*
+:LOADNEXT
+         LDA   _CLOSED    ; CHECK IF FILE WAS CLOSED
+         CMP   #$FF
+         BEQ   :QUITPOP   ; IF SO, JUST EXIT WINDOW
+                          ; OTHERWISE, CLEAR TEXT AREA
+*
+         TFILL _XPOS;_YPOS;_X2;_BBOUND;#$A0
+*
+         JMP   _FSTART    ; CONTINUE READING FILE
+*
+********************************
+*                              *
+* DATA                         *
+*                              *
+********************************
+*
+_HEIGHT  DS    1          ; WINDOW HEIGHT
+_WIDTH   DS    1          ; WINDOW WIDTH
+_YPOS    DS    1          ; WINDOW Y POSITION
+_XPOS    DS    1          ; WINDOW X POSITION
+_X2      DS    1          ; WINDOW RIGHTMOST POSITION
+_Y2      DS    1          ; WINDOW BOTTOM POSITION
+_LBOUND  DS    1          ; LEFT BOUNDARY
+_RBOUND  DS    1          ; RIGHT BOUNDARY
+_TBOUND  DS    1          ; TOP BOUNDARY
+_BBOUND  DS    1          ; BOTTOM BOUNDARY
+_CTRLSEP DS    1          ; CONTROL PANEL SEPARATOR Y POSITION
+_CTRLTXT DS    1          ; CONTROL PANEL TEXT Y POSITION
+_CNT     DS    1          ; COUNTER
+_CNT2    DS    1          ; ANOTHER COUNTER
+_LCNT    DS    1          ; LINE COUNTER
+_LINENO  DS    1          ; CURRENT SCREEN LINE NUMBER
+_LNLEN   DS    1          ; LENGTH OF A LINE READ
+_CBAK    DS    1          ; CURSOR POSITION BACKUP (CNT2)
+_CLOSED  DS    1          ; FILE OPEN OR CLOSED FLAG
+_RFS     DS    100        ; FILENAME STRING COPY
+_LINE    DS    255        ; LINE READ FROM FILE
+_RFILE   DS    2          ; FILENAME STRING ADDRESS
+_JUMPTO  DS    2          ; CALLBACK RETURN LOCATION
+_TXTWIDTH DS   1          ; TEXT AREA WIDTH
+_TXTHEIGHT DS  1          ; TEXT AREA HEIGHT
+_LCHAR   DS    1

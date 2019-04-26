@@ -1,0 +1,24 @@
+INTASC   MAC
+         _ISLIT ]1
+         JSR   HEX2INTASC
+         <<<
+ASCINT   MAC
+         _ISSTR ]1
+         JSR   INTASC2HEX
+         <<<
+HEXASC   MAC
+         _ISLIT ]1
+         JSR   HEX2HEXASC
+         <<<
+ASCHEX   MAC
+         _ISSTR ]1
+         JSR   HEXASC2HEX
+         <<<
+BINASC   MAC
+         _ISLIT ]1
+         JSR   HEX2BINASC
+         <<<
+ASCBIN   MAC
+         _ISSTR ]1
+         JSR   BINASC2HEX
+         <<<

@@ -1,0 +1,599 @@
+********************************
+*                              *
+* PERFECT MAZE GENERATOR       *
+*                              *
+********************************
+*
+** ASSEMBLER DIRECTIVES
+*
+         CYC   AVE
+         EXP   ONLY       ; TURN OFF LATER
+         DSK   MAKEMAZE
+         TR    ON
+         OBJ   $BFE0
+         ORG   $6000
+*
+         PUT   VARS.REQUIRED
+         USE   MIN.MAC.REQUIRED
+         USE   MIN.MAC.ARRAYS
+         USE   MIN.MAC.MATH
+         USE   MIN.MAC.STDIO
+         PUT   MIN.HOOKS.REQUIRED
+         PUT   HOOKS.STDIO
+         PUT   HOOKS.MATH
+         PUT   HOOKS.ARRAYS
+*
+********************************
+*                              *
+* CONSTANT DECLARATIONS        *
+*                              *
+********************************
+*
+XLEN     KBD   "ENTER MAZE SIZE"
+XNUM     EQU   2*XLEN
+BAS      EQU   $2000      ; BASE ADDRESS FOR ARRAYS
+YLEN     EQU   XLEN       ; CURRENT ALGO ONLY DOES SQUARE
+XMAX     EQU   XLEN+1     ; ADD EXTRA COLUMN
+YMAX     EQU   YLEN+1     ; ADD EXTRA ROW
+ASZ      EQU   XMAX*YMAX+10 ; ARRAY SIZE+INFO BYTES
+XSTAKS   EQU   ASZ*2+1    ; COLUMN STACK SIZE; X * Y + 1
+YSTAKS   EQU   ASZ*2+1    ; ROW STACK SIZE; X * Y + 1
+*
+SOUTHW   EQU   BAS        ; SOUTH WALLS ARRAY
+WESTW    EQU   ASZ+BAS    ; WEST WALLS ARRAY
+VISITED  EQU   2*ASZ+BAS  ; CELLS VISITED
+XSTACK   EQU   3*ASZ+BAS  ; STACK FOR COLUMNS
+YSTACK   EQU   3*ASZ+BAS+XSTAKS ; STACK FOR ROWS
+*
+********************************
+*                              *
+* MAIN PROGRAM LOOP            *
+*                              *
+********************************
+*
+INIT
+*
+         JSR   HOME
+         PRN   "INITIALIZING...",8D
+*
+         JSR   :SETVARS
+         JSR   :OUTWALLS
+*
+** GET RANDOM STARTING POINT
+*
+         RNDB #2;#<XLEN   ; RANDOM STARTING POINT
+         STA   XX         ; BETWEEN 2 AND XLEN LOBYTE
+         RNDB #2;#<YLEN   ; RANDOM STARTING POINT
+         STA   YY         ; BETWEEN 2 AND YLEN LOBYTE
+         LDA   #>XLEN     ; IF XLEN HIBYTE IS 0,
+         CMP   #0         ; THEN SKIP SETTING XX HIBYTE
+         BEQ   :SKIPHI
+         LDA   #>YLEN     ; IF YLEN HIBYTE IS 0,
+         CMP   #0         ; THEN SKIP SETTING YY HIBYTE
+         BEQ   :SKIPHI
+         RNDB  #1;#>XLEN  ; RANDOMLY SET XX HIBYTE
+         STA   XX+1
+         RNDB  #1;#>YLEN  ; RANDOMLY SET YY HIBYTE
+         STA   YY+1
+         JMP   BUILD
+:SKIPHI                   ; JUST SET HIBYTES TO 0
+         LDA   #0
+         STA   XX+1
+         STA   YY+1
+*
+         JMP   BUILD
+*
+********************************
+*
+:SETVARS
+*
+** DIM ARRAYS AND FILL
+*
+         DIM162 SOUTHW;#XMAX;#YMAX;#1;#1
+         DIM162 WESTW;#XMAX;#YMAX;#1;#1
+         DIM162 VISITED;#XMAX;#YMAX;#1;#0
+         DIM161 XSTACK;#XSTAKS;#2;#0
+         DIM161 YSTACK;#YSTAKS;#2;#0
+*
+** NOW ASSIGN VARIABLE VALUES
+*
+         LDA   #0
+         STA   SPTR       ; INIT STACK POINTER
+         STA   V0
+         LDA   #1
+         STA   V1
+         RTS
+*
+********************************
+*
+:OUTWALLS
+*
+** MAKE COLUMN MIN AND MAX TO BE ALL
+** WALL (CODE: 1).
+*
+         LDA   #0         ; CLEAR ALL TO 0 FIRST
+         STA   XX
+         STA   YY
+         STA   XX+1
+         STA   YY+1
+         JMP   :COLCONT   ; SKIP FIRST INCREMENT
+*
+:COLEDGE
+         LDA   XX
+         CLC
+         ADC   #1
+         STA   XX
+         BCC   :COLCONT   ; IF CARRY SET, THEN INC HIBYTE
+         INC   XX+1
+:COLCONT
+         PUT162 V1;VISITED;XX;#0
+         PUT162 V1;VISITED;XX;#YMAX-1
+         LDA   XX
+         CMP   #<XMAX-1   ; IF XX LO < MAX SIZE, REPEAT
+         BNE   :COLEDGE
+         LDA   XX+1       ; TEST HI BIT
+         CMP   #>XMAX     ; IF XX HI < MAX HI, REPEAT
+         BNE   :COLEDGE
+*
+** MAKE MIN AND MAX ROWS TO BE ALL WALL
+*
+         JMP   :ROWCONT   ; SKIP FIRST INCREMENT
+*
+:ROWEDGE
+         LDA   YY
+         CLC
+         ADC   #1
+         STA   YY
+         BCC   :ROWCONT   ; IF CARRY SET, INC HIBYTE
+         INC   YY+1
+:ROWCONT
+         PUT162 V1;VISITED;#0;YY
+         PUT162 V1;VISITED;#XMAX-1;YY
+         LDA   YY
+         CMP   #<YMAX-1   ; IF YY LO < YMAX LO, REPEAT
+         BNE   :ROWEDGE
+         LDA   YY+1
+         CMP   #>YMAX     ; IF YY HI < YMAX HI, REPEAT
+         BNE   :ROWEDGE
+         RTS
+*
+********************************
+*                              *
+*   BUILD THE MAZE             *
+*                              *
+********************************
+*
+BUILD
+*
+         PRN   "BUILDING MAZE...",8D8D
+         JMP   CONTSPTR   ; SKIP FIRST INC
+*
+********************************
+*
+STAKPUSH
+*
+         LDA   SPTR       ; INCREMENT STACK POINTER
+         CLC
+         ADC   #1
+         STA   SPTR
+         BCC   CONTSPTR   ; IF CARRY SET, INC POINTER HI
+         INC   SPTR+1
+CONTSPTR
+         PUT161 XX;XSTACK;SPTR ; PUT COL ON STACK
+         PUT161 YY;YSTACK;SPTR ; PUT ROW ON STACK
+         PUT162 V1;VISITED;XX;YY ; MARK BLOCK AS VISITED
+*
+********************************
+*
+CHECKALL
+*
+** CHECKS ALL ADJACENT BLOCKS FOR A WALL. IF
+** COMPLETELY SURROUNDED, POP THE STACK AND
+** AND START OVER UNTIL.
+*
+         LDA   YY+1       ; COPY HI BYTES OF XX,YY FIRST
+         STA   YP1+1
+         STA   YM1+1
+         LDA   XX+1
+         STA   XP1+1
+         STA   XM1+1
+*
+         LDA   YY         ; CALC AND STORE YY+1
+         CLC
+         ADC   #1
+         STA   YP1
+         BCC   :YP1CNT    ; IF CARRY SET, INC YYP1 HI
+         INC   YP1+1
+:YP1CNT
+         LDA   XX         ; CALC AND STORE XX+1
+         CLC
+         ADC   #1
+         STA   XP1
+         BCC   :XP1CNT    ; IF CARRY SET, INC XP1 HI
+         INC   XP1+1
+:XP1CNT
+         LDA   YY         ; CALC AND STORE YY-1
+         SEC
+         SBC   #1
+         STA   YM1
+         BCS   :YM1CNT    ; IF CARRY CLEAR, DEC YM1 HI
+         DEC   YM1+1
+:YM1CNT
+         LDA   XX         ; CALC AND STORE XX-1
+         SEC
+         SBC   #1
+         STA   XM1
+         BCS   :XM1CNT    ; IF CARRY CLEAR, DEC XM1 HI
+         DEC   XM1+1
+:XM1CNT
+*JSR CELLPOS
+*
+** NOW CHECK ADJACENT CELLS FOR WALLS
+*
+:IF1                      ; IF VISITED(XX,YY+1) = 1
+         LDA   YY+1       ; IF YY HI BYTE = YMAX HI BYTE,
+         CMP   #>YMAX     ; THEN TEST YY LOW BYTE
+         BNE   :IF1TEST
+         LDA   YY
+         CMP   #<YMAX     ; IF YY LOBYTE = YMAX LOBYTE, THEN
+         BEQ   :IF2       ; AUTOMATICALLY ASSUME ITS A WALL
+*
+:IF1TEST
+         GET162 VISITED;XX;YP1
+         LDA   RETURN
+         CMP   #1
+         BEQ   :IF2       ; IF CELL BELOW IS A WALL
+                          ; CONTINUE TESTING OTHER
+                          ; ADJACENT CELLS
+         JMP   DOMOVE     ; OTHERWISE, EXIT CONDITIONAL
+*
+:IF2                      ; IF VISITED(X+1,Y) = 1
+*
+         LDA   XX+1       ; IF XX HI BYTE = XMAX HIBYTE
+         CMP   #>XMAX     ; THEN TEST LOBYTE
+         BNE   :IF2TEST
+         LDA   XX         ; IF XX LOBYTE = XMAX LOBYTE
+         CMP   #<XMAX-1   ; THEN ASSUME RIGHT CELL = WALL
+         BEQ   :IF3
+:IF2TEST
+         GET162 VISITED;XP1;YY ; IF CELL TO RIGHT
+         LDA   RETURN     ; IS A WALL, THEN
+         CMP   #1         ; CONTINUE CELL TESTING;
+         BEQ   :IF3       ; ELSE, REPEAT MOVE
+         JMP   DOMOVE
+*
+:IF3                      ; IF VISITED(XX,YY-1) = 1
+         LDA   YY+1       ; IF YY HIBYTE = 0 THEN TEST
+         CMP   #0         ; LOBYTE
+         BNE   :IF3TEST
+         LDA   YY         ; IF YY LOBYTE = 0 THEN
+         CMP   #0         ; ASSUME UPPER CELL = WALL
+         BEQ   :IF4       ; AND CONTINUE TESTING
+:IF3TEST
+         GET162 VISITED;XX;YM1
+         LDA   RETURN     ; IF CELL ABOVE IS WALL THEN
+         CMP   #1         ; CONTINUE TESTING CELLS;
+         BEQ   :IF4       ; ELSE, REPEAT MOVE
+         JMP   DOMOVE
+*
+:IF4                      ; IF VISITED(XX-1,YY) = 1
+         LDA   XX+1       ; IF XX HIBYTE = 0
+         CMP   #0         ; THEN TEST LOBYTES
+         BNE   :IF4TEST
+         LDA   XX         ; IF XX LOBYTE = 0
+         CMP   #0         ; THEN ASSUME LEFT CELL = WALL
+         BEQ   :POP       ; AND POP THE STACK
+:IF4TEST
+         GET162 VISITED;XM1;YY
+         LDA   RETURN     ; IF LEFT CELL = 1
+         CMP   #1         ; THEN ALL ADJACENT CELLS ARE WALLS
+         BEQ   :POP       ; SO POP THE STACK
+*
+         JMP   DOMOVE     ; OTHERWISE, REPEAT MOVING
+*
+********************************
+*
+:POP
+*
+         GET161 XSTACK;SPTR ; GET NEW XX POSITION
+         LDA   RETURN
+         STA   XX         ; STORE LO BYTE
+         LDA   RETURN+1
+         STA   XX+1       ; STORE HI BYTE
+         GET161 YSTACK;SPTR
+         LDA   RETURN     ; GET NEW Y POSITION
+         STA   YY
+         LDA   RETURN+1
+         STA   YY+1
+         LDA   SPTR       ; POP STACK
+         SEC
+         SBC   #1
+         STA   SPTR
+         BCS   :SPCNT2    ; IF CARRY NOT SET, DEC HIBYTE
+         DEC   SPTR+1
+:SPCNT2
+         LDA   SPTR+1     ; IF POINTER HIBYTE > 0
+         CMP   #0         ; THEN REPEAT MOVEMENT
+         BNE   :DOREPEAT
+         LDA   SPTR       ; OTHERWISE, TEST LOBYTE
+         CMP   #1         ; IF STILL MORE ON STACK
+         BEQ   :DOREPEAT
+         BCS   :DOREPEAT  ; THEN REPEAT MOVEMENT
+         JMP   DISPMAZE   ; OTHERWISE, FINISHED!
+*
+:DOREPEAT
+         JMP   CHECKALL
+*
+********************************
+*
+DOMOVE
+*
+** MOVE IN A RANDOM DIRECTION
+*
+         JSR   RAND8
+         CMP   #64        ; IF RND < 64
+         BCC   :MVDJ
+         CMP   #128       ; ELSE IF RND < 128
+         BCC   :MVRJ
+         CMP   #192       ; ELSE IF RND < 192
+         BCC   :MVUPJ
+         JMP   :MVLEFT    ; ELSE RND IS > 191
+:MVUPJ   JMP   :MVUP
+:MVRJ    JMP   :MVRIGHT
+:MVDJ    JMP   :MVDOWN
+*
+:MVDOWN
+         LDA   YY+1       ; IF YY HIBYTE = YMAX HIBYTE
+         CMP   #>YMAX     ; THEN TEST LOBYTES
+         BNE   :DTEST     ; OTHERWISE, TEST CELL BELOW
+         LDA   YY
+         CMP   #<YMAX     ; IF YY LOBYTE = YMAX LOBYTE
+         BEQ   :DNO       ; THEN ASSUME CELL BELOW = WALL
+:DTEST
+         GET162 VISITED;XX;YP1
+         LDA   RETURN
+         CMP   #0         ; IF CELL BELOW NOT A WALL
+         BEQ   :DOWNGO    ; THEN MOVE DOWN
+:DNO
+         JMP   DOMOVE     ; ELSE, TRY MOVING ELSEWHERE
+:DOWNGO
+         PUT162 V0;SOUTHW;XX;YY  ; PUT 0 AT CURRENT POSITION
+         LDA   YP1        ; INCREASE YY POSITION (MOVE DOWN)
+         STA   YY
+         LDA   YP1+1
+         STA   YY+1
+:DOWNC
+         JMP   STAKPUSH   ; PUSH POSITION TO STACK, REPEAT
+*
+:MVRIGHT
+         LDA   XX+1       ; IF XX HIBYTE = XMAX HIBYTE
+         CMP   #>XMAX     ; THEN TEST LOW BYTE
+         BNE   :RTEST     ; ELSE CONTINUE CELL CHECK
+         LDA   XX
+         CMP   #<XMAX-1   ; IF XX LOBYTE = XMAX LOBYTE
+         BEQ   :RNO       ; THEN ASSUME WALL TO RIGHT
+                          ; AND SKIP THE CHECK
+:RTEST
+         GET162 VISITED;XP1;YY
+         LDA   RETURN     ; IF CELL TO RIGHT IS NOT WALL
+         CMP   #0         ; THEN MOVE THERE
+         BEQ   :RIGHTGO
+:RNO
+         JMP   DOMOVE     ; OTHERWISE, TRY MOVING ELSEWHERE
+:RIGHTGO
+         PUT162 V0;WESTW;XP1;YY ; MARK RIGHT CELL AS EMPTY
+         LDA   XP1        ; MOVE TO RIGHT CELL
+         STA   XX
+         LDA   XP1+1
+         STA   XX+1
+:RIGHTC
+         JMP   STAKPUSH
+*
+:MVUP
+         LDA   YY+1       ; IF YY HIBYTE != 0 THEN
+         CMP   #0         ; SKIP LOBYTE TEST
+         BNE   :UTEST
+         LDA   YY         ; IF YY LOBYTE = 0 THEN
+         CMP   #0         ; ASSUME UP CELL IS WALL
+         BEQ   :UNO       ; AND MOVE ELSEWHERE
+:UTEST
+         GET162 VISITED;XX;YM1
+         LDA   RETURN     ; IF VISITED(XX,YY) = 0
+         CMP   #0         ; (NO WALL) THEN
+         BEQ   :UPGO      ; MOVE ON UP THERE
+:UNO
+         JMP   DOMOVE
+:UPGO
+         PUT162 V0;SOUTHW;XX;YM1
+         LDA   YM1        ; MOVE UP ONE CELL
+         STA   YY
+         LDA   YM1+1
+         STA   YY+1
+:UPC
+         JMP   STAKPUSH
+*
+:MVLEFT
+         LDA   XX+1       ; IF XX HIBYTE != 0 THEN
+         CMP   #0         ; SKIP LOBYTE TEST
+         BNE   :LTEST
+         LDA   XX         ; IF XX LOBYTE = 0
+         CMP   #0         ; THEN ASSME LEFT CELL IS WALL
+         BEQ   :LNO       ; AND TRY TO MOVE ELSEWHERE
+:LTEST
+         GET162 VISITED;XM1;YY
+         LDA   RETURN     ; IF LEFT CELL IS NOT A WALL
+         CMP   #0         ; THEN LET'S MOVE THERE
+         BEQ   :LEFTGO
+:LNO
+         JMP   DOMOVE
+:LEFTGO
+         PUT162 V0;WESTW;XX;YY
+         LDA   XM1        ; MOVE ONE CELL LEFT
+         STA   XX
+         LDA   XM1+1
+         STA   XX+1
+:LEFTC
+         JMP   STAKPUSH
+*
+********************************
+*                              *
+* DISPLAY THE MAZE             *
+*                              *
+********************************
+*
+DISPMAZE
+*
+** SEND MAZE TO DISPLAY OUTPUT, FORMATTED
+*
+         PRN   "PRINTING...",8D8D
+         LDA   #0
+         STA   XX
+:XLOOP                    ; PRINT FIRST LINE OF WALLS
+         INC   XX
+         PRN   "X"
+         LDA   XX
+         CMP   #XNUM-1
+         BNE   :XLOOP
+         PRN   " ",8D
+*
+         LDA   #0         ; RESET XX,YY
+         STA   XX+1
+         STA   YY+1
+         LDA   #1
+         STA   XX
+         STA   YY
+WLP
+*
+** IF WESTW(X,Y) == 0
+*
+         GET162 WESTW;XX;YY
+         LDA   RETURN
+         CMP   #0
+         BEQ   NOWALLW    ; THEN PRINT ...
+YESWALLW                  ; ELSE PRINT X..
+         PRN   "X "
+         JMP   CONTWLP
+NOWALLW
+         PRN   "  "
+*
+CONTWLP
+         LDA   XX         ; INCREASE XX
+         CLC
+         ADC   #1         ; LOBYTE FIRST
+         STA   XX
+         BCC   :SKIPHI    ; IF HI = 0, SKIP INC
+         INC   XX+1
+:SKIPHI
+         LDA   XX+1       ; IF HIBYTE != XMAX HI
+         CMP   #>XMAX
+         BNE   WLP        ; THEN REPEAT
+         LDA   XX         ; OTHERWISE, TEST LOWS
+         CMP   #<XMAX-1   ; IF LOBYTE != XMAX-1
+         BNE   WLP        ; REPEAT
+*
+         PRN   "X",8D  ; OTHERWISE, GO TO NEXT LINE
+*
+         LDA   #1         ; RESET XX COUNTER
+         STA   XX
+         LDA   #0
+         STA   XX+1
+*
+** IF SOUTHW(X,Y) == 0
+*
+SLP
+         GET162 SOUTHW;XX;YY
+         LDA   RETURN
+         CMP   #0
+         BEQ   NOSOUTH    ; THEN PRINT X..
+YSOUTH                    ; ELSE PRINT XXX
+         PRN   "XX"
+         JMP   CONTSLP
+NOSOUTH
+         PRN   "X "
+CONTSLP
+         LDA   XX         ; INCREASE XX BY 1
+         CLC
+         ADC   #1
+         STA   XX
+         BCC   :SKIPHI2   ; SKIP HI INC IF NO CARRY
+         INC   XX+1
+:SKIPHI2
+         LDA   XX+1       ; TEST HIBYTE OF XX
+         CMP   #>XMAX     ; IF HI != XMAX HI
+         BNE   SLP        ; REPEAT
+         LDA   XX         ; ELSE, TEST LOBYTE
+         CMP   #<XMAX-1   ; IF XX LO != XMAX LO - 1
+         BNE   SLP        ; REPEAT
+*
+         PRN   "X",8D ; OTHERWISE, NEW LINE
+*
+         LDA   #0         ; RESET XX
+         STA   XX+1
+         LDA   #1
+         STA   XX
+         LDA   YY         ; INCREASE YY BY 1
+         CLC
+         ADC   #1
+         STA   YY
+         BCC   :SKIP      ; IF NO CARRY, SKIP HI INC
+         INC   YY+1
+:SKIP
+         LDA   YY+1       ; IF YY HI != YMAX HI
+         CMP   #>YMAX     ; THEN NOT DONE; REPEAT LOOPS
+         BNE   REPT
+         LDA   YY         ; ELSE IF YY LO != YMAX LO
+         CMP   #<YMAX-1   ; THEN NOT DONE; REPEAT LOOPS
+         BEQ   DISPEXIT   ; OTHERWISE, DONE!
+REPT     JMP   WLP
+*
+DISPEXIT
+*
+         _WAIT
+         JMP   REENTRY
+*
+********************************
+*                              *
+* VARIABLES                    *
+*                              *
+********************************
+*
+V0       DS    1          ; USED BECAUSE OF CURRENT
+V1       DS    1          ; ARRAY DIM LIMITATIONS
+*
+XX       DS    2          ; CURRENT COLUMN
+YY       DS    2          ; CURRENT ROW
+SPTR     DS    2          ; ARRAY STACK POINTER
+XP1      DS    2          ; X PLUS ONE
+XM1      DS    2          ; X MINUS ONE
+YP1      DS    2          ; Y PLUS ONE
+YM1      DS    2          ; Y MINUS ONE
+*
+********************************
+*                              *
+*  LOW-LEVEL ROUTINES          *
+*                              *
+********************************
+*
+         PUT   MIN.LIB.REQUIRED
+*
+** INDIVIDUAL SUBROUTINES
+*
+** ARRAYS
+*
+         PUT   MIN.SUB.ADIM161
+         PUT   MIN.SUB.ADIM162
+         PUT   MIN.SUB.AGET161
+         PUT   MIN.SUB.AGET162
+         PUT   MIN.SUB.APUT161
+         PUT   MIN.SUB.APUT162
+*
+** MATH
+*
+         PUT   MIN.SUB.RAND8
+         PUT   MIN.SUB.RANDB
+*
+** STDIO
+*
+         PUT   MIN.SUB.DPRINT
+         PUT   MIN.SUB.XPRINT
+*

@@ -1,0 +1,93 @@
+*``````````````````````````````*
+* DOSCMD : EXECUTE DOS COMMAND *
+*-                            -*
+* EXECUTES A DOS COMMAND THAT  *
+* IS PASSED VIA AN ASC THAT    *
+* FOLLOWS THE JSR TO THE       *
+* ROUTINE.                     *
+*-                            -*
+* CLOBBERS:                    *
+*                              *
+* FLAGS:  ????----  REG: AXYM  *
+*-                            -*
+* CYCLES: ???                  *
+* SIZE:                        *
+*-                            -*
+* USAGE:                       *
+*                              *
+*  JSR DOSCMD                  *
+*  ASC "CATALOG"               *
+*  HEX 8D00                    *
+*-                            -*
+* ENTRY                        *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+*-                            -*
+* EXIT                         *
+*                              *
+* TOP OF STACK                 *
+*                              *
+* LOW BYTE OF RETURN ADDRESS   *
+* HI BYTE OF RETURN ADDRESS    *
+*                              *
+* .Y = CLOBBERED               *
+* .X = UNCHANGED               *
+* .A = UNCHANGED               *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+DOSCMD
+*
+** GET RETURN ADDRESS
+*
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+         PLA
+         STA   ADDR1
+         PLA
+         STA   ADDR1+1
+*
+** FIRST, ENTER APPLESOFT MODE
+*
+         LDA   #1
+         STA   $AAB6      ; DOS LANG FLAG
+         STA   $75+1      ; NOT DIRECT MODE
+         STA   $33        ; NOT DIRECT MODE
+*
+** NOW SEND STRING TO COUT
+*
+         LDA   #$8D
+         JSR   FCOUT
+         LDA   #$84       ; CTRL-D
+         JSR   FCOUT
+*
+         LDY   #0
+         LDA   (ADDR1),Y
+         STA   :SLEN
+         LDY   #$01       ; POINT TO NEXT INSTR
+*
+:LP
+         LDA   (ADDR1),Y
+         JSR   FCOUT
+         INY
+         CPY   :SLEN
+         BCC   :LP
+         BEQ   :LP
+:DONE
+         LDA   #$8D
+         JSR   FCOUT
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+*
+         RTS
+*
+** DATA
+*
+:SLEN    DS    1
+*

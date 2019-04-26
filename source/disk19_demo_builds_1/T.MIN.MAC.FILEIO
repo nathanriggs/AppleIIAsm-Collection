@@ -1,0 +1,71 @@
+BLOAD    MAC
+         _ISSTR ]1
+         JSR   BINLOAD
+         <<<
+BSAVE    MAC
+         _ISSTR ]1
+         JSR   BINSAVE
+         <<<
+AMODE    MAC
+         LDA   #1
+         STA   $AAB6      
+         STA   $75+1      
+         STA   $33        
+         <<<
+CMD      MAC
+         _ISSTR ]1
+         JSR   DOSCMD
+         <<<
+FPRN     MAC
+         IF    ",]1
+         JSR   FPRINT
+         ASC   ]1
+         HEX   8D00
+         ELSE               
+         _ISLIT ]1
+         JSR   FPSTR      
+         FIN
+         <<<
+FINP     MAC
+         _ISLIT ]1
+         JSR   FINPUT
+         <<<
+SLOT     MAC
+         LDA   ]1
+         STA   SCRATCH
+         ASL   SCRATCH
+         ASL   SCRATCH
+         ASL   SCRATCH
+         ASL   SCRATCH    
+         LDA   SCRATCH
+         STA   IOB_SLOT
+         <<<
+DRIVE    MAC
+         LDA   ]1
+         STA   IOB_DRIV
+         <<<
+TRACK    MAC
+         LDA   ]1
+         STA   IOB_TRAK
+         <<<
+SECT     MAC
+         LDA   ]1
+         STA   IOB_SECT
+         <<<
+SETDR    MAC
+         LDA   $01
+         STA   IOB_COMM
+         <<<
+SETDW    MAC
+         LDA   $02
+         STA   IOB_COMM
+         <<<
+DBUFF    MAC
+         LDA   #<]1
+         STA   IOB_BUFL
+         LDA   #>]1
+         STA   IOB_BUFH
+         <<<
+DRWTS    MAC
+         JSR   DISKOP
+         <<<

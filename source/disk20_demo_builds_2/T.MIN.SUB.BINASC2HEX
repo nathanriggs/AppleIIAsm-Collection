@@ -1,0 +1,164 @@
+BINASC2HEX
+         PLA
+         STA   RETADR
+         PLA
+         STA   RETADR+1
+         PLA
+         STA   ADDR1      
+         PLA
+         STA   ADDR1+1
+         JSR   :TESTNIB
+         LDA   :NIB
+         STA   :HINIB
+         LDA   ADDR1
+         CLC
+         ADC   #4
+         BCC   :NOADD
+         INC   ADDR1+1
+:NOADD
+         STA   ADDR1
+         JSR   :TESTNIB
+         LDA   :NIB
+         STA   :LONIB
+         LDA   :HINIB
+         ORA   :LONIB
+         STA   RETURN
+         LDA   #1
+         STA   RETLEN
+         LDA   RETADR+1
+         PHA
+         LDA   RETADR
+         PHA
+         RTS              
+:TESTNIB
+         LDY   #0
+         LDA   (ADDR1),Y  
+         CMP   #'0'
+         BEQ   :_07       
+         JMP   :_8F       
+:_07
+         LDY   #1
+         LDA   (ADDR1),Y
+         CMP   #'0'
+         BEQ   :_03       
+         JMP   :_47       
+:_03
+         LDY   #2
+         LDA   (ADDR1),Y
+         CMP   #'0'
+         BEQ   :_01       
+         JMP   :_23       
+:_01
+         LDY   #3
+         LDA   (ADDR1),Y
+         CMP   #'0'
+         BEQ   :_00       
+         LDA   #1         
+         STA   :NIB
+         RTS
+:_00     LDA   #0
+         STA   :NIB
+         RTS
+:_23     LDY   #3
+         LDA   (ADDR1),Y
+         CMP   #'0'
+         BEQ   :_02       
+         LDA   #3         
+         STA   :NIB
+         RTS
+:_02     LDA   #$2
+         STA   :NIB
+         RTS
+:_47
+         LDY   #2
+         LDA   (ADDR1),Y
+         CMP   #'0'
+         BEQ   :_45       
+         JMP   :_67       
+:_45
+         LDY   #3
+         LDA   (ADDR1),Y
+         CMP   #'0'
+         BEQ   :_4        
+         LDA   #$5        
+         STA   :NIB
+         RTS
+:_4      LDA   #$4
+         STA   :NIB
+         RTS
+:_67
+         LDY   #3
+         LDA   (ADDR1),Y
+         CMP   #'0'
+         BEQ   :_6        
+         LDA   #$7        
+         STA   :NIB
+         RTS
+:_6      LDA   #$6
+         STA   :NIB
+         RTS
+:_8F
+         LDY   #1
+         LDA   (ADDR1),Y
+         CMP   #'0'
+         BEQ   :_8B       
+         JMP   :_CF       
+:_8B
+         LDY   #2
+         LDA   (ADDR1),Y
+         CMP   #'0'
+         BEQ   :_89
+         JMP   :_AB       
+:_89
+         LDY   #3
+         LDA   (ADDR1),Y
+         CMP   #'0'
+         BEQ   :_8
+         LDA   #9         
+         STA   :NIB
+         RTS
+:_8      LDA   #$8
+         STA   :NIB
+         RTS
+:_AB
+         LDY   #3
+         LDA   (ADDR1),Y
+         CMP   #'0'
+         BEQ   :_A        
+         LDA   #$B        
+         STA   :NIB
+         RTS
+:_A      LDA   #$A
+         STA   :NIB
+         RTS
+:_CF
+         LDY   #2
+         LDA   (ADDR1),Y
+         CMP   #'0'
+         BEQ   :_CD       
+         JMP   :_EF       
+:_CD
+         LDY   #3
+         LDA   (ADDR1),Y
+         CMP   #'0'
+         BEQ   :_C        
+         LDA   #$D        
+         STA   :NIB
+         RTS
+:_C      LDA   #$C
+         STA   :NIB
+         RTS
+:_EF
+         LDY   #3
+         LDA   (ADDR1),Y
+         CMP   #'0'
+         BEQ   :_E        
+         LDA   #$F        
+         STA   :NIB
+         RTS
+:_E      LDA   #$E
+         STA   :NIB
+         RTS
+:HINIB   DS    1
+:LONIB   DS    1
+:NIB     DS    1

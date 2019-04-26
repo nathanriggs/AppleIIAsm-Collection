@@ -1,0 +1,2766 @@
+7000-   4C 4A 72    JMP   $724A
+7003-   00          BRK
+7004-   00          BRK
+7005-   00          BRK
+7006-   00          BRK
+7007-   00          BRK
+7008-   00          BRK
+7009-   00          BRK
+700A-   00          BRK
+700B-   00          BRK
+700C-   00          BRK
+700D-   00          BRK
+700E-   00          BRK
+700F-   00          BRK
+7010-   00          BRK
+7011-   00          BRK
+7012-   00          BRK
+7013-   00          BRK
+7014-   00          BRK
+7015-   00          BRK
+7016-   00          BRK
+7017-   00          BRK
+7018-   00          BRK
+7019-   00          BRK
+701A-   00          BRK
+701B-   00          BRK
+701C-   00          BRK
+701D-   00          BRK
+701E-   00          BRK
+701F-   00          BRK
+7020-   00          BRK
+7021-   00          BRK
+7022-   00          BRK
+7023-   00          BRK
+7024-   00          BRK
+7025-   00          BRK
+7026-   00          BRK
+7027-   00          BRK
+7028-   00          BRK
+7029-   00          BRK
+702A-   00          BRK
+702B-   00          BRK
+702C-   00          BRK
+702D-   00          BRK
+702E-   00          BRK
+702F-   00          BRK
+7030-   00          BRK
+7031-   00          BRK
+7032-   00          BRK
+7033-   00          BRK
+7034-   00          BRK
+7035-   00          BRK
+7036-   00          BRK
+7037-   00          BRK
+7038-   00          BRK
+7039-   00          BRK
+703A-   00          BRK
+703B-   00          BRK
+703C-   00          BRK
+703D-   00          BRK
+703E-   00          BRK
+703F-   00          BRK
+7040-   00          BRK
+7041-   00          BRK
+7042-   00          BRK
+7043-   00          BRK
+7044-   00          BRK
+7045-   00          BRK
+7046-   00          BRK
+7047-   00          BRK
+7048-   00          BRK
+7049-   00          BRK
+704A-   00          BRK
+704B-   00          BRK
+704C-   00          BRK
+704D-   00          BRK
+704E-   00          BRK
+704F-   00          BRK
+7050-   00          BRK
+7051-   00          BRK
+7052-   00          BRK
+7053-   00          BRK
+7054-   00          BRK
+7055-   00          BRK
+7056-   00          BRK
+7057-   00          BRK
+7058-   00          BRK
+7059-   00          BRK
+705A-   00          BRK
+705B-   00          BRK
+705C-   00          BRK
+705D-   00          BRK
+705E-   00          BRK
+705F-   00          BRK
+7060-   00          BRK
+7061-   00          BRK
+7062-   00          BRK
+7063-   00          BRK
+7064-   00          BRK
+7065-   00          BRK
+7066-   00          BRK
+7067-   00          BRK
+7068-   00          BRK
+7069-   00          BRK
+706A-   00          BRK
+706B-   00          BRK
+706C-   00          BRK
+706D-   00          BRK
+706E-   00          BRK
+706F-   00          BRK
+7070-   00          BRK
+7071-   00          BRK
+7072-   00          BRK
+7073-   00          BRK
+7074-   00          BRK
+7075-   00          BRK
+7076-   00          BRK
+7077-   00          BRK
+7078-   00          BRK
+7079-   00          BRK
+707A-   00          BRK
+707B-   00          BRK
+707C-   00          BRK
+707D-   00          BRK
+707E-   00          BRK
+707F-   00          BRK
+7080-   00          BRK
+7081-   00          BRK
+7082-   00          BRK
+7083-   00          BRK
+7084-   00          BRK
+7085-   00          BRK
+7086-   00          BRK
+7087-   00          BRK
+7088-   00          BRK
+7089-   00          BRK
+708A-   00          BRK
+708B-   00          BRK
+708C-   00          BRK
+708D-   00          BRK
+708E-   00          BRK
+708F-   00          BRK
+7090-   00          BRK
+7091-   00          BRK
+7092-   00          BRK
+7093-   00          BRK
+7094-   00          BRK
+7095-   00          BRK
+7096-   00          BRK
+7097-   00          BRK
+7098-   00          BRK
+7099-   00          BRK
+709A-   00          BRK
+709B-   00          BRK
+709C-   00          BRK
+709D-   00          BRK
+709E-   00          BRK
+709F-   00          BRK
+70A0-   00          BRK
+70A1-   00          BRK
+70A2-   00          BRK
+70A3-   00          BRK
+70A4-   00          BRK
+70A5-   00          BRK
+70A6-   00          BRK
+70A7-   00          BRK
+70A8-   00          BRK
+70A9-   00          BRK
+70AA-   00          BRK
+70AB-   00          BRK
+70AC-   00          BRK
+70AD-   00          BRK
+70AE-   00          BRK
+70AF-   00          BRK
+70B0-   00          BRK
+70B1-   00          BRK
+70B2-   00          BRK
+70B3-   00          BRK
+70B4-   00          BRK
+70B5-   00          BRK
+70B6-   00          BRK
+70B7-   00          BRK
+70B8-   00          BRK
+70B9-   00          BRK
+70BA-   00          BRK
+70BB-   00          BRK
+70BC-   00          BRK
+70BD-   00          BRK
+70BE-   00          BRK
+70BF-   00          BRK
+70C0-   00          BRK
+70C1-   00          BRK
+70C2-   00          BRK
+70C3-   00          BRK
+70C4-   00          BRK
+70C5-   00          BRK
+70C6-   00          BRK
+70C7-   00          BRK
+70C8-   00          BRK
+70C9-   00          BRK
+70CA-   00          BRK
+70CB-   00          BRK
+70CC-   00          BRK
+70CD-   00          BRK
+70CE-   00          BRK
+70CF-   00          BRK
+70D0-   00          BRK
+70D1-   00          BRK
+70D2-   00          BRK
+70D3-   00          BRK
+70D4-   00          BRK
+70D5-   00          BRK
+70D6-   00          BRK
+70D7-   00          BRK
+70D8-   00          BRK
+70D9-   00          BRK
+70DA-   00          BRK
+70DB-   00          BRK
+70DC-   00          BRK
+70DD-   00          BRK
+70DE-   00          BRK
+70DF-   00          BRK
+70E0-   00          BRK
+70E1-   00          BRK
+70E2-   00          BRK
+70E3-   00          BRK
+70E4-   00          BRK
+70E5-   00          BRK
+70E6-   00          BRK
+70E7-   00          BRK
+70E8-   00          BRK
+70E9-   00          BRK
+70EA-   00          BRK
+70EB-   00          BRK
+70EC-   00          BRK
+70ED-   00          BRK
+70EE-   00          BRK
+70EF-   00          BRK
+70F0-   00          BRK
+70F1-   00          BRK
+70F2-   00          BRK
+70F3-   00          BRK
+70F4-   00          BRK
+70F5-   00          BRK
+70F6-   00          BRK
+70F7-   00          BRK
+70F8-   00          BRK
+70F9-   00          BRK
+70FA-   00          BRK
+70FB-   00          BRK
+70FC-   00          BRK
+70FD-   00          BRK
+70FE-   00          BRK
+70FF-   00          BRK
+7100-   00          BRK
+7101-   00          BRK
+7102-   00          BRK
+7103-   00          BRK
+7104-   00          BRK
+7105-   00          BRK
+7106-   00          BRK
+7107-   00          BRK
+7108-   00          BRK
+7109-   00          BRK
+710A-   00          BRK
+710B-   00          BRK
+710C-   00          BRK
+710D-   00          BRK
+710E-   00          BRK
+710F-   00          BRK
+7110-   00          BRK
+7111-   00          BRK
+7112-   00          BRK
+7113-   00          BRK
+7114-   00          BRK
+7115-   00          BRK
+7116-   00          BRK
+7117-   00          BRK
+7118-   00          BRK
+7119-   00          BRK
+711A-   00          BRK
+711B-   00          BRK
+711C-   00          BRK
+711D-   00          BRK
+711E-   00          BRK
+711F-   00          BRK
+7120-   00          BRK
+7121-   00          BRK
+7122-   00          BRK
+7123-   00          BRK
+7124-   00          BRK
+7125-   00          BRK
+7126-   00          BRK
+7127-   00          BRK
+7128-   00          BRK
+7129-   00          BRK
+712A-   00          BRK
+712B-   00          BRK
+712C-   00          BRK
+712D-   00          BRK
+712E-   00          BRK
+712F-   00          BRK
+7130-   00          BRK
+7131-   00          BRK
+7132-   00          BRK
+7133-   00          BRK
+7134-   00          BRK
+7135-   00          BRK
+7136-   00          BRK
+7137-   00          BRK
+7138-   00          BRK
+7139-   00          BRK
+713A-   00          BRK
+713B-   00          BRK
+713C-   00          BRK
+713D-   00          BRK
+713E-   00          BRK
+713F-   00          BRK
+7140-   00          BRK
+7141-   00          BRK
+7142-   00          BRK
+7143-   00          BRK
+7144-   00          BRK
+7145-   00          BRK
+7146-   00          BRK
+7147-   00          BRK
+7148-   00          BRK
+7149-   00          BRK
+714A-   00          BRK
+714B-   00          BRK
+714C-   00          BRK
+714D-   00          BRK
+714E-   00          BRK
+714F-   00          BRK
+7150-   00          BRK
+7151-   00          BRK
+7152-   00          BRK
+7153-   00          BRK
+7154-   00          BRK
+7155-   00          BRK
+7156-   00          BRK
+7157-   00          BRK
+7158-   00          BRK
+7159-   00          BRK
+715A-   00          BRK
+715B-   00          BRK
+715C-   00          BRK
+715D-   00          BRK
+715E-   00          BRK
+715F-   00          BRK
+7160-   00          BRK
+7161-   00          BRK
+7162-   00          BRK
+7163-   00          BRK
+7164-   00          BRK
+7165-   00          BRK
+7166-   00          BRK
+7167-   00          BRK
+7168-   00          BRK
+7169-   00          BRK
+716A-   00          BRK
+716B-   00          BRK
+716C-   00          BRK
+716D-   00          BRK
+716E-   00          BRK
+716F-   00          BRK
+7170-   00          BRK
+7171-   00          BRK
+7172-   00          BRK
+7173-   00          BRK
+7174-   00          BRK
+7175-   00          BRK
+7176-   00          BRK
+7177-   00          BRK
+7178-   00          BRK
+7179-   00          BRK
+717A-   00          BRK
+717B-   00          BRK
+717C-   00          BRK
+717D-   00          BRK
+717E-   00          BRK
+717F-   00          BRK
+7180-   00          BRK
+7181-   00          BRK
+7182-   00          BRK
+7183-   00          BRK
+7184-   00          BRK
+7185-   00          BRK
+7186-   00          BRK
+7187-   00          BRK
+7188-   00          BRK
+7189-   00          BRK
+718A-   00          BRK
+718B-   00          BRK
+718C-   00          BRK
+718D-   00          BRK
+718E-   00          BRK
+718F-   00          BRK
+7190-   00          BRK
+7191-   00          BRK
+7192-   00          BRK
+7193-   00          BRK
+7194-   00          BRK
+7195-   00          BRK
+7196-   00          BRK
+7197-   00          BRK
+7198-   00          BRK
+7199-   00          BRK
+719A-   00          BRK
+719B-   00          BRK
+719C-   00          BRK
+719D-   00          BRK
+719E-   00          BRK
+719F-   00          BRK
+71A0-   00          BRK
+71A1-   00          BRK
+71A2-   00          BRK
+71A3-   00          BRK
+71A4-   00          BRK
+71A5-   00          BRK
+71A6-   00          BRK
+71A7-   00          BRK
+71A8-   00          BRK
+71A9-   00          BRK
+71AA-   00          BRK
+71AB-   00          BRK
+71AC-   00          BRK
+71AD-   00          BRK
+71AE-   00          BRK
+71AF-   00          BRK
+71B0-   00          BRK
+71B1-   00          BRK
+71B2-   00          BRK
+71B3-   00          BRK
+71B4-   00          BRK
+71B5-   00          BRK
+71B6-   00          BRK
+71B7-   00          BRK
+71B8-   00          BRK
+71B9-   00          BRK
+71BA-   00          BRK
+71BB-   00          BRK
+71BC-   00          BRK
+71BD-   00          BRK
+71BE-   00          BRK
+71BF-   00          BRK
+71C0-   00          BRK
+71C1-   00          BRK
+71C2-   00          BRK
+71C3-   00          BRK
+71C4-   00          BRK
+71C5-   00          BRK
+71C6-   00          BRK
+71C7-   00          BRK
+71C8-   00          BRK
+71C9-   00          BRK
+71CA-   00          BRK
+71CB-   00          BRK
+71CC-   00          BRK
+71CD-   00          BRK
+71CE-   00          BRK
+71CF-   00          BRK
+71D0-   00          BRK
+71D1-   00          BRK
+71D2-   00          BRK
+71D3-   00          BRK
+71D4-   00          BRK
+71D5-   00          BRK
+71D6-   00          BRK
+71D7-   00          BRK
+71D8-   00          BRK
+71D9-   00          BRK
+71DA-   00          BRK
+71DB-   00          BRK
+71DC-   00          BRK
+71DD-   00          BRK
+71DE-   00          BRK
+71DF-   00          BRK
+71E0-   00          BRK
+71E1-   00          BRK
+71E2-   00          BRK
+71E3-   00          BRK
+71E4-   00          BRK
+71E5-   00          BRK
+71E6-   00          BRK
+71E7-   00          BRK
+71E8-   00          BRK
+71E9-   00          BRK
+71EA-   00          BRK
+71EB-   00          BRK
+71EC-   00          BRK
+71ED-   00          BRK
+71EE-   00          BRK
+71EF-   00          BRK
+71F0-   00          BRK
+71F1-   00          BRK
+71F2-   00          BRK
+71F3-   00          BRK
+71F4-   00          BRK
+71F5-   00          BRK
+71F6-   00          BRK
+71F7-   00          BRK
+71F8-   00          BRK
+71F9-   00          BRK
+71FA-   00          BRK
+71FB-   00          BRK
+71FC-   00          BRK
+71FD-   00          BRK
+71FE-   00          BRK
+71FF-   00          BRK
+7200-   00          BRK
+7201-   00          BRK
+7202-   00          BRK
+7203-   00          BRK
+7204-   00          BRK
+7205-   00          BRK
+7206-   00          BRK
+7207-   00          BRK
+7208-   00          BRK
+7209-   00          BRK
+720A-   00          BRK
+720B-   00          BRK
+720C-   00          BRK
+720D-   00          BRK
+720E-   00          BRK
+720F-   00          BRK
+7210-   00          BRK
+7211-   00          BRK
+7212-   00          BRK
+7213-   00          BRK
+7214-   00          BRK
+7215-   00          BRK
+7216-   00          BRK
+7217-   00          BRK
+7218-   00          BRK
+7219-   00          BRK
+721A-   00          BRK
+721B-   00          BRK
+721C-   00          BRK
+721D-   00          BRK
+721E-   00          BRK
+721F-   00          BRK
+7220-   00          BRK
+7221-   00          BRK
+7222-   00          BRK
+7223-   00          BRK
+7224-   00          BRK
+7225-   00          BRK
+7226-   00          BRK
+7227-   00          BRK
+7228-   00          BRK
+7229-   00          BRK
+722A-   00          BRK
+722B-   00          BRK
+722C-   00          BRK
+722D-   00          BRK
+722E-   00          BRK
+722F-   00          BRK
+7230-   00          BRK
+7231-   00          BRK
+7232-   00          BRK
+7233-   00          BRK
+7234-   00          BRK
+7235-   00          BRK
+7236-   00          BRK
+7237-   00          BRK
+7238-   00          BRK
+7239-   00          BRK
+723A-   00          BRK
+723B-   00          BRK
+723C-   00          BRK
+723D-   00          BRK
+723E-   00          BRK
+723F-   00          BRK
+7240-   00          BRK
+7241-   00          BRK
+7242-   00          BRK
+7243-   00          BRK
+7244-   00          BRK
+7245-   00          BRK
+7246-   00          BRK
+7247-   00          BRK
+7248-   00          BRK
+7249-   00          BRK
+724A-   A9 01       LDA   #$01
+724C-   8D 41 72    STA   $7241
+724F-   A9 01       LDA   #$01
+7251-   8D 42 72    STA   $7242
+7254-   20 5D 72    JSR   $725D
+7257-   20 70 72    JSR   $7270
+725A-   4C D0 03    JMP   $03D0
+725D-   A9 01       LDA   #$01
+725F-   8D B6 AA    STA   $AAB6
+7262-   85 76       STA   $76
+7264-   85 33       STA   $33
+7266-   A9 00       LDA   #$00
+7268-   85 D8       STA   $D8
+726A-   A9 00       LDA   #$00
+726C-   8D DC 76    STA   $76DC
+726F-   60          RTS
+7270-   20 7D 72    JSR   $727D
+7273-   20 A4 72    JSR   $72A4
+7276-   20 29 73    JSR   $7329
+7279-   20 D6 73    JSR   $73D6
+727C-   60          RTS
+727D-   20 21 7F    JSR   $7F21
+7280-   A0 8D       LDY   #$8D
+7282-   8D 00 20    STA   $2000
+7285-   21 7F       AND   ($7F,X)
+7287-   C6 C9       DEC   $C9
+7289-   CC C5 A0    CPY   $A0C5
+728C-   D4          ???
+728D-   CF          ???
+728E-   A0 D0       LDY   #$D0
+7290-   D2 C9       CMP   ($C9)
+7292-   CE D4 BA    DEC   $BAD4
+7295-   A0 00       LDY   #$00
+7297-   20 42 7F    JSR   $7F42
+729A-   A9 76       LDA   #$76
+729C-   48          PHA
+729D-   A9 DD       LDA   #$DD
+729F-   48          PHA
+72A0-   20 1B 7A    JSR   $7A1B
+72A3-   60          RTS
+72A4-   A9 01       LDA   #$01
+72A6-   8D B6 AA    STA   $AAB6
+72A9-   85 76       STA   $76
+72AB-   85 33       STA   $33
+72AD-   A9 FF       LDA   #$FF
+72AF-   85 D8       STA   $D8
+72B1-   A9 F9       LDA   #$F9
+72B3-   8D 5A 9D    STA   $9D5A
+72B6-   A9 72       LDA   #$72
+72B8-   8D 5B 9D    STA   $9D5B
+72BB-   4C C6 72    JMP   $72C6
+72BE-   07          ???
+72BF-   D6 C5       DEC   $C5,X
+72C1-   D2 C9       CMP   ($C9)
+72C3-   C6 D9       DEC   $D9
+72C5-   A0 A0       LDY   #$A0
+72C7-   00          BRK
+72C8-   AD BE 72    LDA   $72BE
+72CB-   8D 40 71    STA   $7140
+72CE-   8D 41 71    STA   $7141
+72D1-   C8          INY
+72D2-   B9 BE 72    LDA   $72BE,Y
+72D5-   99 41 71    STA   $7141,Y
+72D8-   CC 40 71    CPY   $7140
+72DB-   D0 F4       BNE   $72D1
+72DD-   A9 71       LDA   #$71
+72DF-   48          PHA
+72E0-   A9 41       LDA   #$41
+72E2-   48          PHA
+72E3-   A9 76       LDA   #$76
+72E5-   48          PHA
+72E6-   A9 DD       LDA   #$DD
+72E8-   48          PHA
+72E9-   A9 64       LDA   #$64
+72EB-   48          PHA
+72EC-   20 76 7F    JSR   $7F76
+72EF-   A9 70       LDA   #$70
+72F1-   48          PHA
+72F2-   A9 40       LDA   #$40
+72F4-   48          PHA
+72F5-   20 9A 7E    JSR   $7E9A
+72F8-   60          RTS
+72F9-   20 21 7F    JSR   $7F21
+72FC-   A0 8D       LDY   #$8D
+72FE-   8D 00 A9    STA   $A900
+7301-   07          ???
+7302-   20 ED FD    JSR   $FDED    F8ROM:COUT
+7305-   20 21 7F    JSR   $7F21
+7308-   C5 D2       CMP   $D2
+730A-   D2 CF       CMP   ($CF)
+730C-   D2 BA       CMP   ($BA)
+730E-   A0 C6       LDY   #$C6
+7310-   C9 CC       CMP   #$CC
+7312-   C5 A0       CMP   $A0
+7314-   C4 CF       CPY   $CF
+7316-   C5 D3       CMP   $D3
+7318-   CE A7 D4    DEC   $D4A7
+731B-   A0 C5       LDY   #$C5
+731D-   D8          CLD
+731E-   C9 D3       CMP   #$D3
+7320-   D4          ???
+7321-   8D 8D 00    STA   $008D
+7324-   68          PLA
+7325-   68          PLA
+7326-   4C D0 03    JMP   $03D0
+7329-   A9 01       LDA   #$01
+732B-   8D B6 AA    STA   $AAB6
+732E-   85 76       STA   $76
+7330-   85 33       STA   $33
+7332-   A9 FF       LDA   #$FF
+7334-   85 D8       STA   $D8
+7336-   A9 CC       LDA   #$CC
+7338-   8D 5A 9D    STA   $9D5A
+733B-   A9 73       LDA   #$73
+733D-   8D 5B 9D    STA   $9D5B
+7340-   4C 4A 73    JMP   $734A
+7343-   06 C2       ASL   $C2
+7345-   CC CF C1    CPY   $C1CF
+7348-   C4 A0       CPY   $A0
+734A-   A0 00       LDY   #$00
+734C-   AD 43 73    LDA   $7343
+734F-   8D 40 71    STA   $7140
+7352-   8D 41 71    STA   $7141
+7355-   C8          INY
+7356-   B9 43 73    LDA   $7343,Y
+7359-   99 41 71    STA   $7141,Y
+735C-   CC 40 71    CPY   $7140
+735F-   D0 F4       BNE   $7355
+7361-   A9 71       LDA   #$71
+7363-   48          PHA
+7364-   A9 41       LDA   #$41
+7366-   48          PHA
+7367-   A9 76       LDA   #$76
+7369-   48          PHA
+736A-   A9 DD       LDA   #$DD
+736C-   48          PHA
+736D-   A9 64       LDA   #$64
+736F-   48          PHA
+7370-   20 76 7F    JSR   $7F76
+7373-   A9 78       LDA   #$78
+7375-   48          PHA
+7376-   A9 1B       LDA   #$1B
+7378-   48          PHA
+7379-   20 1B 7A    JSR   $7A1B
+737C-   A9 78       LDA   #$78
+737E-   48          PHA
+737F-   A9 1B       LDA   #$1B
+7381-   48          PHA
+7382-   4C 8D 73    JMP   $738D
+7385-   07          ???
+7386-   AC C1 A4    LDY   $A4C1
+7389-   B2 B0       LDA   ($B0)
+738B-   B0 B0       BCS   $733D
+738D-   A0 00       LDY   #$00
+738F-   AD 85 73    LDA   $7385
+7392-   8D 40 71    STA   $7140
+7395-   8D 41 71    STA   $7141
+7398-   C8          INY
+7399-   B9 85 73    LDA   $7385,Y
+739C-   99 41 71    STA   $7141,Y
+739F-   CC 40 71    CPY   $7140
+73A2-   D0 F4       BNE   $7398
+73A4-   A9 71       LDA   #$71
+73A6-   48          PHA
+73A7-   A9 41       LDA   #$41
+73A9-   48          PHA
+73AA-   A9 64       LDA   #$64
+73AC-   48          PHA
+73AD-   20 76 7F    JSR   $7F76
+73B0-   A9 70       LDA   #$70
+73B2-   48          PHA
+73B3-   A9 40       LDA   #$40
+73B5-   48          PHA
+73B6-   20 9A 7E    JSR   $7E9A
+73B9-   A9 FF       LDA   #$FF
+73BB-   8D DA 76    STA   $76DA
+73BE-   AD DC 76    LDA   $76DC
+73C1-   C9 FF       CMP   #$FF
+73C3-   F0 01       BEQ   $73C6
+73C5-   60          RTS
+73C6-   A9 00       LDA   #$00
+73C8-   8D DA 76    STA   $76DA
+73CB-   60          RTS
+73CC-   A9 FF       LDA   #$FF
+73CE-   8D DC 76    STA   $76DC
+73D1-   A9 00       LDA   #$00
+73D3-   85 D8       STA   $D8
+73D5-   60          RTS
+73D6-   AD DA 76    LDA   $76DA
+73D9-   C9 00       CMP   #$00
+73DB-   F0 03       BEQ   $73E0
+73DD-   4C E3 73    JMP   $73E3
+73E0-   4C 0E 75    JMP   $750E
+73E3-   AD 72 AA    LDA   $AA72
+73E6-   8D 14 77    STA   $7714
+73E9-   AD 73 AA    LDA   $AA73
+73EC-   8D 15 77    STA   $7715
+73EF-   20 21 7F    JSR   $7F21
+73F2-   A0 8D       LDY   #$8D
+73F4-   8D 00 AD    STA   $AD00
+73F7-   60          RTS
+73F8-   AA          TAX
+73F9-   8D 16 77    STA   $7716
+73FC-   AD 61 AA    LDA   $AA61
+73FF-   8D 17 77    STA   $7717
+7402-   20 21 7F    JSR   $7F21
+7405-   CC C5 CE    CPY   $CEC5
+7408-   C7          ???
+7409-   D4          ???
+740A-   C8          INY
+740B-   BA          TSX
+740C-   A0 A8       LDY   #$A8
+740E-   CC CF D7    CPY   $D7CF
+7411-   A0 C2       LDY   #$C2
+7413-   D9 D4 C5    CMP   $C5D4,Y
+7416-   AC A0 C8    LDY   $C8A0
+7419-   C9 C7       CMP   #$C7
+741B-   C8          INY
+741C-   A0 C2       LDY   #$C2
+741E-   D9 D4 C5    CMP   $C5D4,Y
+7421-   A9 8D       LDA   #$8D
+7423-   00          BRK
+7424-   A9 77       LDA   #$77
+7426-   48          PHA
+7427-   A9 16       LDA   #$16
+7429-   48          PHA
+742A-   A9 02       LDA   #$02
+742C-   48          PHA
+742D-   20 67 7A    JSR   $7A67
+7430-   20 21 7F    JSR   $7F21
+7433-   A0 8D       LDY   #$8D
+7435-   00          BRK
+7436-   20 1C 7B    JSR   $7B1C
+7439-   A9 00       LDA   #$00
+743B-   8D 0F 77    STA   $770F
+743E-   A9 00       LDA   #$00
+7440-   8D 1B 77    STA   $771B
+7443-   A9 20       LDA   #$20
+7445-   8D 1C 77    STA   $771C
+7448-   AD 1B 77    LDA   $771B
+744B-   85 EB       STA   $EB
+744D-   AD 1C 77    LDA   $771C
+7450-   85 EC       STA   $EC
+7452-   A5 EC       LDA   $EC
+7454-   29 F0       AND   #$F0
+7456-   4A          LSR
+7457-   4A          LSR
+7458-   4A          LSR
+7459-   4A          LSR
+745A-   AA          TAX
+745B-   BD 19 7D    LDA   $7D19,X
+745E-   20 ED FD    JSR   $FDED    F8ROM:COUT
+7461-   A5 EC       LDA   $EC
+7463-   29 0F       AND   #$0F
+7465-   AA          TAX
+7466-   BD 19 7D    LDA   $7D19,X
+7469-   20 ED FD    JSR   $FDED    F8ROM:COUT
+746C-   A5 EB       LDA   $EB
+746E-   29 F0       AND   #$F0
+7470-   4A          LSR
+7471-   4A          LSR
+7472-   4A          LSR
+7473-   4A          LSR
+7474-   AA          TAX
+7475-   BD 19 7D    LDA   $7D19,X
+7478-   20 ED FD    JSR   $FDED    F8ROM:COUT
+747B-   A5 EB       LDA   $EB
+747D-   29 0F       AND   #$0F
+747F-   AA          TAX
+7480-   BD 19 7D    LDA   $7D19,X
+7483-   20 ED FD    JSR   $FDED    F8ROM:COUT
+7486-   A9 BA       LDA   #$BA
+7488-   20 ED FD    JSR   $FDED    F8ROM:COUT
+748B-   A9 A0       LDA   #$A0
+748D-   20 ED FD    JSR   $FDED    F8ROM:COUT
+7490-   A0 00       LDY   #$00
+7492-   B1 EB       LDA   ($EB),Y
+7494-   29 F0       AND   #$F0
+7496-   4A          LSR
+7497-   4A          LSR
+7498-   4A          LSR
+7499-   4A          LSR
+749A-   8D 18 77    STA   $7718
+749D-   B1 EB       LDA   ($EB),Y
+749F-   29 0F       AND   #$0F
+74A1-   8D 19 77    STA   $7719
+74A4-   AE 18 77    LDX   $7718
+74A7-   BD 19 7D    LDA   $7D19,X
+74AA-   20 ED FD    JSR   $FDED    F8ROM:COUT
+74AD-   AE 19 77    LDX   $7719
+74B0-   BD 19 7D    LDA   $7D19,X
+74B3-   20 ED FD    JSR   $FDED    F8ROM:COUT
+74B6-   A9 A0       LDA   #$A0
+74B8-   20 ED FD    JSR   $FDED    F8ROM:COUT
+74BB-   C8          INY
+74BC-   C0 08       CPY   #$08
+74BE-   D0 D2       BNE   $7492
+74C0-   20 21 7F    JSR   $7F21
+74C3-   A0 8D       LDY   #$8D
+74C5-   00          BRK
+74C6-   EE 0F 77    INC   $770F
+74C9-   AD 0F 77    LDA   $770F
+74CC-   C9 14       CMP   #$14
+74CE-   D0 08       BNE   $74D8
+74D0-   20 1C 7B    JSR   $7B1C
+74D3-   A9 00       LDA   #$00
+74D5-   8D 0F 77    STA   $770F
+74D8-   AD 1B 77    LDA   $771B
+74DB-   18          CLC
+74DC-   69 08       ADC   #$08
+74DE-   90 03       BCC   $74E3
+74E0-   EE 1C 77    INC   $771C
+74E3-   8D 1B 77    STA   $771B
+74E6-   AD 00 20    LDA   $2000
+74E9-   6D 16 77    ADC   $7716
+74EC-   8D 12 77    STA   $7712
+74EF-   AD 01 20    LDA   $2001
+74F2-   6D 17 77    ADC   $7717
+74F5-   8D 13 77    STA   $7713
+74F8-   AD 1C 77    LDA   $771C
+74FB-   CD 13 77    CMP   $7713
+74FE-   D0 0A       BNE   $750A
+7500-   AD 1B 77    LDA   $771B
+7503-   CD 12 77    CMP   $7712
+7506-   F0 02       BEQ   $750A
+7508-   B0 03       BCS   $750D
+750A-   4C 48 74    JMP   $7448
+750D-   60          RTS
+750E-   A9 01       LDA   #$01
+7510-   8D B6 AA    STA   $AAB6
+7513-   85 76       STA   $76
+7515-   85 33       STA   $33
+7517-   A9 FF       LDA   #$FF
+7519-   85 D8       STA   $D8
+751B-   A9 43       LDA   #$43
+751D-   8D 5A 9D    STA   $9D5A
+7520-   A9 76       LDA   #$76
+7522-   8D 5B 9D    STA   $9D5B
+7525-   4C 2E 75    JMP   $752E
+7528-   05 CF       ORA   $CF
+752A-   D0 C5       BNE   $74F1
+752C-   CE A0 A0    DEC   $A0A0
+752F-   00          BRK
+7530-   AD 28 75    LDA   $7528
+7533-   8D 40 71    STA   $7140
+7536-   8D 41 71    STA   $7141
+7539-   C8          INY
+753A-   B9 28 75    LDA   $7528,Y
+753D-   99 41 71    STA   $7141,Y
+7540-   CC 40 71    CPY   $7140
+7543-   D0 F4       BNE   $7539
+7545-   A9 71       LDA   #$71
+7547-   48          PHA
+7548-   A9 41       LDA   #$41
+754A-   48          PHA
+754B-   A9 76       LDA   #$76
+754D-   48          PHA
+754E-   A9 DD       LDA   #$DD
+7550-   48          PHA
+7551-   A9 64       LDA   #$64
+7553-   48          PHA
+7554-   20 76 7F    JSR   $7F76
+7557-   A9 70       LDA   #$70
+7559-   48          PHA
+755A-   A9 40       LDA   #$40
+755C-   48          PHA
+755D-   20 9A 7E    JSR   $7E9A
+7560-   4C 69 75    JMP   $7569
+7563-   05 D2       ORA   $D2
+7565-   C5 C1       CMP   $C1
+7567-   C4 A0       CPY   $A0
+7569-   A0 00       LDY   #$00
+756B-   AD 63 75    LDA   $7563
+756E-   8D 40 71    STA   $7140
+7571-   8D 41 71    STA   $7141
+7574-   C8          INY
+7575-   B9 63 75    LDA   $7563,Y
+7578-   99 41 71    STA   $7141,Y
+757B-   CC 40 71    CPY   $7140
+757E-   D0 F4       BNE   $7574
+7580-   A9 71       LDA   #$71
+7582-   48          PHA
+7583-   A9 41       LDA   #$41
+7585-   48          PHA
+7586-   A9 76       LDA   #$76
+7588-   48          PHA
+7589-   A9 DD       LDA   #$DD
+758B-   48          PHA
+758C-   A9 64       LDA   #$64
+758E-   48          PHA
+758F-   20 76 7F    JSR   $7F76
+7592-   A9 70       LDA   #$70
+7594-   48          PHA
+7595-   A9 40       LDA   #$40
+7597-   48          PHA
+7598-   20 9A 7E    JSR   $7E9A
+759B-   A9 01       LDA   #$01
+759D-   8D B6 AA    STA   $AAB6
+75A0-   85 76       STA   $76
+75A2-   85 33       STA   $33
+75A4-   A9 FF       LDA   #$FF
+75A6-   85 D8       STA   $D8
+75A8-   A9 03       LDA   #$03
+75AA-   8D 5A 9D    STA   $9D5A
+75AD-   A9 76       LDA   #$76
+75AF-   8D 5B 9D    STA   $9D5B
+75B2-   A0 00       LDY   #$00
+75B4-   8C 11 77    STY   $7711
+75B7-   A0 01       LDY   #$01
+75B9-   8C 0F 77    STY   $770F
+75BC-   20 0C FD    JSR   $FD0C    F8ROM:RDKEY
+75BF-   A0 00       LDY   #$00
+75C1-   8C 10 C0    STY   $C010    r:KBDSTRB
+75C4-   AC 0F 77    LDY   $770F
+75C7-   99 1B 77    STA   $771B,Y
+75CA-   C9 8D       CMP   #$8D
+75CC-   F0 0A       BEQ   $75D8
+75CE-   C0 FF       CPY   #$FF
+75D0-   F0 06       BEQ   $75D8
+75D2-   EE 0F 77    INC   $770F
+75D5-   4C BC 75    JMP   $75BC
+75D8-   EE 11 77    INC   $7711
+75DB-   AC 0F 77    LDY   $770F
+75DE-   8C 1B 77    STY   $771B
+75E1-   A9 77       LDA   #$77
+75E3-   48          PHA
+75E4-   A9 1B       LDA   #$1B
+75E6-   48          PHA
+75E7-   20 30 80    JSR   $8030
+75EA-   AC 11 77    LDY   $7711
+75ED-   C0 14       CPY   #$14
+75EF-   D0 0F       BNE   $7600
+75F1-   AD 00 C0    LDA   $C000    r:KBD  w:CLR80COL
+75F4-   10 FB       BPL   $75F1
+75F6-   29 7F       AND   #$7F
+75F8-   8D 10 C0    STA   $C010    r:KBDSTRB
+75FB-   A0 00       LDY   #$00
+75FD-   8C 11 77    STY   $7711
+7600-   4C B7 75    JMP   $75B7
+7603-   4C 0D 76    JMP   $760D
+7606-   06 C3       ASL   $C3
+7608-   CC CF D3    CPY   $D3CF
+760B-   C5 A0       CMP   $A0
+760D-   A0 00       LDY   #$00
+760F-   AD 06 76    LDA   $7606
+7612-   8D 40 71    STA   $7140
+7615-   8D 41 71    STA   $7141
+7618-   C8          INY
+7619-   B9 06 76    LDA   $7606,Y
+761C-   99 41 71    STA   $7141,Y
+761F-   CC 40 71    CPY   $7140
+7622-   D0 F4       BNE   $7618
+7624-   A9 71       LDA   #$71
+7626-   48          PHA
+7627-   A9 41       LDA   #$41
+7629-   48          PHA
+762A-   A9 76       LDA   #$76
+762C-   48          PHA
+762D-   A9 DD       LDA   #$DD
+762F-   48          PHA
+7630-   A9 64       LDA   #$64
+7632-   48          PHA
+7633-   20 76 7F    JSR   $7F76
+7636-   A9 70       LDA   #$70
+7638-   48          PHA
+7639-   A9 40       LDA   #$40
+763B-   48          PHA
+763C-   20 9A 7E    JSR   $7E9A
+763F-   68          PLA
+7640-   4C D0 03    JMP   $03D0
+7643-   4C 4C 76    JMP   $764C
+7646-   05 C3       ORA   $C3
+7648-   CC CF D3    CPY   $D3CF
+764B-   C5 A0       CMP   $A0
+764D-   00          BRK
+764E-   AD 46 76    LDA   $7646
+7651-   8D 40 71    STA   $7140
+7654-   8D 41 71    STA   $7141
+7657-   C8          INY
+7658-   B9 46 76    LDA   $7646,Y
+765B-   99 41 71    STA   $7141,Y
+765E-   CC 40 71    CPY   $7140
+7661-   D0 F4       BNE   $7657
+7663-   A9 71       LDA   #$71
+7665-   48          PHA
+7666-   A9 41       LDA   #$41
+7668-   48          PHA
+7669-   20 9A 7E    JSR   $7E9A
+766C-   20 21 7F    JSR   $7F21
+766F-   D4          ???
+7670-   D9 D0 C5    CMP   $C5D0,Y
+7673-   A0 DB       LDY   #$DB
+7675-   CC C9 D3    CPY   $D3C9
+7678-   D4          ???
+7679-   DD A0 D4    CMP   $D4A0,X
+767C-   CF          ???
+767D-   A0 D2       LDY   #$D2
+767F-   C5 C1       CMP   $C1
+7681-   C4 8D       CPY   $8D
+7683-   00          BRK
+7684-   20 21 7F    JSR   $7F21
+7687-   D4          ???
+7688-   C8          INY
+7689-   C5 A0       CMP   $A0
+768B-   C2          ???
+768C-   C1 D3       CMP   ($D3,X)
+768E-   C9 C3       CMP   #$C3
+7690-   A0 CC       LDY   #$CC
+7692-   C9 D3       CMP   #$D3
+7694-   D4          ???
+7695-   C9 CE       CMP   #$CE
+7697-   C7          ???
+7698-   AE 8D 8D    LDX   $8D8D
+769B-   00          BRK
+769C-   4C A5 76    JMP   $76A5
+769F-   05 CC       ORA   $CC
+76A1-   CF          ???
+76A2-   C1 C4       CMP   ($C4,X)
+76A4-   A0 A0       LDY   #$A0
+76A6-   00          BRK
+76A7-   AD 9F 76    LDA   $769F
+76AA-   8D 40 71    STA   $7140
+76AD-   8D 41 71    STA   $7141
+76B0-   C8          INY
+76B1-   B9 9F 76    LDA   $769F,Y
+76B4-   99 41 71    STA   $7141,Y
+76B7-   CC 40 71    CPY   $7140
+76BA-   D0 F4       BNE   $76B0
+76BC-   A9 71       LDA   #$71
+76BE-   48          PHA
+76BF-   A9 41       LDA   #$41
+76C1-   48          PHA
+76C2-   A9 76       LDA   #$76
+76C4-   48          PHA
+76C5-   A9 DD       LDA   #$DD
+76C7-   48          PHA
+76C8-   A9 64       LDA   #$64
+76CA-   48          PHA
+76CB-   20 76 7F    JSR   $7F76
+76CE-   A9 70       LDA   #$70
+76D0-   48          PHA
+76D1-   A9 40       LDA   #$40
+76D3-   48          PHA
+76D4-   20 9A 7E    JSR   $7E9A
+76D7-   4C D0 03    JMP   $03D0
+76DA-   00          BRK
+76DB-   00          BRK
+76DC-   00          BRK
+76DD-   00          BRK
+76DE-   00          BRK
+76DF-   00          BRK
+76E0-   00          BRK
+76E1-   00          BRK
+76E2-   00          BRK
+76E3-   00          BRK
+76E4-   00          BRK
+76E5-   00          BRK
+76E6-   00          BRK
+76E7-   00          BRK
+76E8-   00          BRK
+76E9-   00          BRK
+76EA-   00          BRK
+76EB-   00          BRK
+76EC-   00          BRK
+76ED-   00          BRK
+76EE-   00          BRK
+76EF-   00          BRK
+76F0-   00          BRK
+76F1-   00          BRK
+76F2-   00          BRK
+76F3-   00          BRK
+76F4-   00          BRK
+76F5-   00          BRK
+76F6-   00          BRK
+76F7-   00          BRK
+76F8-   00          BRK
+76F9-   00          BRK
+76FA-   00          BRK
+76FB-   00          BRK
+76FC-   00          BRK
+76FD-   00          BRK
+76FE-   00          BRK
+76FF-   00          BRK
+7700-   00          BRK
+7701-   00          BRK
+7702-   00          BRK
+7703-   00          BRK
+7704-   00          BRK
+7705-   00          BRK
+7706-   00          BRK
+7707-   00          BRK
+7708-   00          BRK
+7709-   00          BRK
+770A-   00          BRK
+770B-   00          BRK
+770C-   00          BRK
+770D-   00          BRK
+770E-   00          BRK
+770F-   00          BRK
+7710-   00          BRK
+7711-   00          BRK
+7712-   00          BRK
+7713-   00          BRK
+7714-   00          BRK
+7715-   00          BRK
+7716-   00          BRK
+7717-   00          BRK
+7718-   00          BRK
+7719-   00          BRK
+771A-   00          BRK
+771B-   00          BRK
+771C-   00          BRK
+771D-   00          BRK
+771E-   00          BRK
+771F-   00          BRK
+7720-   00          BRK
+7721-   00          BRK
+7722-   00          BRK
+7723-   00          BRK
+7724-   00          BRK
+7725-   00          BRK
+7726-   00          BRK
+7727-   00          BRK
+7728-   00          BRK
+7729-   00          BRK
+772A-   00          BRK
+772B-   00          BRK
+772C-   00          BRK
+772D-   00          BRK
+772E-   00          BRK
+772F-   00          BRK
+7730-   00          BRK
+7731-   00          BRK
+7732-   00          BRK
+7733-   00          BRK
+7734-   00          BRK
+7735-   00          BRK
+7736-   00          BRK
+7737-   00          BRK
+7738-   00          BRK
+7739-   00          BRK
+773A-   00          BRK
+773B-   00          BRK
+773C-   00          BRK
+773D-   00          BRK
+773E-   00          BRK
+773F-   00          BRK
+7740-   00          BRK
+7741-   00          BRK
+7742-   00          BRK
+7743-   00          BRK
+7744-   00          BRK
+7745-   00          BRK
+7746-   00          BRK
+7747-   00          BRK
+7748-   00          BRK
+7749-   00          BRK
+774A-   00          BRK
+774B-   00          BRK
+774C-   00          BRK
+774D-   00          BRK
+774E-   00          BRK
+774F-   00          BRK
+7750-   00          BRK
+7751-   00          BRK
+7752-   00          BRK
+7753-   00          BRK
+7754-   00          BRK
+7755-   00          BRK
+7756-   00          BRK
+7757-   00          BRK
+7758-   00          BRK
+7759-   00          BRK
+775A-   00          BRK
+775B-   00          BRK
+775C-   00          BRK
+775D-   00          BRK
+775E-   00          BRK
+775F-   00          BRK
+7760-   00          BRK
+7761-   00          BRK
+7762-   00          BRK
+7763-   00          BRK
+7764-   00          BRK
+7765-   00          BRK
+7766-   00          BRK
+7767-   00          BRK
+7768-   00          BRK
+7769-   00          BRK
+776A-   00          BRK
+776B-   00          BRK
+776C-   00          BRK
+776D-   00          BRK
+776E-   00          BRK
+776F-   00          BRK
+7770-   00          BRK
+7771-   00          BRK
+7772-   00          BRK
+7773-   00          BRK
+7774-   00          BRK
+7775-   00          BRK
+7776-   00          BRK
+7777-   00          BRK
+7778-   00          BRK
+7779-   00          BRK
+777A-   00          BRK
+777B-   00          BRK
+777C-   00          BRK
+777D-   00          BRK
+777E-   00          BRK
+777F-   00          BRK
+7780-   00          BRK
+7781-   00          BRK
+7782-   00          BRK
+7783-   00          BRK
+7784-   00          BRK
+7785-   00          BRK
+7786-   00          BRK
+7787-   00          BRK
+7788-   00          BRK
+7789-   00          BRK
+778A-   00          BRK
+778B-   00          BRK
+778C-   00          BRK
+778D-   00          BRK
+778E-   00          BRK
+778F-   00          BRK
+7790-   00          BRK
+7791-   00          BRK
+7792-   00          BRK
+7793-   00          BRK
+7794-   00          BRK
+7795-   00          BRK
+7796-   00          BRK
+7797-   00          BRK
+7798-   00          BRK
+7799-   00          BRK
+779A-   00          BRK
+779B-   00          BRK
+779C-   00          BRK
+779D-   00          BRK
+779E-   00          BRK
+779F-   00          BRK
+77A0-   00          BRK
+77A1-   00          BRK
+77A2-   00          BRK
+77A3-   00          BRK
+77A4-   00          BRK
+77A5-   00          BRK
+77A6-   00          BRK
+77A7-   00          BRK
+77A8-   00          BRK
+77A9-   00          BRK
+77AA-   00          BRK
+77AB-   00          BRK
+77AC-   00          BRK
+77AD-   00          BRK
+77AE-   00          BRK
+77AF-   00          BRK
+77B0-   00          BRK
+77B1-   00          BRK
+77B2-   00          BRK
+77B3-   00          BRK
+77B4-   00          BRK
+77B5-   00          BRK
+77B6-   00          BRK
+77B7-   00          BRK
+77B8-   00          BRK
+77B9-   00          BRK
+77BA-   00          BRK
+77BB-   00          BRK
+77BC-   00          BRK
+77BD-   00          BRK
+77BE-   00          BRK
+77BF-   00          BRK
+77C0-   00          BRK
+77C1-   00          BRK
+77C2-   00          BRK
+77C3-   00          BRK
+77C4-   00          BRK
+77C5-   00          BRK
+77C6-   00          BRK
+77C7-   00          BRK
+77C8-   00          BRK
+77C9-   00          BRK
+77CA-   00          BRK
+77CB-   00          BRK
+77CC-   00          BRK
+77CD-   00          BRK
+77CE-   00          BRK
+77CF-   00          BRK
+77D0-   00          BRK
+77D1-   00          BRK
+77D2-   00          BRK
+77D3-   00          BRK
+77D4-   00          BRK
+77D5-   00          BRK
+77D6-   00          BRK
+77D7-   00          BRK
+77D8-   00          BRK
+77D9-   00          BRK
+77DA-   00          BRK
+77DB-   00          BRK
+77DC-   00          BRK
+77DD-   00          BRK
+77DE-   00          BRK
+77DF-   00          BRK
+77E0-   00          BRK
+77E1-   00          BRK
+77E2-   00          BRK
+77E3-   00          BRK
+77E4-   00          BRK
+77E5-   00          BRK
+77E6-   00          BRK
+77E7-   00          BRK
+77E8-   00          BRK
+77E9-   00          BRK
+77EA-   00          BRK
+77EB-   00          BRK
+77EC-   00          BRK
+77ED-   00          BRK
+77EE-   00          BRK
+77EF-   00          BRK
+77F0-   00          BRK
+77F1-   00          BRK
+77F2-   00          BRK
+77F3-   00          BRK
+77F4-   00          BRK
+77F5-   00          BRK
+77F6-   00          BRK
+77F7-   00          BRK
+77F8-   00          BRK
+77F9-   00          BRK
+77FA-   00          BRK
+77FB-   00          BRK
+77FC-   00          BRK
+77FD-   00          BRK
+77FE-   00          BRK
+77FF-   00          BRK
+7800-   00          BRK
+7801-   00          BRK
+7802-   00          BRK
+7803-   00          BRK
+7804-   00          BRK
+7805-   00          BRK
+7806-   00          BRK
+7807-   00          BRK
+7808-   00          BRK
+7809-   00          BRK
+780A-   00          BRK
+780B-   00          BRK
+780C-   00          BRK
+780D-   00          BRK
+780E-   00          BRK
+780F-   00          BRK
+7810-   00          BRK
+7811-   00          BRK
+7812-   00          BRK
+7813-   00          BRK
+7814-   00          BRK
+7815-   00          BRK
+7816-   00          BRK
+7817-   00          BRK
+7818-   00          BRK
+7819-   00          BRK
+781A-   00          BRK
+781B-   00          BRK
+781C-   00          BRK
+781D-   00          BRK
+781E-   00          BRK
+781F-   00          BRK
+7820-   00          BRK
+7821-   00          BRK
+7822-   00          BRK
+7823-   00          BRK
+7824-   00          BRK
+7825-   00          BRK
+7826-   00          BRK
+7827-   00          BRK
+7828-   00          BRK
+7829-   00          BRK
+782A-   00          BRK
+782B-   00          BRK
+782C-   00          BRK
+782D-   00          BRK
+782E-   00          BRK
+782F-   00          BRK
+7830-   00          BRK
+7831-   00          BRK
+7832-   00          BRK
+7833-   00          BRK
+7834-   00          BRK
+7835-   00          BRK
+7836-   00          BRK
+7837-   00          BRK
+7838-   00          BRK
+7839-   00          BRK
+783A-   00          BRK
+783B-   00          BRK
+783C-   00          BRK
+783D-   00          BRK
+783E-   00          BRK
+783F-   00          BRK
+7840-   00          BRK
+7841-   00          BRK
+7842-   00          BRK
+7843-   00          BRK
+7844-   00          BRK
+7845-   00          BRK
+7846-   00          BRK
+7847-   00          BRK
+7848-   00          BRK
+7849-   00          BRK
+784A-   00          BRK
+784B-   00          BRK
+784C-   00          BRK
+784D-   00          BRK
+784E-   00          BRK
+784F-   00          BRK
+7850-   00          BRK
+7851-   00          BRK
+7852-   00          BRK
+7853-   00          BRK
+7854-   00          BRK
+7855-   00          BRK
+7856-   00          BRK
+7857-   00          BRK
+7858-   00          BRK
+7859-   00          BRK
+785A-   00          BRK
+785B-   00          BRK
+785C-   00          BRK
+785D-   00          BRK
+785E-   00          BRK
+785F-   00          BRK
+7860-   00          BRK
+7861-   00          BRK
+7862-   00          BRK
+7863-   00          BRK
+7864-   00          BRK
+7865-   00          BRK
+7866-   00          BRK
+7867-   00          BRK
+7868-   00          BRK
+7869-   00          BRK
+786A-   00          BRK
+786B-   00          BRK
+786C-   00          BRK
+786D-   00          BRK
+786E-   00          BRK
+786F-   00          BRK
+7870-   00          BRK
+7871-   00          BRK
+7872-   00          BRK
+7873-   00          BRK
+7874-   00          BRK
+7875-   00          BRK
+7876-   00          BRK
+7877-   00          BRK
+7878-   00          BRK
+7879-   00          BRK
+787A-   00          BRK
+787B-   00          BRK
+787C-   00          BRK
+787D-   00          BRK
+787E-   00          BRK
+787F-   00          BRK
+7880-   00          BRK
+7881-   00          BRK
+7882-   00          BRK
+7883-   00          BRK
+7884-   00          BRK
+7885-   00          BRK
+7886-   00          BRK
+7887-   00          BRK
+7888-   00          BRK
+7889-   00          BRK
+788A-   00          BRK
+788B-   00          BRK
+788C-   00          BRK
+788D-   00          BRK
+788E-   00          BRK
+788F-   00          BRK
+7890-   00          BRK
+7891-   00          BRK
+7892-   00          BRK
+7893-   00          BRK
+7894-   00          BRK
+7895-   00          BRK
+7896-   00          BRK
+7897-   00          BRK
+7898-   00          BRK
+7899-   00          BRK
+789A-   00          BRK
+789B-   00          BRK
+789C-   00          BRK
+789D-   00          BRK
+789E-   00          BRK
+789F-   00          BRK
+78A0-   00          BRK
+78A1-   00          BRK
+78A2-   00          BRK
+78A3-   00          BRK
+78A4-   00          BRK
+78A5-   00          BRK
+78A6-   00          BRK
+78A7-   00          BRK
+78A8-   00          BRK
+78A9-   00          BRK
+78AA-   00          BRK
+78AB-   00          BRK
+78AC-   00          BRK
+78AD-   00          BRK
+78AE-   00          BRK
+78AF-   00          BRK
+78B0-   00          BRK
+78B1-   00          BRK
+78B2-   00          BRK
+78B3-   00          BRK
+78B4-   00          BRK
+78B5-   00          BRK
+78B6-   00          BRK
+78B7-   00          BRK
+78B8-   00          BRK
+78B9-   00          BRK
+78BA-   00          BRK
+78BB-   00          BRK
+78BC-   00          BRK
+78BD-   00          BRK
+78BE-   00          BRK
+78BF-   00          BRK
+78C0-   00          BRK
+78C1-   00          BRK
+78C2-   00          BRK
+78C3-   00          BRK
+78C4-   00          BRK
+78C5-   00          BRK
+78C6-   00          BRK
+78C7-   00          BRK
+78C8-   00          BRK
+78C9-   00          BRK
+78CA-   00          BRK
+78CB-   00          BRK
+78CC-   00          BRK
+78CD-   00          BRK
+78CE-   00          BRK
+78CF-   00          BRK
+78D0-   00          BRK
+78D1-   00          BRK
+78D2-   00          BRK
+78D3-   00          BRK
+78D4-   00          BRK
+78D5-   00          BRK
+78D6-   00          BRK
+78D7-   00          BRK
+78D8-   00          BRK
+78D9-   00          BRK
+78DA-   00          BRK
+78DB-   00          BRK
+78DC-   00          BRK
+78DD-   00          BRK
+78DE-   00          BRK
+78DF-   00          BRK
+78E0-   00          BRK
+78E1-   00          BRK
+78E2-   00          BRK
+78E3-   00          BRK
+78E4-   00          BRK
+78E5-   00          BRK
+78E6-   00          BRK
+78E7-   00          BRK
+78E8-   00          BRK
+78E9-   00          BRK
+78EA-   00          BRK
+78EB-   00          BRK
+78EC-   00          BRK
+78ED-   00          BRK
+78EE-   00          BRK
+78EF-   00          BRK
+78F0-   00          BRK
+78F1-   00          BRK
+78F2-   00          BRK
+78F3-   00          BRK
+78F4-   00          BRK
+78F5-   00          BRK
+78F6-   00          BRK
+78F7-   00          BRK
+78F8-   00          BRK
+78F9-   00          BRK
+78FA-   00          BRK
+78FB-   00          BRK
+78FC-   00          BRK
+78FD-   00          BRK
+78FE-   00          BRK
+78FF-   00          BRK
+7900-   00          BRK
+7901-   00          BRK
+7902-   00          BRK
+7903-   00          BRK
+7904-   00          BRK
+7905-   00          BRK
+7906-   00          BRK
+7907-   00          BRK
+7908-   00          BRK
+7909-   00          BRK
+790A-   00          BRK
+790B-   00          BRK
+790C-   00          BRK
+790D-   00          BRK
+790E-   00          BRK
+790F-   00          BRK
+7910-   00          BRK
+7911-   00          BRK
+7912-   00          BRK
+7913-   00          BRK
+7914-   00          BRK
+7915-   00          BRK
+7916-   00          BRK
+7917-   00          BRK
+7918-   00          BRK
+7919-   00          BRK
+791A-   00          BRK
+791B-   00          BRK
+791C-   00          BRK
+791D-   00          BRK
+791E-   00          BRK
+791F-   00          BRK
+7920-   00          BRK
+7921-   00          BRK
+7922-   00          BRK
+7923-   00          BRK
+7924-   00          BRK
+7925-   00          BRK
+7926-   00          BRK
+7927-   00          BRK
+7928-   00          BRK
+7929-   00          BRK
+792A-   00          BRK
+792B-   00          BRK
+792C-   00          BRK
+792D-   00          BRK
+792E-   00          BRK
+792F-   00          BRK
+7930-   00          BRK
+7931-   00          BRK
+7932-   00          BRK
+7933-   00          BRK
+7934-   00          BRK
+7935-   00          BRK
+7936-   00          BRK
+7937-   00          BRK
+7938-   00          BRK
+7939-   00          BRK
+793A-   00          BRK
+793B-   00          BRK
+793C-   00          BRK
+793D-   00          BRK
+793E-   00          BRK
+793F-   00          BRK
+7940-   00          BRK
+7941-   00          BRK
+7942-   00          BRK
+7943-   00          BRK
+7944-   00          BRK
+7945-   00          BRK
+7946-   00          BRK
+7947-   00          BRK
+7948-   00          BRK
+7949-   00          BRK
+794A-   00          BRK
+794B-   00          BRK
+794C-   00          BRK
+794D-   00          BRK
+794E-   00          BRK
+794F-   00          BRK
+7950-   00          BRK
+7951-   00          BRK
+7952-   00          BRK
+7953-   00          BRK
+7954-   00          BRK
+7955-   00          BRK
+7956-   00          BRK
+7957-   00          BRK
+7958-   00          BRK
+7959-   00          BRK
+795A-   00          BRK
+795B-   00          BRK
+795C-   00          BRK
+795D-   00          BRK
+795E-   00          BRK
+795F-   00          BRK
+7960-   00          BRK
+7961-   00          BRK
+7962-   00          BRK
+7963-   00          BRK
+7964-   00          BRK
+7965-   00          BRK
+7966-   00          BRK
+7967-   00          BRK
+7968-   00          BRK
+7969-   00          BRK
+796A-   00          BRK
+796B-   00          BRK
+796C-   00          BRK
+796D-   00          BRK
+796E-   00          BRK
+796F-   00          BRK
+7970-   00          BRK
+7971-   00          BRK
+7972-   00          BRK
+7973-   00          BRK
+7974-   00          BRK
+7975-   00          BRK
+7976-   00          BRK
+7977-   00          BRK
+7978-   00          BRK
+7979-   00          BRK
+797A-   00          BRK
+797B-   00          BRK
+797C-   00          BRK
+797D-   00          BRK
+797E-   00          BRK
+797F-   00          BRK
+7980-   00          BRK
+7981-   00          BRK
+7982-   00          BRK
+7983-   00          BRK
+7984-   00          BRK
+7985-   00          BRK
+7986-   00          BRK
+7987-   00          BRK
+7988-   00          BRK
+7989-   00          BRK
+798A-   00          BRK
+798B-   00          BRK
+798C-   00          BRK
+798D-   00          BRK
+798E-   00          BRK
+798F-   00          BRK
+7990-   00          BRK
+7991-   00          BRK
+7992-   00          BRK
+7993-   00          BRK
+7994-   00          BRK
+7995-   00          BRK
+7996-   00          BRK
+7997-   00          BRK
+7998-   00          BRK
+7999-   00          BRK
+799A-   00          BRK
+799B-   00          BRK
+799C-   00          BRK
+799D-   00          BRK
+799E-   00          BRK
+799F-   00          BRK
+79A0-   00          BRK
+79A1-   00          BRK
+79A2-   00          BRK
+79A3-   00          BRK
+79A4-   00          BRK
+79A5-   00          BRK
+79A6-   00          BRK
+79A7-   00          BRK
+79A8-   00          BRK
+79A9-   00          BRK
+79AA-   00          BRK
+79AB-   00          BRK
+79AC-   00          BRK
+79AD-   00          BRK
+79AE-   00          BRK
+79AF-   00          BRK
+79B0-   00          BRK
+79B1-   00          BRK
+79B2-   00          BRK
+79B3-   00          BRK
+79B4-   00          BRK
+79B5-   00          BRK
+79B6-   00          BRK
+79B7-   00          BRK
+79B8-   00          BRK
+79B9-   00          BRK
+79BA-   00          BRK
+79BB-   00          BRK
+79BC-   00          BRK
+79BD-   00          BRK
+79BE-   00          BRK
+79BF-   00          BRK
+79C0-   00          BRK
+79C1-   00          BRK
+79C2-   00          BRK
+79C3-   00          BRK
+79C4-   00          BRK
+79C5-   00          BRK
+79C6-   00          BRK
+79C7-   00          BRK
+79C8-   00          BRK
+79C9-   00          BRK
+79CA-   00          BRK
+79CB-   00          BRK
+79CC-   00          BRK
+79CD-   00          BRK
+79CE-   00          BRK
+79CF-   00          BRK
+79D0-   00          BRK
+79D1-   00          BRK
+79D2-   00          BRK
+79D3-   00          BRK
+79D4-   00          BRK
+79D5-   00          BRK
+79D6-   00          BRK
+79D7-   00          BRK
+79D8-   00          BRK
+79D9-   00          BRK
+79DA-   00          BRK
+79DB-   00          BRK
+79DC-   00          BRK
+79DD-   00          BRK
+79DE-   00          BRK
+79DF-   00          BRK
+79E0-   00          BRK
+79E1-   00          BRK
+79E2-   00          BRK
+79E3-   00          BRK
+79E4-   00          BRK
+79E5-   00          BRK
+79E6-   00          BRK
+79E7-   00          BRK
+79E8-   00          BRK
+79E9-   00          BRK
+79EA-   00          BRK
+79EB-   00          BRK
+79EC-   00          BRK
+79ED-   00          BRK
+79EE-   00          BRK
+79EF-   00          BRK
+79F0-   00          BRK
+79F1-   00          BRK
+79F2-   00          BRK
+79F3-   00          BRK
+79F4-   00          BRK
+79F5-   00          BRK
+79F6-   00          BRK
+79F7-   00          BRK
+79F8-   00          BRK
+79F9-   00          BRK
+79FA-   00          BRK
+79FB-   00          BRK
+79FC-   00          BRK
+79FD-   00          BRK
+79FE-   00          BRK
+79FF-   00          BRK
+7A00-   00          BRK
+7A01-   00          BRK
+7A02-   00          BRK
+7A03-   00          BRK
+7A04-   00          BRK
+7A05-   00          BRK
+7A06-   00          BRK
+7A07-   00          BRK
+7A08-   00          BRK
+7A09-   00          BRK
+7A0A-   00          BRK
+7A0B-   00          BRK
+7A0C-   00          BRK
+7A0D-   00          BRK
+7A0E-   00          BRK
+7A0F-   00          BRK
+7A10-   00          BRK
+7A11-   00          BRK
+7A12-   00          BRK
+7A13-   00          BRK
+7A14-   00          BRK
+7A15-   00          BRK
+7A16-   00          BRK
+7A17-   00          BRK
+7A18-   00          BRK
+7A19-   00          BRK
+7A1A-   00          BRK
+7A1B-   68          PLA
+7A1C-   8D 3F 7A    STA   $7A3F
+7A1F-   68          PLA
+7A20-   8D 40 7A    STA   $7A40
+7A23-   68          PLA
+7A24-   85 06       STA   $06
+7A26-   68          PLA
+7A27-   85 07       STA   $07
+7A29-   A0 FF       LDY   #$FF
+7A2B-   C8          INY
+7A2C-   B9 40 70    LDA   $7040,Y
+7A2F-   91 06       STA   ($06),Y
+7A31-   CC 3F 70    CPY   $703F
+7A34-   D0 F5       BNE   $7A2B
+7A36-   AD 40 7A    LDA   $7A40
+7A39-   48          PHA
+7A3A-   AD 3F 7A    LDA   $7A3F
+7A3D-   48          PHA
+7A3E-   60          RTS
+7A3F-   00          BRK
+7A40-   00          BRK
+7A41-   A0 FF       LDY   #$FF
+7A43-   68          PLA
+7A44-   8D 65 7A    STA   $7A65
+7A47-   68          PLA
+7A48-   8D 66 7A    STA   $7A66
+7A4B-   68          PLA
+7A4C-   85 06       STA   $06
+7A4E-   68          PLA
+7A4F-   85 07       STA   $07
+7A51-   C8          INY
+7A52-   B1 06       LDA   ($06),Y
+7A54-   99 41 71    STA   $7141,Y
+7A57-   CC 40 71    CPY   $7140
+7A5A-   D0 F5       BNE   $7A51
+7A5C-   AD 66 7A    LDA   $7A66
+7A5F-   48          PHA
+7A60-   AD 65 7A    LDA   $7A65
+7A63-   48          PHA
+7A64-   60          RTS
+7A65-   00          BRK
+7A66-   00          BRK
+7A67-   68          PLA
+7A68-   8D F6 7A    STA   $7AF6
+7A6B-   68          PLA
+7A6C-   8D F7 7A    STA   $7AF7
+7A6F-   68          PLA
+7A70-   8D FA 7A    STA   $7AFA
+7A73-   68          PLA
+7A74-   85 EB       STA   $EB
+7A76-   68          PLA
+7A77-   85 EC       STA   $EC
+7A79-   A9 8D       LDA   #$8D
+7A7B-   20 F0 FD    JSR   $FDF0    F8ROM:COUT1
+7A7E-   A5 EC       LDA   $EC
+7A80-   29 F0       AND   #$F0
+7A82-   4A          LSR
+7A83-   4A          LSR
+7A84-   4A          LSR
+7A85-   4A          LSR
+7A86-   AA          TAX
+7A87-   BD 19 7D    LDA   $7D19,X
+7A8A-   20 F0 FD    JSR   $FDF0    F8ROM:COUT1
+7A8D-   A5 EC       LDA   $EC
+7A8F-   29 0F       AND   #$0F
+7A91-   AA          TAX
+7A92-   BD 19 7D    LDA   $7D19,X
+7A95-   20 F0 FD    JSR   $FDF0    F8ROM:COUT1
+7A98-   A5 EB       LDA   $EB
+7A9A-   29 F0       AND   #$F0
+7A9C-   4A          LSR
+7A9D-   4A          LSR
+7A9E-   4A          LSR
+7A9F-   4A          LSR
+7AA0-   AA          TAX
+7AA1-   BD 19 7D    LDA   $7D19,X
+7AA4-   20 F0 FD    JSR   $FDF0    F8ROM:COUT1
+7AA7-   A5 EB       LDA   $EB
+7AA9-   29 0F       AND   #$0F
+7AAB-   AA          TAX
+7AAC-   BD 19 7D    LDA   $7D19,X
+7AAF-   20 F0 FD    JSR   $FDF0    F8ROM:COUT1
+7AB2-   A9 BA       LDA   #$BA
+7AB4-   20 F0 FD    JSR   $FDF0    F8ROM:COUT1
+7AB7-   A9 A0       LDA   #$A0
+7AB9-   20 F0 FD    JSR   $FDF0    F8ROM:COUT1
+7ABC-   A0 00       LDY   #$00
+7ABE-   B1 EB       LDA   ($EB),Y
+7AC0-   29 F0       AND   #$F0
+7AC2-   4A          LSR
+7AC3-   4A          LSR
+7AC4-   4A          LSR
+7AC5-   4A          LSR
+7AC6-   8D F9 7A    STA   $7AF9
+7AC9-   B1 EB       LDA   ($EB),Y
+7ACB-   29 0F       AND   #$0F
+7ACD-   8D F8 7A    STA   $7AF8
+7AD0-   AE F9 7A    LDX   $7AF9
+7AD3-   BD 19 7D    LDA   $7D19,X
+7AD6-   20 F0 FD    JSR   $FDF0    F8ROM:COUT1
+7AD9-   AE F8 7A    LDX   $7AF8
+7ADC-   BD 19 7D    LDA   $7D19,X
+7ADF-   20 F0 FD    JSR   $FDF0    F8ROM:COUT1
+7AE2-   A9 A0       LDA   #$A0
+7AE4-   20 F0 FD    JSR   $FDF0    F8ROM:COUT1
+7AE7-   C8          INY
+7AE8-   CC FA 7A    CPY   $7AFA
+7AEB-   D0 D1       BNE   $7ABE
+7AED-   AD F7 7A    LDA   $7AF7
+7AF0-   48          PHA
+7AF1-   AD F6 7A    LDA   $7AF6
+7AF4-   48          PHA
+7AF5-   60          RTS
+7AF6-   00          BRK
+7AF7-   00          BRK
+7AF8-   00          BRK
+7AF9-   00          BRK
+7AFA-   00          BRK
+7AFB-   68          PLA
+7AFC-   85 06       STA   $06
+7AFE-   68          PLA
+7AFF-   85 07       STA   $07
+7B01-   A0 01       LDY   #$01
+7B03-   B1 06       LDA   ($06),Y
+7B05-   F0 06       BEQ   $7B0D
+7B07-   20 F0 FD    JSR   $FDF0    F8ROM:COUT1
+7B0A-   C8          INY
+7B0B-   D0 F6       BNE   $7B03
+7B0D-   18          CLC
+7B0E-   98          TYA
+7B0F-   65 06       ADC   $06
+7B11-   85 06       STA   $06
+7B13-   A5 07       LDA   $07
+7B15-   69 00       ADC   #$00
+7B17-   48          PHA
+7B18-   A5 06       LDA   $06
+7B1A-   48          PHA
+7B1B-   60          RTS
+7B1C-   20 0C FD    JSR   $FD0C    F8ROM:RDKEY
+7B1F-   60          RTS
+7B20-   8D 43 72    STA   $7243
+7B23-   8E 44 72    STX   $7244
+7B26-   8C 45 72    STY   $7245
+7B29-   90 11       BCC   $7B3C
+7B2B-   B0 17       BCS   $7B44
+7B2D-   F0 1D       BEQ   $7B4C
+7B2F-   D0 23       BNE   $7B54
+7B31-   30 29       BMI   $7B5C
+7B33-   10 2F       BPL   $7B64
+7B35-   50 35       BVC   $7B6C
+7B37-   70 3B       BVS   $7B74
+7B39-   4C 79 7B    JMP   $7B79
+7B3C-   A9 00       LDA   #$00
+7B3E-   8D 46 72    STA   $7246
+7B41-   4C 2D 7B    JMP   $7B2D
+7B44-   A9 01       LDA   #$01
+7B46-   8D 46 72    STA   $7246
+7B49-   4C 2D 7B    JMP   $7B2D
+7B4C-   A9 01       LDA   #$01
+7B4E-   8D 48 72    STA   $7248
+7B51-   4C 31 7B    JMP   $7B31
+7B54-   A9 00       LDA   #$00
+7B56-   8D 48 72    STA   $7248
+7B59-   4C 31 7B    JMP   $7B31
+7B5C-   A9 01       LDA   #$01
+7B5E-   8D 47 72    STA   $7247
+7B61-   4C 35 7B    JMP   $7B35
+7B64-   A9 00       LDA   #$00
+7B66-   8D 47 72    STA   $7247
+7B69-   4C 35 7B    JMP   $7B35
+7B6C-   A9 00       LDA   #$00
+7B6E-   8D 49 72    STA   $7249
+7B71-   4C 79 7B    JMP   $7B79
+7B74-   A9 01       LDA   #$01
+7B76-   8D 49 72    STA   $7249
+7B79-   60          RTS
+7B7A-   20 FB 7A    JSR   $7AFB
+7B7D-   A0 8D       LDY   #$8D
+7B7F-   8D 00 20    STA   $2000
+7B82-   FB          ???
+7B83-   7A          PLY
+7B84-   D2 C5       CMP   ($C5)
+7B86-   C7          ???
+7B87-   C9 D3       CMP   #$D3
+7B89-   D4          ???
+7B8A-   D2 D9       CMP   ($D9)
+7B8C-   A0 C4       LDY   #$C4
+7B8E-   D5 CD       CMP   $CD,X
+7B90-   D0 8D       BNE   $7B1F
+7B92-   00          BRK
+7B93-   20 FB 7A    JSR   $7AFB
+7B96-   BD BD BD    LDA   $BDBD,X
+7B99-   BD BD BD    LDA   $BDBD,X
+7B9C-   BD BD BD    LDA   $BDBD,X
+7B9F-   BD BD BD    LDA   $BDBD,X
+7BA2-   BD 8D 00    LDA   $008D,X
+7BA5-   20 FB 7A    JSR   $7AFB
+7BA8-   C1 BA       CMP   ($BA,X)
+7BAA-   A0 00       LDY   #$00
+7BAC-   AD 43 72    LDA   $7243
+7BAF-   29 F0       AND   #$F0
+7BB1-   4A          LSR
+7BB2-   4A          LSR
+7BB3-   4A          LSR
+7BB4-   4A          LSR
+7BB5-   8D 17 7D    STA   $7D17
+7BB8-   AD 43 72    LDA   $7243
+7BBB-   29 0F       AND   #$0F
+7BBD-   8D 18 7D    STA   $7D18
+7BC0-   AE 17 7D    LDX   $7D17
+7BC3-   BD 19 7D    LDA   $7D19,X
+7BC6-   20 F0 FD    JSR   $FDF0    F8ROM:COUT1
+7BC9-   AE 18 7D    LDX   $7D18
+7BCC-   BD 19 7D    LDA   $7D19,X
+7BCF-   20 F0 FD    JSR   $FDF0    F8ROM:COUT1
+7BD2-   20 FB 7A    JSR   $7AFB
+7BD5-   A0 8D       LDY   #$8D
+7BD7-   00          BRK
+7BD8-   20 FB 7A    JSR   $7AFB
+7BDB-   D8          CLD
+7BDC-   BA          TSX
+7BDD-   A0 00       LDY   #$00
+7BDF-   AD 44 72    LDA   $7244
+7BE2-   29 F0       AND   #$F0
+7BE4-   4A          LSR
+7BE5-   4A          LSR
+7BE6-   4A          LSR
+7BE7-   4A          LSR
+7BE8-   8D 17 7D    STA   $7D17
+7BEB-   AD 44 72    LDA   $7244
+7BEE-   29 0F       AND   #$0F
+7BF0-   8D 18 7D    STA   $7D18
+7BF3-   AE 17 7D    LDX   $7D17
+7BF6-   BD 19 7D    LDA   $7D19,X
+7BF9-   20 F0 FD    JSR   $FDF0    F8ROM:COUT1
+7BFC-   AE 18 7D    LDX   $7D18
+7BFF-   BD 19 7D    LDA   $7D19,X
+7C02-   20 F0 FD    JSR   $FDF0    F8ROM:COUT1
+7C05-   20 FB 7A    JSR   $7AFB
+7C08-   A0 8D       LDY   #$8D
+7C0A-   00          BRK
+7C0B-   20 FB 7A    JSR   $7AFB
+7C0E-   D9 BA A0    CMP   $A0BA,Y
+7C11-   00          BRK
+7C12-   AD 45 72    LDA   $7245
+7C15-   29 F0       AND   #$F0
+7C17-   4A          LSR
+7C18-   4A          LSR
+7C19-   4A          LSR
+7C1A-   4A          LSR
+7C1B-   8D 17 7D    STA   $7D17
+7C1E-   AD 45 72    LDA   $7245
+7C21-   29 0F       AND   #$0F
+7C23-   8D 18 7D    STA   $7D18
+7C26-   AE 17 7D    LDX   $7D17
+7C29-   BD 19 7D    LDA   $7D19,X
+7C2C-   20 F0 FD    JSR   $FDF0    F8ROM:COUT1
+7C2F-   AE 18 7D    LDX   $7D18
+7C32-   BD 19 7D    LDA   $7D19,X
+7C35-   20 F0 FD    JSR   $FDF0    F8ROM:COUT1
+7C38-   20 FB 7A    JSR   $7AFB
+7C3B-   A0 8D       LDY   #$8D
+7C3D-   8D 00 20    STA   $2000
+7C40-   FB          ???
+7C41-   7A          PLY
+7C42-   D3          ???
+7C43-   D4          ???
+7C44-   C1 D4       CMP   ($D4,X)
+7C46-   D5 D3       CMP   $D3,X
+7C48-   A0 C6       LDY   #$C6
+7C4A-   CC C1 C7    CPY   $C7C1
+7C4D-   D3          ???
+7C4E-   8D 00 20    STA   $2000
+7C51-   FB          ???
+7C52-   7A          PLY
+7C53-   BD BD BD    LDA   $BDBD,X
+7C56-   BD BD BD    LDA   $BDBD,X
+7C59-   BD BD BD    LDA   $BDBD,X
+7C5C-   BD BD BD    LDA   $BDBD,X
+7C5F-   8D 8D 00    STA   $008D
+7C62-   A9 00       LDA   #$00
+7C64-   CD 46 72    CMP   $7246
+7C67-   F0 12       BEQ   $7C7B
+7C69-   20 FB 7A    JSR   $7AFB
+7C6C-   C3          ???
+7C6D-   C1 D2       CMP   ($D2,X)
+7C6F-   D2 D9       CMP   ($D9)
+7C71-   BA          TSX
+7C72-   A0 D3       LDY   #$D3
+7C74-   C5 D4       CMP   $D4
+7C76-   8D 00 4C    STA   $4C00
+7C79-   8C 7C 20    STY   $207C
+7C7C-   FB          ???
+7C7D-   7A          PLY
+7C7E-   C3          ???
+7C7F-   C1 D2       CMP   ($D2,X)
+7C81-   D2 D9       CMP   ($D9)
+7C83-   BA          TSX
+7C84-   A0 C3       LDY   #$C3
+7C86-   CC C5 C1    CPY   $C1C5
+7C89-   D2 8D       CMP   ($8D)
+7C8B-   00          BRK
+7C8C-   A9 00       LDA   #$00
+7C8E-   CD 47 72    CMP   $7247
+7C91-   F0 15       BEQ   $7CA8
+7C93-   20 FB 7A    JSR   $7AFB
+7C96-   CE C5 C7    DEC   $C7C5
+7C99-   C1 D4       CMP   ($D4,X)
+7C9B-   C9 D6       CMP   #$D6
+7C9D-   C5 BA       CMP   $BA
+7C9F-   A0 D3       LDY   #$D3
+7CA1-   C5 D4       CMP   $D4
+7CA3-   8D 00 4C    STA   $4C00
+7CA6-   BC 7C 20    LDY   $207C,X
+7CA9-   FB          ???
+7CAA-   7A          PLY
+7CAB-   CE C5 C7    DEC   $C7C5
+7CAE-   C1 D4       CMP   ($D4,X)
+7CB0-   C9 D6       CMP   #$D6
+7CB2-   C5 BA       CMP   $BA
+7CB4-   A0 C3       LDY   #$C3
+7CB6-   CC C5 C1    CPY   $C1C5
+7CB9-   D2 8D       CMP   ($8D)
+7CBB-   00          BRK
+7CBC-   A9 00       LDA   #$00
+7CBE-   CD 48 72    CMP   $7248
+7CC1-   F0 11       BEQ   $7CD4
+7CC3-   20 FB 7A    JSR   $7AFB
+7CC6-   DA          PHX
+7CC7-   C5 D2       CMP   $D2
+7CC9-   CF          ???
+7CCA-   BA          TSX
+7CCB-   A0 D3       LDY   #$D3
+7CCD-   C5 D4       CMP   $D4
+7CCF-   8D 00 4C    STA   $4C00
+7CD2-   E4 7C       CPX   $7C
+7CD4-   20 FB 7A    JSR   $7AFB
+7CD7-   DA          PHX
+7CD8-   C5 D2       CMP   $D2
+7CDA-   CF          ???
+7CDB-   BA          TSX
+7CDC-   A0 C3       LDY   #$C3
+7CDE-   CC C5 C1    CPY   $C1C5
+7CE1-   D2 8D       CMP   ($8D)
+7CE3-   00          BRK
+7CE4-   A9 00       LDA   #$00
+7CE6-   CD 49 72    CMP   $7249
+7CE9-   F0 15       BEQ   $7D00
+7CEB-   20 FB 7A    JSR   $7AFB
+7CEE-   CF          ???
+7CEF-   D6 C5       DEC   $C5,X
+7CF1-   D2 C6       CMP   ($C6)
+7CF3-   CC CF D7    CPY   $D7CF
+7CF6-   BA          TSX
+7CF7-   A0 D3       LDY   #$D3
+7CF9-   C5 D4       CMP   $D4
+7CFB-   8D 00 4C    STA   $4C00
+7CFE-   16 7D       ASL   $7D,X
+7D00-   20 FB 7A    JSR   $7AFB
+7D03-   CF          ???
+7D04-   D6 C5       DEC   $C5,X
+7D06-   D2 C6       CMP   ($C6)
+7D08-   CC CF D7    CPY   $D7CF
+7D0B-   BA          TSX
+7D0C-   A0 C3       LDY   #$C3
+7D0E-   CC C5 C1    CPY   $C1C5
+7D11-   D2 8D       CMP   ($8D)
+7D13-   8D 8D 00    STA   $008D
+7D16-   60          RTS
+7D17-   00          BRK
+7D18-   00          BRK
+7D19-   B0 B1       BCS   $7CCC
+7D1B-   B2 B3       LDA   ($B3)
+7D1D-   B4 B5       LDY   $B5,X
+7D1F-   B6 B7       LDX   $B7,Y
+7D21-   B8          CLV
+7D22-   B9 C1 C2    LDA   $C2C1,Y
+7D25-   C3          ???
+7D26-   C4 C5       CPY   $C5
+7D28-   C6 A0       DEC   $A0
+7D2A-   00          BRK
+7D2B-   B1 FE       LDA   ($FE),Y
+7D2D-   8D 4D 7E    STA   $7E4D
+7D30-   C8          INY
+7D31-   B1 FE       LDA   ($FE),Y
+7D33-   8D 4E 7E    STA   $7E4E
+7D36-   20 20 7B    JSR   $7B20
+7D39-   68          PLA
+7D3A-   85 FE       STA   $FE
+7D3C-   68          PLA
+7D3D-   85 FF       STA   $FF
+7D3F-   68          PLA
+7D40-   8D 44 7E    STA   $7E44
+7D43-   68          PLA
+7D44-   8D 45 7E    STA   $7E45
+7D47-   68          PLA
+7D48-   8D 46 7E    STA   $7E46
+7D4B-   68          PLA
+7D4C-   8D 47 7E    STA   $7E47
+7D4F-   68          PLA
+7D50-   8D 48 7E    STA   $7E48
+7D53-   68          PLA
+7D54-   8D 49 7E    STA   $7E49
+7D57-   68          PLA
+7D58-   8D 4A 7E    STA   $7E4A
+7D5B-   68          PLA
+7D5C-   8D 4B 7E    STA   $7E4B
+7D5F-   68          PLA
+7D60-   8D 4C 7E    STA   $7E4C
+7D63-   20 FB 7A    JSR   $7AFB
+7D66-   A0 87       LDY   #$87
+7D68-   87          ???
+7D69-   87          ???
+7D6A-   87          ???
+7D6B-   87          ???
+7D6C-   8D 8D 00    STA   $008D
+7D6F-   20 FB 7A    JSR   $7AFB
+7D72-   C5 D2       CMP   $D2
+7D74-   D2 CF       CMP   ($CF)
+7D76-   D2 A1       CMP   ($A1)
+7D78-   8D 8D 00    STA   $008D
+7D7B-   20 FB 7A    JSR   $7AFB
+7D7E-   D3          ???
+7D7F-   D5 C2       CMP   $C2,X
+7D81-   D2 CF       CMP   ($CF)
+7D83-   D5 D4       CMP   $D4,X
+7D85-   C9 CE       CMP   #$CE
+7D87-   C5 BA       CMP   $BA
+7D89-   A0 00       LDY   #$00
+7D8B-   A0 00       LDY   #$00
+7D8D-   AD 4B 7E    LDA   $7E4B
+7D90-   85 06       STA   $06
+7D92-   AD 4C 7E    LDA   $7E4C
+7D95-   85 07       STA   $07
+7D97-   B1 06       LDA   ($06),Y
+7D99-   F0 06       BEQ   $7DA1
+7D9B-   20 F0 FD    JSR   $FDF0    F8ROM:COUT1
+7D9E-   C8          INY
+7D9F-   D0 F6       BNE   $7D97
+7DA1-   20 FB 7A    JSR   $7AFB
+7DA4-   A0 8D       LDY   #$8D
+7DA6-   00          BRK
+7DA7-   20 FB 7A    JSR   $7AFB
+7DAA-   CD C5 D3    CMP   $D3C5
+7DAD-   D3          ???
+7DAE-   C1 C7       CMP   ($C7,X)
+7DB0-   C5 BA       CMP   $BA
+7DB2-   A0 00       LDY   #$00
+7DB4-   A0 00       LDY   #$00
+7DB6-   AD 49 7E    LDA   $7E49
+7DB9-   85 06       STA   $06
+7DBB-   AD 4A 7E    LDA   $7E4A
+7DBE-   85 07       STA   $07
+7DC0-   B1 06       LDA   ($06),Y
+7DC2-   F0 06       BEQ   $7DCA
+7DC4-   20 F0 FD    JSR   $FDF0    F8ROM:COUT1
+7DC7-   C8          INY
+7DC8-   D0 F6       BNE   $7DC0
+7DCA-   20 FB 7A    JSR   $7AFB
+7DCD-   A0 8D       LDY   #$8D
+7DCF-   8D 00 20    STA   $2000
+7DD2-   1C 7B A0    TRB   $A07B
+7DD5-   00          BRK
+7DD6-   AD 47 7E    LDA   $7E47
+7DD9-   85 06       STA   $06
+7DDB-   AD 48 7E    LDA   $7E48
+7DDE-   85 07       STA   $07
+7DE0-   B1 06       LDA   ($06),Y
+7DE2-   F0 06       BEQ   $7DEA
+7DE4-   20 F0 FD    JSR   $FDF0    F8ROM:COUT1
+7DE7-   C8          INY
+7DE8-   D0 F6       BNE   $7DE0
+7DEA-   20 FB 7A    JSR   $7AFB
+7DED-   A0 8D       LDY   #$8D
+7DEF-   00          BRK
+7DF0-   AD 46 7E    LDA   $7E46
+7DF3-   48          PHA
+7DF4-   AD 45 7E    LDA   $7E45
+7DF7-   48          PHA
+7DF8-   AD 44 7E    LDA   $7E44
+7DFB-   48          PHA
+7DFC-   20 67 7A    JSR   $7A67
+7DFF-   20 1C 7B    JSR   $7B1C
+7E02-   A5 FF       LDA   $FF
+7E04-   48          PHA
+7E05-   A5 FE       LDA   $FE
+7E07-   48          PHA
+7E08-   20 FB 7A    JSR   $7AFB
+7E0B-   A0 8D       LDY   #$8D
+7E0D-   8D 00 20    STA   $2000
+7E10-   1C 7B 20    TRB   $207B
+7E13-   7A          PLY
+7E14-   7B          ???
+7E15-   20 1C 7B    JSR   $7B1C
+7E18-   AD 41 72    LDA   $7241
+7E1B-   C9 01       CMP   #$01
+7E1D-   F0 01       BEQ   $7E20
+7E1F-   60          RTS
+7E20-   20 FB 7A    JSR   $7AFB
+7E23-   A0 8D       LDY   #$8D
+7E25-   8D 00 20    STA   $2000
+7E28-   FB          ???
+7E29-   7A          PLY
+7E2A-   C2          ???
+7E2B-   D2 C5       CMP   ($C5)
+7E2D-   C1 CB       CMP   ($CB,X)
+7E2F-   A0 C1       LDY   #$C1
+7E31-   D4          ???
+7E32-   BA          TSX
+7E33-   A0 00       LDY   #$00
+7E35-   A9 7E       LDA   #$7E
+7E37-   48          PHA
+7E38-   A9 4D       LDA   #$4D
+7E3A-   48          PHA
+7E3B-   A9 02       LDA   #$02
+7E3D-   48          PHA
+7E3E-   20 67 7A    JSR   $7A67
+7E41-   4C D0 03    JMP   $03D0
+7E44-   00          BRK
+7E45-   00          BRK
+7E46-   00          BRK
+7E47-   00          BRK
+7E48-   00          BRK
+7E49-   00          BRK
+7E4A-   00          BRK
+7E4B-   00          BRK
+7E4C-   00          BRK
+7E4D-   00          BRK
+7E4E-   00          BRK
+7E4F-   68          PLA
+7E50-   8D 77 7E    STA   $7E77
+7E53-   68          PLA
+7E54-   8D 78 7E    STA   $7E78
+7E57-   68          PLA
+7E58-   85 06       STA   $06
+7E5A-   68          PLA
+7E5B-   85 07       STA   $07
+7E5D-   A9 FC       LDA   #$FC
+7E5F-   85 D8       STA   $D8
+7E61-   A0 00       LDY   #$00
+7E63-   B1 06       LDA   ($06),Y
+7E65-   8D 5A 9D    STA   $9D5A
+7E68-   C8          INY
+7E69-   B1 06       LDA   ($06),Y
+7E6B-   8D 5B 9D    STA   $9D5B
+7E6E-   AD 78 7E    LDA   $7E78
+7E71-   48          PHA
+7E72-   AD 77 7E    LDA   $7E77
+7E75-   48          PHA
+7E76-   60          RTS
+7E77-   00          BRK
+7E78-   00          BRK
+7E79-   68          PLA
+7E7A-   85 FE       STA   $FE
+7E7C-   68          PLA
+7E7D-   85 FF       STA   $FF
+7E7F-   A0 01       LDY   #$01
+7E81-   B1 FE       LDA   ($FE),Y
+7E83-   F0 06       BEQ   $7E8B
+7E85-   20 ED FD    JSR   $FDED    F8ROM:COUT
+7E88-   C8          INY
+7E89-   D0 F6       BNE   $7E81
+7E8B-   18          CLC
+7E8C-   98          TYA
+7E8D-   65 FE       ADC   $FE
+7E8F-   85 FE       STA   $FE
+7E91-   A5 FF       LDA   $FF
+7E93-   69 00       ADC   #$00
+7E95-   48          PHA
+7E96-   A5 FE       LDA   $FE
+7E98-   48          PHA
+7E99-   60          RTS
+7E9A-   68          PLA
+7E9B-   85 FE       STA   $FE
+7E9D-   68          PLA
+7E9E-   85 FF       STA   $FF
+7EA0-   68          PLA
+7EA1-   85 06       STA   $06
+7EA3-   68          PLA
+7EA4-   85 07       STA   $07
+7EA6-   A9 01       LDA   #$01
+7EA8-   8D B6 AA    STA   $AAB6
+7EAB-   85 76       STA   $76
+7EAD-   85 33       STA   $33
+7EAF-   A9 8D       LDA   #$8D
+7EB1-   20 ED FD    JSR   $FDED    F8ROM:COUT
+7EB4-   A9 84       LDA   #$84
+7EB6-   20 ED FD    JSR   $FDED    F8ROM:COUT
+7EB9-   A0 00       LDY   #$00
+7EBB-   B1 06       LDA   ($06),Y
+7EBD-   8D DB 7E    STA   $7EDB
+7EC0-   A0 01       LDY   #$01
+7EC2-   B1 06       LDA   ($06),Y
+7EC4-   20 ED FD    JSR   $FDED    F8ROM:COUT
+7EC7-   C8          INY
+7EC8-   CC DB 7E    CPY   $7EDB
+7ECB-   90 F5       BCC   $7EC2
+7ECD-   F0 F3       BEQ   $7EC2
+7ECF-   A9 8D       LDA   #$8D
+7ED1-   20 ED FD    JSR   $FDED    F8ROM:COUT
+7ED4-   A5 FF       LDA   $FF
+7ED6-   48          PHA
+7ED7-   A5 FE       LDA   $FE
+7ED9-   48          PHA
+7EDA-   60          RTS
+7EDB-   00          BRK
+7EDC-   68          PLA
+7EDD-   85 FE       STA   $FE
+7EDF-   68          PLA
+7EE0-   85 FF       STA   $FF
+7EE2-   68          PLA
+7EE3-   85 06       STA   $06
+7EE5-   68          PLA
+7EE6-   85 07       STA   $07
+7EE8-   A0 00       LDY   #$00
+7EEA-   B1 06       LDA   ($06),Y
+7EEC-   8D 01 7F    STA   $7F01
+7EEF-   C8          INY
+7EF0-   B1 06       LDA   ($06),Y
+7EF2-   20 ED FD    JSR   $FDED    F8ROM:COUT
+7EF5-   CC 01 7F    CPY   $7F01
+7EF8-   D0 F5       BNE   $7EEF
+7EFA-   A5 FF       LDA   $FF
+7EFC-   48          PHA
+7EFD-   A5 FE       LDA   $FE
+7EFF-   48          PHA
+7F00-   60          RTS
+7F01-   00          BRK
+7F02-   68          PLA
+7F03-   85 FE       STA   $FE
+7F05-   68          PLA
+7F06-   85 FF       STA   $FF
+7F08-   68          PLA
+7F09-   85 06       STA   $06
+7F0B-   68          PLA
+7F0C-   85 07       STA   $07
+7F0E-   A0 00       LDY   #$00
+7F10-   B1 06       LDA   ($06),Y
+7F12-   F0 06       BEQ   $7F1A
+7F14-   20 F0 FD    JSR   $FDF0    F8ROM:COUT1
+7F17-   C8          INY
+7F18-   D0 F6       BNE   $7F10
+7F1A-   A5 FF       LDA   $FF
+7F1C-   48          PHA
+7F1D-   A5 FE       LDA   $FE
+7F1F-   48          PHA
+7F20-   60          RTS
+7F21-   68          PLA
+7F22-   85 06       STA   $06
+7F24-   68          PLA
+7F25-   85 07       STA   $07
+7F27-   A0 01       LDY   #$01
+7F29-   B1 06       LDA   ($06),Y
+7F2B-   F0 06       BEQ   $7F33
+7F2D-   20 F0 FD    JSR   $FDF0    F8ROM:COUT1
+7F30-   C8          INY
+7F31-   D0 F6       BNE   $7F29
+7F33-   18          CLC
+7F34-   98          TYA
+7F35-   65 06       ADC   $06
+7F37-   85 06       STA   $06
+7F39-   A5 07       LDA   $07
+7F3B-   69 00       ADC   #$00
+7F3D-   48          PHA
+7F3E-   A5 06       LDA   $06
+7F40-   48          PHA
+7F41-   60          RTS
+7F42-   A2 00       LDX   #$00
+7F44-   20 6F FD    JSR   $FD6F    F8ROM:GETLN1
+7F47-   8E 74 7F    STX   $7F74
+7F4A-   E0 00       CPX   #$00
+7F4C-   F0 1D       BEQ   $7F6B
+7F4E-   A0 00       LDY   #$00
+7F50-   AD 74 7F    LDA   $7F74
+7F53-   8D 3F 70    STA   $703F
+7F56-   8D 40 70    STA   $7040
+7F59-   EE 3F 70    INC   $703F
+7F5C-   B9 00 02    LDA   $0200,Y
+7F5F-   C8          INY
+7F60-   99 40 70    STA   $7040,Y
+7F63-   CC 74 7F    CPY   $7F74
+7F66-   D0 F4       BNE   $7F5C
+7F68-   4C 73 7F    JMP   $7F73
+7F6B-   A9 00       LDA   #$00
+7F6D-   8D 3F 70    STA   $703F
+7F70-   8D 40 70    STA   $7040
+7F73-   60          RTS
+7F74-   00          BRK
+7F75-   00          BRK
+7F76-   68          PLA
+7F77-   85 FE       STA   $FE
+7F79-   68          PLA
+7F7A-   85 FF       STA   $FF
+7F7C-   68          PLA
+7F7D-   8D 2D 80    STA   $802D
+7F80-   68          PLA
+7F81-   85 08       STA   $08
+7F83-   68          PLA
+7F84-   85 09       STA   $09
+7F86-   68          PLA
+7F87-   85 06       STA   $06
+7F89-   68          PLA
+7F8A-   85 07       STA   $07
+7F8C-   A0 00       LDY   #$00
+7F8E-   B1 06       LDA   ($06),Y
+7F90-   8D 29 80    STA   $8029
+7F93-   8D 2A 80    STA   $802A
+7F96-   EE 2A 80    INC   $802A
+7F99-   B1 08       LDA   ($08),Y
+7F9B-   8D 2B 80    STA   $802B
+7F9E-   A9 01       LDA   #$01
+7FA0-   8D 2C 80    STA   $802C
+7FA3-   AD 2B 80    LDA   $802B
+7FA6-   18          CLC
+7FA7-   6D 29 80    ADC   $8029
+7FAA-   8D 28 80    STA   $8028
+7FAD-   B0 07       BCS   $7FB6
+7FAF-   CD 2D 80    CMP   $802D
+7FB2-   F0 1C       BEQ   $7FD0
+7FB4-   90 1A       BCC   $7FD0
+7FB6-   A9 FF       LDA   #$FF
+7FB8-   8D 2F 80    STA   $802F
+7FBB-   AD 2D 80    LDA   $802D
+7FBE-   38          SEC
+7FBF-   ED 29 80    SBC   $8029
+7FC2-   90 34       BCC   $7FF8
+7FC4-   8D 2E 80    STA   $802E
+7FC7-   AD 2D 80    LDA   $802D
+7FCA-   8D 29 80    STA   $8029
+7FCD-   4C DE 7F    JMP   $7FDE
+7FD0-   8D 29 80    STA   $8029
+7FD3-   A9 00       LDA   #$00
+7FD5-   8D 2F 80    STA   $802F
+7FD8-   AD 2B 80    LDA   $802B
+7FDB-   8D 2E 80    STA   $802E
+7FDE-   AD 2E 80    LDA   $802E
+7FE1-   F0 15       BEQ   $7FF8
+7FE3-   AC 2C 80    LDY   $802C
+7FE6-   B1 08       LDA   ($08),Y
+7FE8-   AC 2A 80    LDY   $802A
+7FEB-   91 06       STA   ($06),Y
+7FED-   EE 2A 80    INC   $802A
+7FF0-   EE 2C 80    INC   $802C
+7FF3-   CE 2E 80    DEC   $802E
+7FF6-   D0 EB       BNE   $7FE3
+7FF8-   AD 29 80    LDA   $8029
+7FFB-   A0 00       LDY   #$00
+7FFD-   91 06       STA   ($06),Y
+7FFF-   AD 2F 80    LDA   $802F
+8002-   6A          ROR
+8003-   A5 FF       LDA   $FF
+8005-   48          PHA
+8006-   A5 FE       LDA   $FE
+8008-   48          PHA
+8009-   A0 00       LDY   #$00
+800B-   B1 06       LDA   ($06),Y
+800D-   8D 3F 70    STA   $703F
+8010-   A9 01       LDA   #$01
+8012-   B1 06       LDA   ($06),Y
+8014-   99 40 70    STA   $7040,Y
+8017-   CC 3F 70    CPY   $703F
+801A-   C8          INY
+801B-   D0 F5       BNE   $8012
+801D-   AD 3F 70    LDA   $703F
+8020-   A0 00       LDY   #$00
+8022-   91 06       STA   ($06),Y
+8024-   AE 28 80    LDX   $8028
+8027-   60          RTS
+8028-   00          BRK
+8029-   00          BRK
+802A-   00          BRK
+802B-   00          BRK
+802C-   00          BRK
+802D-   00          BRK
+802E-   00          BRK
+802F-   00          BRK
+8030-   68          PLA
+8031-   85 FE       STA   $FE
+8033-   68          PLA
+8034-   85 FF       STA   $FF
+8036-   68          PLA
+8037-   85 06       STA   $06
+8039-   68          PLA
+803A-   85 07       STA   $07
+803C-   A0 00       LDY   #$00
+803E-   B1 06       LDA   ($06),Y
+8040-   8D 61 80    STA   $8061
+8043-   C8          INY
+8044-   B1 06       LDA   ($06),Y
+8046-   20 F0 FD    JSR   $FDF0    F8ROM:COUT1
+8049-   CC 61 80    CPY   $8061
+804C-   D0 F5       BNE   $8043
+804E-   A0 00       LDY   #$00
+8050-   B1 06       LDA   ($06),Y
+8052-   A5 FF       LDA   $FF
+8054-   48          PHA
+8055-   A5 FE       LDA   $FE
+8057-   48          PHA
+8058-   A0 00       LDY   #$00
+805A-   B1 06       LDA   ($06),Y
+805C-   A4 06       LDY   $06
+805E-   A6 07       LDX   $07
+8060-   60          RTS
+8061-   00          BRK
