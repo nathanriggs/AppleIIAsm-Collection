@@ -14,6 +14,7 @@ This documentation is currently being updated to reflect massive changes between
 * [Introduction](#introduction)
 * [6502 Assembly Resources](#6502-assembly-resources)
 * [Apple \]\[ Books and Resources](#apple-2-books-and-resources)
+* [Related Github Projects](#related-github-projects)
 * [Library Standard Conventions](#library-standard-conventions)
 * [Documentation Practices](#documentation-practices)
 * [Disk Overviews](#disk-overviews)
@@ -101,6 +102,19 @@ More books have been written over the past forty years than could be read within
 * [Juiced.GS: A Quarterly Apple II Journal](https://juiced.gs/)
 
 ---
+### Related Github Projects
+
+A number of folk are doing work on 6502 or the Apple II on GitHub. While I cannot possibly list each and every one (that's what the search function is for!), these are projects I have found particularly useful, informative, entertaining, or inspiring.
+
+* [Prince of Persia Apple II Source Code](https://github.com/fabiensanglard/Prince-of-Persia-Apple-II), by Jordan Mechner
+* [WeeGUI, a small gui for the Apple II](#https://github.com/blondie7575/WeeGUI)
+* [Two-lines or less Applesoft programs](#https://github.com/thelbane/Apple-II-Programs) -- a lot can be accomplished!
+* [Doss33FSProgs](https://github.com/deater/dos33fsprogs), programs for manipulating the DOS 3.3 filesystem
+* [ADTPro](https://github.com/ADTPro/adtpro), a requirement for anyone working with real Apple II hardware today.
+* [CC65](https://github.com/cc65), a modern cross-compiling C compiler and assembler for 6502 systems.
+* [PLASMA: The Proto-Language Assembler for All](https://github.com/dschmenk/PLASMA) -- this was originally written for the Apple II alone, but has recently expanded to other systems.
+
+---
 ## Library Standard Conventions
 
 ### Includes
@@ -128,7 +142,7 @@ Given the lack of directory structures in DOS 3.3, we are using a filename precu
  
  Additionally, Merlin Appends a ".S" to the end of a filename if it is saved as a source, and prepends the file with "T." to signify it being a text file. This prepended T. overrides our own naming conventions.
  
- **SAMPLE FILENAMES**
+ *SAMPLE FILENAMES*
  
    T.MIN.MAC.STDIO
    T.SUB.TFILLA
