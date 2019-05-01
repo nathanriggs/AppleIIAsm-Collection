@@ -72,7 +72,7 @@ More books have been written over the past forty years than could be read within
 * David Flannigan. [_The New Apple II Users' Guide_](https://www.amazon.com/gp/product/0615639879/). June 6, 2012.
 * David L. Craddock. [_Break Out: How the Apple II Launched the PC Gaming Revolution_](https://www.amazon.com/gp/product/0764353225/). September 28, 2017.
 * Steven Weyhrich. [_Sophistication & Simplicity: The Life and Times of the Apple II Computer_](https://www.amazon.com/gp/product/0986832278/). December 1, 2013.
-* Roger Wagner, Chris Torrence. [_Assembly Lines: The Complete Book_](https://www.amazon.com/Assembly-Lines-Complete-Roger-Wagner/). May 10, 2017.
+* Roger Wagner, Chris Torrence. [_Assembly Lines: The Complete Book_](https://www.amazon.com/Assembly-Lines-Complete-Roger-Wagner/dp/1312089407/). May 10, 2017.
 * Ken Williams, Bob Kernagham, Lisa Kernagham. [_Apple II Computer Graphics_](https://www.amazon.com/gp/product/B01FIXG7ZK/). November 3, 1983.
 * Lon Poole. [_Apple II Users' Guide_.](https://www.amazon.com/gp/product/0931988462/). 1981.
 
