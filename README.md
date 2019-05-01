@@ -55,7 +55,7 @@ Ultimately, my aim is to create a large enough collection of routines to address
 ---
 ## 6502 Assembly Resources
 
-As someone who spends a _lot_ of time thinking about, writing about, and teaching different facets of technical writing (in its broadest sense), I can confirm the following: there are hundreds of thousands of books written about the 6502 architecture and Assembly programming. I can also confirm that these books--as well as most websites--tend to approach the subject from a "writerly" position rather than a reader-centered one; that is, it's written for engineers and computer scientists who have already spent a lot of time and money understanding the theory, learning the jargon, and training themselves to be able to do things by muscle memory. That's great for established engineers, mathemeticians, computer scientists and the like, as well as those who can afford to dedicate years of their lives (and again, gobs of $$$) to obtain a degree that qualifies them as entry level in the field. It is not so great, however, for beginners, hobbyists, or those trying to study it from a non-engineering theoretical perspective. That is, at least, part of the gap I am hoping to fill.
+As someone who spends a _lot_ of time thinking about, writing about, and teaching different facets of technical writing (in its broadest sense), I can confirm the following: there are thousands of books written about the 6502 architecture and Assembly programming. I can also confirm that these books--as well as most websites--tend to approach the subject from a "writerly" position rather than a reader-centered one; that is, it's written for engineers and computer scientists who have already spent a lot of time and money understanding the theory, learning the jargon, and training themselves to be able to do things by muscle memory. That's great for established engineers, mathemeticians, computer scientists and the like, as well as those who can afford to dedicate years of their lives (and again, gobs of $$$) to obtain a degree that qualifies them as entry level in the field. It is not so great, however, for beginners, hobbyists, or those trying to study it from a non-engineering theoretical perspective. That is, at least, part of the gap I am hoping to fill.
 
 That said, I myself would have failed quite readily without at least a few key texts and websites, and it would be remiss to not list them here. And if you're committed to learning this, know that there is no good replacement to sitting down, typing out a listing from a book, compiling and then trying to figure out what the hell you just did--or what you did wrong! There is no doing without learning, and there is no learning without doing; but maybe these can help.
 
@@ -151,7 +151,7 @@ Given the lack of directory structures in DOS 3.3, we are using a filename precu
 
 #### Variables
 
-In Merlin Pro 8, assembler variables are preceded by a ] sign. These variables are temporarily assigned, and can be overwritten further down in the code. Unless highly impractical, constant hooks should use native assembly's system of assigning labels (just the label), as should hook entry points. The exception to this is within macro files, as these could easily lead to label conflicts.
+In Merlin 8 Pro, assembler variables are preceded by a ] sign. These variables are temporarily assigned, and can be overwritten further down in the code. Unless highly impractical, constant hooks should use native assembly's system of assigning labels (just the label), as should hook entry points. The exception to this is within macro files, as these could easily lead to label conflicts.
 
 #### Local Hooks
 
@@ -205,7 +205,7 @@ External documentation refers to this document.
 
 Every Macro and subroutine should have an entry in the the table of contents, cheat sheet area, calls and clobbers list, and detailed descriptions. Detailed descriptions should include the information in the tables as well as a more abstract description of what the subroutine accomplishes, and how it does so. Indented copy of the code in question may also be presented for easier reference than supplied by Merin 8 Pro.
 
-**<u>ALL DOCUMENTATION SHOULD BE UPDATED WITH ANY REVISION, BOTH INTERNAL AND EXTERNAL, AFTER VERSION 0.5.0</u>**
+**ALL DOCUMENTATION SHOULD BE UPDATED WITH ANY REVISION, BOTH INTERNAL AND EXTERNAL, AFTER VERSION 0.5.0**
 
 ---
 ## Disk Overviews
@@ -596,7 +596,7 @@ If a memory alteration is indicated by a [PASS], it means that the memory area t
 Once Macros are mostly finished in how they are called, you can find how to use them here. New versions, of course, always run the risk of changing something integral; This cheat sheet will be updated accordingly.
 
 
- MACRO  | USAGE                                                               | RETURNS
+ MACRO  | USAGE                                                               | OUTPUT
  ------ | ------------------------------------------------------------------- | ----------------------------------- 
  _DUMP  | ```_DUMP [memory address];[# of bytes to dump]```                   | Nothing; dump to screen
  _ERR   | ```_ERR [calling rout];[err msg];[dump msg];[dump loc];[dmplen]```  | prints various error messages and information
