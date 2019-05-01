@@ -58,8 +58,22 @@ As someone who spends a _lot_ of time thinking about, writing about, and teachin
 
 That said, I myself would have failed quite readily without at least a few key texts and websites, and it would be remiss to not list them here. And if you're committed to learning this, know that there is no good replacement to sitting down, typing out a listing from a book, compiling and then trying to figure out what the hell you just did--or what you did wrong! There is no doing without learning, and there is no learning without doing; but maybe these can help.
 
+### Books
 
+* Roger Wagner, Chris Torrence. [_Assembly Lines: The Complete Book_](https://www.amazon.com/Assembly-Lines-Complete-Roger-Wagner/dp/1312089407/). May 10, 2017.
+* Lance A. Leventhal, Winthrop Saville. _6502 Assembly Language Subroutines_. 1982.
+* Don Lancaster. _Assembly Cookbook for the Apple II, IIe_. 1984, 2011.
+* Mark Andrews. _Apple Roots: Assembly Language Programming for the Apple IIe and IIc. 1986.
+* CW Finley, Jr., Roy E. Meyers. _Assembly Language for the Applesoft Programmer_. 1984.
+* Randy Hyde. _Using 6502 Assembly Language_. 1981.
+* Glen Bredon. _Merlin Pro Instruction Manual_. 1984.
+* JS Anderson. _Microprocessor Technology_. 1994. (also covers z80 architecture)
 
+### Websites
+
+* [CodeBase64](http://codebase64.org/doku.php)
+* [6502.org](http://www.6502.org/)
+* [Easy6502](http://skilldrick.github.io/easy6502/)
 
 ---
 ## Apple 2 Books and Resources
@@ -72,15 +86,19 @@ More books have been written over the past forty years than could be read within
 * David Flannigan. [_The New Apple II Users' Guide_](https://www.amazon.com/gp/product/0615639879/). June 6, 2012.
 * David L. Craddock. [_Break Out: How the Apple II Launched the PC Gaming Revolution_](https://www.amazon.com/gp/product/0764353225/). September 28, 2017.
 * Steven Weyhrich. [_Sophistication & Simplicity: The Life and Times of the Apple II Computer_](https://www.amazon.com/gp/product/0986832278/). December 1, 2013.
-* Roger Wagner, Chris Torrence. [_Assembly Lines: The Complete Book_](https://www.amazon.com/Assembly-Lines-Complete-Roger-Wagner/dp/1312089407/). May 10, 2017.
 * Ken Williams, Bob Kernagham, Lisa Kernagham. [_Apple II Computer Graphics_](https://www.amazon.com/gp/product/B01FIXG7ZK/). November 3, 1983.
 * Lon Poole. [_Apple II Users' Guide_.](https://www.amazon.com/gp/product/0931988462/). 1981.
-* And of course, the guides and documentation that came with every version of the Apple II (except the first!)
-
-
+* Jeffrey Stanton. _Apple Graphics and Arcade Game Design_. 1982.
+* Apple. _Apple Monitors Peeled_. 1981.
+* Apple. _Apple II/IIe/IIc/IIgs Technical Reference Manual. 
 
 ### Web Resources
 
+* [Apple II Text Files](http://textfiles.com/apple/.windex.html)
+* [Apple II Programming](http://apple2.org.za/gswv/a2zine/faqs/csa2pfaq.html)
+* [The Asimov Software Archive](https://ftp.apple.asimov.net/)
+* [Apple II Online](https://apple2online.com/index.php)
+* [Juiced.GS: A Quarterly Apple II Journal](https://juiced.gs/)
 
 ---
 ## Library Standard Conventions
