@@ -4,7 +4,7 @@ A general purpose ASM libriary for the Apple II. Assembled in Merlin 8 Pro.
 
 ---
 ## ATTENTION
-This documentation currently reflects version 0.3.1 only. Since then, there have been massive changes. I am currently committed to heavy testing of every subroutine and fixing bugs as they are found, as well as changing how literals and nonliterals are processed by the entire library (thus the long period of silence). Once this is finished, and a working demo of the library builder is done, the next official version will be released. After that, documentation will be updated, both internal and external, and will then reflect the official 0.5.0 release. This will still be considered "unstable" due to the fact that this is still a pre-release, but it should be stable enough to expect few errors to have made it through the revision process.
+This documentation is currently being updated to reflect massive changes between version 0.3 and the next release, 0.5. Generally, these updates are happening in the order of disks: STDIO, then COMMON, etc. Once this is finished, v0.5.0 will go live, and future updates will be piecemeal, by and large, rather than in large chunks.
 
 
 
@@ -12,10 +12,10 @@ This documentation currently reflects version 0.3.1 only. Since then, there have
 ---
 ## Table of Contents
 * [Introduction](#introduction)
-* [FAQ](#faq)
-* ~~The MERLIN Assembler: Quirks and Caveats~~
-* ~~How to use this Documentation~~
-* ~~How to Use the Library~~
+* [6502 Assembly Resources](#6502-assembly-resources)
+* [Apple ]][ Books and Resources](#apple-][-books-and-resources)
+* [Library Standard Conventions](#library-standard-conventions)
+* [Documentation Practices](#documentation-practices)
 * [Disk Overviews](#disk-overviews)
   * [Disk 1: STDIO](#disk-1-stdio)
   * [Disk 2: COMMON](#disk-2-common-required)
@@ -23,95 +23,73 @@ This documentation currently reflects version 0.3.1 only. Since then, there have
   * [Disk 4: MATH](#disk-4-math)
   * [Disk 5: STRINGS](#disk-5-strings)
   * [Disk 6: FILEIO](#disk-6-fileio)
-  * ~~[Disk 7: CONVERSION]~~
-  * ~~[Disk 8: LORES]~~
-  * ~~[Disk 9: SOUND]~~
-  * ~~[Disk 10: 80COL]~~
-  * ~~[Disk 11: HIRES]~~
-  * ~~[Disk 12: DBLLORES]~~
-  * ~~[Disk 13: DBLHIRES]~~
-  * ~~[Disk 14: OTHERIO]~~
-  * [Disk 15: UTILITIES]
-  * [Disk 16: INTEGRATED DEMOS]
-  * [Disk 20: MINIFIED ROUTINES DISK A]
-* [Future Disks](#future-disks)
+  * [Disk 7: CONVERSION](#disk-7-convert)
+  * [Disk 8: LORES](#disk-8-lores)
+  * [Disk 9: SPEAKER](#disk-9-speaker)
+  * [Disk 10: HIRES](#disk-10-hires)
+  * [Disk 11: SERIALIO](#disk-11-serialio)
+  * [Disk 12: SORTSEARCH](#disk-12-sortsearch)
+  * [Disk 13: TMENUTWIN](#disk-13-tmenutwin)
+  * [Disk 14: 80COL](#disk-14-80col)
+  * [Disk 15: MOCKINGBOARD](#disk-15-mockingboard)
+  * [Disk 16: DBLLORES](#disk-16-dbllores)
+  * [Disk 17: DBLHIRES](#disk-17-dblhires)
+  * [Disk 18: DEMOSUTILS](#disk-18-demosutils)
+  * [Disk 19: OTHERCARDS](#disk-19-othercards)
+  * [Disk 20: MINIFIED ROUTINES DISK A](#disk-20-minified)
+  * [Disk 21: DEMOBUILDS 1](#disk-21-demobuilds1)
+  * [Disk 22: DEMOBUILDS 2](#disk-22-demobuilds2)
 * [Macro Subroutine Calls and Clobbers](#macro-subroutine-calls-and-clobbers)
 * [Macro Usage Cheat Sheet](#macro-usage-cheat-sheet)
-* ~~Detailed Descriptions: Macros~~
-* ~~Detailed Descriptions: Subroutines~~
+* [Detailed Descriptions: Macros](#macros)
+* [Detailed Descriptions: Subroutines](#subroutiness)
 
 ---
 ## Introduction
 
-This is a general purpose library in 6502 Assembly for the Apple II. I am learning both Git and Assembly for the first time as I create, update and maintain this, so expect some mishaps: wasted CPU cycles, weird documentation, accidental catastrophes, and so on. I am using Merlin 8 Pro (DOS 3.3) for this project, but this should be fairly easy to convert to other assemblers as well as other 6502-based systems.
+This is a general purpose library in 6502 Assembly for the Apple II. Originally, I began this project as research for a platform study of the Apple \]\[ system, learning Assembly for the first time. However, after speaking to a number of folk who are still actively involved in a community of enthusiasts, I noticed that there was no cohesive place for a first-time learner to find well-documented code, basic data structures and control loops, or even a good and intuitive listing of hooks for the system. There are plenty of books--some very old, some very new--that detail these things somewhat cohesively and are fantastic resources for beginners, but very few of them adequately serve as an good basis for understanding the platform as a whole. There are also many webpages out there dedicated to this matter--but as is the nature of the Internet, they are fractured resources that come and go at the blink of an eye. Thus, Appl\]\[AsmLib began.
 
-Ultimately, my aim is to create a large enough collection of routines to address any domain of development for the Apple II family in Assembly.  I'll do my best to acknowledge when a routine is inspired by (or mostly copied from) another source, and will exclude them from the Apache License 2.0 when necessary; I hope to replace anything of this sort with original work as I learn. If you find your own source here, but would rather it not be here, please reach out to me and I'll remove it immediately.
-
----
-## FAQ
-
-* [Why 6502/the Apple II? Wouldn't something newer be more...relevant?](#the-reason-for-6502-assembly)
-* [Okay, but why a native Assembler, Merlin 8 Pro, instead of something like CC65?](#the-reason-for-native-assembly)
-* [Why is ______ such a mess?](#the-reason-for-some-messiness)
-* [Which versions of the Apple II is this compatible with?](#compatible-apple-2-systems)
-* [What should I use these for?](#what-these-libraries-are-for)
-* [What if I have a better solution/algorithm/subroutine?](#i-have-an-improvement)
+Ultimately, my aim is to create a large enough collection of routines to address any domain of development for the Apple II family in Assembly while maintaining an ease of access to beginners that is hard to come by.  I'll do my best to acknowledge when a routine is inspired by (or mostly copied from) another source, and will exclude them from the Apache License 2.0 when necessary; I hope to replace anything of this sort with original work as I revise. If you find your own source here, but would rather it not be here, please reach out to me and I'll remove it immediately.
 
 ---
-## Answers
+## 6502 Assembly Resources
 
-### The Reason for 6502 Assembly
+As someone who spends a _lot_ of time thinking about, writing about, and teaching different facets of technical writing (in its broadest sense), I can confirm the following: there are hundreds of thousands of books written about the 6502 architecture and Assembly programming. I can also confirm that these books--as well as most websites--tend to approach the subject from a "writerly" position rather than a reader-centered one; that is, it's written for engineers and computer scientists who have already spent a lot of time and money understanding the theory, learning the jargon, and training themselves to be able to do things by muscle memory. That's great for established engineers, mathemeticians, computer scientists and the like, as well as those who can afford to dedicate years of their lives (and again, gobs of $$$) to obtain a degree that qualifies them as entry level in the field. It is not so great, however, for beginners, hobbyists, or those trying to study it from a non-engineering theoretical perspective. That is, at least, part of the gap I am hoping to fill.
 
-6502 Assembly is probably one of the most important and influential assembly language variants to have ever existed. Part of this is due to great timing: the 6502 CPU managed to become a processor cheap enough for the burgeoning minicomputer/home computer scene in the late 1970s and early 1980s while still providing a lot of elegance and power necessary for almost two decades of dominance. I have several personal reasons for deciding on 6502 assembly as a means to learn assembly in general: 
+That said, I myself would have failed quite readily without at least a few key texts and websites, and it would be remiss to not list them here. That said, if you're committed to learning this, there is no good replacement to sitting down, typing out a listing from a book, compiling and then trying to figure out what the hell you just did--or what you did wrong! There is no doing without learning, and there is no learning without doing; but maybe these can help.
 
-* There's a certain nostalgia factor in play, admittedly. I grew up typing BASIC and assembly programs from books and magazines into my Apple ][ computer at the age of 10 or so, and while I learned how BASIC worked pretty quickly through this process, Assembly was almost indecipherable for me at that age. Fast forward to 30 years later, and I'm the same kid entering in code found in books and magazines--or better yet, found in pdfs--but now I have the requisite knowledge to understand the assembly listings.
 
-* 6502 had a limited number of commands, making it ideal to learn just how low-level code works. I started out wanting to do this in order to better read low-level code for my own work in technical communication, and even something as simple as a "MUL" command carries with it a ton of unseen work behind it. To be a little more blunt: although most Assembly variants are closely related to the CPU architecture, 6502 stands out as only executing 1-4 machine code operations per command, making it ideal for sussing out exactly what is happening when, say, you multiply two integer values. Of course I could have just went into RISC systems, but the nostalgia factor probably weighed in heavily here.
 
-* The Apple ][ and its various incarnations constitute one of the most important developments in computing still today. While most of us are familiar with Apple today--even begrudgingly--it is hard to adequately describe the impact the Apple ][ had on the world, and on people personally, without somehow not doing it justice. It was monumental because it was simultaneously 1) cheap due to Wozniak's brilliant designs, and 2) approachable enough for a ten year-old to not have any problems getting used to, with many thanks to Steve Jobs. We are used to the latter now: anyone who has seen an infant interact with a smart phone knows how intuitive these things can be; but we've left a lot of the brilliant engineering behind. This isn't to say, of course, that the engineering behind a modern Mac isn't brilliant--it surely is!--it's simply that said brilliance isn't easily accessible to the end user, and it tends to make machines more expensive rather than less expensive.
 
-* For a long time, I considered learning Assembly via ARM systems like the Raspberry Pi. The issue with newer products, however, is that Assembly is used for only niche projects, for the most part: low-level drivers, systems programming, and the like. Even then, C can usually be substituted for Assembly. Paradoxically then, at least for my purposes, learning 6502 Assembly actually has more use-value than learning modern variants, as I don't intend to become anything close to an expert on any particular architecture. I simply want to know _how things work_, and 6502 presents the best possibility to do so!
+---
+## Apple \]\[ Books and Resources
 
-### The Reason for Native Assembly
+More books have been written over the past forty years than could be read within a reasonable timeframe. However, I have found some books more fruitful than others in understanding both the technical aspects of the Apple \]\[ as well as the cultural ones. If you know of any essential books or websites that are missing here, by all means get in touch or contribute it here yourself!
 
-I have been aware of projects like CC65 for some time now, and in no way do I suggest using a native assembler over these, especially if you plan on doing cross-platform development. After I finish a decent version of these libraries, in fact, I plan on moving straight to CC65 for ease of portability in my "retro" projects. For me, there are simple reasons for choosing a native compiler, and these reasons won't be important for everyone:
+### Books
 
-* Given my research specialties, I need to know what it was like for the programmer "on the ground," and there is no way to understand this other than to do things the way that programmer did. I *will* use emulators from time to time for the sake of convenience, but I generally try to stay at the same execution speed that developers of the time experienced.
 
-* Again, there's the nostalgia factor. I delight in remembering strange magical numbers like $300,-151, and so on while still remembering what they are for. There's a simple pleasure in knowing that what I learned at the age of ten, without even understanding it, has become useful now. You can't say that about much more you learn at that age.
 
-* I own at least one variant of the hardware that Merlin 8 Pro runs on: an Apple //c. This makes it possible to check whether something works in emulation versus whether it works on real hardware fairly easy. 
+### Web Resources
 
-* There is a VAST network of Apple ][ enthusiasts still today--a community that has existed much longer than most of the same kind. If you haven't already, I would highly suggest reading the book _Sophistication and Simplicity_ by Dr. Steven Weyhrich, which chronicles the history of the Apple ][ and its fanbase. This, too, makes it fairly simple to test work on real hardware I do not own: it takes a quick facebook post, and someone will invariably be kind enough to test it for me. 
-* Apple ][ forever! 'nuff said.
 
-### The Reason for some Messiness
+---
+## Library Standard Conventions
 
-As I said in the introduction, I am literally learning Assembly as I create this library, so it's inevitable that code will not always be optimal. I've been iterating over each disk as I update, adding and deleting where I see fit, and optimizing after having learned more every time. Still, the reason for this project has nothing to do with absolute efficiency, and I opt for readability over efficiency when I see fit. In part, this is because I want to keep it helpful for others who are learning 6502 Assembly, but moreso it's because I myself am still something of a beginner with the language. Having used high-level languages for most of my life, there's been a bit of a jump to get here, and old habits die hard! 
 
-### Compatible Apple 2 Systems
-
-So far, I have been able to test these libraries on the actual hardware of an Apple //c alone. I have used emulators to test for other versions of the Apple ][, but I can make no guarantees yet concerning operability. For the most part, however, I am confident that these will also work on an Apple IIe and IIGS, as I have avoided anything I know to be particular to the //c. I suspect that these will also work well on an Apple II+, but there may be problems on the original version of the Apple ][. I have, of course, also avoided the use of the 65c02 opcode additions.
-
-### What These Libraries Are For
-
-Ultimately, this is a __general purpose library__, and should function well for most purposes. The caveat to this might be fast-paced video games, as those usually require special optimizations for that game and that game alone. Still, the code can be optimized after-the-fact for any special projects, and I do plan on having graphics routines that are much faster than the standard ones provided by Applesoft. I'll be heavily leaning on what I'm learning from [Andy McFadden's FDRAW routines](https://github.com/fadden/fdraw) for this at first, which means those libraries should be suitable still for most games.
-
-### I Have an Improvement
-
-That's great! Create a branch, I guess, and I'll merge if it makes sense! It should be noted that I'm also still figuring out git and GitHub as I go along here, which means I barely know what that even means, logistically. 
-
+---
+## Documentation Practices
 
 ---
 ## Disk Overviews
 
-Each disk contains a single Macro (.mac) file, one or more subroutine files related to the overarching theme of the disk, and a "minified" version of the mac and subroutine files that the entire library relies upon. Additionally, each library has a correlating .hooks file for declaring variables used in that library's operations, as well as individual copies of each subroutine for compiling custom libraries for any given project and a demo program. There are also "minified" versions of each subroutine that have no comments as well.
+Each disk contains a single Macro (.mac) file, one or more subroutine files related to the overarching theme of the disk, and a "minified" version of the mac and subroutine files that the entire library relies upon. Additionally, each library has a correlating .hooks file for declaring useful hooks at the beginning of a program used in that library's operations, as well as a variable file that must be included with any subroutine's inclusion into the main listing.
 
-In the following descriptions, we'll be listing the .mac contents that are relevant to the theme of the disk only, as many of the macros are calls to single subroutines and it would be redundant to list those as well. A table in section XXX lists the calls each macro makes to each subroutine, and the required.mac macros and required.lib subroutines are listed in Disk 2 only.
+In the following disk descriptions, we'll be listing the .mac contents that are relevant to the theme of the disk only, as many of the macros are calls to single subroutines. A table in section XXX lists the calls each macro makes to each subroutine, and the same information can be obtained from the detailed descriptions of macros and subroutines.
 
 ### Disk 1: STDIO
 
-This disk is dedicated to Standard Input/Output operations, and a couple non-standard ones. Note that this is for 40-column mode only in order to keep compatibility with earlier hardware, and focuses on screen output alone in order to help with execution speed. However, most of these subroutines will work in 80col mode, with the exception of those that use DMA. Additionally, this focuses on input from the most-used peripherals: the keyboard and game paddles. Libraries for 80-column mode, as well as input and output from and to other devices, will be added later on.
+This disk is dedicated to Standard Input/Output operations, and a couple non-standard ones. Note that this is for 40-column mode only in order to keep compatibility with earlier hardware, and focuses on screen output alone in order to help with execution speed. However, most of these subroutines will work in 80col mode, with the exception of those that directly read or write the screen memory.
 
 * stdio.mac
   * [`CURB`](#macro-curb): Move Cursor Backward by [n] spaces
