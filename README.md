@@ -75,6 +75,7 @@ More books have been written over the past forty years than could be read within
 * Roger Wagner, Chris Torrence. [_Assembly Lines: The Complete Book_](https://www.amazon.com/Assembly-Lines-Complete-Roger-Wagner/dp/1312089407/). May 10, 2017.
 * Ken Williams, Bob Kernagham, Lisa Kernagham. [_Apple II Computer Graphics_](https://www.amazon.com/gp/product/B01FIXG7ZK/). November 3, 1983.
 * Lon Poole. [_Apple II Users' Guide_.](https://www.amazon.com/gp/product/0931988462/). 1981.
+* And of course, the guides and documentation that came with every version of the Apple II (except the first!)
 
 
 
