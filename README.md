@@ -144,10 +144,10 @@ Given the lack of directory structures in DOS 3.3, we are using a filename precu
  
  *SAMPLE FILENAMES*
  
-   T.MIN.MAC.STDIO
-   T.SUB.TFILLA
-   T.MIN.LIB.REQUIRED
-   STDIO.DEMO.S
+ * T.MIN.MAC.STDIO
+ * T.SUB.TFILLA
+ * T.MIN.LIB.REQUIRED
+ * STDIO.DEMO.S
 
 #### Variables
 
