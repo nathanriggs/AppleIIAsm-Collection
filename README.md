@@ -68,7 +68,7 @@ More books have been written over the past forty years than could be read within
 
 ### Books
 
-* Bill Martens, Brian Wiser, William F. Luebbert, Phil Daley. [_What's Where in the Apple, Enhanced Edition: A Complete Guide to the Apple \]\[ Computer_.](https://www.amazon.com/gp/product/136517364X/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) October 11, 2016.
+* Bill Martens, Brian Wiser, William F. Luebbert, Phil Daley. [_What's Where in the Apple, Enhanced Edition: A Complete Guide to the Apple \]\[ Computer_.](https://www.amazon.com/gp/product/136517364X/) October 11, 2016.
 
 
 
