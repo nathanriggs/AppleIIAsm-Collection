@@ -13,7 +13,7 @@ This documentation is currently being updated to reflect massive changes between
 ## Table of Contents
 * [Introduction](#introduction)
 * [6502 Assembly Resources](#6502-assembly-resources)
-* [Apple ]][ Books and Resources](#apple-][-books-and-resources)
+* [Apple \]\[ Books and Resources](#apple-][-books-and-resources)
 * [Library Standard Conventions](#library-standard-conventions)
 * [Documentation Practices](#documentation-practices)
 * [Disk Overviews](#disk-overviews)
