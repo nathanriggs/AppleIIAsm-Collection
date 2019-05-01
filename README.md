@@ -13,7 +13,7 @@ This documentation is currently being updated to reflect massive changes between
 ## Table of Contents
 * [Introduction](#introduction)
 * [6502 Assembly Resources](#6502-assembly-resources)
-* [Apple \]\[ Books and Resources](#apple-][-books-and-resources)
+* [Apple \]\[ Books and Resources](#apple-2-books-and-resources)
 * [Library Standard Conventions](#library-standard-conventions)
 * [Documentation Practices](#documentation-practices)
 * [Disk Overviews](#disk-overviews)
@@ -62,11 +62,13 @@ That said, I myself would have failed quite readily without at least a few key t
 
 
 ---
-## Apple \]\[ Books and Resources
+## Apple 2 Books and Resources
 
 More books have been written over the past forty years than could be read within a reasonable timeframe. However, I have found some books more fruitful than others in understanding both the technical aspects of the Apple \]\[ as well as the cultural ones. If you know of any essential books or websites that are missing here, by all means get in touch or contribute it here yourself!
 
 ### Books
+
+* Bill Martens, Brian Wiser, William F. Luebbert, Phil Daley. [_What's Where in the Apple, Enhanced Edition: A Complete Guide to the Apple \]\[ Computer_.](https://www.amazon.com/gp/product/136517364X/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) October 11, 2016.
 
 
 
