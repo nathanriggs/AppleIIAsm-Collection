@@ -4,7 +4,7 @@ A general purpose ASM libriary for the Apple II. Assembled in Merlin 8 Pro.
 
 ---
 ## ATTENTION
-This documentation is currently being updated to reflect massive changes between version 0.3 and the next release, 0.5. Generally, these updates are happening in the order of disks: STDIO, then COMMON, etc. Once this is finished, v0.5.0 will go live, and future updates will be piecemeal, by and large, rather than in large chunks.
+This documentation is currently being updated to reflect massive changes between version 0.3 and the next release, 0.5. Generally, these updates are happening in the order of disks: STDIO, then COMMON, etc. Once this is finished, v0.5.0 will go live, and future updates will be piecemeal, by and large, rather than in large chunks. Until then, use the internal documentation (comments) for macro and subroutine usage.
 
 
 
@@ -103,9 +103,87 @@ More books have been written over the past forty years than could be read within
 ---
 ## Library Standard Conventions
 
+### Includes
+
+Each sub-library will have a hooks file, a var file, and a mac file. All subroutines within that sub-library will require the hooks file to be included at the top of the main listing, and the var file included directly before including the subroutine (usually at the end of the main program). Additionally, every subroutine requires the use of the required header file, required library file, and required var file.
+
+* HOOKS files: these include various hooks that are used by the sub-library's subroutines. Additional hooks that may be used by the end programmer are commented out.
+* VAR files: these carry temporarily labeled variables and equates for the sub-library's operation. All subroutines use the variables defined here rather than create their own. Note that because the labels are temporary, it is necessary to include the var file directly before including the subroutines in question.
+* MAC files: the macros for a given sub-library are included here, and are included by the "USE" pseudo-op rather than PUT.
+* HEAD file: The required library uses a header file that all sub-libraries and subroutines rely on. This should be included directly after setting the memory address.
+* LIB file: the required library comes in a single package rather than in separate subroutines. This must be included prior to the inclusion of other sub-libraries.
+
+### Naming Conventions
+
+#### Filenames
+
+Given the lack of directory structures in DOS 3.3, we are using a filename precursed extension system. The extensions should be applied to a filename in this order:
+
+* MIN: signifies that the code has been stripped of comments
+* SUB: signifies that the file holds a subroutine
+* MAC: signifies a collection of macros
+* LIB: signifies a collection of subroutines
+* <FILENAME>: the actual name of the subroutine, macro, our other file.
+* DEMO: signifies that the program is a sub-library demo
+ 
+ Additionally, Merlin Appends a ".S" to the end of a filename if it is saved as a source, and prepends the file with "T." to signify it being a text file. This prepended T. overrides our own naming conventions.
+ 
+ **SAMPLE FILENAMES**
+ 
+   T.MIN.MAC.STDIO
+   T.SUB.TFILLA
+   T.MIN.LIB.REQUIRED
+   STDIO.DEMO.S
+
+#### Variables
+
+In Merlin Pro 8, assembler variables are preceded by a ] sign. These variables are temporarily assigned, and can be overwritten further down in the code. Unless highly impractical, constant hooks should use native assembly's system of assigning labels (just the label), as should hook entry points. The exception to this is within macro files, as these could easily lead to label conflicts.
+
+#### Local Hooks
+
+Local labels are preceded by a : sign in Merlin Pro 8. When at all possible, local subroutines should have local labels. This does not apply to Merlin variables.
+
+#### Macros
+
+Macros should named with regard to mneumonic function, when possible, and should not exceed five characters unless absolutely necessary. Additionally, macros may use the following prefixes to signify their classification:
+
+* @: signifies a higher-level control structure, such as @IF,@ELSE,@IFX.
+* \_: signifies a macro mostly meant to be used internally, though it may have limited use outside of that context.
+
+### Subroutine Independence
+
+Beyond needing the core required library files as well as the hook and variable files for the library category in question, a subroutine should be able to operate independently of other subroutines in the library. This will generally mean some wasted bytes here and there, but this can be remedied by the end programmer if code size is a major concern.
+
+### Control Structures
+
+While a number of helpful, higher-level control structures are included as part of the core required library, subroutines in the library itself should refrain from using this shorthand. Control Structure Macros are preceded with a '@' sign to signify their classification as such. Exceptions can be given to control structures that merely extend existing directives for better use, such as BEQL being used to branch beyond the normal byte limit; such macros forego the preceding @-sign. 
+
+### Parameter Passing
+
+As a rule of thump, if more than three bytes are being passed to a subroutine, it happens via pushing those parameters to the stack. Otherwise, the .A, .X, and .Y registers are used. When passing an address or other 16-bit value, the low byte should be put into register .A, and the high byte in register .X.
+
+### Literal and Indirect Passing
+
+All macros should accept either a literal value (\#) or an indirect reference via simply passing the address that holds another address. The required macro library sorts out which value will be passed to the subroutine at assembly-time.
 
 ---
 ## Documentation Practices
+
+### Internal Documentation
+
+**Inline Comments**
+
+For the sake of beginners, *at least* every other directive should have an inline comment that describes what that line, or two lines, is accomplishing.
+
+**Subroutine Headers**
+
+All subroutines require headers that document its input, output, register and memory destructions, minimum number of cycles used, and the size of the subroutine in bytes.
+
+### External Documentation
+
+Every Macro and subroutine should have an entry in the the table of contents, cheat sheet area, calls and clobbers list, and detailed descriptions. Detailed descriptions should include the information in the tables as well as a more abstract description of what the subroutine accomplishes, and how it does so. Indented copy of the code in question may also be presented for easier reference than supplied by Merin 8 Pro.
+
+**ALL DOCUMENTATION SHOULD BE UPDATED WITH ANY REVISION, BOTH INTERNAL AND EXTERNAL, AFTER VERSION 0.5.0**
 
 ---
 ## Disk Overviews
