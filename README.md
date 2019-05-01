@@ -137,12 +137,12 @@ Given the lack of directory structures in DOS 3.3, we are using a filename precu
 * SUB: signifies that the file holds a subroutine
 * MAC: signifies a collection of macros
 * LIB: signifies a collection of subroutines
-* <FILENAME>: the actual name of the subroutine, macro, our other file.
+* \<FILENAME\>: the actual name of the subroutine, macro, our other file.
 * DEMO: signifies that the program is a sub-library demo
  
  Additionally, Merlin Appends a ".S" to the end of a filename if it is saved as a source, and prepends the file with "T." to signify it being a text file. This prepended T. overrides our own naming conventions.
  
- *SAMPLE FILENAMES*
+ *Sample Filenames*
  
  * T.MIN.MAC.STDIO
  * T.SUB.TFILLA
@@ -185,19 +185,27 @@ All macros should accept either a literal value (\#) or an indirect reference vi
 
 ### Internal Documentation
 
+Internal documentation is the documentation that resides within the code itself.
+
 **Inline Comments**
 
-For the sake of beginners, *at least* every other directive should have an inline comment that describes what that line, or two lines, is accomplishing.
+For the sake of beginners, *at least* every other directive should have an inline comment that describes what that line, or two lines, is accomplishing. Inline comments are added at the end of a line with a semicolon to denote the comment.
 
 **Subroutine Headers**
 
 All subroutines require headers that document its input, output, register and memory destructions, minimum number of cycles used, and the size of the subroutine in bytes.
 
+**Other Comments**
+
+If a section of code needs more explanation than can be explained at the end of a line (a common issue, since there is limited space on the Apple II screen), these should be placed just above the code in question using asterisks to denote the line is a comment. Have a blank comment line before and after the comment with only one asterisk, while using two asterisks for the lines with actual comments.
+
 ### External Documentation
+
+External documentation refers to this document.
 
 Every Macro and subroutine should have an entry in the the table of contents, cheat sheet area, calls and clobbers list, and detailed descriptions. Detailed descriptions should include the information in the tables as well as a more abstract description of what the subroutine accomplishes, and how it does so. Indented copy of the code in question may also be presented for easier reference than supplied by Merin 8 Pro.
 
-**ALL DOCUMENTATION SHOULD BE UPDATED WITH ANY REVISION, BOTH INTERNAL AND EXTERNAL, AFTER VERSION 0.5.0**
+**<u>ALL DOCUMENTATION SHOULD BE UPDATED WITH ANY REVISION, BOTH INTERNAL AND EXTERNAL, AFTER VERSION 0.5.0</u>**
 
 ---
 ## Disk Overviews
