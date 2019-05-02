@@ -272,23 +272,23 @@ This disk is dedicated to common and useful subroutines that don't necessarily f
   * [`_PRN`](#_prn): A standard print routine that mirrors that found in STDIO. This, too, is used mostly for debugging.
   * [`SPAR`](#spar): Set Parameter. Transfer the contents of one memory location or a literal to the [PARAM] register.
   * [`_WAIT`](#_wait): A simple routine that waits for a keypress. Again, useful for debugging.
-  * [`@IF`](#if)
-  * [`@ELSE`](#else)
-  * [`@IFX`](#ifx)
-  * [`@RIF`](#rif)
-  * [`@RELSE`](#relse)
-  * [`@RIFX`](#rifx)
-  * [`@WHILE`](#whil)
-  * [`@WHILEX`](#whilx)
-  * [`@FORX`](#for)
-  * [`@NEXTX`](#forx)
-  * [`@FORY`](#fory)
-  * [`@NEXTY`](#nexty)
-  * [`@FORM`](#form)
-  * [`@NEXTM`](#nextm)
-  * [`@CASE`](#case)
-  * [`@OF`](#of)
-  * [`@CASEX`](#casex)
+  * [`@IF`](#if): A higher-level conditional control structure that tests memory locations
+  * [`@ELSE`](#else): a typical higher-level else statement.
+  * [`@IFX`](#ifx): typical "end if"
+  * [`@RIF`](#rif): A higher-level conditional control structure that tests the registers.
+  * [`@RELSE`](#relse): Higher level else statement that refers to the registers.
+  * [`@RIFX`](#rifx): End If, but with registers now.
+  * [`@WHILE`](#whil): Start a while loop.
+  * [`@WHILEX`](#whilx): end a while loop.
+  * [`@FORX`](#for): a for loop using the X register as the counter
+  * [`@NEXTX`](#forx): end a .X register for loop
+  * [`@FORY`](#fory): a for loop using the Y register as the counter
+  * [`@NEXTY`](#nexty): end a .Y register loop
+  * [`@FORM`](#form): a for loop using a memory location
+  * [`@NEXTM`](#nextm): end a memloc for loop
+  * [`@CASE`](#case): a typical higher-level case statement start
+  * [`@OF`](#of): internal "case of" equivalent
+  * [`@CASEX`](#casex): end case statement
   
 ### Disk 3: Arrays
 
@@ -416,110 +416,123 @@ A library dedicated to sound manipulation on the system speaker.
   * `SPLAY`: play a sequence of given notes found at a given memory address. Follows same sequence as `SNOTE` parameters, ending with #00.
   * `SALRM`: play an alarm sound.
   * `SLAZE`: play a lazer sound at a specific frequency.
-  
-~~Disk 10: 80Col~~
-* ~~stdio80.mac: stdio library for 80-column output. Most of these will be identical to the routines on the stdio disk.~~
-  * ~~`80CB`: Move Cursor Backward by [n] spaces~~
-  * ~~`80CD`: Move Cursor Down by [n] spaces~~
-  * ~~`80CF`: Move Cursor Forward by [n] spaces~~
-  * ~~`80CU`: Move Cursor Up by [n] spaces~~
-  * ~~`80INP`: String Input Macro~~
-  * ~~`80PBX`: Read State of Paddle Button [x]~~
-  * ~~`80PCR`: Print Carraige Return~~
-  * ~~`80PDL`: Read Current Paddle State~~
-  * ~~`80PRN`: Flexible (screen) Printing routine~~
-  * ~~`80RCP`: Read Cursor Position~~
-  * ~~`80SCP`: Set Cursor position at [x],[y]~~
-  * ~~`80SCX`: Set Cursor Horizontal Position~~
-  * ~~`80SCY`: Set Cursor Vertical Position~~
-  * ~~`80TFIL`: Text Fill square [x1],[x2],[y1],[y2] with Character [n]~~
-  * ~~`80THLN`: Text Horizontal Line Fill with Character [n]~~
-  * ~~`80TVLN`: Text Vertical Line Fill with Character [n]~~
-* ~~80to40.mac: a simple set of macros that calls the 80-column macros when 40-column macros are invoked. Obviously, the 40-column stdio.mac cannot be used simultaneously.~~
 
-~~Disk 11: HiRes~~
-* ~~hires.mac: Library for fast(er) graphics in high resolution mode.~~
-  * ~~`HHLIN`: High resolution horizontal line.~~
-  * ~~`HVLIN`: High resolution vertical line.~~
-  * ~~`HLINE`: High resolution line from x1,y1 to x2,y2.~~
-  * ~~`HCIRC`: High resolution circle at position x,y with a radius of r.~~
-  * ~~`HSQR`: High resolution square at position x,y with a width of w.~~
-  * ~~`HBLIT`: High resolution sprite blitting macro.~~
-  * ~~`HCOLR`: Change High resolution color.~~
-  * ~~`HGET`: Get color of high-resolution screen at x,y.~~
-  * ~~`HPUT`: plot a high resolution block at x,y on the screen.~~
-  * ~~`HCHAR`: plot a text character on the high resolution screen at x,y.~~
-  * ~~`HPRN`: plot a string of characters on the high resolution screen at x,y.~~
+### Disk 10: HiRes
 
-~~Disk 12: DblLoRes~~
-* ~~dlres.mac: library for double low resolution graphics. Only available on IIe (with 80col card), //c, and IIgs.~~
-  * ~~`DLHLN`: Double Low resolution horizontal line.~~
-  * ~~`DLVLN`: Double Low resolution vertical line.~~
-  * ~~`DLLNE`: Double Low resolution line from x1,y1 to x2,y2.~~
-  * ~~`DLCRC`: Double Low resolution circle at position x,y with a radius of r.~~
-  * ~~`DLSQR`: Double Low resolution square at position x,y with a width of w.~~
-  * ~~`DLBLT`: Double Low resolution sprite blitting macro.~~
-  * ~~`DLCLR`: Change Double low resolution color.~~
-  * ~~`DLGET`: Get color of Double low-resolution screen at x,y.~~
-  * ~~`DLPUT`: plot a Double low resolution block at x,y on the screen.~~
-  * ~~`DLCHR`: plot a text character on the Double low resolution screen at x,y.~~
-  * ~~`DLPRN`: plot a string of characters on the Double resolution screen at x,y.~~
+* hires.mac: Library for fast(er) graphics in high resolution mode.
+  * `HHLIN`: High resolution horizontal line.
+  * `HVLIN`: High resolution vertical line.
+  * `HLINE`: High resolution line from x1,y1 to x2,y2.
+  * `HCIRC`: High resolution circle at position x,y with a radius of r.
+  * `HSQR`: High resolution square at position x,y with a width of w.
+  * `HBLIT`: High resolution sprite blitting macro.
+  * `HCOLR`: Change High resolution color.
+  * `HGET`: Get color of high-resolution screen at x,y.
+  * `HPUT`: plot a high resolution block at x,y on the screen.
+  * `HCHAR`: plot a text character on the high resolution screen at x,y.
+  * `HPRN`: plot a string of characters on the high resolution screen at x,y.
 
-~~Disk 13: DblHiRes~~
-* ~~dhres.mac: library for double high resolution graphics. Note that this is only available on the IIe (with 80col card), //c, and IIgs.~~
-  * ~~`DHHLN`: Double high resolution horizontal line.~~
-  * ~~`DHVLN`: Double high resolution vertical line.~~
-  * ~~`DHLNE`: Double high resolution line from x1,y1 to x2,y2.~~
-  * ~~`DHCRC`: Double high resolution circle at position x,y with a radius of r.~~
-  * ~~`DHSQR`: Double high resolution square at position x,y with a width of w.~~
-  * ~~`DHBLT`: Double high resolution sprite blitting macro.~~
-  * ~~`DHCLR`: Change Double high resolution color.~~
-  * ~~`DHGET`: Get color of Double high-resolution screen at x,y.~~
-  * ~~`DHPUT`: plot a Double high resolution block at x,y on the screen.~~
-  * ~~`DHCHR`: plot a text character on the Double high resolution screen at x,y.~~
-  * ~~`DHPRN`: plot a string of characters on the Double high resolution screen at x,y.~~
-  
-~~Disk 14: OtherIO~~
-* ~~library for interfacing with a printer.~~
-  * ~~`PINIT`: Printer Detect and Initialize.~~
-  * ~~`PPRNC`: Print a single Character on the Printer.~~
-  * ~~`PPRNL`: Print a line of text on the printer.~~
-  * ~~`PPUT`: Print a single dot on the printer.~~
-  * ~~`PLBLK`: Print a block of low-res graphics at a given memory location to the printer.~~
-  * ~~`PHBLK`: Print a block of high resolution graphics at a given memory location on the printer.~~  
-* ~~library for sending and receiving data over the serial port~~
-  * ~~`SSEND`: Serial send bit/byte.~~
-  * ~~`SRECV`: Serial Receive bit/byte.~~
-  * ~~`SLSTN`: Listen to serial and wait for data for continuing.~~
-  
-~~Disk 15: Sort~~
-  * ~~BSORT: Bubble Sort~~
-  * ~~ISORT: Insertion Sort~~
-  * ~~MSORT: Merge Sort~~
-  * ~~QSORT: Quick Sort~~
-  * ~~SSORT: Selection Sort~~
-  
-~~Disk 16: Search~~
-  * ~~BSRCH: Binary Search~~
+### Disk 11: OtherIO
+
+* library for interfacing with a printer.~~
+  * `PINIT`: Printer Detect and Initialize.~~
+  * `PPRNC`: Print a single Character on the Printer.~~
+  * `PPRNL`: Print a line of text on the printer.~~
+  * `PPUT`: Print a single dot on the printer.~~
+  * `PLBLK`: Print a block of low-res graphics at a given memory location to the printer.~~
+  * `PHBLK`: Print a block of high resolution graphics at a given memory location on the printer.~~  
+* library for sending and receiving data over the serial port~~
+  * `SSEND`: Serial send bit/byte.~~
+  * `SRECV`: Serial Receive bit/byte.~~
+  * `SLSTN`: Listen to serial and wait for data for continuing.~~
+
+### Disk 12: SortSearch
+
+  * BSORT: Bubble Sort
+  * ISORT: Insertion Sort
+  * MSORT: Merge Sort
+  * QSORT: Quick Sort
+  * SSORT: Selection Sort
+  * BSRCH: Binary Search
     
-~~Disk 17: Lists_Trees~~
+### Disk 13: TmenusTwindows
+
+
+### Disk 14: 80Col
+* stdio80.mac: stdio library for 80-column output. Most of these will be identical to the routines on the stdio disk.
+  * `80CB`: Move Cursor Backward by [n] spaces
+  * `80CD`: Move Cursor Down by [n] spaces
+  * `80CF`: Move Cursor Forward by [n] spaces
+  * `80CU`: Move Cursor Up by [n] spaces
+  * `80INP`: String Input Macro
+  * `80PBX`: Read State of Paddle Button [x]
+  * `80PCR`: Print Carraige Return
+  * `80PDL`: Read Current Paddle State
+  * `80PRN`: Flexible (screen) Printing routine
+  * `80RCP`: Read Cursor Position
+  * `80SCP`: Set Cursor position at [x],[y]
+  * `80SCX`: Set Cursor Horizontal Position
+  * `80SCY`: Set Cursor Vertical Position
+  * `80TFIL`: Text Fill square [x1],[x2],[y1],[y2] with Character [n]
+  * `80THLN`: Text Horizontal Line Fill with Character [n]
+  * `80TVLN`: Text Vertical Line Fill with Character [n]
+* 80to40.mac: a simple set of macros that calls the 80-column macros when 40-column macros are invoked. Obviously, the 40-column stdio.mac cannot be used simultaneously.
+
+### Disk 15: MOCKINGBOARD
+
+
+Disk 16: DblLoRes
+
+* dlres.mac: library for double low resolution graphics. Only available on IIe (with 80col card), //c, and IIgs.
+  * `DLHLN`: Double Low resolution horizontal line.
+  * `DLVLN`: Double Low resolution vertical line.
+  * `DLLNE`: Double Low resolution line from x1,y1 to x2,y2.
+  * `DLCRC`: Double Low resolution circle at position x,y with a radius of r.
+  * `DLSQR`: Double Low resolution square at position x,y with a width of w.
+  * `DLBLT`: Double Low resolution sprite blitting macro.
+  * `DLCLR`: Change Double low resolution color.
+  * `DLGET`: Get color of Double low-resolution screen at x,y.
+  * `DLPUT`: plot a Double low resolution block at x,y on the screen.
+  * `DLCHR`: plot a text character on the Double low resolution screen at x,y.
+  * `DLPRN`: plot a string of characters on the Double resolution screen at x,y.
+
+Disk 17: DblHiRes
+* dhres.mac: library for double high resolution graphics. Note that this is only available on the IIe (with 80col card), //c, and IIgs.
+  * `DHHLN`: Double high resolution horizontal line.
+  * `DHVLN`: Double high resolution vertical line.
+  * `DHLNE`: Double high resolution line from x1,y1 to x2,y2.
+  * `DHCRC`: Double high resolution circle at position x,y with a radius of r.
+  * `DHSQR`: Double high resolution square at position x,y with a width of w.
+  * `DHBLT`: Double high resolution sprite blitting macro.
+  * `DHCLR`: Change Double high resolution color.
+  * `DHGET`: Get color of Double high-resolution screen at x,y.
+  * `DHPUT`: plot a Double high resolution block at x,y on the screen.
+  * `DHCHR`: plot a text character on the Double high resolution screen at x,y.
+  * `DHPRN`: plot a string of characters on the Double high resolution screen at x,y.
     
-~~Disk 18: Utilities~~
-* ~~builder.bas: A utility that automatically builds custom libraries by copying routines from the appropriate disks, commented or minified.~~
+Disk 18: DemosUtilities1
+* builder.bas: A utility that automatically builds custom libraries by copying routines from the appropriate disks, commented or minified.
 * makeexec.bas
 * minify.bas
-* ~~BUILDER~~
-* ~~MAKEEXEC~~
-* ~~MINIFY~~
+* BUILDER
+* MAKEEXEC
+* MINIFY
 
-Disk 19: Integrated_Demos
+Disk 19: Demo Builds 1
 * disk(s) with demos that show more complicated usage of the libraries, integrating them as each demo needs. 
   * MAKEMAZE: A fairly simple maze creation demo. Can only create square mazes.
-  * ~~READFILE~~
-  * ~~SKIDOWN~~
-  * ~~GAMEOFLIFE~~
+  * READFILE
+  * SKIDOWN
+  * GAMEOFLIFE
 
-Disk 20: MiniDisk A
+Disk 20: Demo Builds 2
+* disk(s) with demos that show more complicated usage of the libraries, integrating them as each demo needs. 
+  * MAKEMAZE: A fairly simple maze creation demo. Can only create square mazes.
+  * READFILE
+  * SKIDOWN
+  * GAMEOFLIFE
+
+Disk 21: MiniDisk A
 
 A disk with minified versions of the source files of disks 1-7. This is primarily used by the library-building utility.
 
