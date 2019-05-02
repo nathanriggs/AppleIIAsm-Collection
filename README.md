@@ -219,56 +219,56 @@ In the following disk descriptions, we'll be listing the .mac contents that are 
 This disk is dedicated to Standard Input/Output operations, and a couple non-standard ones. Note that this is for 40-column mode only in order to keep compatibility with earlier hardware, and focuses on screen output alone in order to help with execution speed. However, most of these subroutines will work in 80col mode, with the exception of those that directly read or write the screen memory.
 
 * stdio.mac
-  * [`COL40`](#macro-col40): Force 40-column mode
-  * [`COL80`](#macro-col80): Force 80-column mode
-  * [`CURB`](#macro-curb): Move Cursor Backward by [n] spaces
-  * [`CURD`](#macro-curd): Move Cursor Down by [n] spaces
-  * [`CURF`](#macro-curf): Move Cursor Forward by [n] spaces
-  * [`CURU`](#macro-curu): Move Cursor Up by [n] spaces
-  * [`GKEY`](#macro-gkey): Monitor Getkey
-  * [`INP`](#macro-inp): String Input Macro
-  * [`MTXT0`](#macro-mtxt0): Turn off mouse text
-  * [`MTXT1`](#macro-mtxt1): Enable mouse text
-  * [`PBX`](#macro-pbx): Read State of Paddle Button [x]
-  * [`PDL`](#macro-pdl): Read Current Paddle State
-  * [`PRN`](#macro-prn): Flexible (screen) Printing routine
-  * [`RCPOS`](#macro-rcpos): Read Cursor Position
-  * [`SCPOS`](#macro-scpos): Set Cursor position at [x],[y]
-  * [`SETCX`](#macro-setcx): Set Cursor Horizontal Position
-  * [`SETCY`](#macro-setcy): Set Cursor Vertical Position
-  * [`SPRN`](#macro-sprn): Print String (with length byte)
-  * [`TFILL`](#macro-tfill): Text Fill square [x1],[x2],[y1],[y2] with Character [n]
-  * [`THLIN`](#macro-thlin): Text Horizontal Line Fill with Character [n]
-  * [`TPUT`](#macro-tput): Direct memory text plotting routine
-  * [`TVLIN`](#macro-tvlin): Text Vertical Line Fill with Character [n]
-  * [`WAIT`](#macro-wait): non-monitor getkey
+  * [`COL40`](#col40): Force 40-column mode
+  * [`COL80`](#col80): Force 80-column mode
+  * [`CURB`](#curb): Move Cursor Backward by [n] spaces
+  * [`CURD`](#curd): Move Cursor Down by [n] spaces
+  * [`CURF`](#curf): Move Cursor Forward by [n] spaces
+  * [`CURU`](#curu): Move Cursor Up by [n] spaces
+  * [`GKEY`](#gkey): Monitor Getkey
+  * [`INP`](#inp): String Input Macro
+  * [`MTXT0`](#mtxt0): Turn off mouse text
+  * [`MTXT1`](#mtxt1): Enable mouse text
+  * [`PBX`](#pbx): Read State of Paddle Button [x]
+  * [`PDL`](#pdl): Read Current Paddle State
+  * [`PRN`](#prn): Flexible (screen) Printing routine
+  * [`RCPOS`](#rcpos): Read Cursor Position
+  * [`SCPOS`](#scpos): Set Cursor position at [x],[y]
+  * [`SETCX`](#setcx): Set Cursor Horizontal Position
+  * [`SETCY`](#setcy): Set Cursor Vertical Position
+  * [`SPRN`](#sprn): Print String (with length byte)
+  * [`TFILL`](#tfill): Text Fill square [x1],[x2],[y1],[y2] with Character [n]
+  * [`THLIN`](#thlin): Text Horizontal Line Fill with Character [n]
+  * [`TPUT`](#tput): Direct memory text plotting routine
+  * [`TVLIN`](#tvlin): Text Vertical Line Fill with Character [n]
+  * [`WAIT`](#wait): non-monitor getkey
   
 ### Disk 2: COMMON / REQUIRED
 
 This disk is dedicated to common and useful subroutines that don't necessarily fit neatly into another category worth dedicating an entire disk to, as well as the fully commented code for the required libraries and macros that exist on every disk in minified form.
 
 * common.mac
-  * `BEEP`: Beep for a given number of cycles.
-  * `DELAY`: Delay for the given number of Milliseconds.
-  * `MFILL`: Fill a block of memory with the passed value.
-  * `MMOVE`: Move a block of memory to another block of memory.
-  * `MSWAP`: Swap a memory range at one address with another.
-  * `ZLOAD`: Retrieve previously save zero page values from a given address and restore them to the zero page. 
-  * `ZSAVE`: Save the zero page memory locations not used by applesoft, dos, etc. to another memory location.
+  * [`BEEP`:](#beep): Beep for a given number of cycles.
+  * [`DELAY`](#delay): Delay for the given number of Milliseconds.
+  * [`MFILL`](#mfill): Fill a block of memory with the passed value.
+  * [`MMOVE`](#mmove): Move a block of memory to another block of memory.
+  * [`MSWAP`](#mswap): Swap a memory range at one address with another.
+  * [`ZLOAD`](#zload): Retrieve previously save zero page values from a given address and restore them to the zero page. 
+  * [`ZSAVE`](#zsave): Save the zero page memory locations not used by applesoft, dos, etc. to another memory location.
     
 * required.mac
-  * `_AXLIT`: Check for literal. Pass data via .AX.
-  * `_AXSTR`: Check for String. Pass data via .AX registers.
-  * `CLRHI`: Clear High Nibble of a Byte.
-  * `DUMP`: Dump the contents of a block of memory. This displays hex values only, and is primarily useful for debugging.
-  * `ERRH`: Set Error-handling hook
-  * `GRET`: Get Return. Transfer the contents of the [RETURN] register to another memory location.
-  * `_ISLIT`: Is Literal. Tests a parameter to see if it is a literal value or an address. Passes via stack.
-  * `_ISSTR`: Is String. Tests a parameter to see if it is a literal string. Passes via stack.
-  * `_PRN`: A standard print routine that mirrors that found in STDIO. This, too, is used mostly for debugging.
-  * `SPAR`: Set Parameter. Transfer the contents of one memory location or a literal to the [PARAM] register.
-  * `_WAIT`: A simple routine that waits for a keypress. Again, useful for debugging.
-  * `_RDMP`: Registry Dump without halting execution.
+  * [`_AXLIT`](#_axlit): Check for literal. Pass data via .AX.
+  * [`_AXSTR`](#_axstr): Check for String. Pass data via .AX registers.
+  * [`CLRHI`](#(clrhi): Clear High Nibble of a Byte.
+  * [`DUMP`](#dump): Dump the contents of a block of memory. This displays hex values only, and is primarily useful for debugging.
+  * [`ERRH`](#errh): Set Error-handling hook
+  * [`GRET`](#gret): Get Return. Transfer the contents of the [RETURN] register to another memory location.
+  * [`_ISLIT`](#_islit): Is Literal. Tests a parameter to see if it is a literal value or an address. Passes via stack.
+  * [`_ISSTR`](#_isstr): Is String. Tests a parameter to see if it is a literal string. Passes via stack.
+  * [`_PRN`](#_prn): A standard print routine that mirrors that found in STDIO. This, too, is used mostly for debugging.
+  * [`SPAR`](#spar): Set Parameter. Transfer the contents of one memory location or a literal to the [PARAM] register.
+  * [`_WAIT`](#_wait): A simple routine that waits for a keypress. Again, useful for debugging.
+  
   
 ### Disk 3: Arrays
 
