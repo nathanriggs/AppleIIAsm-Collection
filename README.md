@@ -219,24 +219,29 @@ In the following disk descriptions, we'll be listing the .mac contents that are 
 This disk is dedicated to Standard Input/Output operations, and a couple non-standard ones. Note that this is for 40-column mode only in order to keep compatibility with earlier hardware, and focuses on screen output alone in order to help with execution speed. However, most of these subroutines will work in 80col mode, with the exception of those that directly read or write the screen memory.
 
 * stdio.mac
+  * [`COL40`](#macro-col40): Force 40-column mode
+  * [`COL80`](#macro-col80): Force 80-column mode
   * [`CURB`](#macro-curb): Move Cursor Backward by [n] spaces
   * [`CURD`](#macro-curd): Move Cursor Down by [n] spaces
   * [`CURF`](#macro-curf): Move Cursor Forward by [n] spaces
   * [`CURU`](#macro-curu): Move Cursor Up by [n] spaces
+  * [`GKEY`](#macro-gkey): Monitor Getkey
   * [`INP`](#macro-inp): String Input Macro
+  * [`MTXT0`](#macro-mtxt0): Turn off mouse text
+  * [`MTXT1`](#macro-mtxt1): Enable mouse text
   * [`PBX`](#macro-pbx): Read State of Paddle Button [x]
-  * [`PCR`](#macro-pcr): Print Carraige Return
   * [`PDL`](#macro-pdl): Read Current Paddle State
   * [`PRN`](#macro-prn): Flexible (screen) Printing routine
   * [`RCPOS`](#macro-rcpos): Read Cursor Position
   * [`SCPOS`](#macro-scpos): Set Cursor position at [x],[y]
   * [`SETCX`](#macro-setcx): Set Cursor Horizontal Position
   * [`SETCY`](#macro-setcy): Set Cursor Vertical Position
+  * [`SPRN`](#macro-sprn): Print String (with length byte)
   * [`TFILL`](#macro-tfill): Text Fill square [x1],[x2],[y1],[y2] with Character [n]
   * [`THLIN`](#macro-thlin): Text Horizontal Line Fill with Character [n]
   * [`TPUT`](#macro-tput): Direct memory text plotting routine
   * [`TVLIN`](#macro-tvlin): Text Vertical Line Fill with Character [n]
-
+  * [`WAIT`](#macro-wait): non-monitor getkey
   
 ### Disk 2: COMMON / REQUIRED
 
@@ -247,18 +252,21 @@ This disk is dedicated to common and useful subroutines that don't necessarily f
   * `DELAY`: Delay for the given number of Milliseconds.
   * `MFILL`: Fill a block of memory with the passed value.
   * `MMOVE`: Move a block of memory to another block of memory.
+  * `MSWAP`: Swap a memory range at one address with another.
   * `ZLOAD`: Retrieve previously save zero page values from a given address and restore them to the zero page. 
   * `ZSAVE`: Save the zero page memory locations not used by applesoft, dos, etc. to another memory location.
-  * `MSWAP`: Swap a memory range at one address with another.
     
 * required.mac
-  * `_DUMP`: Dump the contents of a block of memory. This displays hex values only, and is primarily useful for debugging.
-  * `_ERR`: Error handling routine. Generally only called from routine libraries.
-  * `_GRET`: Get Return. Transfer the contents of the [RETURN] register to another memory location.
-  * `_ISLIT`: Is Literal. Tests a parameter to see if it is a literal value or an address. 
-  * `_ISSTR`: Is String. Tests a parameter to see if it is a literal string. 
-  * `_PRNT`: A standard print routine that mirrors that found in STDIO. This, too, is used mostly for debugging.
-  * `_SPAR`: Set Parameter. Transfer the contents of one memory location or a literal to the [PARAM] register.
+  * `_AXLIT`: Check for literal. Pass data via .AX.
+  * `_AXSTR`: Check for String. Pass data via .AX registers.
+  * `CLRHI`: Clear High Nibble of a Byte.
+  * `DUMP`: Dump the contents of a block of memory. This displays hex values only, and is primarily useful for debugging.
+  * `ERRH`: Set Error-handling hook
+  * `GRET`: Get Return. Transfer the contents of the [RETURN] register to another memory location.
+  * `_ISLIT`: Is Literal. Tests a parameter to see if it is a literal value or an address. Passes via stack.
+  * `_ISSTR`: Is String. Tests a parameter to see if it is a literal string. Passes via stack.
+  * `_PRN`: A standard print routine that mirrors that found in STDIO. This, too, is used mostly for debugging.
+  * `SPAR`: Set Parameter. Transfer the contents of one memory location or a literal to the [PARAM] register.
   * `_WAIT`: A simple routine that waits for a keypress. Again, useful for debugging.
   * `_RDMP`: Registry Dump without halting execution.
   
