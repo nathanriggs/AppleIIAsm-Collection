@@ -19,7 +19,7 @@ This documentation is currently being updated to reflect massive changes between
 * [Documentation Practices](#documentation-practices)
 * [Disk Overviews](#disk-overviews)
   * [Disk 1: STDIO](#disk-1-stdio)
-  * [Disk 2: COMMON](#disk-2-common-required)
+  * [Disk 2: COMMON](#disk-2-common)
   * [Disk 3: ARRAYS](#disk-3-arrays)
   * [Disk 4: MATH](#disk-4-math)
   * [Disk 5: STRINGS](#disk-5-strings)
@@ -42,8 +42,8 @@ This documentation is currently being updated to reflect massive changes between
   * [Disk 22: DEMOBUILDS 2](#disk-22-demobuilds2)
 * [Macro Subroutine Calls and Clobbers](#macro-subroutine-calls-and-clobbers)
 * [Macro Usage Cheat Sheet](#macro-usage-cheat-sheet)
-* [Detailed Descriptions: Macros](#macros)
-* [Detailed Descriptions: Subroutines](#subroutiness)
+* [Detailed Descriptions: Macros](#detailed-macro-descriptions)
+* [Detailed Descriptions: Subroutines](#detailed-subroutine-descriptions)
 
 ---
 ## Introduction
@@ -218,7 +218,7 @@ In the following disk descriptions, we'll be listing the .mac contents that are 
 
 This disk is dedicated to Standard Input/Output operations, and a couple non-standard ones. Note that this is for 40-column mode only in order to keep compatibility with earlier hardware, and focuses on screen output alone in order to help with execution speed. However, most of these subroutines will work in 80col mode, with the exception of those that directly read or write the screen memory.
 
-* stdio.mac
+* MAC.STDIO
   * [`COL40`](#col40): Force 40-column mode
   * [`COL80`](#col80): Force 80-column mode
   * [`CURB`](#curb): Move Cursor Backward by [n] spaces
@@ -243,12 +243,12 @@ This disk is dedicated to Standard Input/Output operations, and a couple non-sta
   * [`TVLIN`](#tvlin): Text Vertical Line Fill with Character [n]
   * [`WAIT`](#wait): non-monitor getkey
   
-### Disk 2: COMMON / REQUIRED
+### Disk 2: COMMON 
 
 This disk is dedicated to common and useful subroutines that don't necessarily fit neatly into another category worth dedicating an entire disk to, as well as the fully commented code for the required libraries and macros that exist on every disk in minified form.
 
-* common.mac
-  * [`BEEP`:](#beep): Beep for a given number of cycles.
+* MAC.COMMON
+  * [`BEEP`](#beep): Beep for a given number of cycles.
   * [`DELAY`](#delay): Delay for the given number of Milliseconds.
   * [`MFILL`](#mfill): Fill a block of memory with the passed value.
   * [`MMOVE`](#mmove): Move a block of memory to another block of memory.
@@ -256,9 +256,13 @@ This disk is dedicated to common and useful subroutines that don't necessarily f
   * [`ZLOAD`](#zload): Retrieve previously save zero page values from a given address and restore them to the zero page. 
   * [`ZSAVE`](#zsave): Save the zero page memory locations not used by applesoft, dos, etc. to another memory location.
     
-* required.mac
+* MAC.REQUIRED
   * [`_AXLIT`](#_axlit): Check for literal. Pass data via .AX.
   * [`_AXSTR`](#_axstr): Check for String. Pass data via .AX registers.
+  * [`BCCL`](#bccl): Branch Carry Clear Long Instruction
+  * [`BCSL`](#bcsl): Branch Carry Set Long Instruction
+  * [`BEQL`](#beql): Branch on Equal Long Instruction
+  * [`BNEL`](#bnel): Branch on Not Equal Long Instruction
   * [`CLRHI`](#(clrhi): Clear High Nibble of a Byte.
   * [`DUMP`](#dump): Dump the contents of a block of memory. This displays hex values only, and is primarily useful for debugging.
   * [`ERRH`](#errh): Set Error-handling hook
@@ -268,25 +272,47 @@ This disk is dedicated to common and useful subroutines that don't necessarily f
   * [`_PRN`](#_prn): A standard print routine that mirrors that found in STDIO. This, too, is used mostly for debugging.
   * [`SPAR`](#spar): Set Parameter. Transfer the contents of one memory location or a literal to the [PARAM] register.
   * [`_WAIT`](#_wait): A simple routine that waits for a keypress. Again, useful for debugging.
-  
+  * [`@IF`](#if)
+  * [`@ELSE`](#else)
+  * [`@IFX`](#ifx)
+  * [`@RIF`](#rif)
+  * [`@RELSE`](#relse)
+  * [`@RIFX`](#rifx)
+  * [`@WHILE`](#whil)
+  * [`@WHILEX`](#whilx)
+  * [`@FORX`](#for)
+  * [`@NEXTX`](#forx)
+  * [`@FORY`](#fory)
+  * [`@NEXTY`](#nexty)
+  * [`@FORM`](#form)
+  * [`@NEXTM`](#nextm)
+  * [`@CASE`](#case)
+  * [`@OF`](#of)
+  * [`@CASEX`](#casex)
   
 ### Disk 3: Arrays
 
-This disk contains libraries and subroutines related to the management of one-dimensional and two-dimensional arrays. Since these arrays use a singly byte for indexing, they are referred to as 8-bit arrays, even though you could technically use 64k of memory by increasing element lengths or simply having a 2D array of 256x256. Support for 16-bit indexing will be added in the future.
+This disk contains libraries and subroutines related to the management of 8-bit and 16-bit one-dimensional and two-dimensional arrays that hold n-length elements. "8-bit" and "16-bit" refers to the number of elements the arrays can hold.
 
-* arrays.mac
-  * `DIM81`: Create a 1D array at a given address with a given element size and number of elements.
-  * `DIM82`: Create a 2D array at a given address with a given element size and number of elements in each dimension.
-  * `GET81`: Get the element at the given index in a 1D array.
-  * `GET82`: Get the element at the given index in a 2D array.
-  * `PUT81`: Put a value (literal or memory address) into a 1D array at the given index.
-  * `PUT82`: Put a value into a 2D array at the given index.
+* MAC.ARRAYS
+  * `DIM81`: Create a 1D, 8-bit array at a given address with a given element size and number of elements.
+  * `DIM82`: Create a 2D, 8-bit array at a given address with a given element size and number of elements in each dimension.
+  * `DIM161`: Create a 1D, 16-bit array.
+  * `DIM162`: Create a 2D, 16-bit array.
+  * `GET81`: Get the element at the given index in a 1D, 8-bit array.
+  * `GET82`: Get the element at the given index in a 2D, 8-bit array.
+  * `GET161`: Get an element from a 1D, 16-bit array.
+  * `GET162`: Get an element from a 2D, 16-bit array.
+  * `PUT81`: Put a value (literal or memory address) into a 1D, 8-bit array at the given index.
+  * `PUT82`: Put a value into a 2D,8-bit array at the given index.
+  * `PUT161`: Put a value into a 1D, 16-bit array.
+  * `PUT162`: Put a value into a 2D, 16-bit array.
 
 ### Disk 4: Math
 
-This disk hold routines related to standard mathematical calculations for signed and unsigned integer math as well as macros that use Applesoft's floating-point routines. Note that this only includes some rather basic math functions; more complicated problems should be addressed by the main program using the libraries.
+This disk hold routines related to standard mathematical calculations for signed and unsigned integer math; macros for using Woz's floating-point math routines will be added in the future. Note that this only includes some rather basic math functions; more complicated problems should be addressed by the main program using the libraries.
 
-* math.mac
+* MAC.MATH
   * `ADD16`: Add two 16-bit integers, signed or unsigned, and return a 16-bit result.
   * `CMP16`: Compare two 16-bit values, signed or unsigned, and set flags appropriately.
   * `DIV8`: Divide one unsigned 8-bit integer by another and return 8-bit result.
@@ -299,31 +325,12 @@ This disk hold routines related to standard mathematical calculations for signed
   * `RNDB`: Generate an 8-bit pseudo-random integer between a given min and max value.
   * `RNDW`: Generate a 16-bit pseudo-random integer between a given min and max value.
   * `SUB16`: Subtract one 16-bit integer, signed or unsigned, from another and return a 16-bit result.
-  * ~~FPADD: Floating-point addition using Applesoft's floating-point routines.~~ (not working yet)~~
-  * ~~FPMUL: Floating-point multiplication.~~
-  * ~~FPSUB: Floating-point subtraction.~~
-  * ~~FPDIV: Floating-point division.~~
-  * ~~FPPWR: Floating-point exponent.~~
-  * ~~FPSQR: Floating-point square-root.~~
-  * ~~FPEXP: Floating-point power of e.~~
-  * ~~FPLOG: Floating-point logarithm.~~
-  * ~~FPSIN: Floating-point sine.~~
-  * ~~FPCOS: Floating-point cosine.~~
-  * ~~FPTAN: Floating-point tangent.~~
-  * ~~FPATN: Floating-point atangent.~~
-  * ~~FPABS: Floating-point absolute value.~~
-  * ~~FPINT: floating point integer value.~~
-  * ~~FPFLT: integer to Floating-point.~~
-  * ~~FPSGN: Floating-point sign determination.~~
-  * ~~FPCMP: Floating-point compare.~~
-  * ~~FPD10: Floating-point divide by ten.~~
-  * ~~FPM10: Floating-point multiply by ten.~~
   
 ### Disk 5: Strings
 
 This disk holds routines and macros related to string and substring manipulation. In the future, certain tasks like "TONUM" and "TOSTR" may be relegated to their own disk for data type conversion routines.
 
-* strings.mac
+* MAC.STRINGS
   * `SCAT`: String Concatenate. Concatenate two independent strings and return a new string.
   * `SCMP`: String Compare. Compare two strings and set flags accordingly.
   * `SCOP`: Substring Copy. Returns the substring of another string at the given index and length.
@@ -338,7 +345,7 @@ This disk holds routines and macros related to string and substring manipulation
 
 This disk is dedicated to routines and macros that involve file manipulation and low-level disk access.
 
-* fileio.mac
+* MAC.FILEIO
   * `BLOAD`: Binary load a file from the disk into the given memory location.
   * `BSAVE`: Binary save a file from the given memory location to the given binary file.
   * `CMD`: Execute a DOS command.
@@ -352,60 +359,63 @@ This disk is dedicated to routines and macros that involve file manipulation and
   * `SETDW`: Set RWTS to the write command.
   * `SLOT`: Set the RWTS slot.
   * `TMODE`: Ready system for text-file mode. This is necessary for reading and writing text files.
-  * ~~FCOPY: Copy a source file to a destination file~~ (not implemented yet)~~
-  * ~~FDEL: Delete a file from the disk~~ (not implemented yet)~~
 
+### Disk 7: Conversion
+
+This sub-library is dedicated to converting between different number types and their string equivalents. 
+
+* MAC.CONVERT
+  * `HX2CHR`: Hex value to character notation.
+  * `TOSTR`: Integer value to character equivalent.
+  * `TONUM`: Character string number to hexcode equivalent.
+  * `HX2DEC`: Hexadecimal value to decimal value string.
+  * `HX2BIN`: Hexademial value to binary string.
+  * `BIN2HX`: binary string to hex value.
+  * `DEC2HX`: decimal string to hex value. Not much different than `TONUM`
+  * `HR2LR`: Hi-resolution to low-resolution conversion.
+  * `LR2HR`: Low-resolution to high-resolution conversion.
+  * `LS2STR`: a string that ends in #$00 coverted to the string data type (length byte first, then string)
 ---
-## Future Disks
-
-The following disks are in pre-production/planning, and will be part of future versions of the library. I am currently focusing on the six core disks to make sure everything works seamlessly and functions the same across different subroutine calls, which is taking time to sort out. Once production of each of these disks begins, I'll be moving them from this section to the actual disks section.
-
-~~Disk 7: Conversion~~
-* ~~convert.mac: Library for converting between different data types.~~
-  * ~~`HX2CHR`: Hex value to character notation.~~
-  * ~~`TOSTR`: Integer value to character equivalent.~~
-  * ~~`TONUM`: Character string number to hexcode equivalent.~~
-  * ~~`HX2DEC`: Hexadecimal value to decimal value string.~~
-  * ~~`HX2BIN`: Hexademial value to binary string.~~
-  * ~~`BIN2HX`: binary string to hex value.~~
-  * ~~`DEC2HX`: decimal string to hex value. Not much different than `TONUM`~~
-  * ~~`HR2LR`: Hi-resolution to low-resolution conversion.~~
-  * ~~`LR2HR`: Low-resolution to high-resolution conversion.~~
-  * ~~`LS2STR`: a string that ends in #$00 coverted to the string data type (length byte first, then string)~~  
   
-~~Disk 8: LoRes~~  
-  * ~~lores.mac: Library for fast(er) graphics in low resolution mode.~~
-  * ~~`LHLIN`: Low resolution horizontal line.~~
-  * ~~`LVLIN`: Low resolution vertical line.~~
-  * ~~`LLINE`: Low resolution line from x1,y1 to x2,y2.~~
-  * ~~`LCIRC`: Low resolution circle at position x,y with a radius of r.~~
-  * ~~`LSQR`: Low resolution square at position x,y with a width of w.~~
-  * ~~`LBLIT`: Low resolution sprite blitting macro.~~
-  * ~~`LCOLR`: Change low resolution color.~~
-  * ~~`LGET`: Get color of low-resolution screen at x,y.~~
-  * ~~`LPUT`: plot a low resolution block at x,y on the screen.~~
-  * ~~`LCHAR`: plot a text character on the low resolution screen at x,y.~~
-  * ~~`LPRN`: plot a string of characters on the low resolution screen at x,y.~~
-  * ~~`LINV`: Invert colors on the low resolution screen.~~
+### Disk 8: LoRes (not yet implemented)
 
-~~Disk 9: Sound~~
-* ~~sound.mac: Music and sound effects library for the internal speaker (not add-on cards like Mockingboard). Note that this is not really for "real-time" music generation while doing something else, as that would involve counting the cycles in loops that a library would not necessarily have access to. In the future, I may try to create a library that does this, but it would still be pretty limited and the main execution would have to follow a very rigid format. I may also create a library that takes advantage of the Mockingboard.~~
-  * ~~`STONE`: Play a tone at the specified megahertz for a specified duration of milliseconds.~~
-  * ~~`SNOTE`: Play a specified musical note at the specified octave for a specified duration in milliseconds.~~
-  * ~~`SWAIT`: See the `DELAY` Macro, as this is simply a slightly modified version for music timing.~~
-  * ~~`SDRUM`: Send a sharp sound to the speaker that emulates the nois of a bass drum.~~
-  * ~~`SHATC`: Send a short click that emulates a closed hi hat.~~
-  * ~~`SHATO`: Send a long bout of noise to emulate an open hi hat.~~
-  * ~~`SSTAT`: Send static to the speaker for a specified number of milliseconds.~~
-  * ~~`SARPG`: Send a series of Arpeggio notes to the speaker to emulate multiple notes at once or chords.~~
-  * ~~`SASC`: Play a series of tones between a low and high mhz, ascending at a given rate.~~
-  * ~~`SDESC`: Play a series of tones between a high and low mhz, descending at a given rate.~~
-  * ~~`SENV`: Rudimentary envelope for notes achieved by manipulating octave frequencies.~~
-  * ~~`SQKEY`: Set the keypress to signal the library to halt playing a note.~~
-  * ~~`SPLOD`: a sound effect resembling an explosion sound. Customizeable via parameters.~~
-  * ~~`SPLAY`: play a sequence of given notes found at a given memory address. Follows same sequence as `SNOTE` parameters, ending with #00.~~
-  * ~~`SALRM`: play an alarm sound.~~
-  * ~~`SLAZE`: play a lazer sound at a specific frequency.~~
+This is a sub-library for using lower resolution graphics mode at a higher speed than is provided by Woz's routines.
+
+* MAC.LORES
+  * `LHLIN`: Low resolution horizontal line.
+  * `LVLIN`: Low resolution vertical line.
+  * `LLINE`: Low resolution line from x1,y1 to x2,y2.
+  * `LCIRC`: Low resolution circle at position x,y with a radius of r.
+  * `LSQR`: Low resolution square at position x,y with a width of w.
+  * `LBLIT`: Low resolution sprite blitting macro.
+  * `LCOLR`: Change low resolution color.
+  * `LGET`: Get color of low-resolution screen at x,y.
+  * `LPUT`: plot a low resolution block at x,y on the screen.
+  * `LCHAR`: plot a text character on the low resolution screen at x,y.
+  * `LPRN`: plot a string of characters on the low resolution screen at x,y.
+  * `LINV`: Invert colors on the low resolution screen.
+
+### Disk 9: SPEAKER
+
+A library dedicated to sound manipulation on the system speaker.
+
+* MAC.SPEAKER
+  * `STONE`: Play a tone at the specified megahertz for a specified duration of milliseconds.
+  * `SNOTE`: Play a specified musical note at the specified octave for a specified duration in milliseconds.
+  * `SWAIT`: See the `DELAY` Macro, as this is simply a slightly modified version for music timing.
+  * `SDRUM`: Send a sharp sound to the speaker that emulates the nois of a bass drum.
+  * `SHATC`: Send a short click that emulates a closed hi hat.
+  * `SHATO`: Send a long bout of noise to emulate an open hi hat.
+  * `SSTAT`: Send static to the speaker for a specified number of milliseconds.
+  * `SARPG`: Send a series of Arpeggio notes to the speaker to emulate multiple notes at once or chords.
+  * `SASC`: Play a series of tones between a low and high mhz, ascending at a given rate.
+  * `SDESC`: Play a series of tones between a high and low mhz, descending at a given rate.
+  * `SENV`: Rudimentary envelope for notes achieved by manipulating octave frequencies.
+  * `SQKEY`: Set the keypress to signal the library to halt playing a note.
+  * `SPLOD`: a sound effect resembling an explosion sound. Customizeable via parameters.
+  * `SPLAY`: play a sequence of given notes found at a given memory address. Follows same sequence as `SNOTE` parameters, ending with #00.
+  * `SALRM`: play an alarm sound.
+  * `SLAZE`: play a lazer sound at a specific frequency.
   
 ~~Disk 10: 80Col~~
 * ~~stdio80.mac: stdio library for 80-column output. Most of these will be identical to the routines on the stdio disk.~~
