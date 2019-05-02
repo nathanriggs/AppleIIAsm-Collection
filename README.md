@@ -459,6 +459,7 @@ A library dedicated to sound manipulation on the system speaker.
 
 
 ### Disk 14: 80Col
+
 * stdio80.mac: stdio library for 80-column output. Most of these will be identical to the routines on the stdio disk.
   * `80CB`: Move Cursor Backward by [n] spaces
   * `80CD`: Move Cursor Down by [n] spaces
@@ -481,7 +482,7 @@ A library dedicated to sound manipulation on the system speaker.
 ### Disk 15: MOCKINGBOARD
 
 
-Disk 16: DblLoRes
+### Disk 16: DblLoRes
 
 * dlres.mac: library for double low resolution graphics. Only available on IIe (with 80col card), //c, and IIgs.
   * `DLHLN`: Double Low resolution horizontal line.
@@ -496,7 +497,8 @@ Disk 16: DblLoRes
   * `DLCHR`: plot a text character on the Double low resolution screen at x,y.
   * `DLPRN`: plot a string of characters on the Double resolution screen at x,y.
 
-Disk 17: DblHiRes
+### Disk 17: DblHiRes
+
 * dhres.mac: library for double high resolution graphics. Note that this is only available on the IIe (with 80col card), //c, and IIgs.
   * `DHHLN`: Double high resolution horizontal line.
   * `DHVLN`: Double high resolution vertical line.
@@ -510,7 +512,8 @@ Disk 17: DblHiRes
   * `DHCHR`: plot a text character on the Double high resolution screen at x,y.
   * `DHPRN`: plot a string of characters on the Double high resolution screen at x,y.
     
-Disk 18: DemosUtilities1
+### Disk 18: DemosUtilities1
+
 * builder.bas: A utility that automatically builds custom libraries by copying routines from the appropriate disks, commented or minified.
 * makeexec.bas
 * minify.bas
@@ -518,21 +521,23 @@ Disk 18: DemosUtilities1
 * MAKEEXEC
 * MINIFY
 
-Disk 19: Demo Builds 1
+### Disk 19: Demo Builds 1
+
 * disk(s) with demos that show more complicated usage of the libraries, integrating them as each demo needs. 
   * MAKEMAZE: A fairly simple maze creation demo. Can only create square mazes.
   * READFILE
   * SKIDOWN
   * GAMEOFLIFE
 
-Disk 20: Demo Builds 2
+### Disk 20: Demo Builds 2
+
 * disk(s) with demos that show more complicated usage of the libraries, integrating them as each demo needs. 
   * MAKEMAZE: A fairly simple maze creation demo. Can only create square mazes.
   * READFILE
   * SKIDOWN
   * GAMEOFLIFE
 
-Disk 21: MiniDisk A
+### Disk 21: MiniDisk A
 
 A disk with minified versions of the source files of disks 1-7. This is primarily used by the library-building utility.
 
