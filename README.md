@@ -395,7 +395,7 @@ This is a sub-library for using lower resolution graphics mode at a higher speed
   * `LPRN`: plot a string of characters on the low resolution screen at x,y.
   * `LINV`: Invert colors on the low resolution screen.
 
-### Disk 9: SPEAKER
+### Disk 9: SPEAKER (not yet implemented)
 
 A library dedicated to sound manipulation on the system speaker.
 
@@ -417,7 +417,7 @@ A library dedicated to sound manipulation on the system speaker.
   * `SALRM`: play an alarm sound.
   * `SLAZE`: play a lazer sound at a specific frequency.
 
-### Disk 10: HiRes
+### Disk 10: HiRes (not yet implemented)
 
 * hires.mac: Library for fast(er) graphics in high resolution mode.
   * `HHLIN`: High resolution horizontal line.
@@ -432,7 +432,7 @@ A library dedicated to sound manipulation on the system speaker.
   * `HCHAR`: plot a text character on the high resolution screen at x,y.
   * `HPRN`: plot a string of characters on the high resolution screen at x,y.
 
-### Disk 11: OtherIO
+### Disk 11: OtherIO (not yet implemented)
 
 * library for interfacing with a printer.~~
   * `PINIT`: Printer Detect and Initialize.~~
@@ -446,7 +446,7 @@ A library dedicated to sound manipulation on the system speaker.
   * `SRECV`: Serial Receive bit/byte.~~
   * `SLSTN`: Listen to serial and wait for data for continuing.~~
 
-### Disk 12: SortSearch
+### Disk 12: SortSearch (not yet implemented)
 
   * BSORT: Bubble Sort
   * ISORT: Insertion Sort
@@ -455,7 +455,7 @@ A library dedicated to sound manipulation on the system speaker.
   * SSORT: Selection Sort
   * BSRCH: Binary Search
     
-### Disk 13: TmenusTwindows
+### Disk 13: TmenusTwindows (partially implemented)
 
 
 ### Disk 14: 80Col
@@ -551,43 +551,73 @@ If a memory alteration is indicated by a [PASS], it means that the memory area t
 
  MACRO  | SUBROUTINES CALLED         | FLAGS ALTERED | REGS ALTERED | MEM ALTERED  
  ------ | -------------------------- |:-------------:|:------------:| ----------- 
- _DUMP  | __DUMP                     |               |              |                   
- _ERR   | __ERR                      |               |              |
- _GRET  | __GETRET                   |               |              |                   
- _ISLIT | None                       |               |              |                   
- _ISSTR | None                       |               |              |                   
- _PRNT  | __P                        |               |              |                   
- _RDUMP | __RDMP                     |               |              | 
- _SPAR  | __SETPARM                  |               |              |                   
- _WAIT  | __W                        |               |              |                   
+ @IF    |                            |               |              |
+ @ELSE  |                            |               |              |
+ @IFX   |                            |               |              |
+ @RIF   |                            |               |              |
+ @RELSE |                            |               |              |
+ @RIFX  |                            |               |              |
+ @WHILE |                            |               |              |
+ @WHILEX|                            |               |              |
+ @FORX  |                            |               |              |
+ @NEXTX |                            |               |              |
+ @FORY  |                            |               |              |
+ @NEXTY |                            |               |              |
+ @FORM  |                            |               |              |
+ @NEXTM |                            |               |              |
+ @CASE  |                            |               |              |
+ @OF    |                            |               |              |
+ @CASEX |                            |               |              |
+ \_AXLIT |                            |               |              |
+ \_AXSTR |                            |               |              |
+ \_DUMP  | \_\_DUMP                     |               |              |                   
+ \_ISLIT | None                       |               |              |                   
+ \_ISSTR | None                       |               |              |                   
+ \_PRNT  | \_\_P                        |               |              |                   
+ \_WAIT  | \_\_W                        |               |              |                   
+ 
+ 
+ 
  ADD16  | ADDIT16                    |               |              |
  AMODE  | None                       |               |              |
  BEEP   | None (BELL)                |               |              |
  BLOAD  | BINLOAD                    |               |              |
  BSAVE  | BINSAVE                    |               |              |
+ CLRHI  |                            |               |              |
  CMD    | DOSCMD                     |               |              |
  CMP16  | COMP16                     |               |              |
+ COL40  |                            |               |              |
+ COL80  |                            |               |              |
  CURB   | CURSBAK                    |               |              |                   
  CURD   | CURSDN                     |               |              |                   
  CURF   | CURSFOR                    |               |              |                   
  CURU   | CURSUP                     |               |              |                   
  DBUFF  | None                       |               |              |
  DELAY  | DELAYMS                    |               |              |
+ DIE80  |                            |               |              |
  DIM81  | ADIM81                     |               |              |
  DIM82  | ADIM82                     |               |              |
+ DIM161 |                            |               |              |
+ DIM162 |                            |               |              |
  DIV8   | DIVD8                      |               |              |
  DIV16  | SDIV16,UDIV16              |               |              |
  DRIVE  | None                       |               |              |
  DRWTS  | DISKOP                     |               |              |
+ ERRH   |                            |               |              |
  FINP   | FINPUT                     |               |              |
  FPRN   | FPRINT,FPSTR               |               |              |
  GET81  | AGET81                     |               |              |
  GET82  | AGET82                     |               |              |
+ GET161 |                            |               |              |
+ GET162 |                            |               |              |
  GKEY   | None (GETKEY)              |               |              | 
+ GRET   | \_\_GETRET                   |               |              |                   
  INP    | SINPUT                     |               |              |                   
  MFILL  | MEMFILL                    |               |              |
  MMOVE  | MEMMOVE                    |               |              |
  MSWAP  | MEMSWAP                    |               |              |
+ MTXT0  |                            |               |              |
+ MTXT1  |                            |               |              |
  MUL8   | MULT8                      |               |              |
  MUL16  | MULT16                     |               |              |
  PBX    | GPBX                       |               |              |                   
@@ -596,6 +626,8 @@ If a memory alteration is indicated by a [PASS], it means that the memory area t
  PRN    | XPRINT,DPRINT              |               |              |                   
  PUT81  | APUT81                     |               |              |
  PUT82  | APUT82                     |               |              |
+ PUT161 |                            |               |              |
+ PUT162 |                            |               |              |
  RCPOS  | None (GBASCALC)            |               |              |                   
  REM16  | SREMD16,UREMD16            |               |              |
  RND16  | RAND16                     |               |              |
@@ -612,6 +644,7 @@ If a memory alteration is indicated by a [PASS], it means that the memory area t
  SETDW  | None                       |               |              |
  SINS   | SUBINS                     |               |              |                   
  SLOT   | None                       |               |              |
+ SPAR   | \_\_SETPARM                  |               |              |                   
  SPOS   | SUBPOS                     |               |              |                   
  SPRN   | PRNSTR                     |               |              |                   
  SUB16  | SUBT16                     |               |              |
@@ -621,7 +654,8 @@ If a memory alteration is indicated by a [PASS], it means that the memory area t
  TONUM  | STR2NUM                    |               |              |                   
  TOSTR  | NUM2STR                    |               |              |                   
  TRACK  | None                       |               |              |
- TVLIN  | TVLINE                     |               |              |                   
+ TVLIN  | TVLINE                     |               |              |           
+ WAIT   |                            |               |              |
  ZLOAD  | ZMLOAD                     |               |              | 
  ZSAVE  | ZMSAVE                     |               |              |
  
@@ -634,15 +668,29 @@ Once Macros are mostly finished in how they are called, you can find how to use 
 
  MACRO  | USAGE                                                               | OUTPUT
  ------ | ------------------------------------------------------------------- | ----------------------------------- 
- _DUMP  | ```_DUMP [memory address];[# of bytes to dump]```                   | Nothing; dump to screen
- _ERR   | ```_ERR [calling rout];[err msg];[dump msg];[dump loc];[dmplen]```  | prints various error messages and information
- _GRET  | ```_GRET [dest memory address]```                                   | [return] stored in specified address
- _ISLIT | ```_ISLIT [data]```                                                 | inserts executable code at pointer                
- _ISSTR | ```_ISSTR [data]```                                                 | inserts executable code at pointer
- _PRNT  | ```_PRNT [string or address]```                                     | prints provided literal string                 
- _RDUMP | ```_RDUMP```                                                        | nothing; outputs registry values
- _SPAR  | ```_SPAR [src address];[length]```                                  | moves data at address to [param]                          
- _WAIT  | ```_WAIT```                                                         | Nothing; wait for keypress.
+ @IF    |                                                                     |
+ @ELSE  |                                                                     |
+ @IFX   |                                                                     |
+ @RIF   |                                                                     |
+ @RELSE |                                                                     |
+ @RIFX  |                                                                     |
+ @WHILE |                                                                     |
+ @WHILEX|                                                                     |
+ @FORX  |                                                                     |
+ @NEXTX |                                                                     |
+ @FORY  |                                                                     |
+ @NEXTY |                                                                     |
+ @FORM  |                                                                     |
+ @NEXTM |                                                                     |
+ @CASE  |                                                                     |
+ @OF    |                                                                     |
+ @CASEX |                                                                     |
+ \_AXLIT |                                                                     |
+ \_AXSTR |                                                                     |
+ \_ISLIT | ```_ISLIT [data]```                                                 | inserts executable code at pointer                
+ \_ISSTR | ```_ISSTR [data]```                                                 | inserts executable code at pointer
+ \_PRNT  | ```_PRNT [string or address]```                                     | prints provided literal string                 
+ \_WAIT  | ```_WAIT```                                                         | Nothing; wait for keypress.
  ADD16  | ```ADD16 [word 1];[word 2] ```                                      | .Y = lobyte of sum
  .      | .                                                                   | .X = hibyte of sum
  .      | .                                                                   | [RETURN] = sum
@@ -650,18 +698,24 @@ Once Macros are mostly finished in how they are called, you can find how to use 
  BEEP   | ```BEEP [number of beep calls]```                                   | Nothing; just speaker output   
  BLOAD  | ```BLOAD [dos command parameters]```                                | Nothing; just disk input
  BSAVE  | ```BSAVE [dos command parameters]```                                | Nothing; just disk output
+ CLRHI  |                                                                     |
  CMD    | ```CMD [dos command with parameters]```                             | Nothing, save for changes done by command
  CMP16  | ```CMP16 [word 1];[word 2]```                                       | See full description for flag changes.
+ COL40  | ```COL40```                                                         | Set 40-Column mode.
+ COL80  | ```COL80```                                                         | Set 80-Column mode.
  CURB   | ```CURB [spaces to move back]```                                    | Nothing
  CURD   | ```CURD [spaces to move down]```                                    | Nothing
  CURF   | ```CURF [spaces to move forward]```                                 | Nothing
  CURU   | ```CURU [spaces to move up]```                                      | Nothing
  DBUFF  | ```DBUFF [buffer address]```                                        | Nothing
  DELAY  | ```DELAY [number of milliseconds to delay]```                       | Nothing; just execution delay  
+ DIE80  | ```DIE80```                                                         | Kill 80-column firmware
  DIM81  | ```DIM81 [array address];[# of elements];[element byte length]```   | [RETURN] = total array size in bytes
  .      | .                                                                   | [RETLEN] = length of [RETURN] val
  DIM82  | ```DIM82 [array addr];[# of cols];[# of rows];[elem byte length]``` | [RETURN] = total array size in bytes
  .      | .                                                                   | [RETLEN] = length of [RETURN] val
+ DIM161 |                                                                     |
+ DIM162 |                                                                     |
  DIV8   | ```DIV8 [dividend byte];[divisor byte]```                           | .A = quotient (byte)
  .      |                                                                     | .X = remainder (byte)
  .      | .                                                                   | [RETURN] = quotient
@@ -672,6 +726,8 @@ Once Macros are mostly finished in how they are called, you can find how to use 
  .      | .                                                                   | [RETLEN] = quotient length (2 bytes) 
  DRIVE  | ```DRIVE [drive number]```                                          | Nothing
  DRWTS  | ```DRWTS```                                                         | Nothing
+ DUMP  | ```_DUMP [memory address];[# of bytes to dump]```                   | Nothing; dump to screen
+ ERRH   |                                                                     |
  FINP   | ```FINP [adress to store string]```                                 | Nothing
  FPRN   | ```FPRN [literal string or address of string]```                    | Nothing 
  GET81  | ```GET81 [array address];[element index]```                         | .Y = lobyte of element addr
@@ -682,13 +738,18 @@ Once Macros are mostly finished in how they are called, you can find how to use 
  .      | .                                                                   | .X = hibyte of element addr
  .      | .                                                                   | [RETURN] = value stored in element
  .      | .                                                                   | [RETLEN] = length of return value 
+ GET161 |                                                                     | 
+ GET162 |                                                                     | 
  GKEY   | ```GKEY```                                                          | .A = key pressed
+ GRET  | ```_GRET [dest memory address]```                                   | [return] stored in specified address
  INP    | ```INP```                                                           | [RETURN] = string entered by user
  .      | .                                                                   | [RETLEN] = string length (same as first byte of [RETURN], +1)
  .      | .                                                                   | .X, .Y = length of string
  MFILL  | ```MFILL [address start];[length in bytes];[fill value]```          | Nothing useful       
  MMOVE  | ```MMOVE [src addr];[dest addr];[length in bytes]```                | Nothing useful
  MSWAP  | ```MSWAP [first address];[second address];[length]```               | Nothing 
+ MTXT0  | ```MTXT0```                                                         | Turn off MouseText
+ MTXT1  | ```MTXT1```                                                         | Turn on MouseText
  MUL8   | ```MUL8 [multiplicand byte];[multiplier byte]```                    | .Y = lobyte of product (word)
  .      | .                                                                   | .X = hibyte of product (word)
  .      | .                                                                   | [RETURN] = quotient
@@ -707,6 +768,8 @@ Once Macros are mostly finished in how they are called, you can find how to use 
  PUT82  | ```PUT82 [src addr or lit];[array addr];[col index];[row index]```  | .Y = lobyte of element addr
  .      | .                                                                   | .X = hibyte of element addr
  .      | .                                                                   | .A = length of element in bytes    
+ PUT161 | ```PUT161 [src addr];[array addr];[16-bit element index]```         |
+ PUT162 | ```PUT162 [src addr];[array addr];[16-bit col index];[16-bit row]```|
  RCPOS  | ```RCPOS [col];[row]```                                             | .A = character at that position
  REM16  | ```REM16 [dividend word];[divisor word]```                          | .Y = lobyte of remainder
  .      | .                                                                   | .X = hibyte of remainder
@@ -735,6 +798,7 @@ Once Macros are mostly finished in how they are called, you can find how to use 
  SINS   | ```SINS [parent string];[index];[max length];[substring to ins]```  | .CARRY = 0 if no errors; else, 1
  .      | .                                                                   | passed parent string will be altered!
  SLOT   | ```SLOT [slot number]```                                            | Nothing 
+ SPAR  | ```_SPAR [src address];[length]```                                  | moves data at address to [param]                      
  SPOS   | ```SPOS [parent string];[substring]```                              | .A = index of substring if found; 0 if not
  .      | .                                                                   | [RETURN] = index of substring found; 0 if not
  .      | .                                                                   | [RETLEN] = byte length of [RETURN] (1)
@@ -753,11 +817,18 @@ Once Macros are mostly finished in how they are called, you can find how to use 
  TOSTR  | ```TOSTR [number to convert to string]```                           | [RETURN] = string equivalent of number
  .      | .                                                                   | [RETLEN] = length of string returned (not yet)
  TVLIN  | ```TVLIN [row start];[row end];[column];[fill char]```              | Nothing Useful
+ WAIT   |                                                                     |
  ZLOAD  | ```ZLOAD [address where backup is stored]```                        | Nothing
  ZSAVE  | ```ZSAVE [address to backup at]```                                  | Nothing  
  
 ---
+## Detailed Macro Descriptions
 
+
+
+
+---
+## Detailed Subroutine Description
 
 
 
