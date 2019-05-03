@@ -48,7 +48,7 @@ This documentation is currently being updated to reflect massive changes between
 ---
 ## Introduction
 
-This is a general purpose library in 6502 Assembly for the Apple II. Originally, I began this project as research for a platform study of the Apple \]\[ system, learning Assembly for the first time. However, after speaking to a number of folk who are still actively involved in a community of enthusiasts, I noticed that there was no cohesive place for a first-time learner to find well-documented code, basic data structures and control loops, or even a good and intuitive listing of hooks for the system. There are plenty of books--some very old, some very new--that detail these things somewhat cohesively and are fantastic resources for beginners, but very few of them adequately serve as an good basis for understanding the platform as a whole. There are also many webpages out there dedicated to this matter--but as is the nature of the Internet, they are fractured resources that come and go at the blink of an eye. Thus, Appl\]\[AsmLib began.
+This is a general purpose library in 6502 Assembly for the Apple II. Originally, I began this project as research for a platform study of the Apple \]\[ system, learning Assembly for the first time. However, after speaking to a number of folk who are still actively involved in a community of enthusiasts, I noticed that there was no cohesive place for a first-time learner to find well-documented code, basic data structures and control loops, or even a good and intuitive listing of hooks for the system. There are plenty of books--some very old, some very new--that detail these things somewhat cohesively and are fantastic resources for beginners, but very few of them adequately serve as an good basis for understanding the platform as a whole. There are also many webpages out there dedicated to this matter--but as is the nature of the Internet, they are fractured resources that come and go at the blink of an eye. Thus, Apple\]\[AsmLib began.
 
 Ultimately, my aim is to create a large enough collection of routines to address any domain of development for the Apple II family in Assembly while maintaining an ease of access to beginners that is hard to come by.  I'll do my best to acknowledge when a routine is inspired by (or mostly copied from) another source, and will exclude them from the Apache License 2.0 when necessary; I hope to replace anything of this sort with original work as I revise. If you find your own source here, but would rather it not be here, please reach out to me and I'll remove it immediately.
 
@@ -263,7 +263,7 @@ This disk is dedicated to common and useful subroutines that don't necessarily f
   * [`BCSL`](#bcsl): Branch Carry Set Long Instruction
   * [`BEQL`](#beql): Branch on Equal Long Instruction
   * [`BNEL`](#bnel): Branch on Not Equal Long Instruction
-  * [`CLRHI`](#(clrhi): Clear High Nibble of a Byte.
+  * [`CLRHI`](#clrhi): Clear High Nibble of a Byte.
   * [`DUMP`](#dump): Dump the contents of a block of memory. This displays hex values only, and is primarily useful for debugging.
   * [`ERRH`](#errh): Set Error-handling hook
   * [`GRET`](#gret): Get Return. Transfer the contents of the [RETURN] register to another memory location.
@@ -365,16 +365,14 @@ This disk is dedicated to routines and macros that involve file manipulation and
 This sub-library is dedicated to converting between different number types and their string equivalents. 
 
 * MAC.CONVERT
-  * `HX2CHR`: Hex value to character notation.
-  * `TOSTR`: Integer value to character equivalent.
-  * `TONUM`: Character string number to hexcode equivalent.
-  * `HX2DEC`: Hexadecimal value to decimal value string.
-  * `HX2BIN`: Hexademial value to binary string.
-  * `BIN2HX`: binary string to hex value.
-  * `DEC2HX`: decimal string to hex value. Not much different than `TONUM`
-  * `HR2LR`: Hi-resolution to low-resolution conversion.
-  * `LR2HR`: Low-resolution to high-resolution conversion.
-  * `LS2STR`: a string that ends in #$00 coverted to the string data type (length byte first, then string)
+  * `ASCBIN`: Binary String to equivalent number.
+  * `ASCHEX`: Binary Hexadecimal to equivalent number.
+  * `ASCINT`: Binary Integer to equivalent number.
+  * `BINASC`: Number to Binary String.
+  * `HEXASC`: Number to Hexadecimal String.
+  * `INTASC`: Number to Integer String.
+  * `ZTRSTR`: Null terminated string to indexed string
+  
 ---
   
 ### Disk 8: LoRes (not yet implemented)
@@ -575,12 +573,13 @@ If a memory alteration is indicated by a [PASS], it means that the memory area t
  \_ISSTR | None                       |               |              |                   
  \_PRNT  | \_\_P                        |               |              |                   
  \_WAIT  | \_\_W                        |               |              |                   
- 
- 
- 
  ADD16  | ADDIT16                    |               |              |
+ ASCBIN |                            |               |              |
+ ASCHEX |                            |               |              | 
+ ASCINT |                            |               |              |
  AMODE  | None                       |               |              |
  BEEP   | None (BELL)                |               |              |
+ BINASC |                            |               |              |
  BLOAD  | BINLOAD                    |               |              |
  BSAVE  | BINSAVE                    |               |              |
  CLRHI  |                            |               |              |
@@ -612,7 +611,9 @@ If a memory alteration is indicated by a [PASS], it means that the memory area t
  GET162 |                            |               |              |
  GKEY   | None (GETKEY)              |               |              | 
  GRET   | \_\_GETRET                   |               |              |                   
+ HEXASC |                            |               |              |
  INP    | SINPUT                     |               |              |                   
+ INTASC |                            |               |              |
  MFILL  | MEMFILL                    |               |              |
  MMOVE  | MEMMOVE                    |               |              |
  MSWAP  | MEMSWAP                    |               |              |
@@ -695,7 +696,11 @@ Once Macros are mostly finished in how they are called, you can find how to use 
  .      | .                                                                   | .X = hibyte of sum
  .      | .                                                                   | [RETURN] = sum
  .      | .                                                                   | [RETLEN] = length of sum (2 bytes)
+ ASCBIN |                                                                     |
+ ASCHEX |                                                                     |
+ ASCINT |                                                                     |
  BEEP   | ```BEEP [number of beep calls]```                                   | Nothing; just speaker output   
+ BINASC |                                                                     |
  BLOAD  | ```BLOAD [dos command parameters]```                                | Nothing; just disk input
  BSAVE  | ```BSAVE [dos command parameters]```                                | Nothing; just disk output
  CLRHI  |                                                                     |
@@ -742,6 +747,8 @@ Once Macros are mostly finished in how they are called, you can find how to use 
  GET162 |                                                                     | 
  GKEY   | ```GKEY```                                                          | .A = key pressed
  GRET  | ```_GRET [dest memory address]```                                   | [return] stored in specified address
+ HEXASC |                                                                     |
+ INASC  |                                                                     |
  INP    | ```INP```                                                           | [RETURN] = string entered by user
  .      | .                                                                   | [RETLEN] = string length (same as first byte of [RETURN], +1)
  .      | .                                                                   | .X, .Y = length of string
