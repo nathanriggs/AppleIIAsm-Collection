@@ -237,8 +237,10 @@ This disk is dedicated to Standard Input/Output operations, and a couple non-sta
   * [`SETCX`](#setcx): Set Cursor Horizontal Position
   * [`SETCY`](#setcy): Set Cursor Vertical Position
   * [`SPRN`](#sprn): Print String (with length byte)
+  * [`TCIRC`](#tcirc): Text circle (Bressenham algo)
   * [`TFILL`](#tfill): Text Fill square [x1],[x2],[y1],[y2] with Character [n]
   * [`THLIN`](#thlin): Text Horizontal Line Fill with Character [n]
+  * [`TLINE`](#tline): Text diagonal line with fill character (Bressenham algo)
   * [`TPUT`](#tput): Direct memory text plotting routine
   * [`TVLIN`](#tvlin): Text Vertical Line Fill with Character [n]
   * [`WAIT`](#wait): non-monitor getkey
@@ -649,8 +651,10 @@ If a memory alteration is indicated by a [PASS], it means that the memory area t
  SPOS   | SUBPOS                     |               |              |                   
  SPRN   | PRNSTR                     |               |              |                   
  SUB16  | SUBT16                     |               |              |
+ TCIRC  |                            |               |              | 
  TFILL  | TFILLA                     |               |              |                   
- THLIN  | THLINE                     |               |              |                   
+ THLIN  | THLINE                     |               |              |
+ TLINE  |                            |               |              |
  TPUT   | TXTPUT                     |               |              |
  TONUM  | STR2NUM                    |               |              |                   
  TOSTR  | NUM2STR                    |               |              |                   
@@ -814,8 +818,10 @@ Once Macros are mostly finished in how they are called, you can find how to use 
  .      |                                                                     | .X = hibyte of result     
  .      | .                                                                   | [RETURN] = result
  .      | .                                                                   | [RETLEN] = result length (2 bytes)                
+ TCIRC  |                                                                     |
  TFILL  | ```TFILL [col start];[row start];[col end];[row end];[fill char]``` | Nothing Useful
  THLIN  | ```THLIN [col start];[col end];[row];[fill char]```                 | Nothing Useful
+ TLINE  |                                                                     |
  TMODE  | ```TMODE```                                                         | Nothing
  TONUM  | ```TONUM [string to convert to number, addr or literal]```          | [RETURN] = number equivalent of string
  .      | .                                                                   | [RETLEN] = byte length of number (2)
