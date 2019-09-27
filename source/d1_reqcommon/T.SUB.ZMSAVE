@@ -1,0 +1,69 @@
+*
+*``````````````````````````````*
+* ZMSAVE ::   SAVE 0-PAGE FREE *
+*                              *
+* INPUT:                       *
+*                              *
+*  .A = DESTINATION LOBYTE     *
+*  .Y = DESTINATION HIBYTE     *
+*                              *
+* OUTPUT:                      *
+*                              *
+*  THE FREE AREAS OF THE       *
+*  ZERO PAGE ARE COPIED TO     *
+*  THE DESTINATION ADDRESS.    *
+*                              *
+* DESTROYS: AXYNVBDIZCMS       *
+*           ^^^^    ^^^        *
+*                              *
+* CYCLES: 138+                 *
+* SIZE: 84 BYTES               *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+]ADR1    EQU   VARTAB     ; 2 BYTES--DEST ADDRESS
+]ADR2    EQU   VARTAB+2   ; 2 BYTES--SOURCE ADDRESS
+]Z       HEX   191EE3BECEDEEF ; ZERO PAGE LOCATIONS
+         HEX   FAFBFCFDFEFF ; TO BE BACKED UP
+         HEX   00
+ZMSAVE
+*
+         STA   ]ADR1      ; BACKUP DESTINATION ADDRESS LO
+         STX   ]ADR1+1    ; BACKUP HIBYTE
+         LDA   ADDR2      ; BACKUP CONTENTS OF ADDR2 LOBYTE
+         STA   ]ADR2
+         LDA   ADDR2+1    ; BACKUP HIBYTE
+         STA   ]ADR2+1
+         LDA   ]ADR1      ; PUT DESTINATION ADDRESS
+         STA   ADDR2      ; INTO ZERO-PAGE ADDR2
+         LDA   ]ADR1      ; FOR INDIRECT ACCESS
+         STA   ADDR2+1
+         LDY   #0         ; CLEAR INDEX
+         LDA   ADDR1      ; LOAD ADDR1 LOBYTE
+         STA   (ADDR2),Y  ; STORE IT IN DESTINATION
+         INY              ; INCREASE INDEX
+         LDA   ADDR1+1    ; GET ADDR1 HIBYTE
+         STA   (ADDR2),Y  ; STORE IN DESTINATION
+         INY              ; INCREMENT INDEX
+         LDA   ]ADR2      ; LOAD OLD ADDR2 LOBYTE
+         STA   (ADDR2),Y  ; COPY TO DESTINATION
+         INY              ; INCREMENT INDEX
+         LDA   ]ADR2+1    ; LOAD OLD ADDR2 HIBYTE
+         STA   (ADDR2),Y  ; STORE IN DESTINATION
+         LDX   #255       ; RESET INDEX2 COUNTER
+         STY   ]SIZE      ; STORE INDEX1 IN ]SIZE
+         LDY   #0         ; RESET Y-INDEX
+:LP
+         INC   ]SIZE      ; INCREMENT SOURCE INDEX
+         INX              ; INCREMENT TABLE INDEX
+         LDA   ]Z,X       ; GET NEXT BYTE FROM TABLE
+         BEQ   :EXIT      ; IF ZERO, QUIT
+         STA   ADDR1      ; STORE BYTE FROM TABLE AS LOBYTE
+         LDA   #0         ; CLEAR THE HIBYTE
+         STA   ADDR1+1
+         LDA   (ADDR1),Y  ; INDIRECTLY LOAD ZERO-PAGE CONTENT
+         LDY   ]SIZE      ; PULL INDEX BACK INTO Y
+         STA   (ADDR2),Y  ; STORE BYTE TO DESTINATION
+         LDY   #0         ; RESET Y
+         JMP   :LP        ; REPEAT UNTIL FINISHED
+:EXIT
+         RTS

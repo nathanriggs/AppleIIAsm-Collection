@@ -1,0 +1,341 @@
+*
+*``````````````````````````````*
+* MAC.REQUIRED                 *
+*                              *
+* MACROS USED FOR CORE UTILS   *
+* AND LIBRARY ROUTINES. NOTE   *
+* THAT THE LIBRARIES DO NOT    *
+* USE THESE MACROS, BUT MAY    *
+* USE THE ROUTINES. THESE ARE  *
+* MERELY PROVIDED FOR THE SAKE *
+* OF CONVENIENCE.              *
+*                              *
+* AUTHOR:    NATHAN RIGGS      *
+* CONTACT:   NATHAN.RIGGS@     *
+*            OUTLOOK.COM       *
+*                              *
+* DATE:      30-JUN-2019       *
+* ASSEMBLER: MERLIN 8 PRO      *
+* OS:        DOS 3.3           *
+*                              *
+* SUBROUTINE FILES NEEDED      *
+*                              *
+*  LIB.REQUIRED                *
+*                              *
+* MACROS INCLUDED:             *
+*                              *
+* _MLIT  : IS LITERAL? (ZERO)  *
+* _ISLIT : IS LITERAL? (STACK) *
+* _AXLIT : IS LITERAL? (REGS)  *
+* _ISSTR : IS STRING? (STACK)  *
+* _AXSTR : IS STRING? (REGS)   *
+* GRET   : GET RETURN          *
+* DUMP   : DUMP MEMORY         *
+* _PRN   : PRINT STRING        *
+* _WAIT  : GET KEYPRESS        *
+* ERRH   : SET ERROR ROUTINE   *
+* CLRHI  : CLEAR HIGH NIBBLE   *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+*``````````````````````````````*
+* _MLIT                        *
+*                              *
+* CHECKS IF PARAMETER IS A     *
+* LITERAL OR NOT, AND SETS THE *
+* LO AND HI IN THE SPECIFIED   *
+* MEMORY ADDRESS.              *
+*                              *
+* PARAMETERS                   *
+*                              *
+*  ]1 = MEMORY ADDRESS BYTE    *
+*  ]2 = ZERO PAGE ADDRESS      *
+*                              *
+* SAMPLE USAGE                 *
+*                              *
+*  _MLIT #$6000                *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_MLIT    MAC
+         IF    #=]1       ; IF ]1 IS A LITERAL
+         LDA   ]1/$100    ; GET HI
+         STA   ]2+1
+         LDA   ]1         ; GET LO
+         STA   ]2
+         ELSE             ; ]1 IS ADDRESS
+         LDA   ]1+1       ; SO GET HIGH VAL FROM ADDR
+         STA   ]2+1
+         LDA   ]1         ; THEN LO VAL
+         STA   ]2
+         FIN
+         <<<
+*
+*``````````````````````````````*
+* _ISLIT                       *
+*                              *
+* CHECKS IF THE PARAMETER IS   *
+* A LITERAL OR NOT, THEN       *
+* PUSHES THE LO AND HI AS      *
+* NEEDED.                      *
+*                              *
+* PARAMETERS                   *
+*                              *
+*  ]1 = MEMORY ADDRESS BYTE    *
+*                              *
+* SAMPLE USAGE                 *
+*                              *
+*  _ISLIT #$6000               *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_ISLIT   MAC
+         IF    #=]1       ; IF ]1 IS A LITERAL
+         LDA   ]1/$100    ; GET HI
+         PHA
+         LDA   ]1         ; GET LO
+         PHA
+         ELSE             ; ]1 IS ADDRESS
+         LDA   ]1+1       ; SO GET HIGH VAL FROM ADDR
+         PHA
+         LDA   ]1         ; THEN LO VAL
+         PHA
+         FIN
+         <<<
+*
+*``````````````````````````````*
+* _AXLIT                       *
+*                              *
+* CHECKS IF PARAMETER IS A     *
+* LITERAL OR NOT, AND SETS THE *
+* LO AND HI IN .A AND .X.      *
+*                              *
+* PARAMETERS                   *
+*                              *
+*  ]1 = MEMORY ADDRESS BYTE    *
+*                              *
+* SAMPLE USAGE                 *
+*                              *
+*  _AXLIT #$6000               *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_AXLIT   MAC
+         IF    #=]1       ; IF ]1 IS A LITERAL
+         LDX   ]1/$100    ; GET HI
+         LDA   ]1         ; GET LO
+         ELSE             ; ]1 IS ADDRESS
+         LDX   ]1+1       ; SO GET HIGH VAL FROM ADDR
+         LDA   ]1         ; THEN LO VAL
+         FIN
+         <<<
+*
+*``````````````````````````````*
+* _MSTR                        *
+*                              *
+* CHECKS IF PARAMETER IS A     *
+* STRING, AND IF SO PROVIDE IT *
+* WITH AN ADDRESS. IF NOT,     *
+* CHECK IF IT'S A LITERAL AND  *
+* PASS ACCORDINGLY.            *
+*                              *
+* PARAMETERS                   *
+*                              *
+*  ]1 = MEMORY ADDRESS BYTE    *
+*       OR STRING              *
+*  ]2 = ZERO PAGE ADDRESS      *
+*                              *
+* SAMPLE USAGE                 *
+*                              *
+*  _ISSTR "TESTING"            *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_MSTR    MAC
+         IF    "=]1 ; IF ]1 IS A STRING
+         JMP   __STRCONT
+]STRTMP  STR   ]1
+__STRCONT
+*
+         LDA   #>]STRTMP  ; GET HI
+         STA   ]2+1
+         LDA   #<]STRTMP  ; GET LO
+         STA   ]2
+         ELSE             ; ]1 IS ADDRESS
+         _ISLIT ]1
+         FIN
+         <<<
+*
+*
+*``````````````````````````````*
+* _ISSTR                       *
+*                              *
+* CHECKS IF PARAMETER IS A     *
+* STRING, AND IF SO PROVIDE IT *
+* WITH AN ADDRESS. IF NOT,     *
+* CHECK IF IT'S A LITERAL AND  *
+* PASS ACCORDINGLY.            *
+*                              *
+* PARAMETERS                   *
+*                              *
+*  ]1 = MEMORY ADDRESS BYTE    *
+*       OR STRING              *
+*                              *
+* SAMPLE USAGE                 *
+*                              *
+*  _ISSTR "TESTING"            *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_ISSTR   MAC
+         IF    "=]1 ; IF ]1 IS A STRING
+         JMP   __STRCONT
+]STRTMP  STR   ]1
+__STRCONT
+*
+         LDA   #>]STRTMP  ; GET HI
+         PHA
+         LDA   #<]STRTMP  ; GET LO
+         PHA
+         ELSE             ; ]1 IS ADDRESS
+         _ISLIT ]1
+         FIN
+         <<<
+*
+*``````````````````````````````*
+* _AXSTR                       *
+*                              *
+* CHECKS IF PARAMETER IS A     *
+* STRING, AND IF SO PROVIDES   *
+* AN ADDRESS FOR IT. IF NOT,   *
+* CHECK IF IT'S A LITERAL, AND *
+* STORE THE HI A LO BYTES IN   *
+* .A AND .X.                   *
+*                              *
+* PARAMETERS                   *
+*                              *
+*  ]1 = MEMORY ADDRESS BYTE    *
+*       OR STRING              *
+*                              *
+* SAMPLE USAGE                 *
+*                              *
+*  _AXSTR "TESTING"            *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_AXSTR   MAC
+         IF    "=]1 ; IF ]1 IS A STRING
+         JMP   __STRCNT2
+]STRTMP  STR   ]1
+__STRCNT2
+*
+         LDX   #>]STRTMP  ; GET HI
+         LDA   #<]STRTMP  ; GET LO
+         ELSE             ; ]1 IS ADDRESS
+         _AXLIT ]1
+         FIN
+         <<<
+*
+*``````````````````````````````*
+* GRET                         *
+*                              *
+* COPY THE VALUE IN RETURN AND *
+* PLACE IT IN GIVEN ADDRESS.   *
+*                              *
+* PARAMETERS                   *
+*                              *
+*  ]1 = MEMORY ADDRESS BYTE    *
+*                              *
+* SAMPLE USAGE                 *
+*                              *
+*  GRET #$6000                 *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+GRET     MAC
+         _AXLIT ]1
+         JSR   __GETRET
+         <<<
+*
+*``````````````````````````````*
+* DUMP                         *
+*                              *
+* DUMP THE HEX AT A GIVEN      *
+* ADDRESS.                     *
+*                              *
+* PARAMETERS                   *
+*                              *
+*  ]1 = MEMORY ADDRESS BYTE    *
+*  ]2 = LENGTH IN BYTES        *
+*                              *
+* SAMPLE USAGE                 *
+*                              *
+*  DUMP #$6000;#10             *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+DUMP     MAC
+         _AXLIT ]1
+         LDY   ]2
+         JSR   __DUMP
+         <<<
+*
+*``````````````````````````````*
+* _PRN                         *
+*                              *
+* PRINT A STRING OR ADDRESS.   *
+*                              *
+* PARAMETERS                   *
+*                              *
+*  ]1 = MEMORY ADDRESS BYTE    *
+*       OR STRING              *
+*                              *
+* SAMPLE USAGE                 *
+*                              *
+*  _PRN "TESTING"              *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_PRN     MAC
+         JSR   __P
+         ASC   ]1
+         HEX   00
+         <<<
+*
+*``````````````````````````````*
+* _WAIT                        *
+*                              *
+* WAIT FOR A KEYPRESS.         *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+_WAIT    MAC
+         JSR   __W
+         <<<
+*
+*``````````````````````````````*
+* ERRH                         *
+*                              *
+* SET THE ERROR HANDLING HOOK  *
+*                              *
+* PARAMETERS                   *
+*                              *
+*  ]1 = MEMORY ADDRESS BYTE    *
+*                              *
+* SAMPLE USAGE                 *
+*                              *
+*  ERRH #$6000                 *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+ERRH     MAC
+         _AXLIT
+         JSR   __ERRH
+         <<<
+*
+*``````````````````````````````*
+* CLRHI                        *
+*                              *
+* CLEAR HI NIBBLE OF A BYTE    *
+*                              *
+* PARAMETERS                   *
+*                              *
+*  ]1 = BYTE TO CLEAR          *
+*                              *
+* SAMPLE USAGE                 *
+*                              *
+*  CLRHI #$FF                  *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+CLRHI    MAC
+         LDA   ]1
+         JSR   __CLRHI
+         <<<

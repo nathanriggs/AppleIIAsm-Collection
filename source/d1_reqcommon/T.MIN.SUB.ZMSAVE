@@ -1,0 +1,46 @@
+]ADR1    EQU   VARTAB     
+]ADR2    EQU   VARTAB+2   
+]Z       HEX   191EE3BECEDEEF 
+         HEX   FAFBFCFDFEFF 
+         HEX   00
+ZMSAVE
+         STA   ]ADR1      
+         STX   ]ADR1+1    
+         LDA   ADDR2      
+         STA   ]ADR2
+         LDA   ADDR2+1    
+         STA   ]ADR2+1
+         LDA   ]ADR1      
+         STA   ADDR2      
+         LDA   ]ADR1      
+         STA   ADDR2+1
+         LDY   #0         
+         LDA   ADDR1      
+         STA   (ADDR2),Y  
+         INY   
+         LDA   ADDR1+1    
+         STA   (ADDR2),Y  
+         INY   
+         LDA   ]ADR2      
+         STA   (ADDR2),Y  
+         INY   
+         LDA   ]ADR2+1    
+         STA   (ADDR2),Y  
+         LDX   #255       
+         STY   ]SIZE      
+         LDY   #0         
+:LP
+         INC   ]SIZE      
+         INX   
+         LDA   ]Z,X       
+         BEQ   :EXIT      
+         STA   ADDR1      
+         LDA   #0         
+         STA   ADDR1+1
+         LDA   (ADDR1),Y  
+         LDY   ]SIZE      
+         STA   (ADDR2),Y  
+         LDY   #0         
+         JMP   :LP        
+:EXIT
+         RTS

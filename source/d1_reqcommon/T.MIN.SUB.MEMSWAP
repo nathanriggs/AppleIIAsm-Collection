@@ -1,0 +1,16 @@
+]SIZE    EQU   BPAR1      
+]ADDR1   EQU   WPAR1      
+]ADDR2   EQU   WPAR2      
+MEMSWAP
+         LDY   #255       
+:LP
+         INY   
+         LDA   (]ADDR1),Y 
+         TAX   
+         LDA   (]ADDR2),Y 
+         STA   (]ADDR1),Y 
+         TXA   
+         STA   (]ADDR2),Y 
+         CPY   ]SIZE      
+         BNE   :LP        
+         RTS   

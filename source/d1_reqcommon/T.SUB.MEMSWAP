@@ -1,0 +1,40 @@
+*
+*``````````````````````````````*
+* MEMSWAP       (NATHAN RIGGS) *
+*                              *
+* INPUT:                       *
+*                              *
+*  ]SIZE = BPAR1               *
+*  ]ADDR1 = WPAR1              *
+*  ]ADDR2 = WPAR2              *
+*                              *
+* OUTPUT:                      *
+*                              *
+*  SWAPS THE VALUES IN THE     *
+*  MEMORY LOCATIONS GIVEN      *
+*  FOR THE SPECIFIED LENGTH.   *
+*                              *
+* DESTROYS: AXYNVBDIZCMS       *
+*           ^^^^    ^^^        *
+*                              *
+* CYCLES: 100+                 *
+* SIZE: 43 BYTES               *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+]SIZE    EQU   BPAR1      ; SIZE OF RANGE TO SWAP
+]ADDR1   EQU   WPAR1      ; SOURCE ADDRESS 1
+]ADDR2   EQU   WPAR2      ; SOURCE ADDRESS 2
+*
+MEMSWAP
+         LDY   #255       ; RESET BYTE INDEX
+:LP
+         INY              ; INCREASE BYTE INDEX
+         LDA   (]ADDR1),Y ; LOAD BYTE FROM FIRST ADDRESS
+         TAX              ; TRANSFER TO .X
+         LDA   (]ADDR2),Y ; LOAD BYTE FROM SECOND ADDRESS
+         STA   (]ADDR1),Y ; STORE IN FIRST ADDRESS
+         TXA              ; TRANSFER FIRST BYTE VAL TO .A
+         STA   (]ADDR2),Y ; NOW STORE THAT IN SECOND ADDRESS
+         CPY   ]SIZE      ; IF BYTE INDEX < LENGTH,
+         BNE   :LP        ; CONTINUE LOOPING
+         RTS              ; OTHERWISE, EXIT

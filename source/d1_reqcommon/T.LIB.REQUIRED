@@ -1,0 +1,284 @@
+*
+*``````````````````````````````*
+* LIB.REQUIRED                 *
+*                              *
+* LIBRARY OF REQUIRED ROUTINES *
+* AS PART OF THE APPLEIIASM    *
+* MACRO AND SUBROUTINE LIBRARY *
+*                              *
+* AUTHOR:    NATHAN RIGGS      *
+* CONTACT:   NATHAN.RIGGS@     *
+*            OUTLOOK.COM       *
+*                              *
+* DATE:      30-JUN-2019       *
+* ASSEMBLER: MERLIN 8 PRO      *
+* LICENSE:   APACHE 2.0        *
+* OS:        DOS 3.3           *
+*                              *
+* SUBROUTINES:                 *
+*                              *
+* __GETRET  : GET RETURN VAL   *
+* __CLRHI   : CLEAR HI NIBBLE  *
+* __DUMP    : DUMP MEMORY      *
+* __P       : PRINT            *
+* __W       : WAIT             *
+* __ERRH    : HANDLE ERRORS    *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+** LIBRARY-SPECIFIC VARIABLES
+*
+]RIGHT   DS    1
+]LEFT    DS    1
+]LENGTH  DS    1
+]A       DS    1          ; REGISTER .A BACKUP
+]X       DS    1          ; REGISTER .X BACKUP
+]Y       DS    1          ; REGISTER .Y BACKUP
+]C       DS    1          ; CARRY FLAG BACKUP
+]Z       DS    1          ; ZERO FLAG BACKUP
+]N       DS    1          ; NEGATIVE FLAG BACKUP
+]O       DS    1          ; OVERFLOW FLAG BACKUP
+]HEXTAB  ASC   "0123456789ABCDEF"
+*
+** LIBRARY-SPECIFIC HOOKS
+*
+]COUT    EQU   $FDF0      ; SCREEN OUTPUT ROUTINE
+]KYBD    EQU   $C000      ; KEYBOARD INPUT
+]STROBE  EQU   $C010      ; KEYBOARD STROBE
+*
+*``````````````````````````````*
+* __GETRET      (NATHAN RIGGS) *
+*                              *
+* INPUT:                       *
+*                              *
+*  .A = ADDRESS LOBYTE         *
+*  .X = ADDRESS HIBYTE         *
+*  RETURN = DATA STRING        *
+*  RETLEN = DATA STRING LENGTH *
+*                              *
+* OUTPUT:                      *
+*                              *
+*  COPIES CONTENT OF RETURN    *
+*  TO SPECIFIED ADDRESS.       *
+*                              *
+*  .Y = RETURN LENGTH          *
+*                              *
+* DESTROYS: AXYNVBDIZCMS       *
+*           ^^^^    ^^^        *
+*                              *
+* CYCLES: 32+                  *
+* SIZE: 18 BYTES               *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+__GETRET
+         STA   ADDR1      ; LOBYTE PASSED IN .A
+         STX   ADDR1+1    ; HIBYTE PASSED IN .X
+         LDY   #255       ; RESET COUNTER
+:LP
+         INY              ; INCREASE COUNTER
+         LDA   RETURN,Y   ; LOAD BYTE IN RETURN AT
+         STA   (ADDR1),Y  ; COUNTER OFFSET; STORE AT
+         CPY   RETLEN     ; NEW LOCATION
+         BNE   :LP        ; IF COUNTER < RETLEN, LOOP
+         RTS
+*
+*``````````````````````````````*
+* __CLRHI       (NATHAN RIGGS) *
+*                              *
+* INPUT:                       *
+*                              *
+*  .A = BYTE TO CLEAR HIBITS   *
+*                              *
+* OUTPUT:                      *
+*                              *
+*  CLEARS 4 HIBITS FROM BYTE   *
+*                              *
+*  .A = CLEARED BYTE           *
+*                              *
+* DESTROYS: AXYNVBDIZCMS       *
+*           ^  ^    ^^         *
+*                              *
+* CYCLES: 16                   *
+* SIZE: 6 BYTES                *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+__CLRHI
+*
+         AND   #$F0       ; CLEAR 4 RIGHT BITS
+         LSR              ; MOVE BITS RIGHT
+         LSR              ; MOVE BITS RIGHT
+         LSR              ; MOVE BITS RIGHT
+         LSR              ; MOVE BITS RIGHT
+         RTS
+*
+*``````````````````````````````*
+* __DUMP:       (NATHAN RIGGS) *
+*                              *
+* INPUT:                       *
+*                              *
+*  .A = ADDRESS LOBYTE         *
+*  .X = ADDRESS HIBYTE         *
+*  .Y = NUMBER OF BYTES        *
+*                              *
+* OUTPUT:                      *
+*                              *
+*  OUTPUTS DATA LOCATED AT THE *
+*  SPECIFIED ADDRESS IN HEX    *
+*  FORMAT FOR SPECIFIED NUMBER *
+*  OF BYTES.                   *
+*                              *
+* DESTROYS: AXYNVBDIZCMS       *
+*           ^^^^    ^^^        *
+*                              *
+* CYCLES: 184+                 *
+* SIZE: 114 BYTES              *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+__DUMP
+         STY   ]LENGTH    ; LENGTH PASSED IN .Y
+         STA   ADDR1      ; ADDRESS LOBYTE IN .A
+         STX   ADDR1+1    ; ADDRESS HIBYTE IN .X
+         LDA   #$8D       ; LOAD CARRIAGE RETURN
+         JSR   ]COUT      ; SEND TO COUT
+         LDA   ADDR1+1    ; GET ADDRESS HIBYTE
+         JSR   __CLRHI    ; CLEAR HIBITS
+         TAX              ; TRANSFER T .X
+         LDA   ]HEXTAB,X  ; LOAD HEX CHAR FROM TABLE AT .X
+         JSR   ]COUT      ; SEND TO COUT
+         LDA   ADDR1+1    ; LOAD ADDRESS HIBYTE AGAIN
+         AND   #$0F       ; CLEAR LOBITS
+         TAX              ; TRANSER TO .X
+         LDA   ]HEXTAB,X  ; LOAD HEX CHAR FROM TABLE AT .X
+         JSR   ]COUT      ; SENT TO COUT
+         LDA   ADDR1      ; LOAD LOBYTE
+         JSR   __CLRHI    ; CLEAR HIBITS
+         TAX              ; TRANSFER TO .X
+         LDA   ]HEXTAB,X  ; LOAD HEXCHAR AT .X
+         JSR   ]COUT      ; SEND TO COUT
+         LDA   ADDR1      ; LOAD LOBYTE AGAIN
+         AND   #$0F       ; CLEAR LOBITS
+         TAX              ; TRANSFER T .X
+         LDA   ]HEXTAB,X  ; LOAD HEXCHAR AT .X
+         JSR   ]COUT      ; SEND TO COUT
+         LDA   #":"       ;
+         JSR   ]COUT      ; SEND COLON TO COUT
+         LDA   #" "
+         JSR   ]COUT      ; SEND SPACE TO COUT
+         LDY   #0         ; RESET COUNTER
+:LP
+         LDA   (ADDR1),Y  ; LOAD BYTE FROM ADDRESS
+         JSR   __CLRHI    ; AT COUNTER OFFSET; CLEAR HIBITS
+         STA   ]LEFT      ; SAVE LEFT INDEX
+         LDA   (ADDR1),Y  ; RELOAD
+         AND   #$0F       ; CLEAR LOBITS
+         STA   ]RIGHT     ; SAVE RIGHT INDEX
+         LDX   ]LEFT      ; LOAD LEFT INDEX
+         LDA   ]HEXTAB,X  ; GET NIBBLE CHAR
+         JSR   ]COUT      ; SEND TO COUT
+         LDX   ]RIGHT     ; LOAD RIGHT INDEX
+         LDA   ]HEXTAB,X  ; GET NIBBLE CHAR
+         JSR   ]COUT      ; SEND TO COUT
+         LDA   #160       ; LOAD SPACE
+         JSR   ]COUT      ; SEND TO COUT
+         INY              ; INCREASE COUNTER
+         CPY   ]LENGTH    ; IF COUNTER < LENGTH
+         BNE   :LP        ; CONTINUE LOOP
+         RTS              ; ELSE, EXIT
+*
+*``````````````````````````````*
+* __P:          (NATHAN RIGGS) *
+*                              *
+* INPUT:                       *
+*                              *
+*  ASC STRING FOLLOWING CALL   *
+*  TERMINATED WITH A 00 BYTE   *
+*                              *
+* OUTPUT:                      *
+*                              *
+*  CONTENTS OF STRING.         *
+*                              *
+* DESTROYS: AXYNVBDIZCMS       *
+*           ^ ^^    ^^^^       *
+*                              *
+* CYCLES: 63+                  *
+* SIZE: 33 BYTES               *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+__P
+         PLA              ; PULL RETURN LOBYTE
+         STA   ADDR1      ; STORE TO ZERO PAGE
+         PLA              ; PULL RETURN HIBYTE
+         STA   ADDR1+1    ; STORE TO ZERO PAGE
+         LDY   #1         ; SET OFFSET TO PLUS ONE
+:LP      LDA   (ADDR1),Y  ; LOAD BYTE AT OFFSET .Y
+         BEQ   :DONE      ; IF BYTE = 0, QUIT
+         JSR   ]COUT      ; OTHERWISE, PRINT BYTE
+         INY              ; INCREASE OFFSET
+         BNE   :LP        ; IF .Y <> 0, CONTINUE LOOP
+:DONE    CLC              ; CLEAR CARRY FLAG
+         TYA              ; TRANSFER OFFSET TO .A
+         ADC   ADDR1      ; ADD OFFSET TO RETURN ADDRESS
+         STA   ADDR1      ; STORE TO RETURN ADDRESS LOBYTE
+         LDA   ADDR1+1    ; DO THE SAME WITH THE HIBYTE
+         ADC   #0         ; CARRY NOT RESET, SO INC HIBYTE
+         PHA              ; IF NEEDED; THEN, PUSH HIBYTE
+         LDA   ADDR1      ; LOAD LOBYTE
+         PHA              ; PUSH LOBYTE
+         RTS              ; EXIT
+*
+*``````````````````````````````*
+* __W:          (NATHAN RIGGS) *
+*                              *
+* INPUT:  NONE                 *
+* OUTPUT: .A HOLDS KEY VALUE   *
+*                              *
+* DESTROYS: AXYNVBDIZCMS       *
+*           ^  ^    ^^         *
+*                              *
+* CYCLES: 18+                  *
+* SIZE: 11 BYTES               *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+__W
+:LP      LDA   ]KYBD      ; CHECK IF KEY PRESSED
+         BPL   :LP        ; IF NOT, KEEP CHECKING
+         AND   #$7F       ; SET HI BIT
+         STA   ]STROBE    ; RESET KEYBOARD STROBE
+         RTS              ; EXIT
+*
+*``````````````````````````````*
+* __ERRH        (NATHAN RIGGS) *
+*                              *
+* INPUT:                       *
+*                              *
+*  .A = ADDRESS LOBYTE         *
+*  .X = ADDRESS HIBYTE         *
+*                              *
+* OUTPUT:                      *
+*                              *
+*  SETS NEW ADDRESS FOR THE    *
+*  APPLSOFT ERROR HANDLING     *
+*  ROUTINE.                    *
+*                              *
+* DESTROYS: AXYNVBDIZCMS       *
+*           ^^^^    ^^^        *
+*                              *
+* CYCLES: 51                   *
+* SIZE: 31 BYTES               *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+__ERRH
+         LDA   #1         ; TRICK DOS INTO THINKING
+         STA   $AAB6      ; IT'S IN APPLESOFT MODE
+         STA   $75+1      ; APPLESOFT LINE NUMBER POINTER
+         STA   $33        ; APLESOFT PROMPT CHARACTER
+         STA   ADDR1      ; ADDRESS LOBYTE IN .A
+         STX   ADDR1+1    ; ADDRESS HIBYTE IN .X
+         LDA   #$FF       ; TURN ON ERROR HANDLING
+         STA   $D8        ; BYTE HERE
+         LDY   #0         ; CLEAR OFFSET
+         LDA   (ADDR1),Y  ; LOAD ADDRESS LOBYTE
+         STA   $9D5A      ; SET AS ERROR HANDLING LO
+         INY              ; INCREASE OFFSET
+         LDA   (ADDR1),Y  ; LOAD ADDRESS HIBYTE
+         STA   $9D5B      ; SET AS ERROR HANDLING HI
+         RTS              ; EXIT SUBROUTINE

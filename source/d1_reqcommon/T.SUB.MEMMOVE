@@ -1,0 +1,139 @@
+*
+*``````````````````````````````*
+* MEMMOVE (LEVENTHAL/SEVILLE)  *
+*                              *
+* ADAPTED FROM LEVANTHAL AND   *
+* SEVILLE'S /6502 ASSEMBLY     *
+* LANGUAGE ROUTINES/.          *
+*                              *
+* INPUT:                       *
+*                              *
+*  ]SIZE  AT WPAR3             *
+*  ]ADDR1 AT WPAR1             *
+*  ]ADDR2 AT WPAR2             *
+*                              *
+* OUTPUT:                      *
+*                              *
+*  BYTES FROM SOURCE ARE       *
+*  COPIED IN ORDER TO THE      *
+*  DESTINATION ADDRESS FOR     *
+*  AS LONG AS LENGTH.          *
+*                              *
+* DESTROY: .AXY,MEMORY         *
+* CYCLES: 267+                 *
+* SIZE: 150 BYTES              *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+]SIZE    EQU   WPAR3      ; LENGTH TO COPY (BYTES)
+]ADDR1   EQU   WPAR1      ; SOURCE ADDRESS
+]ADDR2   EQU   WPAR2      ; DESTINATION ADDRESS
+*
+MEMMOVE
+*
+** DETERMINE IF DEST AREA IS
+** ABOVE SRC AREA BUT OVERLAPS
+** IT. REMEMBER, OVERLAP CAN BE
+** MOD 64K. OVERLAP OCCURS IF
+** STARTING DEST ADDRESS MINUS
+** STARTING SRC ADDRESS (MOD
+** 64K) IS LESS THAN NUMBER
+** OF BYTES TO MOVE.
+*
+         LDA   ]ADDR2     ; CALC DEST-SRC
+         SEC              ; SET CARRY
+         SBC   ]ADDR1     ; SUBTRACT SOURCE ADDRESS
+         TAX              ; HOLD VAL IN .X
+         LDA   ]ADDR2+1
+         SBC   ]ADDR1+1   ; MOD 64K AUTOMATIC
+                          ; -- DISCARD CARRY
+         TAY              ; HOLD HIBYTE IN .Y
+         TXA              ; CMP LOBYTE WITH # TO MOVE
+         CMP   ]SIZE
+         TYA
+         SBC   ]SIZE+1    ; SUBTRACT SIZE+1 FROM HIBYTE
+         BCS   :DOLEFT    ; BRANCH IF NO OVERLAP
+*
+** DEST AREA IS ABOVE SRC AREA
+** BUT OVERLAPS IT.
+** MOVE FROM HIGHEST ADDR TO
+** AVOID DESTROYING DATA
+*
+         JSR   :MVERHT
+         JMP   :MREXIT
+*
+** NO PROB DOING ORDINARY MOVE
+** STARTING AT LOWEST ADDR
+*
+:DOLEFT
+         JSR   :MVELEFT
+:EXIT
+         JMP   :MREXIT
+:MVELEFT
+         LDY   #0         ; ZERO INDEX
+         LDX   ]SIZE+1    ; X=# OF FULL PP TO MOVE
+         BEQ   :MLPART    ; IF X=0, DO PARTIAL PAGE
+:MLPAGE
+         LDA   (]ADDR1),Y ; LOAD BYTE FROM SOURCE
+         STA   (]ADDR2),Y ; MOVE BYTE TO DESTINATION
+         INY              ; NEXT BYTE
+         BNE   :MLPAGE    ; CONT UNTIL 256B MOVED
+         INC   ]ADDR1+1   ; ADV TO NEXT SRC PAGE
+         INC   ]ADDR2+1   ; ADV NEXT DEST PAGE
+         DEX              ; DEC PAGE COUNT
+         BNE   :MLPAGE    ; CONT UNTIL ALL FULL
+                          ; PAGES ARE MOVED
+:MLPART
+         LDX   ]SIZE      ; GET LENGTH OF LAST PAGE
+         BEQ   :MLEXIT    ; BR IF LENGTH OF LAST
+                          ; PAGE = 0
+                          ; REG Y IS 0
+:MLLAST
+         LDA   (]ADDR1),Y ; LOAD BYTE FROM SOURCE
+         STA   (]ADDR2),Y ; MOVE BYTE TO DESTINATION
+         INY              ; NEXT BYTE
+         DEX              ; DEC COUNTER
+         BNE   :MLLAST    ; CONT UNTIL LAST P DONE
+:MLEXIT
+         JMP   :MREXIT
+*
+********************************
+*
+:MVERHT
+*
+** MOVE THE PARTIAL PAGE FIRST
+*
+         LDA   ]SIZE+1    ; GET SIZE HIBYTE
+         CLC              ; CLEAR CARRY
+         ADC   ]ADDR1+1   ; ADD SOURCE ADDRESS HIBYTE
+         STA   ]ADDR1+1   ; POINT TO LAST PAGE OF SRC
+         LDA   ]SIZE+1    ; GET SIZE HIBYTE
+         CLC              ; CLEAR CARRY
+         ADC   ]ADDR2+1   ; ADD DESTINATION HIBYTE
+         STA   ]ADDR2+1   ; POINT TO LAST P OF DEST
+*
+** MOVE THE LAST PARTIAL PAGE FIRST
+*
+         LDY   ]SIZE      ; GET LENGTH OF LAST PAGE
+         BEQ   :MRPAGE    ; IF Y=0 DO THE FULL PAGES
+:MR0
+         DEY              ; BACK UP Y TO NEXT BYTE
+         LDA   (]ADDR1),Y ; LOAD CURRENT SOURCE BYTE
+         STA   (]ADDR2),Y ; STORE IN CURRENT DESTINATION
+         CPY   #0         ; BRANCH IF NOT DONE
+         BNE   :MR0       ; WITH THE LAST PAGE
+:MRPAGE
+         LDX   ]SIZE+1    ; GET SIZE HIBYTE
+         BEQ   :MREXIT    ; BR IF HYBYTE = 0 (NO FULL P)
+:MR1
+         DEC   ]ADDR1+1   ; BACK UP TO PREV SRC PAGE
+         DEC   ]ADDR2+1   ; AND DEST
+:MR2
+         DEY              ; BACK UP Y TO NEXT BYTE
+         LDA   (]ADDR1),Y ; LOAD SOURCE CURRENT BYTE
+         STA   (]ADDR2),Y ; STORE BYTE IN DESTINATION
+         CPY   #0         ; IF NOT DONE WITH PAGE
+         BNE   :MR2       ; THEN BRANCH OUT
+         DEX              ; DECREASE BYTE COUNTER
+         BNE   :MR1       ; BR IF NOT ALL PAGES MOVED
+:MREXIT
+         RTS

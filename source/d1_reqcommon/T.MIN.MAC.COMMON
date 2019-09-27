@@ -1,0 +1,40 @@
+MFILL    MAC
+         _MLIT ]1;WPAR1
+         _MLIT ]2;WPAR2
+         LDA   ]3         
+         STA   BPAR1
+         JSR   MEMFILL
+         <<<
+BEEP     MAC
+         LDX   ]1
+]LP1
+         JSR   BELL
+         DEX
+         CPX   #0
+         BNE   ]LP1
+         <<<
+MMOVE    MAC
+         _MLIT ]1;WPAR1
+         _MLIT ]2;WPAR2
+         _MLIT ]3;WPAR3
+         JSR   MEMMOVE
+         <<<
+DELAY    MAC
+         LDY   ]1
+         JSR   DELAYMS
+         <<<
+ZSAVE    MAC
+         _AXLIT ]1
+         JSR   ZMSAVE
+         <<<
+ZLOAD    MAC
+         _AXLIT ]1
+         JSR   ZMLOAD
+         <<<
+MSWAP    MAC
+         _MLIT ]2;WPAR2
+         _MLIT ]1;WPAR1
+         LDA   ]3
+         STA   BPAR1
+         JSR   MEMSWAP
+         <<<

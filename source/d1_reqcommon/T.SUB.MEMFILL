@@ -1,0 +1,59 @@
+*
+*``````````````````````````````*
+* MEMFILL  (LEVENTHAL/SAVILLE) *
+*                              *
+* ADAPTED FROM LEVANTHAL AND   *
+* SAVILLE'S /6502 ASSEMBLY     *
+* LANGUAGE ROUTINES/.          *
+*                              *
+* INPUT:                       *
+*                              *
+*  ]FILL IN BPAR1              *
+*  ]SIZE IN WPAR2              *
+*  ]ADDR IN WPAR3              *
+*                              *
+* OUTPUT:                      *
+*                              *
+*  FILLS THE GIVEN MEM RANGE   *
+*                              *
+* DESTROYS: AXYNVBDIZCMS       *
+*           ^^^^    ^ ^        *
+*                              *
+* CYCLES: 117+                 *
+* SIZE: 60 BYTES               *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+]FILL    EQU   BPAR1      ; FILL VALUE
+]SIZE    EQU   WPAR2      ; RANGE LENGTH IN BYTES
+]ADDR    EQU   WPAR1      ; RANGE STARTING ADDRESS
+*
+MEMFILL
+*
+** FILL WHOLE PAGES FIRST
+*
+         LDA   ]FILL      ; GET VAL FOR FILL
+         LDX   ]SIZE+1    ; X=# OF PAGES TO DO
+         BEQ   :PARTPG    ; BRANCH IF HIGHBYTE OF SZ = 0
+         LDY   #0         ; RESET INDEX
+:FULLPG
+         STA   (]ADDR),Y  ; FILL CURRENT BYTE
+         INY              ; INCREMENT INDEX
+         BNE   :FULLPG    ; BRANCH IF NOT DONE W/ PAGE
+         INC   ]ADDR+1    ; ADVANCE TO NEXT PAGE
+         DEX              ; DECREMENT COUNTER
+         BNE   :FULLPG    ; BRANCH IF NOT DONE W/ PAGES
+*
+** DO THE REMAINING PARTIAL PAGE
+** REGISTER A STILL CONTAINS VALUE
+*
+:PARTPG
+         LDX   ]SIZE      ; GET # OF BYTES IN FINAL PAGE
+         BEQ   :EXIT      ; BRANCH IF LOW BYTE = 0
+         LDY   #0         ; RESET INDEX
+:PARTLP
+         STA   (]ADDR),Y  ; STORE VAL
+         INY              ; INCREMENT INDEX
+         DEX              ; DECREMENT COUNTER
+         BNE   :PARTLP    ; BRANCH IF NOT DONE
+:EXIT
+         RTS
