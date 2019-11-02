@@ -1,0 +1,176 @@
+;
+; OMF segment summary:
+;
+;  #01: DATA     len=0x000098  loadName='' segName='~ExpressLoad'
+;  #02: CODE     len=0x00013c  loadName='' segName='main'
+;
+
+;
+; Segment #1 (1): loadName='' segName='~ExpressLoad': 
+;  type=DATA  length=152  OMF v2.1
+;  flags: dynamic
+;
+OMF: LCONST record (0x004f bytes follow)
+00/0000: 00 00         BRK 00
+00/0002: 00 00         BRK 00
+00/0004: 00 00         BRK 00
+00/0006: 0A            ASL
+00/0007: 00 00         BRK 00
+00/0009: 00 00         BRK 00
+00/000B: 00 00         BRK 00
+00/000D: 00 02         BRK 02
+00/000F: 00 D8         BRK D8
+00/0011: 00 00         BRK 00
+00/0013: 00 E3         BRK E3
+00/0015: 00 00         BRK 00
+00/0017: 00 BB         BRK BB
+00/0019: 01 00         ORA (00,X)
+00/001B: 00 18         BRK 18
+00/001D: 00 00         BRK 00
+00/001F: 00 00         BRK 00
+00/0021: 00 04         BRK 04
+00/0023: 02 00         COP 00
+00/0025: 00 01         BRK 01
+00/0027: 00 00         BRK 00
+00/0029: 30 00         BMI 002B {+00}
+00/002B: 00 00         BRK 00
+00/002D: 00 00         BRK 00
+00/002F: 00 00         BRK 00
+00/0031: 00 00         BRK 00
+00/0033: 00 00         BRK 00
+00/0035: 00 02         BRK 02
+00/0037: 00 00         BRK 00
+00/0039: 00 00         BRK 00
+00/003B: 00 2C         BRK 2C
+00/003D: 00 00         BRK 00
+00/003F: 00 00         BRK 00
+00/0041: 00 00         BRK 00
+00/0043: 00 00         BRK 00
+00/0045: 00 00         BRK 00
+00/0047: 00 00         BRK 00
+00/0049: 00 04         BRK 04
+00/004B: 6D 61 69      ADC 6961
+00/004E: 6E 00 00      ROR 0000
+
+;
+; Segment #2 (2): loadName='' segName='main': 
+;  type=CODE  length=316  OMF v2.1
+;  flags: noSpecial posnIndep
+;
+OMF: LCONST record (0x00e3 bytes follow)
+00/0000: E2 30         SEP #30
+00/0002: AF 68 C0 00   LDA 00C068  rw:STATEREG
+00/0006: 48            PHA
+00/0007: A9 0C 8F      LDA #8F0C
+00/000A: 68            PLA
+00/000B: C0 00 38      CPY #3800
+00/000E: 22 94 00 E1   JSL E10094  ToBramSetup
+00/0012: 68            PLA
+00/0013: 8F 68 C0 00   STA 00C068  rw:STATEREG
+00/0017: C2 30         REP #30
+00/0019: 8B            PHB
+00/001A: 48            PHA
+00/001B: A2 04 04      LDX #0404
+00/001E: 22 00 00 E1   JSL E10000  QDVersion():Vers
+00/0022: 68            PLA
+00/0023: 29 00 7F      AND #7F00
+00/0026: C9 00 01      CMP #0100
+00/0029: F0 14         BEQ 003F {+14}
+00/002B: 48            PHA
+00/002C: A2 01 04      LDX #0401
+00/002F: 22 00 00 E1   JSL E10000  TLVersion():Vers
+00/0033: 68            PLA
+00/0034: 29 00 7F      AND #7F00
+00/0037: C9 00 04      CMP #0400
+00/003A: 90 03         BCC 003F {+03}
+00/003C: 82 79 00      BRL 00B8 {+79}
+00/003F: EB            XBA
+00/0040: 18            CLC
+00/0041: 69 30 00      ADC #0030
+00/0044: E2 30         SEP #30
+00/0046: 8F E2 00 00   STA 0000E2
+00/004A: C2 30         REP #30
+00/004C: A0 C8 00      LDY #00C8
+00/004F: 5A            PHY
+00/0050: 48            PHA
+00/0051: 48            PHA
+00/0052: F4 00 00      PEA 0000
+00/0055: F4 00 00      PEA 0000
+00/0058: F4 01 4F      PEA 4F01
+00/005B: F4 00 00      PEA 0000
+00/005E: 48            PHA
+00/005F: 48            PHA
+00/0060: A2 02 09      LDX #0902
+00/0063: 22 00 00 E1   JSL E10000  NewHandle(Size/4,MemID,Attr,@loc):H
+00/0067: FA            PLX
+00/0068: FA            PLX
+00/0069: B0 5C         BCS 00C7 {+5C}
+00/006B: 7A            PLY
+00/006C: 88            DEY
+00/006D: 10 E0         BPL 004F {-20}
+00/006F: F4 01 4F      PEA 4F01
+00/0072: A2 02 11      LDX #1102
+00/0075: 22 00 00 E1   JSL E10000  DisposeAll(MemID)
+00/0079: 48            PHA
+00/007A: F4 00 A0      PEA A000
+00/007D: A2 03 20      LDX #2003
+00/0080: 22 00 00 E1   JSL E10000  GetNewID(Kind):MemID
+00/0084: 68            PLA
+00/0085: DA            PHX
+00/0086: DA            PHX
+00/0087: DA            PHX
+00/0088: DA            PHX
+00/0089: DA            PHX
+00/008A: 48            PHA
+00/008B: F4 C9 00      PEA 00C9
+00/008E: F4 C9 00      PEA 00C9
+00/0091: F4 FF FF      PEA FFFF
+00/0094: A2 11 09      LDX #0911
+00/0097: 22 00 00 E1   JSL E10000  InitialLoad(MemID,@path,F):dpsSz,dps,@l,MemID
+00/009B: B0 2A         BCS 00C7 {+2A}
+00/009D: 7A            PLY
+00/009E: FA            PLX
+00/009F: 68            PLA
+00/00A0: 7A            PLY
+00/00A1: 7A            PLY
+00/00A2: 22 BF 00 00   JSL 0000BF
+00/00A6: A9 00 00      LDA #0000
+00/00A9: 8F 88 01 E1   STA E10188
+00/00AD: 8F 8A 01 E1   STA E1018A
+00/00B1: A2 01 16      LDX #1601
+00/00B4: 22 00 00 E1   JSL E10000  SetDefaultTPT()
+00/00B8: AB            PLB
+00/00B9: A9 FF FF      LDA #FFFF
+00/00BC: 83 04         STA 04,S
+00/00BE: 6B            RTL
+00/00BF: EB            XBA
+00/00C0: 48            PHA
+00/00C1: 8B            PHB
+00/00C2: 8A            TXA
+00/00C3: 3A            DEC
+00/00C4: 83 01         STA 01,S
+00/00C6: 6B            RTL
+00/00C7: 00 FF         BRK FF
+00/00C9: 19 2A 2F      ORA 2F2A,Y
+00/00CC: 73 79         ADC (79,S),Y
+00/00CE: 73 74         ADC (74,S),Y
+00/00D0: 65 6D         ADC 6D
+00/00D2: 2F 73 79 73   AND 737973
+00/00D6: 74 65         STZ 65,X
+00/00D8: 6D 2E 73      ADC 732E
+00/00DB: 65 74         ADC 74
+00/00DD: 75 70         ADC 70,X
+00/00DF: 2F 74 73 2A   AND 2A7374
+00/00E3: F5 02         SBC 02,X
+00/00E5: F0 8C         BEQ 0073 {-74}
+00/00E7: 00 C9         BRK C9
+00/00E9: 00 F7         BRK F7
+00/00EB: 03 00         ORA 00,S
+00/00ED: 00 00         BRK 00
+00/00EF: 00 00         BRK 00
+00/00F1: 8F F7 04 00   STA 0004F7
+00/00F5: 00 00         BRK 00
+00/00F7: 01 01         ORA (01,X)
+00/00F9: 47 A3         EOR [A3]
+00/00FB: 00 00         BRK 00
+
