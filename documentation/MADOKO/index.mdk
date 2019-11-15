@@ -1,0 +1,46 @@
+# AppleIIAsm Library { - }
+
+## Technical Reference Manual { - } 
+                
+### Version 0.5.1 { - }
+  
+by Nathan Riggs
+
+Apache 2.0 License
+  
+  
+---
+
+## TABLE OF CONTENTS { - }
+
+- Preface
+- Introduction
+- PART I
+ - Package Overview
+ - Standard Practices / Procedures
+ - Naming Conventions
+ - Commenting Conventions
+ - Parameter Passing
+ - Main Source Sequencing
+ - Quick Reference: Macros
+ - Quick Reference: Subroutines
+
+- PART II
+ - Detailed Descriptions and Listings
+ - Library Disks
+   - Disk 1: REQCOM (Required & Common Libraries)
+   - Required Library
+     - HEAD.REQUIRED
+     - MAC.REQUIRED
+     - LIB.REQUIRED
+   - Common Library
+     - HOOKS.COMMON
+     - MAC.COMMON
+     - DEMO.COMMON
+
+## Appendix A: Companion Books { - }
+
+  - The New Merlin 8 Pro User Guide
+  - Learning 6502 Assembly with AppleIIAsmLib and AppleChop
+  - Forever Machine: The Past and Future on the Apple II Platform
+
