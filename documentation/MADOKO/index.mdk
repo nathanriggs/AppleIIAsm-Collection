@@ -11,17 +11,17 @@ Apache 2.0 License
   
 ---
 
-## TABLE OF CONTENTS { - }
+# TABLE OF CONTENTS { - }
 
 - Preface
 - Introduction
 - PART I
  - Package Overview
  - Standard Practices / Procedures
- - Naming Conventions
- - Commenting Conventions
- - Parameter Passing
- - Main Source Sequencing
+ -  Naming Conventions
+   - Commenting Conventions
+   - Parameter Passing
+   - Main Source Sequencing
  - Quick Reference: Macros
  - Quick Reference: Subroutines
 
