@@ -19,6 +19,6 @@ __27-SEP-2019__
 
 ## Documentation
 
-- You can find documentation to the current version being revised, 0.6.0, [in the documentation section](./documentation/0.6.0/0.3 Table of Contents \(GitHub\))
-- You can find documentation for the current stable version, 0.5.0, [also in the appropriate documentation section](./documentation/0.5.0/AppleIIAsm Manual v0.5.0.docx)
+- You can find documentation to the current version being revised, 0.6.0, [in the documentation section](./documentation/0.6.0/0.3_Table of_Contents_GH)
+- You can find documentation for the current stable version, 0.5.0, [also in the appropriate documentation section](./documentation/0.5.0/AppleIIAsm_Manual_v0.5.0.docx)
 
