@@ -9,7 +9,7 @@ __17-DEC-2019__
 - Currently working on version 0.6.0, which includes:
   - an updated architecture
   - deliberate use of markdown for documentation
-   - with the eventual goal of translating it to Madoko, a markdown variant that allows for more visual control on a printend page
+    - with the eventual goal of translating it to Madoko, a markdown variant that allows for more visual control on a printend page
   - Still transforming entire disk system to adhere to a singular software architecture. 
   - Added Alias macros for 8080 and z80 instruction sets.
   - Major changes to Disk 1, including merger of REQUIRED and COMMON libraries
