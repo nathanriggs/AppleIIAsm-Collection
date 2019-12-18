@@ -1,0 +1,1 @@
+This directory contains all of the documentations for each version of AppleIIAsm. Note that the latest version is the highest number, and thus is always at the top. However, keep in mind the that version may yet be unstable. Follow the documentation found in the latest stable release.
