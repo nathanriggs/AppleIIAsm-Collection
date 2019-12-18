@@ -22,6 +22,6 @@ __27-SEP-2019__
 
 ## Documentation
 
-- You can find documentation to the current version being revised, 0.6.0, [in the documentation section](./documentation/0.6.0/) 
-- You can find documentation for the current stable version, 0.5.0, [also in the appropriate documentation section](https://github.com/nathanriggs/AppleIIAsmLib/blob/master/documentation/0.6.0/0_3_Table_of_Contents_GH.md) 
+- You can find documentation to the current version being revised, 0.6.0, [in the documentation section](https://github.com/nathanriggs/AppleIIAsmLib/blob/master/documentation/0.6.0/0_3_Table_of_Contents_GH.md) 
+- You can find documentation for the current stable version, 0.5.0, [also in the appropriate documentation section](https://github.com/nathanriggs/AppleIIAsmLib/blob/master/documentation/0.5.0/) 
 
