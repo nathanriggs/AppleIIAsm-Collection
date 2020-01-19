@@ -1,8 +1,17 @@
 # AppleIIAsmLib
 
-A general purpose ASM libriary for the Apple II. Assembled in Merlin 8 Pro.
+A general purpose ASM libriary for the Apple II. Assembled in Merlin 8 Pro. While this source is currently in constant flux, save for "stable" releases, [you may find the project's current technical documentation, v0.6.0 here](https://github.com/nathanriggs/AppleIIAsm-Collection/tree/master/documentation/AppleIIAsm%20Library%20Collection%20Technical%20Manual/0.6.0).
+
+Since this is in flux, you may also find [the previous documentation,v0.5.0, here](https://github.com/nathanriggs/AppleIIAsm-Collection/blob/master/documentation/AppleIIAsm%20Library%20Collection%20Technical%20Manual/0.5.0/AppleIIAsm%20Manual%20v0.5.0.pdf). Note that this documentation is in .pdf format.
 
 # Updates
+
+__19-JAN-2020__
+
+- **Really** Finished all goals previously made on 17-DEC-2019, and then some
+- Began reworking Disk 2: STDIO to conform to new software architecture and documentation
+- next version will be 0.6.1, but no package will be created due to incompatibilities between libraries. From this point onward, releases will only be made if the entire collection is inter-compatible. The second digit will increase, and the third digit reset, in order to reflect compatible versus incomplatible current versions at this point. Later down the road, this version system will simply reflect major versus minor changes.
+- updated base README.md to point toward documentation
 
 __17-DEC-2019__
 
