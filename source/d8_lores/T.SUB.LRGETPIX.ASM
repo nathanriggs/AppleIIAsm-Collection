@@ -16,17 +16,11 @@
 *  BPAR1 = X COORDINATE        *
 *  BPAR2 = Y COORDINATE        *
 *                              *
-* OUTPUT:                      *
+* DESTROY: NZCIDV              *
+*          ^^^  ^              *
 *                              *
-*  .A = COLOR CODE OF PIXEL    *
-*  RETURN = COLOR CODE         *
-*  RETLEN = 1                  *
-*                              *
-* DESTROY: AXYNVBDIZCMS        *
-*          ^^^^^   ^^^         *
-*                              *
-* CYCLES: 209+                 *
-* SIZE: 234 BYTES              *
+* CYCLES: 90+                  *
+* SIZE: 58 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 ]HALFX   EQU   VARTAB     ; X COORD / 2 FOR GBASCALC
@@ -37,31 +31,31 @@
 *
 LRGETPIX
 *
-         LDY   BPAR1      ; LOAD X POSITION
-         STY   ]FULLX
-         TYA              ; TRANSFER T .A
-         ASL              ; SHIFT LEFT TO DIVIDE IN HALF
-         STA   ]HALFX     ; STORE AS HALFX
-         LDA   BPAR2      ; GET Y POSITION
-         STA   ]FULLY
-         LDY   ]HALFX     ; LOAD HALF-X POSITION
-         LDA   ]FULLY     ; LOAD Y POSITION
-         JSR   LRGBCALC   ; GET CHARACTER AT COORDINATES
-         LDA   (GBASLO),Y ; GET FULL CHARACTER FROM SCREEN ADDR
-         STA   ]FULLCHAR  ; AND STORE IN FULLCHAR
-         LDA   ]FULLX     ; LOAD THE LORES FULL X COORDINATE
-         LSR              ; SHIFT LEAST BYTE INTO CARRY
-         BCC   :EVEN      ; IF THAT BYTE IS 0, THEN GOTO EVEN
-         LDX   #$F0       ; OTHERWISE, IT'S ODD; MASK APPROPRIATELY
-         BCS   :EXIT      ; JUMP TO EXIT
+         LDY   BPAR1      ; {3C2B} LOAD X POSITION
+         STY   ]FULLX     ; {4C3B}
+         TYA              ; {2C1B} TRANSFER T .A
+         ASL              ; {2C1B} SHIFT LEFT TO DIVIDE IN HALF
+         STA   ]HALFX     ; {4C3B} STORE AS HALFX
+         LDA   BPAR2      ; {3C2B} GET Y POSITION
+         STA   ]FULLY     ; {4C3B}
+         LDY   ]HALFX     ; {4C3B} LOAD HALF-X POSITION
+         LDA   ]FULLY     ; {4C3B} LOAD Y POSITION
+         JSR   LRGBCALC   ; {?C?B} GET CHARACTER AT COORDINATES
+         LDA   (GBASLO),Y ; {6C2B} GET FULL CHAR FROM SCREEN ADDR
+         STA   ]FULLCHAR  ; {4C3B} AND STORE IN FULLCHAR
+         LDA   ]FULLX     ; {4C3B} LOAD THE LORES FULL X COORD
+         LSR              ; {2C1B} SHIFT LEAST BYTE INTO CARRY
+         BCC   :EVEN      ; {3C2B} IF THAT BYTE IS 0, THEN GOTO EVEN
+         LDX   #$F0       ; {3C2B} ELSE IT'S ODD; MASK IT
+         BCS   :EXIT      ; {3C2B} JUMP TO EXIT
 :EVEN
-         LDX   #$0F       ; MASK COLOR RETURNED APPROPIRATELY
+         LDX   #$0F       ; {3C2B} MASK COLOR RETURNED
 :EXIT
-         STX   ]MASK      ; STORE THE MASK TO ]MASK
-         LDA   ]FULLCHAR  ; LOAD FULL CHARACTER
-         AND   ]MASK      ; MASK APPROPRIATE NIBBLE
-         STA   RETURN     ; STRE NEW BYTE IN RETURN
-         LDA   #1
-         STA   RETLEN
-         LDA   RETURN     ; ALSO RETURN NEW COLOR BYTE IN .A
-         RTS
+         STX   ]MASK      ; {4C3B} STORE THE MASK TO ]MASK
+         LDA   ]FULLCHAR  ; {4C3B} LOAD FULL CHARACTER
+         AND   ]MASK      ; {3C2B} MASK APPROPRIATE NIBBLE
+         STA   RETURN     ; {4C3B} STRE NEW BYTE IN RETURN
+         LDA   #1         ; {3C2B}
+         STA   RETLEN     ; {4C3B}
+         LDA   RETURN     ; {4C3B} RETURN NEW COLOR BYTE IN .A
+         RTS              ; {6C1B}

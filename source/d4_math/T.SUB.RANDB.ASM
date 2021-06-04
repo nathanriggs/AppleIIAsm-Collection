@@ -3,24 +3,18 @@
 * RANDB         (NATHAN RIGGS) *
 *                              *
 * GET A RANDOM VALUE BETWEEN   *
-* A MIN AND MAX BOUNDARY.      *
+* A MIN AND MAX 8-BIT BOUNDARY *
 *                              *
 * INPUT:                       *
 *                              *
 *  BPAR1 = MINIMUM VALUE       *
 *  BPAR2 = MAXIMUM VALUE       *
 *                              *
-* OUTPUT:                      *
+* DESTROY: NZCIDV              *
+*          ^^^  ^              *
 *                              *
-*  .A = NEW VALUE              *
-*  RETURN = NEW VALUE          *
-*  RETLEN = 1 (BYTE COUNT)     *
-*                              *
-* DESTROY: AXYNVBDIZCMS        *
-*          ^^^^^   ^^^         *
-*                              *
-* CYCLES: 248+                 *
-* SIZE: 476 BYTES              *
+* CYCLES: 249+                 *
+* SIZE: 162 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 ]NEWMIN  EQU   BPAR1      ; MINIMUM PARAMETER
@@ -38,29 +32,28 @@
 ]REMAIN  EQU   VARTAB+16  ; REMAINDER
 *
 RANDB
-         STX   ]NEWMAX    ; NEW HIGH VALUE
-         STA   ]NEWMIN    ; NEW LOW VALUE OF RANGE
+         STX   ]NEWMAX    ; {4C3B} NEW HIGH VALUE
+         STA   ]NEWMIN    ; {4C3B} NEW LOW VALUE OF RANGE
 *
 ** GET OLDMIN,OLDMAX,OLDVAL
 *
-         LDA   #1         ; OLD LOW IS ALWAYS 1
-         STA   ]OLDMIN
-         LDA   #255       ; OLD HIGH IS ALWAYS 255
-         STA   ]OLDMAX
-*
-         LDX   #8         ; NUMBER OF BITS IN #
-         LDA   RNDL+0     ; LOAD SEED VALUE
+         LDA   #1         ; {3C2B} OLD LOW IS ALWAYS 1
+         STA   ]OLDMIN    ; {3C2B}
+         LDA   #255       ; {3C2B} OLD HIGH IS ALWAYS 255
+         STA   ]OLDMAX    ; {3C2B}
+         LDX   #8         ; {3C2B} NUMBER OF BITS IN #
+         LDA   RNDL+0     ; {3C2B} LOAD SEED VALUE
 :AA
-         ASL              ; SHIFT ACCUMULATOR
-         ROL   RNDL+1
-         BCC   :BB        ; IF NEXT BIT IS 0, BRANCH
-         EOR   #$2D       ; ELSE, APPLY XOR FEEDBACK
+         ASL              ; {2C1B} SHIFT ACCUMULATOR
+         ROL   RNDL+1     ; {5C2B}
+         BCC   :BB        ; {3C2B} IF NEXT BIT IS 0, BRANCH
+         EOR   ]MAGEOR    ; {2C2B} ELSE, APPLY XOR FEEDBACK
 :BB
-         DEX              ; DECREASE .X COUNTER
-         BNE   :AA        ; IF > 0, KEEP LOOPING
-         STA   RNDL+0     ; OVERWRITE SEED VALUE
-         CMP   #0         ; RESET FLAGS
-         STA   ]OLDVAL    ; STORE RANDOM NUMBER
+         DEX              ; {2C1B} DECREASE .X COUNTER
+         BNE   :AA        ; {3C2B} IF > 0, KEEP LOOPING
+         STA   RNDL+0     ; {3C2B} OVERWRITE SEED VALUE
+         CMP   #0         ; {2C2B} RESET FLAGS
+         STA   ]OLDVAL    ; {4C3B} STORE RANDOM NUMBER
 *
 ** NEWVALUE = (((OLDVAL-NEWMIN) * (NEWMAX-NEWMIN) /
 **            (OLDMAX-OLDMIN)) + NEWMIN
@@ -69,80 +62,75 @@ RANDB
 ** NEWRANGE = (NEWMAX - NEWMIN)
 ** NEWVAL = (((OLDVAL-OLDMIN) * NEWRANGE) / OLDRANGE) + NEWMIN
 *
-         LDA   ]OLDMAX    ; SUBTRACT OLDMIN
-         SEC              ; FROM OLDMAX, STORE
-         SBC   ]OLDMIN    ; IN OLDRANGE
-         STA   ]OLDRNG
-*
-         LDA   ]NEWMAX    ; SUBTRACT NEWMIN
-         SEC              ; FROM NEWMAX, THEN
-         SBC   ]NEWMIN    ; STORE IN NEWRANGE
-         STA   ]NEWRNG
-*
-         LDA   ]OLDVAL    ; SUBTRACT OLDMIN
-         SEC              ; FROM OLDVAL AND
-         SBC   ]OLDMIN    ; STORE IN VALRANGE
-         STA   ]VALRNG
+         LDA   ]OLDMAX    ; {3C2B} SUBTRACT OLDMIN
+         SEC              ; {2C1B} FROM OLDMAX, STORE
+         SBC   ]OLDMIN    ; {3C2B} IN OLDRANGE
+         STA   ]OLDRNG    ; {4C3B}
+         LDA   ]NEWMAX    ; {4C3B} SUBTRACT NEWMIN
+         SEC              ; {2C1B} FROM NEWMAX, THEN
+         SBC   ]NEWMIN    ; {4C3B} STORE IN NEWRANGE
+         STA   ]NEWRNG    ; {4C3B}
+         LDA   ]OLDVAL    ; {4C3B} SUBTRACT OLDMIN
+         SEC              ; {2C1B} FROM OLDVAL AND
+         SBC   ]OLDMIN    ; {3C2B} STORE IN VALRANGE
+         STA   ]VALRNG    ; {4C3B}
 *
 ** GET MULRANGE: VALRANGE * NEWRANGE
 *
-         LDA   #00        ; CLEAR ACCUMULATOR,
-         TAY              ; .Y AND THE HIGH BYTE
-         STY   ]NUM1HI
-         BEQ   :ENTLP     ; IF ZERO, BRANCH
+         LDA   #00        ; {3C2B} CLEAR ACCUMULATOR,
+         TAY              ; {2C1B} .Y AND THE HIGH BYTE
+         STY   ]NUM1HI    ; {4C3B}
+         BEQ   :ENTLP     ; {3C2B} IF ZERO, BRANCH
 :DOADD
-         CLC              ; CLEAR CARRY
-         ADC   ]VALRNG    ; ADD VALUE RANGE TO .A
-         TAX              ; HOLD IN .X
-         TYA              ; .Y BACK TO .A
-         ADC   ]NUM1HI    ; ADD HIBYTE
-         TAY              ; MOVE BACK TO .Y
-         TXA              ; .X BACK TO .A
+         CLC              ; {2C1B} CLEAR CARRY
+         ADC   ]VALRNG    ; {4C3B} ADD VALUE RANGE TO .A
+         TAX              ; {2C1B} HOLD IN .X
+         TYA              ; {2C1B} .Y BACK TO .A
+         ADC   ]NUM1HI    ; {4C3B} ADD HIBYTE
+         TAY              ; {2C1B} MOVE BACK TO .Y
+         TXA              ; {2C1B} .X BACK TO .A
 :MLP
-         ASL   ]VALRNG    ; SHIFT VALUE RANGE
-         ROL   ]NUM1HI    ; ADJUST HIGH BYTE
+         ASL   ]VALRNG    ; {5C2B} SHIFT VALUE RANGE
+         ROL   ]NUM1HI    ; {5C2B} ADJUST HIGH BYTE
 :ENTLP
-         LSR   ]NEWRNG    ; SHIFT NEW RANGE
-         BCS   :DOADD     ; IF LAST BIT WAS 1, LOOP ADD
-         BNE   :MLP       ; IF ZERO FLAG CLEAR, LOOP SHIFT
-         STA   ]MULRNG    ; STORE RESULT LOW BYTE
-         STY   ]MULRNG+1  ; STORE HIGH BYTE
+         LSR   ]NEWRNG    ; {5C2B} SHIFT NEW RANGE
+         BCS   :DOADD     ; {3C2B} IF LAST BIT WAS 1, LOOP ADD
+         BNE   :MLP       ; {3C2B} IF ZERO FLAG CLEAR, LOOP SHIFT
+         STA   ]MULRNG    ; {4C3B} STORE RESULT LOW BYTE
+         STY   ]MULRNG+1  ; {4C3B} STORE HIGH BYTE
 *
 ** NOW GET DIVRANGE: MULRANGE / OLDRANGE
 *
 :DIVIDE
-         LDA   #0         ; CLEAR ACCUMULATOR
-         STA   ]REMAIN    ; AND THE REMAINDER LOBYTE
-         STA   ]REMAIN+1  ; AND REMAINDER HIBYTE
-         LDX   #16        ; NUMBER OF BYTES
-*
+         LDA   #0         ; {3C2B} CLEAR ACCUMULATOR
+         STA   ]REMAIN    ; {4C3B} AND THE REMAINDER LOBYTE
+         STA   ]REMAIN+1  ; {4C3B} AND REMAINDER HIBYTE
+         LDX   #16        ; {3C2B} NUMBER OF BYTES
 :DIVLP
-         ASL   ]MULRNG    ; LOW BYTE * 2
-         ROL   ]MULRNG+1  ; HIGH BYTE * 2
-         ROL   ]REMAIN    ; REMAINDER LOW BYTE * 2
-         ROL   ]REMAIN+1  ; HIGH BYTE * 2
-         LDA   ]REMAIN    ; SUBTRACT OLDRANGE
-         SEC              ; FROM REMAINDER
-         SBC   ]OLDRNG
-         TAY              ; HOLD IN .Y
-         LDA   ]REMAIN+1  ; SUBTRACT HIGH BYTES
-         SBC   ]OLDRNG+1
-         BCC   :SKIP      ; IF NO CARRY, THEN NOT DONE
-*
-         STA   ]REMAIN+1  ; SAVE SBC AS NEW REMAINDER
-         STY   ]REMAIN
-         INC   ]DIVRNG    ; INCREMENT THE RESULT
-*
-:SKIP    DEX              ; DECREMENT COUNTER
-         BNE   :DIVLP     ; IF ZERNO, RELOOP
+         ASL   ]MULRNG    ; {5C2B} LOW BYTE * 2
+         ROL   ]MULRNG+1  ; {5C2B} HIGH BYTE * 2
+         ROL   ]REMAIN    ; {5C2B} REMAINDER LOW BYTE * 2
+         ROL   ]REMAIN+1  ; {5C2B} HIGH BYTE * 2
+         LDA   ]REMAIN    ; {4C3B} SUBTRACT OLDRANGE
+         SEC              ; {2C1B} FROM REMAINDER
+         SBC   ]OLDRNG    ; {4C3B}
+         TAY              ; {2C1B} HOLD IN .Y
+         LDA   ]REMAIN+1  ; {4C3B} SUBTRACT HIGH BYTES
+         SBC   ]OLDRNG+1  ; {4C3B}
+         BCC   :SKIP      ; {3C2B} IF NO CARRY, THEN NOT DONE
+         STA   ]REMAIN+1  ; {4C3B} SAVE SBC AS NEW REMAINDER
+         STY   ]REMAIN    ; {4C3B}
+         INC   ]DIVRNG    ; {6C3B} INCREMENT THE RESULT
+:SKIP    DEX              ; {2C1B} DECREMENT COUNTER
+         BNE   :DIVLP     ; {3C2B} IF ZERNO, RELOOP
 *
 ** NOW ADD NEWMIN TO DIVRANGE
 *
-         LDA   ]DIVRNG    ; USE LOW BYTE ONLY
-         CLC              ; AND ADD TO ]NEWMIN
-         ADC   ]NEWMIN    ; TO GET THE NEW VALUE
-         STA   ]NEWVAL
-         STA   RETURN     ; COPY TO RETURN
-         LDX   #1         ; RETURN LENGTH
-         STX   RETLEN
-         RTS
+         LDA   ]DIVRNG    ; {4C3B} USE LOW BYTE ONLY
+         CLC              ; {2C1B} AND ADD TO ]NEWMIN
+         ADC   ]NEWMIN    ; {4C3B} TO GET THE NEW VALUE
+         STA   ]NEWVAL    ; {4C3B}
+         STA   RETURN     ; {4C3B} COPY TO RETURN
+         LDX   #1         ; {3C2B} RETURN LENGTH
+         STX   RETLEN     ; {4C3B}
+         RTS              ; {6C1B}

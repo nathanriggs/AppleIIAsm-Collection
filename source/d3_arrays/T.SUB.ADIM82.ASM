@@ -2,7 +2,15 @@
 *``````````````````````````````*
 * ADIM82        (NATHAN RIGGS) *
 *                              *
-* INITIALIZE AN 8BIT, 2D ARRAY *
+* DECLARE THE DIMENSIONS OF A  *
+* NEW 8-BIT, 2D ARRAY.         *
+*                              *
+*------------------------------*
+* 8-BIT MULTIPLICATION CODE    *
+* ADAPTED FROM WHITE FLAME'S   *
+* WORK ON CODEBASE64. LICENSE  *
+* MAY VARY.                    *
+*------------------------------*
 *                              *
 * INPUT:                       *
 *                              *
@@ -12,17 +20,11 @@
 *  BPAR1 = FILL VALUE          *
 *  BPAR2 = ELEMENT LENGTH      *
 *                              *
-* OUTPUT:                      *
+* DESTROY: NZCIDV              *
+*          ^^^  ^              *
 *                              *
-*  .A = ELEMENT SIZE           *
-*  RETURN = TOTAL ARRAY SIZE   *
-*  RETLEN = 4                  *
-*                              *
-* DESTROY: AXYNVBDIZCMS        *
-*          ^^^^^   ^^^         *
-*                              *
-* CYCLES: 282+                 *
-* SIZE: 244 BYTES              *
+* CYCLES: 309+                 *
+* SIZE: 197 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 ]ADDR    EQU   WPAR1      ; ARRAY ADDRESS
@@ -38,118 +40,118 @@
 ]MCAND   EQU   VARTAB+8   ; MULTIPLICAND, ELEMENT SIZE
 *
 ADIM82
-         LDA   ]ESIZE     ; ELEMENT LENGTH
-         STA   ]MCAND     ; AND STORE AS MULTIPLICAND
-         LDA   ]AYSIZE    ; GET ARRAY Y SIZE
-         STA   ]AYBAK     ; BACK IT UP
-         LDA   ]AXSIZE
-         STA   ]AXBAK     ; AND BACK THAT UP TOO
-         LDA   #0         ; CLEAR MCAND HIBYTE
-         STA   ]MCAND+1
+         LDA   ]ESIZE     ; {2C2B} ELEMENT LENGTH
+         STA   ]MCAND     ; {3C2B} AND STORE AS MULTIPLICAND
+         LDA   ]AYSIZE    ; {2C2B} GET ARRAY Y SIZE
+         STA   ]AYBAK     ; {3C2B} BACK IT UP
+         LDA   ]AXSIZE    ; {2C2B}
+         STA   ]AXBAK     ; {3C2B} AND BACK THAT UP TOO
+         LDA   #0         ; {2C2B} CLEAR MCAND HIBYTE
+         STA   ]MCAND+1   ; {3C2B}
 *
 ** MULTIPLY X AND Y
 *
-         TAY              ; AND LOBYTE
-         STY   SCRATCH
-         BEQ   :ENTLP     ; IF ZERO, SKIP TO LOOP
+         TAY              ; {2C1B} AND LOBYTE
+         STY   SCRATCH    ; {3C2B}
+         BEQ   :ENTLP     ; {3C2B} IF ZERO, SKIP TO LOOP
 :DOADD
-         CLC              ; CLEAR CARRY FLAG
-         ADC   ]AXSIZE    ; ADD X LENGTH
-         TAX              ; TEMPORARILY STORE IN .X
-         TYA              ; TRANSFER HIBYTE TO .A
-         ADC   SCRATCH    ; ADD HIBYTE
-         TAY              ; STORE BACK IN .Y
-         TXA              ; RELOAD LOBYTE INTO .A
+         CLC              ; {2C1B} CLEAR CARRY FLAG
+         ADC   ]AXSIZE    ; {5C3B} ADD X LENGTH
+         TAX              ; {2C1B} TEMPORARILY STORE IN .X
+         TYA              ; {2C1B} TRANSFER HIBYTE TO .A
+         ADC   SCRATCH    ; {5C3B} ADD HIBYTE
+         TAY              ; {2C1B} STORE BACK IN .Y
+         TXA              ; {2C1B} RELOAD LOBYTE INTO .A
 :LP
-         ASL   ]AXSIZE    ; MULTIPLY X LENGTH BY 2
-         ROL   SCRATCH    ; ADJUST HIBYTE
+         ASL   ]AXSIZE    ; {6C3B} MULTIPLY X LENGTH BY 2
+         ROL   SCRATCH    ; {6C3B} ADJUST HIBYTE
 :ENTLP
-         LSR   ]AYSIZE    ; DIVIDE Y LENGTH BY 2
-         BCS   :DOADD     ; IF >= LOBYTE IN .A,
-         BNE   :LP        ; ADD AGAIN; OTHERWISE, LOOP
-         STX   ]MLIER     ; STORE LOBYTE IN MULTIPLIER
-         STY   ]MLIER+1   ; STORE HIBYTE IN MULTIPLIER
+         LSR   ]AYSIZE    ; {6C3B} DIVIDE Y LENGTH BY 2
+         BCS   :DOADD     ; {3C2B} IF >= LOBYTE IN .A,
+         BNE   :LP        ; {3C2B} ADD AGAIN; OTHERWISE, LOOP
+         STX   ]MLIER     ; {3C2B} STORE LOBYTE IN MULTIPLIER
+         STY   ]MLIER+1   ; {3C2B} STORE HIBYTE IN MULTIPLIER
 *
 ** NOW MULTIPLY BY LENGTH OF ELEMENTS
 *
-         LDA   #0         ; CLEAR PRODUCT LOBYTE
-         STA   ]PROD
-         STA   ]PROD+1    ; CLEAR NEXT BYTE
-         STA   ]PROD+2    ; CLEAR NEXT BYTE
-         STA   ]PROD+3    ; CLEAR HIBYTE
-         LDX   #$10       ; LOAD $10 IN .X (#16)
-:SHIFTR  LSR   ]MLIER+1   ; DIVIDE MLIER BY TWO
-         ROR   ]MLIER     ; ADJUST LOBYTE
-         BCC   :ROTR      ; IF LESS THAN PRODUCT, ROTATE
-         LDA   ]PROD+2    ; LOAD PRODUCT 3RD BYTE
-         CLC              ; CLEAR CARRY
-         ADC   ]MCAND     ; ADD MULTIPLICAND
-         STA   ]PROD+2    ; STORE BACK INTO PRODUCT 3RD BYTE
-         LDA   ]PROD+3    ; LOAD PRODUCT HIBYTE
-         ADC   ]MCAND+1   ; ADD MULTIPLICAND HIBYTE
+         LDA   #0         ; {2C2B} CLEAR PRODUCT LOBYTE
+         STA   ]PROD      ; {3C2B}
+         STA   ]PROD+1    ; {3C2B} CLEAR NEXT BYTE
+         STA   ]PROD+2    ; {3C2B} CLEAR NEXT BYTE
+         STA   ]PROD+3    ; {3C2B} CLEAR HIBYTE
+         LDX   #$10       ; {2C2B} LOAD $10 IN .X (#16)
+:SHIFTR  LSR   ]MLIER+1   ; {6C3B} DIVIDE MLIER BY TWO
+         ROR   ]MLIER     ; {6C3B} ADJUST LOBYTE
+         BCC   :ROTR      ; {3C2B} IF LESS THAN PRODUCT, ROTATE
+         LDA   ]PROD+2    ; {2C2B} LOAD PRODUCT 3RD BYTE
+         CLC              ; {2C1B} CLEAR CARRY
+         ADC   ]MCAND     ; {5C3B} ADD MULTIPLICAND
+         STA   ]PROD+2    ; {3C2B} STORE BACK INTO PRODUCT 3RD BYTE
+         LDA   ]PROD+3    ; {2C2B} LOAD PRODUCT HIBYTE
+         ADC   ]MCAND+1   ; {5C3B} ADD MULTIPLICAND HIBYTE
 :ROTR
-         ROR              ; ROTATE .A RIGHT
-         STA   ]PROD+3    ; STORE IN PRODUCT HIBYTE
-         ROR   ]PROD+2    ; ROTATE PRODUCT 3RD BYTE
-         ROR   ]PROD+1    ; ROTATE PRODUCT 2ND BYTE
-         ROR   ]PROD      ; ROTATE PRODUCT LOBYTE
-         DEX              ; DECREMENT COUNTER
-         BNE   :SHIFTR    ; IF NOT 0, BACK TO SHIFTER
+         ROR              ; {6C3B} ROTATE .A RIGHT
+         STA   ]PROD+3    ; {3C2B} STORE IN PRODUCT HIBYTE
+         ROR   ]PROD+2    ; {6C3B} ROTATE PRODUCT 3RD BYTE
+         ROR   ]PROD+1    ; {6C3B} ROTATE PRODUCT 2ND BYTE
+         ROR   ]PROD      ; {6C3B} ROTATE PRODUCT LOBYTE
+         DEX              ; {2C1B} DECREMENT COUNTER
+         BNE   :SHIFTR    ; {3C2B} IF NOT 0, BACK TO SHIFTER
 *
-         LDA   ]PROD      ; LOAD PRODUCT LOBYTE TO .A
-         CLC              ; CLEAR CARRY FLAG
-         ADC   #3         ; ADD 3
-         STA   ]PROD      ; STORE BACK INTO PRODUCT LOBYTE
-         LDA   ]PROD+1
-         ADC   #0         ; INITIATE CARRY FOR 2ND BYTE
-         STA   ]PROD+1
-         LDA   ]PROD+2
-         ADC   #0         ; AND THIRD BYTE
-         STA   ]PROD+2
+         LDA   ]PROD      ; {2C2B} LOAD PRODUCT LOBYTE TO .A
+         CLC              ; {2C1B} CLEAR CARRY FLAG
+         ADC   #3         ; {5C3B} ADD 3
+         STA   ]PROD      ; {3C2B} STORE BACK INTO PRODUCT LOBYTE
+         LDA   ]PROD+1    ; {2C2B}
+         ADC   #0         ; {5C3B} INITIATE CARRY FOR 2ND BYTE
+         STA   ]PROD+1    ; {3C2B}
+         LDA   ]PROD+2    ; {2C2B}
+         ADC   #0         ; {5C3B} AND THIRD BYTE
+         STA   ]PROD+2    ; {3C2B}
 *
 ** NOW CLEAR MEMORY BLOCKS, WHOLE PAGES FIRST
 *
-         LDA   ]FILL      ; GET FILL VALUE
-         LDX   ]PROD+1    ; LOAD SECOND BYTE OF PRODUCT
-         BEQ   :PART      ; IF 0, THEN ONLY PARTIAL PAGE
-         LDY   #0         ; CLEAR INDEX
+         LDA   ]FILL      ; {2C2B} GET FILL VALUE
+         LDX   ]PROD+1    ; {2C2B} LOAD SECOND BYTE OF PRODUCT
+         BEQ   :PART      ; {3C2B} IF 0, THEN ONLY PARTIAL PAGE
+         LDY   #0         ; {2C2B} CLEAR INDEX
 :FULL
-         STA   (]ADDR),Y  ; COPY FILL BYTE TO ADDRESS
-         INY              ; INCREASE INDEX
-         BNE   :FULL      ; IF NO OVERFLOW, KEEP FILL
-         INC   ]ADDR+1    ; INCREASE ADDRESS HIBYTE
-         DEX              ; DECREMENT COUNTER
-         BNE   :FULL      ; LOOP UNTIL PAGES DONE
+         STA   (]ADDR),Y  ; {3C2B} COPY FILL BYTE TO ADDRESS
+         INY              ; {2C1B} INCREASE INDEX
+         BNE   :FULL      ; {3C2B} IF NO OVERFLOW, KEEP FILL
+         INC   ]ADDR+1    ; {6C3B} INCREASE ADDRESS HIBYTE
+         DEX              ; {2C1B} DECREMENT COUNTER
+         BNE   :FULL      ; {3C2B} LOOP UNTIL PAGES DONE
 :PART
-         LDX   ]PROD      ; LOAD PRODUCT LOBYTE TO X
-         BEQ   :MFEXIT    ; IF ZERO, THEN WE'RE DONE
-         LDY   #0         ; RESET INDEX
+         LDX   ]PROD      ; {2C2B} LOAD PRODUCT LOBYTE TO X
+         BEQ   :MFEXIT    ; {3C2B} IF ZERO, THEN WE'RE DONE
+         LDY   #0         ; {2C2B} RESET INDEX
 :PARTLP
-         STA   (]ADDR),Y  ; STORE FILL BYTE
-         INY              ; INCREASE INDEX
-         DEX              ; DECREASE COUNTER
-         BNE   :PARTLP    ; LOOP UNTIL DONE
+         STA   (]ADDR),Y  ; {6C2B} STORE FILL BYTE
+         INY              ; {2C1B} INCREASE INDEX
+         DEX              ; {2C1B} DECREASE COUNTER
+         BNE   :PARTLP    ; {3C2B} LOOP UNTIL DONE
 :MFEXIT
-         LDY   #0         ; RESET INDEX
-         LDA   ]AXBAK     ; PUT X LENGTH INTO
-         STA   (]ADDR),Y  ; FIRST BYTE OF ARRAY
-         INY              ; INCREMENT INDEX
-         LDA   ]AYBAK     ; PUT Y LENGTH INTO
-         STA   (]ADDR),Y  ; SECOND BYTE OF ARRAY
-         INY              ; INCREMENT INDEX
-         LDA   ]MCAND     ; PUT ELEMENT SIZE
-         STA   (]ADDR),Y  ; INTO 3RD BYTE OF ARRAY
-         LDX   ]ADDR      ; RETURN ARRAY ADDR LOBYTE IN .X
-         LDY   ]ADDR+1    ; RETURN ARRAY ADDR HIBYTE IN .Y
-         LDA   ]PROD      ; STORE PRODUCT LOBYTE IN RETURN
-         STA   RETURN
-         LDA   ]PROD+1    ; STORE NEXT BYTE
-         STA   RETURN+1
-         LDA   ]PROD+2    ; NEXT BYTE
-         STA   RETURN+2
-         LDA   ]PROD+3    ; STORE HIBYTE
-         STA   RETURN+3
-         LDA   #4         ; SIZE OF RETURN
-         STA   RETLEN     ; SPECIFY RETURN LENGTH
-         LDA   ]MCAND     ; RETURN ELEMENT SIZE IN .A
-         RTS
+         LDY   #0         ; {2C2B} RESET INDEX
+         LDA   ]AXBAK     ; {2C2B} PUT X LENGTH INTO
+         STA   (]ADDR),Y  ; {6C2B} FIRST BYTE OF ARRAY
+         INY              ; {2C1B} INCREMENT INDEX
+         LDA   ]AYBAK     ; {2C2B} PUT Y LENGTH INTO
+         STA   (]ADDR),Y  ; {6C2B} SECOND BYTE OF ARRAY
+         INY              ; {2C1B} INCREMENT INDEX
+         LDA   ]MCAND     ; {2C2B} PUT ELEMENT SIZE
+         STA   (]ADDR),Y  ; {6C2B} INTO 3RD BYTE OF ARRAY
+         LDX   ]ADDR      ; {2C2B} RETURN ARRAY ADDR LOBYTE IN .X
+         LDY   ]ADDR+1    ; {2C2B} RETURN ARRAY ADDR HIBYTE IN .Y
+         LDA   ]PROD      ; {2C2B} STORE PRODUCT LOBYTE IN RETURN
+         STA   RETURN     ; {3C2B}
+         LDA   ]PROD+1    ; {2C2B} STORE NEXT BYTE
+         STA   RETURN+1   ; {3C2B}
+         LDA   ]PROD+2    ; {2C2B} NEXT BYTE
+         STA   RETURN+2   ; {3C2B}
+         LDA   ]PROD+3    ; {2C2B} STORE HIBYTE
+         STA   RETURN+3   ; {3C2B}
+         LDA   #4         ; {2C2B} SIZE OF RETURN
+         STA   RETLEN     ; {3C2B} SPECIFY RETURN LENGTH
+         LDA   ]MCAND     ; {2C2B} RETURN ELEMENT SIZE IN .A
+         RTS              ; {6C3B}

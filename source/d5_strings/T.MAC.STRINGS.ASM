@@ -9,29 +9,29 @@
 * CONTACT:   NATHAN.RIGGS@     *
 *            OUTLOOK.COM       *
 *                              *
-* DATE:      17-SEP-2019       *
+* DATE:      11-APR-2021       *
 * ASSEMBLER: MERLIN 8 PRO      *
 * OS:        DOS 3.3           *
 *                              *
 * SUBROUTINE FILES USED        *
 *                              *
-* SUB.PRNSTR                   *
-* SUB.STRCAT                   *
-* SUB.STRCOMP                  *
-* SUB.SUBCOPY                  *
-* SUB.SUBDEL                   *
-* SUB.SUBINS                   *
-* SUB.SUBPOS                   *
+* SUB.STRCAT.ASM               *
+* SUB.STRCOMP.ASM              *
+* SUB.STRTRIM.ASM              *
+* SUB.STRUPPER.ASM             *
+* SUB.STRLOWER.ASM             *
+* SUB.STRREV.ASM               *
+* SUB.STRCAP.ASM               *
 *                              *
 * LIST OF MACROS               *
 *                              *
 * SCMP : STRING COMPARE        *
 * SCAT : STRING CONCATENATE    *
-* SPRN : PRINT STRING          *
-* SPOS : FIND SUBSTRING POS    *
-* SCOP : SUBSTRING COPY        *
-* SDEL : SUBSTRING DELETE      *
-* SINS : SUNBSTRING INSERT     *
+* STRIM: STRING TRIM           *
+* SUP  : STRING UPPERCASE      *
+* SLO  : STRING LOWERCASE      *
+* SREV :  STRING REVERSE       *
+* SCAP : STRING CAPITALIZATION *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 *``````````````````````````````*
@@ -51,17 +51,16 @@
 *  ]1 = 1ST STRING TO COMPARE  *
 *  ]2 = 2ND STRING TO COMPARE  *
 *                              *
-* SAMPLE USAGE                 *
-*                              *
-*  SCMP "TEST";"TEST"          *
+* CYCLES: 110+                 *
+* SIZE: 67 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 SCMP     MAC
-         STY   SCRATCH
-         _MSTR ]1;WPAR1
-         _MSTR ]2;WPAR2
-         JSR   STRCMP
-         LDY   SCRATCH
+         STY   SCRATCH    ; {3C2B} BACKUP .Y REGISTER
+         _MSTR ]1;WPAR1   ; {15C14B}
+         _MSTR ]2;WPAR2   ; {15C14B}
+         JSR   STRCMP     ; {74C26B}
+         LDY   SCRATCH    ; {3C2B} RELOAD .Y
          <<<
 *
 *``````````````````````````````*
@@ -74,140 +73,110 @@ SCMP     MAC
 *  ]1 = FIRST STRING           *
 *  ]2 = SECOND STRING          *
 *                              *
-* SAMPLE USAGE                 *
-*                              *
-*  SCAT "I AM";" TIRED"        *
+* CYCLES: 170+                 *
+* SIZE: 113 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 SCAT     MAC
-         STY   SCRATCH
-         _MSTR ]1;WPAR1
-         _MSTR ]2;WPAR2
-         JSR   STRCAT
-         LDY   SCRATCH
+         STY   SCRATCH    ; {3C2B} BACKUP .Y
+         _MSTR ]1;WPAR1   ; {15C14B}
+         _MSTR ]2;WPAR2   ; {15C14B}
+         JSR   STRCAT     ; {134C81B}
+         LDY   SCRATCH    ; {3C2B} RESTORE .Y
          <<<
 *
 *``````````````````````````````*
-* SPRN :          PRINT STRING *
+* STRIM         (NATHAN RIGGS) *
 *                              *
-* PRINT A STRING TO THE SCREEN *
-*                              *
-* PARAMETERS                   *
-*                              *
-*  ]1 = STRING TO PRINT        *
-*                              *
-* SAMPLE USAGE                 *
-*                              *
-*  SPRN "TESTING"              *
-*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
-*
-SPRN     MAC
-         STY   SCRATCH
-         _AXLIT ]1
-         JSR   PRNSTR
-         LDY   SCRATCH
-         <<<
-*
-*``````````````````````````````*
-* SPOS          (NATHAN RIGGS) *
-*                              *
-* FIND THE POSITION OF A SUB-  *
-* STRING IN A GIVEN STRING.    *
-*                              *
-* PARAMETERS                   *
-*                              *
-*  ]1 = SOURCE STRING          *
-*  ]2 = SUBSTRING              *
-*                              *
-* SAMPLE USAGE                 *
-*                              *
-*  SPOS "A TEST";"TEST"        *
-*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
-*
-SPOS     MAC
-         STY   SCRATCH
-         _MSTR ]1;WPAR2
-         _MSTR ]2;WPAR1
-         JSR   SUBPOS
-         LDY   SCRATCH
-         <<<
-*
-*``````````````````````````````*
-* SCPY          (NATHAN RIGGS) *
-*                              *
-* COPY SUBSTRING FROM STRING   *
-*                              *
-* PARAMETERS                   *
-*                              *
-*  ]1 = SOURCE STRING          *
-*  ]2 = SUBSTRING INDEX        *
-*  ]3 = SUBSTRING LENGTH       *
-*                              *
-* SAMPLE USAGE                 *
-*                              *
-*  SCPY "HELLO WORLD";#7;#5    *
-*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
-*
-SCPY     MAC
-         STY   SCRATCH
-         _MSTR ]1;WPAR1
-         LDA   ]2
-         STA   BPAR2
-         LDA   ]3
-         STA   BPAR1
-         JSR   SUBCOPY
-         LDY   SCRATCH
-         <<<
-*
-*``````````````````````````````*
-* SDEL          (NATHAN RIGGS) *
-*                              *
-* DELETE SUBSTRING FROM STRING *
-*                              *
-* PARAMETERS                   *
-*                              *
-*  ]1 = SOURCE STRING          *
-*  ]2 = SUBSTRING INDEX        *
-*  ]3 = SUBSTRING LENGTH       *
-*                              *
-* SAMPLE USAGE                 *
-*                              *
-*  SUBDEL "12345";#2;#2        *
-*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
-*
-SDEL     MAC
-         STY   SCRATCH
-         _MSTR ]1;WPAR1
-         LDA   ]2
-         STA   BPAR2
-         LDA   ]3
-         STA   BPAR1
-         JSR   SUBDEL
-         LDY   SCRATCH
-         <<<
-*
-*``````````````````````````````*
-* SINS          (NATHAN RIGGS) *
-*                              *
-* INSERT SUBSTRING INTO STRING *
+* CONCATENATE TWO STRINGS      *
 *                              *
 * PARAMETERS                   *
 *                              *
 *  ]1 = STRING ADDRESS         *
-*  ]2 = SUBSTRING ADDRESS      *
-*  ]3 = SUBSTRING INDEX        *
+*  ]2 = DELIMITER              *
 *                              *
-* SAMPLE USAGE                 *
-*                              *
-*  SINS "1245";"3";#3          *
+* CYCLES: 123+                 *
+* SIZE: 80 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-SINS     MAC
-         STY   SCRATCH
-         _MSTR ]1;WPAR2
-         _MSTR ]2;WPAR1
-         LDA   ]3
-         STA   BPAR1
-         JSR   SUBINS
-         LDY   SCRATCH
+STRIM    MAC
+         _MSTR ]1;WPAR1   ; {15C14B}
+         LDA   ]2         ; {4C3B}
+         STA   WPAR2      ; {3C2B}
+         JSR   STRTRIM    ; {101C61B}
+         <<<
+*
+*``````````````````````````````*
+* STRUP         (NATHAN RIGGS) *
+*                              *
+* CONVERTS A STRING TO ITS     *
+* UPPERCASE EQUIVALENT.        *
+*                              *
+* PARAMETERS                   *
+*                              *
+*  ]1 = STRING ADDRESS         *
+*                              *
+* CYCLES: 114+                 *
+* SIZE: 64 BYTES               *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+STRUP    MAC
+         _MSTR ]1;WPAR1   ; {15C14B}
+         JSR   STRUPPER   ; {99C50B}
+         <<<
+*
+*``````````````````````````````*
+* STRLO         (NATHAN RIGGS) *
+*                              *
+* CONVERTS A STRING TO ITS     *
+* LOWERCASE EQUIVALENT.        *
+*                              *
+* PARAMETERS                   *
+*                              *
+*  ]1 = STRING ADDRESS         *
+*                              *
+* CYCLES: 113+                 *
+* SIZE: 64 BYTES               *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+STRLO    MAC
+         _MSTR ]1;WPAR1   ; {15C14B}
+         JSR   STRLOWER   ; {98C50B}
+         <<<
+*
+*``````````````````````````````*
+* SCAP          (NATHAN RIGGS) *
+*                              *
+* CAPITALIZES THE APPROPRIATE  *
+* CHARACTERS IN A LOWERCASE    *
+* STRING.                      *
+*                              *
+* PARAMETERS                   *
+*                              *
+*  ]1 = STRING ADDRESS         *
+*                              *
+* CYCLES: 192+                 *
+* SIZE: 117 BYTES              *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+SCAP     MAC
+         _MSTR ]1;WPAR1   ; {15C14B}
+         JSR   STRCAP     ; {177C103B}
+         <<<
+*
+*``````````````````````````````*
+* SREV          (NATHAN RIGGS) *
+*                              *
+*                              *
+* PARAMETERS                   *
+*                              *
+*  ]1 = STRING ADDRESS         *
+*                              *
+* CYCLES: 70+                  *
+* SIZE: 41 BYTES               *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+SREV     MAC
+         _MSTR ]1;WPAR1   ; {14C13B}
+         JSR   STRREV     ; {56C28B}
          <<<

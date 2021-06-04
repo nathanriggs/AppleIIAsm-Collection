@@ -1,3 +1,4 @@
+*
 *``````````````````````````````*
 * ADDIT16       (NATHAN RIGGS) *
 *                              *
@@ -8,32 +9,28 @@
 *  WPAR1 = AUGEND              *
 *  WPAR2 = ADDEND              *
 *                              *
-* OUTPUT:                      *
 *                              *
-*  .A = SUMMAND LOW BYTE       *
-*  .X = SUMMAND HIGH BYTE      *
+* DESTROY: NZCIDV              *
+*          ^^^  ^              *
 *                              *
-* DESTROY: AXYNVBDIZCMS        *
-*          ^^^^    ^^^         *
-*                              *
-* CYCLES: 43+                  *
+* CYCLES: 40                   *
 * SIZE: 24 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]ADD1    EQU   WPAR1
-]ADD2    EQU   WPAR2
+]ADD1    EQU   WPAR1      ; FIRST ARGUMENT
+]ADD2    EQU   WPAR2      ; SECOND ARGUMENT
 *
 ADDIT16
-         LDA   #2
-         STA   RETLEN
-         LDA   ]ADD1      ; ADD LOBYTES
-         CLC              ; CLEAR CARRY
-         ADC   ]ADD2
-         TAY              ; TEMPORARY STORE IN .Y
-         LDA   ]ADD1+1    ; ADD HIBYTES
-         ADC   ]ADD2+1
-         TAX              ; STORE IN .X
-         TYA              ; XFER LOBYTE TO .A
-         STA   RETURN
-         STX   RETURN+1
-         RTS
+         LDA   #2         ; {2C2B} PUT SUMMAND LENGTH
+         STA   RETLEN     ; {4C3B} IN RETLEN
+         LDA   ]ADD1      ; {3C2B} ADD LOBYTES
+         CLC              ; {2C1B} CLEAR CARRY
+         ADC   ]ADD2      ; {3C2B}
+         TAY              ; {2C1B} TEMPORARY STORE IN .Y
+         LDA   ]ADD1+1    ; {3C2B} ADD HIBYTES
+         ADC   ]ADD2+1    ; {3C2B}
+         TAX              ; {2C1B} STORE IN .X
+         TYA              ; {2C1B} XFER LOBYTE TO .A
+         STA   RETURN     ; {4C3B} ALSO PASS BACK IN RETURN
+         STX   RETURN+1   ; {4C3B} TO KEEP CONSISTENT
+         RTS              ; {6C1B}

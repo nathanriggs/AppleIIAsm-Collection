@@ -8,34 +8,28 @@
 *                              *
 *  NONE                        *
 *                              *
-* OUTPUT:                      *
+* DESTROY: NZCIDV              *
+*          ^^^  ^              *
 *                              *
-*  .A = RANDOM BYTE            *
-*  RETURN = RANDOM BYTE        *
-*  RETLEN = #1                 *
-*                              *
-* DESTROY: AXYNVBDIZCMS        *
-*          ^^^^    ^^^         *
-*                              *
-* CYCLES: 44+                  *
+* CYCLES: 45+                  *
 * SIZE: 27 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 RAND8
-         LDX   #8         ; NUMBER OF BITS
-         LDA   RNDL+0     ; GET SEED
+         LDX   #8         ; {3C2B} NUMBER OF BITS
+         LDA   RNDL+0     ; {3C2B} GET SEED
 :A
-         ASL              ;SHIFT THE REG
-         ROL   RNDL+1     ; ROTATE HIGH BYTE
-         BCC   :B         ; IF 1 BIT SHIFTED OUT,
-         EOR   #$2D       ; APPLY XOR FEEDBACK
+         ASL              ; {2C1B} SHIFT THE REG
+         ROL   RNDL+1     ; {5C2B} ROTATE HIGH BYTE
+         BCC   :B         ; {3C2B} IF 1 BIT SHIFTED OUT,
+         EOR   ]MAGEOR    ; {2C2B} APPLY XOR FEEDBACK
 :B
-         DEX              ; DECREASE BIT COUNTER
-         BNE   :A         ; IF NOT ZERO, RELOOP
-         STA   RNDL+0     ; STORE NEW SEED
-         STA   RETURN     ; STORE IN RETURN
-         LDY   #1         ; RETURN BYTE LENGTH
-         STY   RETLEN     ; IN RETLEN
-         CMP   #0         ; RELOAD FLAGS
-         RTS
+         DEX              ; {2C1B} DECREASE BIT COUNTER
+         BNE   :A         ; {3C2B} IF NOT ZERO, RELOOP
+         STA   RNDL+0     ; {3C2B} STORE NEW SEED
+         STA   RETURN     ; {4C3B} STORE IN RETURN
+         LDY   #1         ; {3C2B} RETURN BYTE LENGTH
+         STY   RETLEN     ; {4C3B} IN RETLEN
+         CMP   #0         ; {2C2B} RELOAD FLAGS
+         RTS              ; {6C1B}
 *

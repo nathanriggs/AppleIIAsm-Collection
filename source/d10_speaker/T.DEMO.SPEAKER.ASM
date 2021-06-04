@@ -1,86 +1,168 @@
 *
 *``````````````````````````````*
-* DEMO.LORES                   *
+* DEMO.SPEAKER.ASM             *
 *                              *
-* A DEMO OF THE MACROS AND     *
-* SUBROUTINES FOR USING LORES  *
-* GRAPHICS.                    *
+* A DEMONSTRATION OF HOW TO    *
+* USE THE VARIOUS MACROS IN    *
+* THE SPEAKER COLLECTION.      *
 *                              *
-* AUTHOR:    NATHAN RIGGS      *
-* CONTACT:   NATHAN.RIGGS@     *
-*            OUTLOOK.COM       *
+* AUTHOR:     NATHAN RIGGS     *
+* CONTACT:    NATHAN.RIGGS@    *
+*             OUTLOOK.COM      *
 *                              *
-* DATE:      03-OCT-2019       *
-* ASSEMBLER: MERLIN 8 PRO      *
-* OS:        DOS 3.3           *
+* DATE:       03-JUN-2021      *
+* ASSEMBLER:  MERLIN 8 PRO     *
+* OS:         DOS 3.3          *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
-*
-** ASSEMBLER DIRECTIVES
 *
          CYC   AVE
          EXP   OFF
          TR    ON
          DSK   DEMO.SPEAKER
-         OBJ   $BFE0
          ORG   $6000
+         OBJ   $BFE0
+*
+         PUT   MIN.HEAD.REQUIRED.ASM
+         USE   MIN.MAC.REQUIRED.ASM
+         PUT   MIN.HEAD.SPEAKER.ASM
+         USE   MIN.MAC.SPEAKER.ASM
 *
 *``````````````````````````````*
-*  TOP INCLUDES (PUTS, MACROS) *
+* PLAYING A FREQUENCY          *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-         PUT   MIN.HEAD.REQUIRED
-         USE   MIN.MAC.REQUIRED
-         USE   MAC.SPEAKER
-         PUT   HOOKS.SPEAKER
+** THE PFREQ MACRO PLAYS A FREQUENCY AT THE
+** SPECIFIED PITCH AND DURATION. NOTE THAT
+** THIS IS NOT ATTACHED TO PLAYING A SONG
+** SEQUENCE, NOR DOES IT ACCEPT THE NOTE AND
+** DURATION OFFSETS MEANT FOR PLAYING SONGS.
+*
+         PFREQ #195;#141
+         PFREQ #174;#141
+         PFREQ #155;#141
+         PFREQ #146;#141
+         PFREQ #130;#141
+         PFREQ #116;#141
+         PFREQ #103;#141
 *
 *``````````````````````````````*
-*      PROGRAM MAIN BODY       *
+* PLAYING A TONE               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-         LDY   #1
-         STY   ]O
-:RPT
-         PTONE #OCT1_C;#WHOLE;]O
-         _PRN  "C;WHOLE",8D8D
-         _WAIT
-         PTONE #OCT1_D;#WHOLE;]O
-         _PRN  "D WHOLE",8D8D
-         _WAIT
-         PTONE #OCT1_E;#WHOLE;]O
-         _PRN  "E WHOLE",8D8D
-         _WAIT
-         PTONE #OCT1_F;#WHOLE;]O
-         _PRN  "F WHOLE",8D8D
-         _WAIT
-         PTONE #OCT1_G;#WHOLE;]O
-         _PRN  "G WHOLE",8D8D
-         _WAIT
-         PTONE #OCT1_A;#WHOLE;]O
-         _PRN  "A WHOLE",8D8D
-         _WAIT
-         PTONE #OCT1_B;#WHOLE;]O
-         _PRN  "B WHOLE",8D8D
-         _WAIT
+** THE PTONE MACRO PLAYS A TONE OUTSIDE OF
+** PLAYING NOTES IN A SONG. THIS USES THE NOTE
+** AND DURATION OFFSETS NORMALLY USED BY SONG-PLAYING
+** FUNCTIONS.
 *
-         INC   ]O
-         LDA   ]O
-         CMP   #5
-         BEQ   :EXIT
-         JMP   :RPT
-*
-:EXIT
-         JMP   REENTRY
+         PTONE #NIND_C1;#DIND_W
+         PTONE #NIND_D1;#DIND_W
+         PTONE #NIND_E1;#DIND_W
+         PTONE #NIND_F1;#DIND_W
+         PTONE #NIND_G1;#DIND_W
+         PTONE #NIND_A2;#DIND_W
+         PTONE #NIND_B2;#DIND_W
 *
 *``````````````````````````````*
-*        BOTTOM INCLUDES       *
+* PLAYING SONGS                *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-** BOTTOM INCLUDES
+** THE STMPO MACRO SETS THE TEMPO FOR A SONG. THIS
+** CHANGES THE DURATIONS OF NOTES AS WELL.
 *
-         PUT   MIN.LIB.REQUIRED
+         STMPO #$09
 *
-** INDIVIDUAL SUBROUTINE INCLUDES
+** THE SSONG MACRO SETS THE ADDRESS OF THE SONG TO
+** BE PLAYED.
 *
-         PUT   SUB.PLAYTONE
+         SSONG #SCALE
 *
-]O       DB    #5
+** THE PNOTE MACRO PLAYS THE NOTE CURRENTLY INDEXED
+** IN A SONG SET BY THE SSONG MACRO.
+*
+         PNOTE
+*
+** THE NEXTN ADVANCES THE SONG BY A SINGLE NOTE.
+*
+         NEXTN
+         PNOTE
+         NEXTN
+         PNOTE
+         NEXTN
+         PNOTE
+         NEXTN
+         PNOTE
+         NEXTN
+         PNOTE
+         NEXTN
+         PNOTE
+         NEXTN
+*
+** THE PREVN MACRO MOVES THE SONG NOTE POINTER ONE
+** NOTE BACKWARDS.
+*
+         PREVN
+         PNOTE
+         PREVN
+         PNOTE
+         PREVN
+         PNOTE
+         PREVN
+         PNOTE
+         PREVN
+         PNOTE
+         PREVN
+         PNOTE
+         PREVN
+         PNOTE
+*
+** THE FFWRD MACRO AND THE REWND MACRO MOVE THE SONG
+** POINTER A SPECIFIED NUMBER OF NOTES FORWARDS OR
+** BACKWARD.
+*
+         FFWRD #2
+         PNOTE
+         REWND #2
+         PNOTE
+*
+** THE RSTRT MACRO SETS THE NOTE INDEX OF A SONG
+** BACK TO THE FIRST NOTE.
+*
+         RSTRT
+*
+** THE PSONG MACRO PLAYS A SONG FROM BEGINNING TO END.
+*
+         PSONG
+*
+*``````````````````````````````*
+* PLAYING SOUND EFFECTS        *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+** THE SFX MACRO PLAYS ONE OF A NUMBER OF DIFFERENT
+** STANDARDIZED SOUND EFFECTS. WHILE THE SELECTION IS
+** SMALL NOW, MORE WILL BE ADDED IN A FUTURE DEDICATED
+** UPDATE TO THE SPEAKER COLLECTION.
+*
+         SFX   #0;#10;#0
+         SFX   #1;#1;#160
+         SFX   #2;#1;#176
+         SFX   #3;#12;#6
+*
+         JSR   $3D0
+*
+         PUT   MIN.LIB.REQUIRED.ASM
+         PUT   MIN.SUB.PLAYNOTE.ASM
+         PUT   MIN.SUB.SOUNDFX.ASM
+*
+SCALE    DFB   NIND_D1S,DIND_W
+         DFB   NIND_C1,DIND_D8
+         DFB   NIND_D1,DIND_D8
+         DFB   NIND_D1S,DIND_D8
+         DFB   NIND_E1,DIND_D8
+         DFB   NIND_F1,DIND_H
+         DFB   NIND_D1S,DIND_H
+         DFB   NIND_D1,DIND_D8
+         DFB   NIND_D1S,DIND_D8
+         DFB   NIND_F1,DIND_D8
+         DFB   NIND_G1S,DIND_D8
+         DFB   NIND_G1,DIND_W
+         DFB   NIND_END,NIND_END

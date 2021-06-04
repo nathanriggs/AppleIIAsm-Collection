@@ -1,7 +1,3 @@
-         PUT   MIN.HEAD.REQUIRED
-         USE   MIN.MAC.REQUIRED
-         PUT   HOOKS.LORES
-         CYC   ON
 *``````````````````````````````*
 * LRVLINE       (NATHAN RIGGS) *
 *                              *
@@ -22,8 +18,8 @@
 * DESTROY: AXYNVBDIZCMS        *
 *          ^^^^^   ^^^         *
 *                              *
-* CYCLES: 262+                 *
-* SIZE: 52  BYTES              *
+* CYCLES: 216+                 *
+* SIZE: 141 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 ]Y1      EQU   WPAR1      ; Y COORDINATE ORIGIN
@@ -34,19 +30,20 @@
 ]Y       EQU   VARTAB+8   ; WORKING YPOS
 *
 LRVLINE
+         INC   ]Y2
 *
-         LDA   ]X1        ; LOAD ROW
-         STA   ]X         ; AND STORE IN WORKING VARIABLE
-         LDY   ]Y1        ; LOAD Y START POS
-         STY   ]Y         ; STORING IN WORKING Y VAR
+         LDA   ]X1        ; {4C3B} LOAD ROW
+         STA   ]X         ; {4C3B} AND STORE IN WORKING VARIABLE
+         LDY   ]Y1        ; {4C3B} LOAD Y START POS
+         STY   ]Y         ; {4C3B} STORING IN WORKING Y VAR
 :LOOP
-         LDA   ]COLOR     ; LOAD COLOR
-         LDX   ]X         ; LOAD X INTO .X
-         LDY   ]Y         ; LOAD Y INTO .Y
-         JSR   LOCPLOT    ; GOSUB PLOTTING SUBROUTINE
-         INC   ]Y         ; INCREASE Y INDEX
-         LDY   ]Y         ; LOAD Y FOR COMPARISON
-         CPY   ]Y2        ; IF Y < Y2
-         BNE   :LOOP      ; LOOP; ELSE, CONTINUE
+         LDA   ]COLOR     ; {4C3B} LOAD COLOR
+         LDX   ]X         ; {4C3B} LOAD X INTO .X
+         LDY   ]Y         ; {4C3B} LOAD Y INTO .Y
+         JSR   LOCPLOT    ; {168C109B} GOSUB PLOTTING SUBROUTINE
+         INC   ]Y         ; {5C2B} INCREASE Y INDEX
+         LDY   ]Y         ; {4C3B} LOAD Y FOR COMPARISON
+         CPY   ]Y2        ; {3C2B} IF Y < Y2
+         BCC   :LOOP      ; {3C2B} LOOP; ELSE, CONTINUE
 :EXIT
-         RTS
+         RTS              ; {6C1B}

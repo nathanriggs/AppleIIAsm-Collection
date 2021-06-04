@@ -2,141 +2,140 @@
 *``````````````````````````````*
 * TBLINE        (NATHAN RIGGS) *
 *                              *
-* OUTPUTS A LINE FROM COORDS   *
-* X1,Y1 TO X2,Y2 USING THE     *
-* BRESSENHAM LINE ALOGORITHM   *
-*                              *
 * INPUT:                       *
 *                              *
-*  ]X1 STORED IN WPAR1         *
-*  ]X2 STORED IN WPAR1+1       *
-*  ]Y1 STORED IN WPAR2         *
-*  ]Y2 STORED IN WPAR2+1       *
-*  ]F  STORED IN BPAR1         *
+*  ]X0 = X ORIGIN              *
+*  ]X1 = X DESTINATION         *
+*  ]Y0 = Y ORIGIN              *
+*  ]Y1 = Y DESTINATION         *
+*  ]F  = LINE FILL CHARACTER   *
 *                              *
 * OUTPUT:                      *
 *                              *
-*  NONE                        *
+* OUTPUTS A LINE FROM COORDS   *
+* X0,Y0 TO X1,Y1 USING THE     *
+* BRESSENHAM LINE ALOGORITHM   *
 *                              *
-* DESTROY: AXYNVBDIZCMS        *
-*          ^^^^^   ^^^         *
+* DESTROY: NZCIDV              *
+*          ^^^  ^              *
 *                              *
-* CYCLES: 283+                 *
-* SIZE: 188 BYTES              *
+* CYCLES: 280+                 *
+* SIZE: 178 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]X1      EQU   WPAR1      ; PARAMETERS PASSED VIA
-]X2      EQU   WPAR2      ; ZERO PAGE LOCATIONS
-]Y1      EQU   WPAR1+1
-]Y2      EQU   WPAR2+1
-]F       EQU   BPAR1
+]X0      EQU   WPAR1      ; XPOS ORIGIN PASSED VIA ZP
+]X1      EQU   WPAR2      ; XPOS DEST PASSED VIA ZP
+]Y0      EQU   WPAR1+1    ; YPOS ORIGIN PASSED VIA ZP
+]Y1      EQU   WPAR2+1    ; YPOS DEST PASSED VIA ZP
+]F       EQU   BPAR1      ; FILL VALUE
 *
-]DX      EQU   VARTAB     ; CHANGE IN X; 1 BYTE
-]DY      EQU   VARTAB+1   ; CHANGE IN Y; 1 BYTE
-]SX      EQU   VARTAB+2   ; X POSITION STEP; 1 BYTE
-]SY      EQU   VARTAB+3   ; Y POSITION STEP; 1 BYTE
-]ERR     EQU   VARTAB+4   ; SLOPE ERROR; 1 BYTE
-]ERR2    EQU   VARTAB+5   ; COMPARISON COPY OF ]ERR; 1 BYTE
+]DX      EQU   ADDR1      ; CHANGE IN X
+]DY      EQU   ADDR1+1    ; CHANGE IN Y
+]SX      EQU   ADDR2      ; X POSITION STEP
+]SY      EQU   ADDR2+1    ; Y POSITION STEP
+]ERR     EQU   ADDR3      ; SLOPE ERROR
+]ERRX2   EQU   ADDR3+1    ; COMPARISON COPY OF ]ERR
 *
 TBLINE
+         LDA   ]X1        ; {3C2B} SUBTRACT X0 FROM X1
+         SEC              ; {2C1B}
+         SBC   ]X0        ; {3C2B}
+         BPL   :ABSF1     ; {3C2B} IF POS, SKIP ABSOLUTE VALUE
+         SEC              ; {2C1B} SUBTRACT 1 AND EOR #$FF
+         SBC   #1         ; {3C2B} TO GET THE ABSOLUTE VALUE
+         EOR   #$FF       ; {2C2B}
+:ABSF1
+         STA   ]DX        ; {3C2B} STORE VALUE AS CHANGE IN X
 *
-** FIRST CALCULATE INITIAL VALUES
+         LDA   ]Y1        ; {3C2B} SUBTRACT Y0 FROM Y1
+         SEC              ; {2C1B}
+         SBC   ]Y0        ; {3C2B}
+         BPL   :ABSF2     ; {3C2B} IF POSITIVE, SKIP ABS VALUE
+         SEC              ; {2C1B} SUBTRACT 1 AND EOR #$FF
+         SBC   #1         ; {3C2B} TO GET THE ABSOLUTE VALUE
+         EOR   #$FF       ; {2C2B}
+:ABSF2
+         STA   ]DY        ; {3C2B} STORE VALUE AS CHANGE IN Y
 *
-** CHECK IF Y STEP IS POSITIVE OR NEGATIVE
+         LDA   ]DX        ; {3C2B} ]ERR = DX - DY
+         SEC              ; {2C1B}
+         SBC   ]DY        ; {3C2B}
+         STA   ]ERR       ; {3C2B}
 *
-         LDX   #$FF       ; .X = -1
-         LDA   ]Y1        ; GET Y1 - Y2
-         SEC              ; RESET CARRY
-         SBC   ]Y2
-         BPL   :YSTORE    ; IF POSITIVE, SKIP TO STORE
-         LDX   #1         ; .X = +1
-         EOR   #$FF       ; NEG ACCUMULATOR
-         CLC
-         ADC   #1
-:YSTORE
-         STA   ]DY        ; STORE CHANGE IN Y
-         STX   ]SY        ; STORE + OR - Y STEPPER
+         LDX   #$FF       ; {3C2B} .X = -1
+         LDA   ]X0        ; {3C2B} IF X0 >= X1
+         CMP   ]X1        ; {3C2B}
+         BCS   :NONEG     ; {3C2B} THEN SKIP CHANGE IN .X
+         LDX   #$01       ; {3C2B} ELSE, CHANGE .X TO +1
+:NONEG   STX   ]SX        ; {3C2B} STORE EITHER -1 OR +1 IN SX
 *
-** NOW CHECK POSITIVE OR NEGATIVE X STEP
+         LDX   #$FF       ; {3C2B} .X = -1
+         LDA   ]Y0        ; {3C2B} IF Y0 >= Y1
+         CMP   ]Y1        ; {3C2B}
+         BCS   :NONEG2    ; {3C2B} THEN SKIP CHANGE IN .X
+         LDX   #$01       ; {3C2B} ELSE CHANGE .X TO +1
+:NONEG2  STX   ]SY        ; {3C2B} STORE EITHER -1 OR +1 IN SY
 *
-         LDX   #$FF       ; .X = -1
-         LDA   ]X1        ; GET X1 - X2
-         SEC              ; RESET CARRY
-         SBC   ]X2        ; SUBTRACT X2
-         BPL   :XSTORE    ; IF POSITIVE, SKIP TO X STORE
-         LDX   #1         ; .X = +1
-         EOR   #$FF       ; NEGATIVE ACCUMULATOR
-         CLC
-         ADC   #1
-:XSTORE
-         STA   ]DX        ; STORE CHANGE IN X
-         STX   ]SX        ; STORE + OR - X STEPPER
+** MAIN LOOP
 *
-** IF CHANGE IN X IS GREATER THAN CHANGE IN Y,
-** THEN INITIAL ERROR IS THE CHANGE IN X; ELSE,
-** INITIAL ERROR IS THE CHANGE IN Y
+:LOOP
+         LDA   ]Y0        ; {3C2B} .A = Y POSITION {NZ}
+         LDY   ]X0        ; {3C2B} .Y = X POSITION {NZ}
+         JSR   GBCALC     ; {43C24B} FIND SCREEN MEM LOCATION {NZCV}
+         LDA   ]F         ; {3C2B} LOAD FILL INTO .A {NZ}
+         STA   (GBPSH),Y  ; {6C2B} PUSH TO SCREEN MEMORY
 *
-         CMP   ]DY        ; DX IS ALREADY IN .A
-         BEQ   :SKIP      ; IF EQUAL, US CHANGE IN Y
-         BPL   :SKIP2     ; IF GREATER THAN, USE CHANGE IN X
-:SKIP
-         LDA   ]DY        ; GET CHANGE IN Y
-         EOR   #$FF       ; NEGATE
-         CLC
-         ADC   #1
-:SKIP2
-         STA   ]ERR       ; STORE EITHER DX OR DY IN ERR
-         ASL   ]DX        ; DX = DX * 2
-         ASL   ]DY        ; DY = DY * 2
+         LDA   ]X0        ; {3C2B} IF X0 != X1, KEEP LOOPING
+         CMP   ]X1        ; {3C2B}
+         BNE   :CONT      ; {3C2B}
+         LDA   ]Y0        ; {3C2B} IF Y0 != Y1, KEEP LOOPING
+         CMP   ]Y1        ; {3C2B}
+         BNE   :CONT      ; {3C2B}
+         JMP   TBLEXIT    ; {3C3B} ELSE, EXIT LOOP
+:CONT
 *
-** NOW LOOP THROUGH EACH POINT ON LINE
+         LDA   ]ERR       ; {3C2B} ]ERR = ]ERR * 2
+         ASL              ; {2C1B}
+         STA   ]ERRX2     ; {3C2B}
 *
-:LP
+         LDA   ]DY        ; {3C2B} NEGATE ]DY
+         EOR   #$FF       ; {3C2B}
+         CLC              ; {2C1B}
+         ADC   #1         ; {3C2B}
+         SEC              ; {2C1B} USE SBC FOR SIGNED COMPARE
+         SBC   ]ERRX2     ; {3C2B}
+         BMI   :NFSETX    ; {3C2B} IF N FLAG SET, GO CHECK V FLAG
+         BVC   :GEX       ; {3C2B} IF V = 0 & N = 0, VAL >= .A REG
+:LTX                      ;        N = 0 AND V = 1, SO LESS THAN
+         LDA   ]ERR       ; {3C2B} ]ERR = ]ERR - ]DY
+         SEC              ; {2C1B}
+         SBC   ]DY        ; {3C2B}
+         STA   ]ERR       ; {3C2B}
+         LDA   ]X0        ; {3C2B} X0 = X0 + SX
+         CLC              ; {2C1B}
+         ADC   ]SX        ; {3C2B}
+         STA   ]X0        ; {3C2B}
+         JMP   :GEX       ; {3C3B}
+:NFSETX  BVC   :LTX       ; {3C2B} IF N = 1 & V = 0, VAL < .A REG
+:GEX                      ;        N = 1 & V = 1, SO VAL >= .A REG
 *
-** PRINT CHARACTER FIRST
+         LDA   ]ERRX2     ; {3C2B} IF ER * 2 < DX, GOTO :LTY
+         SEC              ; {2C1B}
+         SBC   ]DX        ; {3C2B}
+         BMI   :SKIPY     ; {3C2B} IF N FLAG = 1, GO CHECK V FLAG
+         BVC   :GEY       ; {3C2B} N = 0 & V = 0, SO VAL >= .A REG
+:LTY     LDA   ]ERR       ; {3C2B} N = 0 AND V = 1, SO LESS THAN
+         CLC              ; {2C1B}
+         ADC   ]DX        ; {3C2B} ]ERR = ]ERR + ]DX
+         STA   ]ERR       ; {3C2B}
+         LDA   ]Y0        ; {3C2B} ]Y0 = ]Y0 + ]SY
+         CLC              ; {2C1B}
+         ADC   ]SY        ; {3C2B}
+         STA   ]Y0        ; {3C2B}
+         JMP   :GEY       ; {3C3B}
+:SKIPY   BVC   :LTY       ; {3C2B} IF N = 1 & V = 0, VAL < .A REG
+:GEY                      ; {3C2B} N = 1 & V = 1, SO VAL >= .A REG
 *
-         LDA   ]Y1 ; .A = Y POSITION
-         LDY   ]X1 ; .Y = X POSITION
-         JSR   GBCALC ; FIND SCREEN MEM LOCATION
-         LDA   ]F ; LOAD FILL INTO .A
-         STA   (GBPSH),Y ; PUSH TO SCREEN MEMORY
-*
-** NOW CHECK IF X1 = X2, Y = Y2
-*
-         LDA   ]X1        ; IF X1 != X2 THEN
-         CMP   ]X2        ; KEEP LOOPING
-         BNE   :KEEPGO
-         LDA   ]Y1        ; ELSE, CHECK IF Y1 = Y2
-         CMP   ]Y2
-         BEQ   :EXIT      ; IF EQUAL, EXIT; ELSE, LOOP
-:KEEPGO
-         LDA   ]ERR       ; LOAD ERR AND BACKUP
-         STA   ]ERR2      ; FOR LATER COMPARISON
-         CLC              ; CLEAR CARRY
-         ADC   ]DX        ; ADD CHANGE IN X
-         BMI   :SKIPX     ; IF RESULT IS -, SKIP
-         BEQ   :SKIPX     ; TO CHANGING Y POS
-         LDA   ]ERR       ; RELOAD ERR
-         SEC              ; SET CARRY
-         SBC   ]DY        ; SUBTRACT CHANGE IN Y
-         STA   ]ERR       ; STORE ERROR
-         LDA   ]X1        ; LOAD CURRENT X POSITION
-         CLC              ; CLEAR CARRY
-         ADC   ]SX        ; INCREASE OR DECREASE BY 1
-         STA   ]X1        ; STORE NEW X POSITION
-:SKIPX
-         LDA   ]ERR2      ; LOAD EARLIER ERR
-         CMP   ]DY        ; IF ERR - CHANGE IN Y IS +
-         BPL   :SKIPY     ; SKIP CHANGING Y POS
-         LDA   ]ERR       ; RELOAD ERR
-         CLC              ; CLEAR CARRY
-         ADC   ]DX        ; ADD CHANGE IN X
-         STA   ]ERR       ; STORE NEW ERR
-         LDA   ]Y1        ; LOAD Y POSITION
-         CLC              ; CLEAR CARRY
-         ADC   ]SY        ; INCREASE OR DECREASE YPOS BY 1
-         STA   ]Y1        ; STORE NEW Y POSITION
-:SKIPY
-         JMP   :LP        ; LOOP LINE DRAWING
-:EXIT
-         RTS
+         JMP   :LOOP      ; {3C3B}
+TBLEXIT
+         RTS              ; {6C1B}

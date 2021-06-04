@@ -12,30 +12,30 @@
 * OUTPUT:  HORIZONTAL LINE TO  *
 *          SCREEN              *
 *                              *
-* DESTROY: AXYNVBDIZCMS        *
-*          ^^^^^^  ^^^         *
+* DESTROY: NZCIDV              *
+*          ^^^  ^              *
 *                              *
-* CYCLES: 90+                  *
-* SIZE:   47 BYTES             *
+* CYCLES: 81+                  *
+* SIZE:   19 BYTES             *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]X1      EQU   WPAR1      ; 1 BYTE
-]X2      EQU   WPAR1+1    ; 1 BYTE
-]Y1      EQU   BPAR1      ; 1 BYTE
-]F       EQU   BPAR2      ; 1 BYTE
+]X1      EQU   WPAR1      ; X POS ORIGIN
+]X2      EQU   WPAR1+1    ; X POS DESTINATION
+]Y1      EQU   BPAR1      ; Y POSITION
+]F       EQU   BPAR2      ; FILL CHAR
 *
 THLINE
-         LDA   ]Y1        ; LOAD ROW
-         LDY   ]X1        ; LOAD X START POS
+               LDA        ]Y1 ; {3C2B} LOAD ROW {NZ}
+         LDY   ]X1        ; {3C2B} LOAD X START POS {NZ}
 :LOOP
-         JSR   GBCALC     ; GOSUB GBASCALC ROUTINE,
+         JSR   GBCALC     ; {49C3B} GOSUB GBASCALC ROUTINE, {NZCV}
                           ; WHICH FINDS MEMLOC FOR
                           ; POSITION ON SCREEN
-         LDA   ]F
-         STA   (GBPSH),Y  ; PUSH ]F TO SCREEN MEM
-         LDA   ]Y1
-         INY              ; INCREASE X POS
-         CPY   ]X2        ; IF LESS THAN X END POS
-         BNE   :LOOP      ; REPEAT UNTIL DONE
+         LDA   ]F         ; {3C2B} LOAD FILL CHAR  {NZ}
+         STA   (GBPSH),Y  ; {6C2B} PUSH ]F TO SCREEN MEM
+         LDA   ]Y1        ; {3C2B} LOAD Y POSITION {NZ}
+         INY              ; {2C1B} INCREASE X POS {NZ}
+         CPY   ]X2        ; {3C2B} IF < X DEST THEN END {NZC}
+         BNE   :LOOP      ; {3C2B} REPEAT UNTIL DONE
 :EXIT
-         RTS
+         RTS              ; {6C1B}

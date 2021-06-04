@@ -2,30 +2,28 @@
 *``````````````````````````````*
 * AGET161       (NATHAN RIGGS) *
 *                              *
-* GET DATA IN ARRAY ELEMENT    *
+* GET DATA IN 16-BIT, 2D ARRAY *
+*                              *
+*------------------------------*
+* MULTIPLICATION CODE ADAPTED  *
+* FROM WHITE FLAME'S WORK ON   *
+* CODEBASE64. LICENSE MAY VARY *
+*------------------------------*
 *                              *
 * INPUT:                       *
 *                              *
 *  WPAR1 = ARRAY ADDRESS       *
 *  WPAR2 = ELEMENT INDEX       *
 *                              *
-* OUTPUT:                      *
+* DESTROY: NZCIDV              *
+*          ^^^  ^              *
 *                              *
-*  .A = ELEMENT LENGTH         *
-*  .X = ELEMENT ADDR  LOBYTE   *
-*  .Y = ELEMENT ADDR  HIBYTE   *
-*  RETURN = ELEMENT DATA       *
-*  RETLEN = ELEMENT LENGTH     *
-*                              *
-* DESTROY: AXYNVBDIZCMS        *
-*          ^^^^^   ^^^         *
-*                              *
-* CYCLES: 126                  *
-* SIZE: 135 BYTES              *
+* CYCLES: 185+                 *
+* SIZE: 113 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]AIDX    EQU   WPAR2
-]ADDR    EQU   WPAR1
+]AIDX    EQU   WPAR2      ; ELEMENT INDEX
+]ADDR    EQU   WPAR1      ; ARRAY ADDRESS
 *
 ]ESIZE   EQU   VARTAB     ; ELEMENT LENGTH
 ]ESIZEB  EQU   VARTAB+1   ; ^BACKUP
@@ -33,68 +31,68 @@
 ]IDX     EQU   VARTAB+6   ; INDEX BACKUP
 *
 AGET161
-         LDA   ]AIDX
-         STA   ]IDX
-         LDA   ]AIDX+1    ; GET INDEX HIBYTE
-         STA   ]AIDX+1
-         STA   SCRATCH
-         LDY   #0         ; RESET INDEX
-         LDA   (]ADDR),Y  ; GET NUMBER OF
-         STA   ]ASIZE     ; ARRAY ELEMENTS
-         LDY   #1         ; GET HIBYTE OF
-         LDA   (]ADDR),Y  ; # OF ARRAY ELEMENTS
-         STA   ]ASIZE+1
-         INY              ; INCREASE BYTE INDEX
-         LDA   (]ADDR),Y  ; GET ELEMENT LENGTH
-         STA   ]ESIZE
-         STA   ]ESIZEB
+         LDA   ]AIDX      ; {3C2B}
+         STA   ]IDX       ; {3C2B}
+         LDA   ]AIDX+1    ; {3C2B} GET INDEX HIBYTE
+         STA   ]AIDX+1    ; {3C2B}
+         STA   SCRATCH    ; {3C2B}
+         LDY   #0         ; {2C2B} RESET INDEX
+         LDA   (]ADDR),Y  ; {6C2B} GET NUMBER OF
+         STA   ]ASIZE     ; {3C2B} ARRAY ELEMENTS
+         LDY   #1         ; {2C2B} GET HIBYTE OF
+         LDA   (]ADDR),Y  ; {6C2B} # OF ARRAY ELEMENTS
+         STA   ]ASIZE+1   ; {3C2B}
+         INY              ; {2C1B} INCREASE BYTE INDEX
+         LDA   (]ADDR),Y  ; {6C2B} GET ELEMENT LENGTH
+         STA   ]ESIZE     ; {3C2B}
+         STA   ]ESIZEB    ; {3C2B}
 *
 ** MULTIPLY INDEX BY ELEMENT SIZE, ADD 3
 *
-         LDY   #0         ; RESET .Y AND .A
-         LDA   #0
-         BEQ   :ENTLPA    ; IF ZERO, SKIP TO LOOP
+         LDY   #0         ; {2C2B} RESET .Y AND .A
+         LDA   #0         ; {2C2B}
+         BEQ   :ENTLPA    ; {3C2B} IF ZERO, SKIP TO LOOP
 :DOADD
-         CLC              ; CLEAR CARRY
-         ADC   ]AIDX      ; ADD INDEX TO .A
-         TAX              ; HOLD IN .X
-         TYA              ; LOAD HIBYTE
-         ADC   SCRATCH    ; ADD HIBYTE
-         TAY              ; HOLD IN .Y
-         TXA              ; RELOAD LOBYTE
+         CLC              ; {2C1B} CLEAR CARRY
+         ADC   ]AIDX      ; {4C3B} ADD INDEX TO .A
+         TAX              ; {2C1B} HOLD IN .X
+         TYA              ; {2C1B} LOAD HIBYTE
+         ADC   SCRATCH    ; {4C3B} ADD HIBYTE
+         TAY              ; {2C1B} HOLD IN .Y
+         TXA              ; {2C1B} RELOAD LOBYTE
 :LPA
-         ASL   ]AIDX      ; MULTIPLY INDEX BY 2
-         ROL   SCRATCH    ; ADJUST HIBYTE
+         ASL   ]AIDX      ; {6C3B} MULTIPLY INDEX BY 2
+         ROL   SCRATCH    ; {6C3B} ADJUST HIBYTE
 :ENTLPA
-         LSR   ]ESIZE     ; DIVIDE ELEMENT LENGTH BY 2
-         BCS   :DOADD     ; IF BIT 1 SHIFTED IN CARRY, ADD MORE
-         BNE   :LPA       ; CONTINUE LOOPING IF ZERO FLAG UNSET
-         STX   ]IDX       ; STORE LOBYTE
-         STY   ]IDX+1     ; STORE HIBYTE
-         LDA   #3         ; ADD 3 TO INDEX LOBYTE
-         CLC              ; CLEAR CARRY
-         ADC   ]IDX
-         STA   ADDR2      ; STORE ON ZERO PAGE
-         LDA   ]IDX+1     ; ADJUST HIBYTE
-         ADC   #0
-         STA   ADDR2+1
+         LSR   ]ESIZE     ; {6C3B} DIVIDE ELEMENT LENGTH BY 2
+         BCS   :DOADD     ; {3C2B} IF BIT1 SHIFTED IN CARRY +MORE
+         BNE   :LPA       ; {3C2B} CONTINUE LOOPING IF Z FLAG UNSET
+         STX   ]IDX       ; {3C2B} STORE LOBYTE
+         STY   ]IDX+1     ; {3C2B} STORE HIBYTE
+         LDA   #3         ; {2C2B} ADD 3 TO INDEX LOBYTE
+         CLC              ; {2C1B} CLEAR CARRY
+         ADC   ]IDX       ; {4C3B}
+         STA   ADDR2      ; {3C2B} STORE ON ZERO PAGE
+         LDA   ]IDX+1     ; {3C2B} ADJUST HIBYTE
+         ADC   #0         ; {2C2B}
+         STA   ADDR2+1    ; {3C2B}
 *
-         LDA   ADDR2      ; ADD ARRAY ADDRESS
-         CLC
-         ADC   ]ADDR      ; LOBYTE
-         STA   ADDR2
-         LDA   ADDR2+1    ; HIBYTE
-         ADC   ]ADDR+1
-         STA   ADDR2+1
-         LDY   #0         ; RESET BYTE INDEX
+         LDA   ADDR2      ; {3C2B} ADD ARRAY ADDRESS
+         CLC              ; {2C1B}
+         ADC   ]ADDR      ; {4C3B} LOBYTE
+         STA   ADDR2      ; {3C2B}
+         LDA   ADDR2+1    ; {3C2B} HIBYTE
+         ADC   ]ADDR+1    ; {4C3B}
+         STA   ADDR2+1    ; {3C2B}
+         LDY   #0         ; {2C2B} RESET BYTE INDEX
 :LP
-         LDA   (ADDR2),Y  ; GET BYTE FROM ELEMENT
-         STA   RETURN,Y   ; PUT INTO RETURN
-         INY              ; INCREASE BYTE INDEX
-         CPY   ]ESIZEB    ; IF INDEX != ELEMENT LENGTH
-         BNE   :LP        ; CONTINUE LOOP
-         LDA   ]ESIZEB    ; .A = ELEMENT SIZE
-         STA   RETLEN     ; STORE IN RETLEN
-         LDY   ADDR2+1    ; .Y = ELEMENT ADDRESS HIBYTE
-         LDX   ADDR2      ; .X = ELEMENT ADDRESS LOBYTE
-         RTS
+         LDA   (ADDR2),Y  ; {6C2B} GET BYTE FROM ELEMENT
+         STA   RETURN,Y   ; {3C2B} PUT INTO RETURN
+         INY              ; {2C1B} INCREASE BYTE INDEX
+         CPY   ]ESIZEB    ; {4C3B} IF INDEX != ELEMENT LENGTH
+         BNE   :LP        ; {3C2B} CONTINUE LOOP
+         LDA   ]ESIZEB    ; {3C2B} .A = ELEMENT SIZE
+         STA   RETLEN     ; {3C2B} STORE IN RETLEN
+         LDY   ADDR2+1    ; {3C2B} .Y = ELEMENT ADDRESS HIBYTE
+         LDX   ADDR2      ; {3C2B} .X = ELEMENT ADDRESS LOBYTE
+         RTS              ; {6C1B}

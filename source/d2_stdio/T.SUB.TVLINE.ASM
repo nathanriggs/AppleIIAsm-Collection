@@ -11,29 +11,29 @@
 *                              *
 * OUTPUT: VERT LINE TO SCREEN  *
 *                              *
-* DESTROY: AXYNVBDIZCMS        *
-*          ^^^^^   ^^^         *
+* DESTROY: NZCIDV              *
+*          ^^^  ^              *
 *                              *
-* CYCLES: 33+                  *
-* SIZE:   34 BYTES             *
+* CYCLES: 77+                  *
+* SIZE:   26 BYTES             *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]X1      EQU   WPAR1      ; 1 BYTE
-]Y1      EQU   WPAR2      ; 1 BYTE
-]Y2      EQU   WPAR2+1    ; 1 BYTE
-]F       EQU   BPAR1      ; 1 BYTE
+]X1      EQU   WPAR1      ; X COLUMN OF LINE
+]Y1      EQU   WPAR2      ; Y POSITION ORIGIN
+]Y2      EQU   WPAR2+1    ; Y POSITION DESTINATION
+]F       EQU   BPAR1      ; LINE FILL CHARACTER
 *
 TVLINE
 *
-         LDA   ]Y1
-         LDY   ]X1
+         LDA   ]Y1        ; {4C3B} LOAD Y ORIGIN {NZ}
+         LDY   ]X1        ; {4C3B} LOAD X POSITION {NZ}
 :LOOP
-         JSR   GBCALC     ; GET POS SCREEN ADDRESS
-         LDA   ]F
-         STA   (GBPSH),Y  ; PLOT TO SCREEN MEMORY
-         INC   ]Y1
-         LDA   ]Y1
-         CMP   ]Y2        ; IF Y1 < Y2
-         BNE   :LOOP      ; LOOP; ELSE, CONTINUE
+         JSR   GBCALC     ; {43C3B} GET POS SCREEN ADDRESS {NZCV}
+         LDA   ]F         ; {4C3B} LOAD FILL CHARACTER {NZ}
+         STA   (GBPSH),Y  ; {6C2B} PLOT TO SCREEN MEMORY
+         INC   ]Y1        ; {6C3B} INCREASE Y POSITION {NZ}
+         LDA   ]Y1        ; {4C3B} RELOAD Y POSITION {NZ}
+         CMP   ]Y2        ; {4C3B} IF Y1 < Y2 {NZC}
+         BNE   :LOOP      ; {3C2B} LOOP; ELSE, CONTINUE
 :EXIT
-         RTS
+         RTS              ; {6C1B}

@@ -1,17 +1,25 @@
 *
 *``````````````````````````````*
-* HOOKS.STDIO                  *
+* HEAD.STDIO.ASM               *
 *                              *
-* THESE ARE HOOKS THAT ARE     *
-* USED BY THE STDIO LIBRARY.   *
-* COMMENTED HOOKS ARE RELATED  *
-* BUT CURRENTLY UNUSED.        *
+* THIS FILE CONTAINS HOOKS AND *
+* VARIABLES USED BY THE STDIO  *
+* LIBRARY. SOME ARE INCLUDED   *
+* BUT ARE COMMENTED OUT, DUE   *
+* TO NOT BEING USED BY THE     *
+* LIBRARY; THEY ARE THERE FOR  *
+* THE USER TO UNCOMMENT, IF    *
+* NEEDED.                      *
+*                              *
+* THIS FILE ALSO INCLUDES VERY *
+* COMMONLY USED ROUTINES IN    *
+* THE LIBRARY SUBROUTINES.     *
 *                              *
 * AUTHOR:    NATHAN RIGGS      *
 * CONTACT:   NATHAN.RIGGS@     *
 *            OUTLOOK.COM       *
 *                              *
-* DATE:      07-JUL-2019       *
+* DATE:      11-MAR-2021       *
 * ASSEMBLER: MERLIN 8 PRO      *
 * OS:        DOS 3.3           *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*

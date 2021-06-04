@@ -1,0 +1,231 @@
+*
+*``````````````````````````````*
+* DEMO.SUBSTRINGS.ASM          *
+*                              *
+* A DEMO OF THE VARIOUS MACROS *
+* FOR HANDLING SUBSTRINGS.     *
+*                              *
+* AUTHOR:    NATHAN RIGGS      *
+* CONTACT:   NATHAN.RIGGS@     *
+*            OUTLOOK.COM       *
+*                              *
+* DATE:      12-APR-2021       *
+* ASSEMBLER: MERLIN 8 PRO      *
+* OS:        DOS 3.3           *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+** ASSEMBLER DIRECTIVES
+*
+         CYC   AVE
+         EXP   OFF
+         TR    ON
+         DSK   DEMO.SUBSTRINGS
+         OBJ   $BFE0
+         ORG   $6000
+*
+*``````````````````````````````*
+*  TOP INCLUDES (PUTS, MACROS) *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+         PUT   MIN.HEAD.REQUIRED.ASM
+         USE   MIN.MAC.REQUIRED.ASM
+         USE   MIN.MAC.SUBSTRINGS.ASM
+         PUT   MIN.HEAD.STRINGS.ASM
+]HOME    EQU   $FC58
+*
+*``````````````````````````````*
+*      PROGRAM MAIN BODY       *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+** THIS FILE CONTAINS DEMONSTRATIONS OF THE MACROS
+** DEDICATED TO SUBSTRINGS IN THE STRINGS COLLECTION
+** OF THE APPLEIIASM LIBRARY. NOTE THAT ANOTHER
+** DEMO FILE EXISTS FOR OPERATIONS ON FULL STRINGS.
+*
+*``````````````````````````````*
+* TOKENIZED SUBSTRING RETRIEVE *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+** THE STOK MACRO RETRIEVES A SUBSTRING FROM A
+** LARGER STRING THAT IS FOUND BY A PRECEDING
+** TOKEN. THE ENTIRE STRING CONSISTS OF SUBSTRINGS
+** SEPARATED BY TOKENS (A SPACE, A COMMA, ETC.), AND
+** THE SUBSTRING IS RETRIEVED BY SPECIFYING THE TOKEN
+** NUMBER PRECEDING IT.
+*
+** NOTE THAT THERE IS CURRENTLY NO SAFETY MEASURE TO
+** PREVENT OVERFLOW HERE. TO BE SPECIFIC, IT IS
+** POSSIBLE TO ATTEMPT TO RETRIEVE A TOKEN SUBSTRING
+** THAT DOES NOT EXIST, SUCH AS A SEVENTH SUBSTRING
+** WHERE ONLY SIX EXIST. TO GUARD AGAINST THIS, THE
+** SCNT MACRO SHOULD BE USED TO ASCERTAIN THE NUMBER OF
+** TOKENS IN THE STRING (SEE BELOW).
+*
+** ADDITIONALLY, IT IS IMPORTANT TO KNOW THAT TOKEN
+** NUMBER ZERO IS COUNTED, MEANING THE TEXT BEFORE
+** THE FIRST OCCURENCE OF A TOKEN. IF A STRING HAS
+** SIX TOKENS IN IT, THEN, IT WILL TECHNICALLY HAVE
+** SEVEN SUBSTRINGS.
+*
+         JSR   ]HOME
+         _PRN  "TOKENIZED SUBSTRINGS",8D
+         _PRN  "====================",8D8D
+         STOK  #S7;#" ";#6
+         _AXLIT #RETLEN
+         JSR   _PS
+         _WAIT
+*
+*``````````````````````````````*
+* STRING TOKEN COUNTING        *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+** THE SCNT MACRO COUNTS THE NUMBER OF TOKENS,
+** OR THE NUMBER OF TIMES A GIVEN CHARACTER IS
+** PRESENTED IN A STRING. THIS IS MOSTLY USEFUL
+** IN CONJUNCTION WITH THE STOK MACRO, AS IT
+** PROVIDES THE NUMBER OF SUBSTRINGS AVAILABLE
+** TO BE RETRIEVED.
+*
+** NOTE THAT WHEN USED WITH THE STOK MACRO,
+** ONE SHOULD BE ADDED TO THE RESULT OF SCNT
+** TO FIND THE TOTAL NUMBER OF SUBSTRINGS THAT
+** ARE AVAILABLE. THIS IS DUE TO THE FACT THAT
+** THE STOK MACRO STARTS WITH A ZERO INDEX,
+** COUNTING THE TEXT BEFORE THE FIRST TOKEN AS
+** A TOKENIZED SUBSTRING AS WELL.
+*
+         JSR   ]HOME
+         _PRN  "STRING TOKEN COUNTING",8D
+         _PRN  "=====================",8D8D
+         SCNT  #S7;#" "
+         DUMP  #RETURN;#1
+         _WAIT
+*
+*``````````````````````````````*
+* SUBSTRING POSITION           *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+** THE SPOS MACRO FINDS THE POSITION OF A SUBSTRING
+** IN A GIVEN STRING AND RETURNS IT. NOTE THAT THIS
+** MACRO ONLY RETURNS THE POSITION OF THE FIRST
+** INSTANCE OF THE SUBSTRING, AND DOES NOT ACCOUNT
+** FOR REPETITIONS.
+*
+** NOTE THAT THIS MACRO USES A STARTING INDEX OF ONE
+** FOR A MORE INTUITIVE FEEL. WHEN USED IN CONJUNCTION
+** WITH ZERO-INDEXED MACROS, CARE SHOULD BE TAKEN TO
+** ADD OR SUBTRACT TO THIS VALUE ACCORDINGLY.
+*
+         JSR   ]HOME
+         _PRN  "SUBSTRING POSITION",8D
+         _PRN  "==================",8D8D
+         SPOS  #S1;"RING"
+         DUMP  #RETURN;#1
+         _WAIT
+*
+*``````````````````````````````*
+* SUBSTRING INSERTION          *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+** THE SINS MACRO INSERTS A GIVEN SUBSTRING INTO
+** ANOTHER GIVEN STRING AT THE PROVIDED INDEX. THE
+** NEW STRING IS PASSED BACK VIA RETURN, WITH ITS
+** LENGTH BYTE IN RETLEN.
+*
+         JSR   ]HOME
+         _PRN  "SUBSTRING INSERTION",8D
+         _PRN  "===================",8D8D
+         SINS  #S1;#S7;#10
+         _AXLIT #RETLEN
+         JSR   _PS
+         _WAIT
+*
+*``````````````````````````````*
+* SUBSTRING COPY               *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+** THE SCPY MACRO COPIES A SUBSTRING FROM A GIVEN
+** STRING AT AN INDEX AND LENGTH. THE RESULTING
+** SUBSTRING IS STORED IN RETURN, WITH ITS LENGTH
+** HELD IN RETLEN.
+*
+         JSR   ]HOME
+         _PRN  "SUBSTRING COPY",8D
+         _PRN  "==============",8D8D
+         SCPY  #S1;#5;#10
+         _AXLIT #RETLEN
+         JSR   _PS
+         _WAIT
+*
+*``````````````````````````````*
+* SUBSTRING DELETION           *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+** THE SDEL MACRO TAKES A STRING, AN INDEX AND A
+** SUBSTRING LENGTH AND DELETES THAT SUBSTRING
+** FROM THE LARGER STRING, PASSING BACK THE RESULTING
+** STRING IN RETURN WITH ITS LENGTH IN RETLEN.
+*
+         JSR   ]HOME
+         _PRN  "SUBSTRING DELETION",8D
+         _PRN  "==================",8D8D
+         SDEL  #S1;#5;#10
+         _AXLIT #RETLEN
+         JSR   _PS
+         _WAIT
+*
+         JSR   ]HOME
+         _PRN  " ",8D8D
+         _PRN  "FIN!",8D8D
+*
+         JMP   $3D0
+*
+** THE FOLLOWING SUBROUTINE IS A COPY OF THE STDIO
+** LIBRARY'S PRNSTR SUBROUTINE, WHICH IS USED TO
+** PRINT STRINGS WITH A PRECEDING LENGTH-BYTE. THIS
+** IS USED FOR SHOWING THE OUTPUT OF THE VARIOUS
+** STRING MACROS.
+*
+]STRLEN  HEX   0000
+]COUT1   EQU   $FDF0
+_PS
+         STA   ADDR1
+         STX   ADDR1+1
+         LDY   #0
+         LDA   (ADDR1),Y
+         STA   ]STRLEN
+:_LP
+         INY
+         LDA   (ADDR1),Y
+         JSR   ]COUT1
+         CPY   ]STRLEN
+         BNE   :_LP
+         LDA   ]STRLEN
+         RTS
+*
+S1       STR   "ONE RING TO RULE THEM ALL"
+S2       STR   " ONE RING TO FIND THEM "
+S3       STR   " ONE RING TO BRING THEM ALL"
+S4       STR   "AND IN THE DARKNESS BIND THEM "
+S5       STR   "this is a test? a test. a test! a test."
+S6       STR   "this is a test."
+S7       STR   "ZERO ONE TWO THREE FOUR FIVE SIX"
+*
+*``````````````````````````````*
+*        BOTTOM INCLUDES       *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+** BOTTOM INCLUDES
+*
+         PUT   MIN.LIB.REQUIRED.ASM
+*
+** INDIVIDUAL SUBROUTINE INCLUDES
+*
+** STRING SUBROUTINES
+*
+         PUT   MIN.SUB.SUBTOK.ASM
+         PUT   MIN.SUB.SUBCOPY.ASM
+         PUT   MIN.SUB.SUBDEL.ASM
+         PUT   MIN.SUB.SUBINS.ASM
+         PUT   MIN.SUB.SUBPOS.ASM
+         PUT   MIN.SUB.SUBCHARCNT.ASM

@@ -2,7 +2,7 @@
 * SUBCOPY       (NATHAN RIGGS) *
 *                              *
 * COPY A SUBSTRING FROM A      *
-* STRING AND STORE IN RETURN.  *
+* STRING.                      *
 *                              *
 * INPUT:                       *
 *                              *
@@ -10,17 +10,11 @@
 *  BPAR2 = SUBSTRING INDEX     *
 *  WPAR1 = SOURCE STRING ADDR  *
 *                              *
-* OUTPUT:                      *
+* DESTROY: NZCIDV              *
+*          ^^^  ^              *
 *                              *
-*  .A = SUBSTRING LENGTH       *
-*  RETURN = SUBSTRING          *
-*  RETLEN = SUBSTRING LENGTH   *
-*                              *
-* DESTROY: AXYNVBDIZCMS        *
-*          ^^^^^   ^^^         *
-*                              *
-* CYCLES: 46+                  *
-* SIZE: 27 BYTES               *
+* CYCLES: 47+                  *
+* SIZE: 25 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 ]SUBLEN  EQU   BPAR1      ; SUBSTRING LENGTH
@@ -28,20 +22,19 @@
 ]STR     EQU   WPAR1      ; SOURCE STRING
 *
 SUBCOPY
-*
-         LDY   ]SUBIND    ; STARTING COPY INDEX
-         LDA   ]SUBLEN    ; SUBSTRING LENGTH
-         STA   RETLEN     ; STORE SUBSTRING LENGTH IN RETLEN
-         LDX   #0
+         LDY   ]SUBIND    ; {3C2B} STARTING COPY INDEX
+         LDA   ]SUBLEN    ; {3C2B} SUBSTRING LENGTH
+         STA   RETLEN     ; {4C3B} STORE SUB LENGTH IN RETLEN
+         LDX   #0         ; {3C2B}
 :COPY
-         LDA   (]STR),Y   ; GET SUBSTRING CHARACTER
-         STA   RETURN,X   ; STORE CHAR IN RETURN
-         CPX   ]SUBLEN    ; IF .X COUNTER = SUBSTRING LENGTH
-         BEQ   :EXIT      ; THEN FINISHED WITH LOOP
-         INY              ; OTHERWISE, INCREMENT .Y
-         INX              ; AND INCREMENT .X
-         CLC              ; CLEAR CARRY FOR FORCED BRANCH
-         BCC   :COPY      ; LOOP
+         LDA   (]STR),Y   ; {5C2B} GET SUBSTRING CHARACTER
+         STA   RETURN,X   ; {5C2B} STORE CHAR IN RETURN
+         CPX   ]SUBLEN    ; {3C2B} IF .X COUNTER = SUBSTRING LENGTH
+         BEQ   :EXIT      ; {3C2B} THEN FINISHED WITH LOOP
+         INY              ; {2C1B} OTHERWISE, INCREMENT .Y
+         INX              ; {2C1B} AND INCREMENT .X
+         CLC              ; {2C1B} CLEAR CARRY FOR FORCED BRANCH
+         BCC   :COPY      ; {3C2B} LOOP
 :EXIT
-         LDA   ]SUBLEN    ; RETURN SUBSTRING LENGTH IN .A
-         RTS
+         LDA   ]SUBLEN    ; {3C2B} RETURN SUBSTRING LENGTH IN .A
+         RTS              ; {6C1B}

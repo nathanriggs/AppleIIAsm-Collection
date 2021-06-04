@@ -13,20 +13,14 @@
 *                              *
 * INPUT:                       *
 *                              *
-*  WPAR1 = 1ST STRING          *
+*  WPAR1 = 1ST STRING ADDRESS  *
 *  WPAR2 = 2ND STRING ADDRESS  *
 *                              *
-* OUTPUT:                      *
+* DESTROY: NZCIDV              *
+*          ^^^  ^              *
 *                              *
-*  .A = NEW STRING LENGTH      *
-*  RETURN = NEW STRING ADDRESS *
-*  RETLEN = NEW STRING LENGTH  *
-*                              *
-* DESTROY: AXYNVBDIZCMS        *
-*          ^^^^^   ^^^         *
-*                              *
-* CYCLES: 115+                 *
-* SIZE: 75 BYTES               *
+* CYCLES: 128+                 *
+* SIZE: 78 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 ]S1LEN   EQU   VARTAB+1   ; FIRST STRING LENGTH
@@ -37,49 +31,49 @@
 *
 STRCAT
 *
-         LDY   #0         ; CLEAR INDEX POINTER
-         LDA   (]STR1),Y  ; GET LENGTH OF 1ST STRING
-         STA   ]S1LEN     ; STORE IN 1ST STRING LENGTH
-         LDA   (]STR2),Y  ; GET LENGTH OF 2ND STRING
-         STA   ]S2LEN     ; STORE 2ND STRING LENGTH
+         LDY   #0         ; {3C2B} CLEAR INDEX POINTER
+         LDA   (]STR1),Y  ; {5C2B} GET LENGTH OF 1ST STRING
+         STA   ]S1LEN     ; {4C3B} STORE IN 1ST STRING LENGTH
+         LDA   (]STR2),Y  ; {5C2B} GET LENGTH OF 2ND STRING
+         STA   ]S2LEN     ; {4C3B} STORE 2ND STRING LENGTH
 *
 ** DETERMINE NUMBER OF CHAR
 *
-         LDA   ]S2LEN     ; GET 2ND STRING LENGTH
-         CLC              ; CLEAR CARRY
-         ADC   ]S1LEN     ; ADD TO LENGTH OF 1ST STRING
-         STA   RETLEN     ; SAVE SUM OF TWO LENGTHS
-         BCC   :DOCAT     ; NO OVERFLOW, JUST CONCATENATE
-         LDA   #255       ; OTHERWISE, 255 IS MAX
-         STA   RETLEN
+         LDA   ]S2LEN     ; {4C3B} GET 2ND STRING LENGTH
+         CLC              ; {2C1B} CLEAR CARRY
+         ADC   ]S1LEN     ; {4C3B} ADD TO LENGTH OF 1ST STRING
+         STA   RETLEN     ; {4C3B} SAVE SUM OF TWO LENGTHS
+         BCC   :DOCAT     ; {3C2B} NO OVERFLOW, JUST CONCATENATE
+         LDA   #255       ; {3C2B} OTHERWISE, 255 IS MAX
+         STA   RETLEN     ; {4C3B}
 *
 :DOCAT
 *
-         LDY   #0         ; OFFSET INDEX BY 1
+         LDY   #0         ; {4C3B} OFFSET INDEX BY 1
 :CAT1
-         INY
-         LDA   (]STR1),Y  ; LOAD 1ST STRING INDEXED CHAR
-         STA   RETLEN,Y   ; STORE IN RETURN AT SAME INDEX
-         CPY   ]S1LEN     ; IF .Y < 1ST STRING LENGTH
-         BNE   :CAT1      ; THEN LOOP UNTIL FALSE
+         INY              ; {2C1B}
+         LDA   (]STR1),Y  ; {5C2B} LOAD 1ST STRING INDEXED CHAR
+         STA   RETLEN,Y   ; {5C2B} STORE IN RETURN AT SAME INDEX
+         CPY   ]S1LEN     ; {4C3B} IF .Y < 1ST STRING LENGTH
+         BNE   :CAT1      ; {3C2B} THEN LOOP UNTIL FALSE
 *
-         TYA              ; TRANSFER COUNTER TO .A
-         CLC              ; CLEAR CARRY
-         ADC   #<RETLEN   ; ADD LOW BYTE OF RETLEN ADDRESS
-         STA   ]INDEX     ; STORE AS NEW ADDRESS LOW BYTE
-         LDA   #0         ; NOW ADJUST HIGH BYTE
-         ADC   #>RETLEN+1 ; OF NEW ADDRESS
-         STA   ]INDEX+1   ; AND STORE HIGH BYTE
-         CLC              ; RESET CARRY
-         LDY   #0
+         TYA              ; {2C1B} TRANSFER COUNTER TO .A
+         CLC              ; {2C1B} CLEAR CARRY
+         ADC   #<RETLEN   ; {4C3B} ADD LOW BYTE OF RETLEN ADDRESS
+         STA   ]INDEX     ; {4C3B} STORE AS NEW ADDRESS LOW BYTE
+         LDA   #0         ; {3C2B} NOW ADJUST HIGH BYTE
+         ADC   #>RETLEN+1 ; {4C3B} OF NEW ADDRESS
+         STA   ]INDEX+1   ; {4C3B} AND STORE HIGH BYTE
+         CLC              ; {2C1B} RESET CARRY
+         LDY   #0         ; {3C2B}
 *
 :CAT2
-         INY
-         LDA   (]STR2),Y  ; LOAD 2ND STRING INDEXED CHAR
-         STA   (]INDEX),Y ; STORE AT NEW ADDRESS
-         CPY   RETLEN     ; IF .Y < 2ND STRING LENGTH
-         BEQ   :EXIT
-         BNE   :CAT2      ; LOOP UNTIL FALSE
+         INY              ; {2C1B}
+         LDA   (]STR2),Y  ; {5C2B} LOAD 2ND STRING INDEXED CHAR
+         STA   (]INDEX),Y ; {5C2B} STORE AT NEW ADDRESS
+         CPY   RETLEN     ; {4C3B} IF .Y < 2ND STRING LENGTH
+         BEQ   :EXIT      ; {3C2B}
+         BNE   :CAT2      ; {3C2B} LOOP UNTIL FALSE
 :EXIT
-         LDA   RETLEN     ; RETURN NEW LENGTH IN .A
-         RTS
+         LDA   RETLEN     ; {4C3B} RETURN NEW LENGTH IN .A
+         RTS              ; {6C2B}

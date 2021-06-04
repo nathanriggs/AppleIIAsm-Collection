@@ -22,14 +22,10 @@
 *  WPAR1 = 1ST STRING ADDRESS  *
 *  WPAR2 = 2ND STRING ADDRESS  *
 *                              *
-* OUTPUT:                      *
+* DESTROY: NZCIDV              *
+*          ^^^  ^              *
 *                              *
-*  SEE DESCRIPTION             *
-*                              *
-* DESTROY: AXYNVBDIZCMS        *
-*          ^^^^^   ^^^         *
-*                              *
-* CYCLES: 61+                  *
+* CYCLES: 68+                  *
 * SIZE: 32 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
@@ -38,26 +34,26 @@
 *
 STRCMP
 *
-         LDY   #0         ; RESET .Y COUNTER
-         LDA   (]STR1),Y  ; GET LENGTH OF 1ST STRING
-         CMP   (]STR2),Y  ; IF STR1 LENGTH < STR2 LENGTH
-         BCC   :BEGCMP    ; THEN BEGIN COMPARISON; ELSE
-         LDA   (]STR2),Y  ; USE STR2 LENGTH INSTEAD
+         LDY   #0         ; {3C2B} RESET .Y COUNTER
+         LDA   (]STR1),Y  ; {5C2B} GET LENGTH OF 1ST STRING
+         CMP   (]STR2),Y  ; {5C2B} IF STR1 LENGTH < STR2 LENGTH
+         BCC   :BEGCMP    ; {3C2B} THEN BEGIN COMPARISON; ELSE
+         LDA   (]STR2),Y  ; {5C2B} USE STR2 LENGTH INSTEAD
 :BEGCMP
-         TAX              ; X IS LENGTH OF SHORTER STRING
-         BEQ   :TSTLEN    ; IF LENGTH IS 0, TEST LENGTH
-         LDY   #1         ; ELSE SET .Y TO FIRST CHAR OF STRINGS
+         TAX              ; {2C1B} X IS LENGTH OF SHORTER STRING
+         BEQ   :TSTLEN    ; {3C2B} IF LENGTH IS 0, TEST LENGTH
+         LDY   #1         ; {3C2B} ELSE SET .Y TO 1ST CHAR
 :CMPLP
-         LDA   (]STR1),Y  ; GET INDEXED CHAR OF 1ST STRING
-         CMP   (]STR2),Y  ; COMPARE TO INDEXED CHAR OF 2ND
-         BNE   :EXIT      ; EXIT IF THE CHARS ARE NOT EQUAL
+         LDA   (]STR1),Y  ; {5C2B} GET INDEXED CHAR OF 1ST STRING
+         CMP   (]STR2),Y  ; {5C2B} COMPARE TO INDEXED CHAR OF 2ND
+         BNE   :EXIT      ; {3C2B} EXIT IF THE CHARS ARE NOT EQUAL
                           ; Z,C WILL BE PROPERLY SET
-         INY              ; INCREASE CHARACTER INDEX
-         DEX              ; DECREMENT COUNTER
-         BNE   :CMPLP     ; CONTINUE UNTIL ALL CHARS CHECKED
+         INY              ; {2C1B} INCREASE CHARACTER INDEX
+         DEX              ; {2C1B} DECREMENT COUNTER
+         BNE   :CMPLP     ; {3C2B} CONT UNTIL ALL CHARS CHECKED
 :TSTLEN
-         LDY   #0         ; NOW COMPARE LENGTHS
-         LDA   (]STR1),Y  ; GET LENGTH OF 1ST STRING
-         CMP   (]STR2),Y  ; SET OR CLEAR THE FLAGS
+         LDY   #0         ; {3C2B} NOW COMPARE LENGTHS
+         LDA   (]STR1),Y  ; {5C2B} GET LENGTH OF 1ST STRING
+         CMP   (]STR2),Y  ; {5C2B} SET OR CLEAR THE FLAGS
 :EXIT
-         RTS
+         RTS              ; {6C1B}

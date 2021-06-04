@@ -10,7 +10,7 @@
 * CONTACT:   NATHAN.RIGGS@     *
 *            OUTLOOK.COM       *
 *                              *
-* DATE:      07-JUL-2019       *
+* DATE:      11-MAR-2021       *
 * ASSEMBLER: MERLIN 8 PRO      *
 * OS:        DOS 3.3           *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
@@ -28,364 +28,649 @@
 *  TOP INCLUDES (HOOKS,MACROS) *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-         PUT   MIN.HEAD.REQUIRED
-         USE   MIN.MAC.REQUIRED
-         USE   MIN.MAC.STDIO
-         PUT   MIN.HOOKS.STDIO
+         PUT   MIN.HEAD.REQUIRED.ASM
+         USE   MIN.MAC.REQUIRED.ASM
+*
+         PUT   MIN.HEAD.STDIO.ASM
+*
+         USE   MIN.MAC.COUT.STDOUT.ASM
+         USE   MIN.MAC.STDIN.ASM
+         USE   MIN.MAC.SCRMEM.STDIO.ASM
+         USE   MIN.MAC.MISC.STDIO.ASM
+*
+]HOME2   EQU   $FC58
 *
 *``````````````````````````````*
 *      PROGRAM MAIN BODY       *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-         JSR   HOME       ; CLEAR SCREEN
+         JSR   ]HOME2     ; CLEAR SCREEN
 *
-         PRN   "STDIO DEMO",8D
-         PRN   "----------",8D8D
-         PRN   "WELCOME! THIS IS A DEMO FOR",8D
-         PRN   "THE STDIO LIBRARY MACROS AND ",8D
-         PRN   "SUBROUTINES.",8D8D
-         WAIT
-         PRN   "OUR FIRST OBVIOUS MACRO USED",8D
-         PRN   "IS PRN. THIS MACRO CAN PRINT A",8D
-         PRN   "GIVEN STRING, OR PRINT THE STRING",8D
-         PRN   "AT A GIVEN ADDRESS THAT IS REFERENCED",8D
-         PRN   "EITHER DIRECTLY (#) OR INDIRECTLY.",8D
-         PRN   "THEREFORE: ",8D8D
-         WAIT
-         PRN   "   PRN 'HELLO!'",8D8D
-         PRN   "PRINTS HELLO, WHEREAS",8D8D
-         PRN   "   PRN #STRING1",8D8D
-         PRN   "PRINTS THE STRING LOCATED AT",8D
-         PRN   "THAT EXACT ADDRESS."
-         WAIT
-         JSR   HOME
-         PRN   "MEANWHILE,",8D8D
-         PRN   "   PRN STRING2",8D8D
-         PRN   "PRINTS THE STRING AT THE ADDRESS PASSED",8D
-         PRN   "VIA THAT MEMORY LOCATION.",8D8D
-         WAIT
-         PRN   "IT IS IMPORTANT TO NOTE THAT",8D
-         PRN   "WHENEVER THERE IS AN OPTION FOR",8D
-         PRN   "EITHER A STRING OR A MEMORY ADDRESS,",8D
-         PRN   "THIS IS HOW ALL SUBROUTINES WORK IN",8D
-         PRN   "THIS LIBRARY. IN OTHER DEMOS, IT MAY",8D
-         PRN   "BE ASSUMED THAT THE READER KNOWS THIS."
-         WAIT
-         JSR   HOME
-         PRN   "OUR NEXT SUBROUTINE NEEDING ",8D
-         PRN   "OUR ATTENTION IS CALLED BY THE",8D
-         PRN   "COL40 MACRO. THIS FORCES USING",8D
-         PRN   "40-COLUMN MODE, AND IS ESPECIALLY",8D
-         PRN   "NECESSARY FOR ROUTINES THAT PRINT",8D
-         PRN   "DIRECTLY TO SCREEN MEMORY INSTEAD",8D
-         PRN   "OF USING COUT ROUTINES. SO,"8D8D
-         PRN   "   COL40",8D8D
-         PRN   "WILL PUT US IN 40-COLUMN MODE",8D
-         PRN   "AFTER HITTING A KEY NOW."
-         WAIT
-         COL40
-         JSR   HOME
-         PRN   "YOU CAN ALSO FORCE 80-COLUMN MODE",8D
-         PRN   "WITH THE COL80 MACRO, BUT BE",8D
-         PRN   "AWARE THAT TRECF,TPUT,THLIN",8D
-         PRN   "AND TVLIN WILL ONLY WORK",8D
-         PRN   "AS INTENDED IN 40 COLUMNS.",8D8D
-         PRN   "LET'S LOOK AT THESE MACROS NOW."
-         WAIT
-         JSR   HOME
-         PRN   "ASCII DRAWING",8D
-         PRN   "=============",8D8D
-         PRN   "AT TIMES, YOU MAY NEED TO ",8D
-         PRN   "PUT A BLOCK OF TEXT THAT CONSISTS",8D
-         PRN   "OF A SINGLE CHARACTER AS QUICKLY",8D
-         PRN   "AS POSSIBLE. CURRENTLY, THERE ARE",8D
-         PRN   "FOUR MACROS DEDICATED TO JUST ",8D
-         PRN   "THAT: THLIN, TVLIN, TRECF, AND TPUT.",8D8D
-         WAIT
-         PRN   "THE SIMPLEST OF THESE IS TPUT:",8D
-         PRN   "IT OUTPUTS A SINGLE CHARACTER AT",8D
-         PRN   "THE GIVEN XY COORDINATES. SO,",8D8D
-         PRN   "   TPUT #38;#20;#'$'",8D8D
-         PRN   "WILL PLACE THE '$' CHARACTER",8D
-         PRN   "AT THE X-POSITION 38 AND Y-POSITION",8D
-         PRN   "20. LET'S TRY THAT NOW...",8D8D
-         WAIT
-         TPUT  #38;#20;#"$"
-         PRN   "SEE? RIGHT OVER HERE -->"
-         WAIT
-         JSR   HOME
-         PRN   "NOT THAT THE CURSOR'S POSITION",8D
-         PRN   "IS NOT DISTURBED BY TPUT; THIS",8D
-         PRN   "IS DUE TO THE FACT THAT THE ROUTINE",8D
-         PRN   "BYPASSES COUT AND INSTEAD DIRECTLY",8D
-         PRN   "POKES THE CHARACTER INTO SCREEN MEMORY.",8D
-         PRN   "THIS IS PRIMARILY FOR SPEED, BUT AGAIN",8D
-         PRN   "KEEP IN MIND THAT THIS DOES NOT WORK",8D
-         PRN   "CORRECTLY IN 80-COLUMN MODE.",8D8D
-         WAIT
-         PRN   "THLIN, TVLIN, AND TRECF OPERATE IN",8D
-         PRN   "THE SAME WAY. LET'S LOOK AT THOSE NEXT."
-         TPUT  #38;#12;#"K"
-         TPUT  #38;#13;#"E"
-         TPUT  #38;#14;#"E"
-         TPUT  #38;#15;#"P"
-         TPUT  #38;#17;#"G"
-         TPUT  #38;#18;#"O"
-         TPUT  #38;#19;#"I"
-         TPUT  #38;#20;#"N"
-         TPUT  #38;#21;#"G"
-         WAIT
-         JSR   HOME
-         PRN   "THLIN AND TVLIN BOTH CREATE LINES",8D
-         PRN   "FROM A SINGLE CHARACTER, HORIZONTALLY",8D
-         PRN   "AND VERTICALLY RESPECTIVELY. THUS",8D8D
-         PRN   "   THLIN #25;#35;#20;#'X'",8D8D
-         WAIT
-         THLIN #25;#35;#20;#"X"
-         PRN   "CREATES A HORIZONTAL LINE FROM THE",8D
-         PRN   "X-POSITION 25 TO 35 AT THE Y-POSITION",8D
-         PRN   "OF 20 WITH THE CHARACTER 'X'. LIKEWISE,",8D8D
-         PRN   "   TVLIN #10;#20;#35;#'Y'",8D8D
-         WAIT
-         TVLIN #10;#20;#35;#"Y"
-         PRN   "CREATES A VERTICAL LINE FROM Y-POSITION",8D
-         PRN   "10 TO 20 AT THE X-POSITION 35."
-         WAIT
-         JSR   HOME
-         PRN   "NOTE THAT THE LAST POSITION GIVEN",8D
-         PRN   "IS NOT ACTUALLY FILLED. THIS IS",8D
-         PRN   "TO KEEP PLACEMENT MORE INTUITIVE.",8D
-         PRN   "HOWEVER, WHEN TRYING TO ARRANGE LINES",8D
-         PRN   "CONNECTED TOGETHER, YOU WILL HAVE TO",8D
-         PRN   "ADJUST YOUR NUMBERS ACCORDINGLY. TO",8D
-         PRN   "CREATE A BOX, FOR INSTANCE, YOU WOULD",8D
-         PRN   "NEED TO WRITE:",8D8D
-         PRN   "   THLIN #25;#35;#20;#'X'",8D
-         PRN   "   TVLIN #10;#20;#34;#'X'",8D
-         PRN   "   TVLIN #10;#20;#25;#'X'",8D
-         PRN   "   THLIN #25;#35;#10;#'X'",8D8D
-         WAIT
-         THLIN #25;#35;#20;#"X"
-         TVLIN #10;#20;#34;#"X"
-         TVLIN #10;#20;#25;#"X"
-         THLIN #25;#35;#10;#"X"
-         PRN   "YAY!"
+*``````````````````````````````*
+* OUTPUT MACRO EXAMPLES        *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-********************************
+** THE STDIO LIBRARY CONTAINS A NUMBER OF
+** MACROS AND SUBROUTINES FOR OUTPUTTING
+** CHARACTERS TO THE 40 COLUMN SCREEN.
+** THESE ARE:
 *
-         WAIT
-         JSR   HOME
-         PRN   "THE TLINE MACRO DRAWS A LINE FROM",8D
-         PRN   "X1,Y1 TO X2,Y2 WITH A FILL CHARACTER.",8D
-         PRN   "USE TVLIN OR THLINE IF YOU ARE",8D
-         PRN   "DRAWING HORIZONTAL OR VERTICAL LINES,",8D
-         PRN   "AS THESE USE FEWER CYCLES.",8D8D
-         PRN   "  TLINE #20;#12;#30;#22;#'*'",8D
-         PRN   "  TLINE #30;#22;#10;#15;#'*'",8D
-         PRN   "  TLINE #10;#15;#30;#15;'*'",8D
-         PRN   "  TLINE #30;#15;#10;#22;#'*'",8D
-         PRN   "  TLINE #10;#22;#20;#12;#'*'",8D8D
-         PRN   "WILL OUTPUT:"
-         WAIT
-         TLINE #20;#12;#30;#22;#"*"
-         TLINE #30;#22;#10;#15;#"*"
-         TLINE #10;#15;#30;#15;#"*"
-         TLINE #30;#15;#10;#22;#"*"
-         TLINE #10;#22;#20;#12;#"*"
-         WAIT
-         JSR   HOME
-         PRN   "YOU CAN ALSO CREATE CIRCLES WITH",8D
-         PRN   "THE TCIRC MACRO. IN THE PARAMS,",8D
-         PRN   "YOU SPECIFY THE X POSITION OF THE",8D
-         PRN   "CENTER, THE Y POSITION OF IT, ",8D
-         PRN   " THE CIRCLE'S RADIUS, AND THE ",8D
-         PRN   "FILL CHAR OF THE CIRCLE'S OUTLINE.",8D
-         PRN   "THUS:",8D8D
-         PRN   "TCIRC #30;#14;#7;#'*'",8D
-         PRN   "TCIRC #30;#14;#6;#'.'",8D
-         PRN   "TCIRC #30;#14;#5;#'#'",8D
-         PRN   "TCIRC #30;#14;#4;#':'",8D
-         PRN   "TCIRC #30;#14;#3;#'@'",8D
-         PRN   "TCIRC #30;#14;#2;#'+'",8D8D
-         PRN   "WILL PRODUCE:"
-         WAIT
-         TCIRC #30;#14;#7;#"*"
-         TCIRC #30;#14;#6;#"."
-         TCIRC #30;#14;#5;#"#"
-         TCIRC #30;#14;#4;#":"
-         TCIRC #30;#14;#3;#"@"
-         TCIRC #30;#14;#2;#"+"
-         WAIT
-         JSR   HOME
-         PRN   "THE LAST OF THESE KIND OF MACROS",8D
-         PRN   "IS TRECF, WHICH CREATES A FILLED",8D
-         PRN   "BOX. THIS CAN BE ESPECIALLY USEFUL",8D
-         PRN   "FOR CREATING A SEMBLANCE OF 'WINDOWS'",8D
-         PRN   "ON THE TEXT SCREEN. SO:",8D8D
-         PRN   "   TRECF #10;#10;#20;#20;#'#'",8D8D
-         PRN   "WILL RESULT IN:",8D8D
-         WAIT
-         TRECF #10;#10;#20;#20;#"#"
-         PRN   "W00T!"
-         WAIT
-         JSR   HOME
-         PRN   "CURSOR POSITIONING",8D
-         PRN   "==================",8D8D
-         PRN   "THE REST OF THESE ROUTINES",8D
-         PRN   "USE COUT1 FOUR CONVENIENCE AND",8D
-         PRN   "SAVING A FEW BYTES HERE AND THERE.",8D
-         PRN   "THIS MEANS, AMONG OTHER THINGS, THAT",8D
-         PRN   "THE SYSTEM MONITOR KEEPS TRACK",8D
-         PRN   "OF OUR CURSOR POSITION, AND WE CAN",8D
-         PRN   "CALL ITS ROUTINES TO ALTER SAID",8D
-         PRN   "POSITION. THIS IS ACHIEVED WITH THE",8D
-         PRN   "FOLLOWING MACROS, WHICH WE WILL EXPLORE",8D
-         PRN   "NEXT:",8D8D
-         PRN   "   SETCX   SETCY",8D
-         PRN   "   SCPOS   RCPOS",8D
-         PRN   "   CURF    CURB",8D
-         PRN   "   CURU    CURD"
-         WAIT
-         JSR   HOME
-         PRN   "SETCX AND SETCY SIMPLY SET THE X",8D
-         PRN   "AND Y POSITIONS OF THE CURSOR,",8D
-         PRN   "RESPECTIVELY. SO:",8D8D
-         PRN   "   SETCX #20",8D8D
-         WAIT
-         SETCX #20
-         PRN   "SETS THE CURSOR'S",8D
-         PRN   "X-POSITION TO 20, WHEREAS",8D8D
-         PRN   "   SETCY #20",8D8D
-         WAIT
-         SETCY #20
-         PRN   "SET'S THE Y-POSITION TO 20."
-         WAIT
-         JSR   HOME
-         PRN   "YOU CAN SET THESE COORDINATES",8D
-         PRN   "AT ONCE WITH THE SCPOS MACRO. SO:",8D8D
-         PRN   "   SCPOS #8;#10"
-         WAIT
-         SCPOS #8;#10
-         PRN   "SETS THE CURSOR AT X POSITION",8D
-         PRN   "OF 8 AND A Y POSITION OF 10.",8D8D
-         WAIT
-         PRN   "YOU CAN ALSO READ THE CHARACTER",8D
-         PRN   "AT A GIVEN POSITION WITH THE ",8D
-         PRN   "RCPOS MACRO. THUS,",8D8D
-         PRN   "   RCPOS #8;#10 "
-         WAIT
-         PRN   "RETURNS: "
-         RCPOS #8;#10
-         JSR   COUT1
-         WAIT
-         JSR   HOME
-         PRN   "THE LAST OF THE CURSOR POSITIONING",8D
-         PRN   "MACROS ARE CURF, CURB, CURD AND CURU.",8D
-         PRN   "THESE ALL MOVE THE CURSOR RELATIVE",8D
-         PRN   "TO ITS CURRENT POSITION. CURF MOVES",8D
-         PRN   "IT FORWARD BY THE SPECIFIED AMOUNT,",8D
-         PRN   "CURB MOVES BACKWARDS, CURD MOVES",8D
-         PRN   "DOWN AND CURU MOVES UP. THUS:",8D8D
-         PRN   "   CURF #5 ",8D8D
-         PRN   "MOVES THE CURSOR "
-         WAIT
-         CURF  #5
-         PRN   "FORWARD BY FIVE.",8D8D
-         PRN   "THE OTHER MACROS USE THE SAME",8D
-         PRN   "SYNTAX."
-         WAIT
-         JSR   HOME
-         PRN   "MOUSETEXT",8D
-         PRN   "=========",8D8D
-         PRN   "ON CAPABLE SYSTEMS, MOUSETEXT",8D
-         PRN   "CAN BE TURNED ON WITH THE",8D
-         PRN   "MTXT1 MACRO AND TURNED OFF WITH",8D
-         PRN   "THE MTXT0 MACRO. SINCE THIS",8D
-         PRN   "WON'T HAVE A DEMO OF IT HERE."
-         WAIT
-         JSR   HOME
-         PRN   "INPUT MACROS",8D
-         PRN   "============",8D8D
-         PRN   "CURRENTLY, THIS STDIO LIBRARY",8D
-         PRN   "CONTAINS FIVE MACROS FOR USER",8D
-         PRN   "INPUT. THEY ARE AS FOLLOWS:",8D8D
-         PRN   "   INP   STRING INPUT",8D
-         PRN   "   GKEY  CHARACTER INPUT",8D
-         PRN   "   PDL   PADDLE INPUT",8D
-         PRN   "   PBX   PADDLE BUTTON INPUT",8D
-         PRN   "   WAIT  CHARACTER INPUT, NO MONITOR"
-         WAIT
-         JSR   HOME
-         PRN   "WE HAVE ALREADY MADE SUBSTANTIAL",8D
-         PRN   "USE OF THE WAIT MACRO--THAT'S ",8D
-         PRN   "WHAT IS CALLED EVERY TIME THIS",8D
-         PRN   "DEMO PAUSES. ONCE A KEY IS PRESSED,",8D
-         PRN   "THE ASCII CODE FOR IT IS STORED",8D
-         PRN   "IN THE .A REGISTER. THIS MACRO",8D
-         PRN   "ACCEPTS NO PARAMETERS.",8D8D
-         PRN   "A SPECIAL FEATURE OF THE WAIT",8D
-         PRN   "MACRO IS THAT IT DOES NOT USE THE",8D
-         PRN   "TYPICAL MONITOR ROUTINES FOR INPUT,",8D
-         PRN   "AND READS THE KEYBOARD DIRECTLY,",8D
-         PRN   "ALLOWING US TO NOT HAVE A CURSOR ON",8D
-         PRN   "THE SCREEN, AMONG OTHER BENEFITS.",8D
-         PRN   "THIS IS IN CONTRAST TO GKEY, WHICH",8D
-         PRN   "USES THE MONITOR ROUTINE TO ACHIEVE",8D
-         PRN   "THE SAME RESULT: "
+** - CPUT  : PUT CHARACTER INTO SCREEN MEMORY
+** - CURB  : MOVE COUT CURSOR BACKWARDS
+** - CURD  : MOVE COUT CURSOR DOWN
+** - CURF  : MOVE COUT CURSOR FORWARDS
+** - CURU  : MOVE COUT CURSOR UP
+** - PRN   : PRINT A STRING OR TEXT LITERAL
+** - SCPOS : SET CURSOR POSITION
+** - SETCX : SET CURSOR X POSITION
+** - SETCY : SET CURSOR Y POSITION
+** - SPRN  : PRINT A PRECEDING LENGTH BYTE STRING
+** - SPUT  : PUT STRING INTO SCREEN MEMORY
+** - TCIRC : PUT TEXT CIRCLE INTO SCREEN MEMORY
+** - TCLR  : FILL THE SCREEN MEMORY
+** - TCTR  : CALCULATE CENTER POSITION
+** - THLIN : PUT HORIZONTAL TEXT LINE TO SCREEN MEMORY
+** - TMORE : WORD-WRAP AND PAUSE SCROLLING OF NULL-TERM STRING
+** - TREC  : PUT UNFILLED RECTANGLE INTO SCREEN MEMORY
+** - TRECF : PUT FILLED RECTANGLE INTO SCREEN MEMORY
+** - TLINE : PLOT DIAGONAL LINE TO SCREEN MEMORY
+** - TVLIN : PLOT VERTICAL LINE TO SCREEN MEMORY
+*
+*``````````````````````````````*
+* CPUT MACRO                   *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+** THE CPUT MACRO PLACES A CHARACTER PROVIDED
+** IN THE PARAMETERS INTO SCREEN MEMORY,
+** CALCULATING THE MEMORY ADDRESS IN REAL-TIME.
+** THIS IS SIGNIFICANTLY FASTER THAN USING COUT
+** SUBROUTINES, BUT THE OBVIOUS DOWNSIDE IS
+** THAT COUT SUBROUTINES WILL NOT PLAY NICE
+** WITH CPUT.
+*
+** USAGE:
+*
+         JSR   ]HOME2     ; FILL SCREEN NOT COVERED YET
+         _PRN  "CPUT MACRO",8D
+         _PRN  "==========",8D8D
+         CPUT  #10;#10;#"C"
+         CPUT  #11;#11;#"P"
+         CPUT  #12;#12;#"U"
+         CPUT  #13;#11;#"T"
+         CPUT  #16;#10;#"W"
+         CPUT  #17;#11;#"O"
+         CPUT  #18;#12;#"O"
+         CPUT  #19;#11;#"T"
+         CPUT  #20;#10;#"!"
+         _WAIT
+*
+*``````````````````````````````*
+* CURB MACRO                   *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+** THE CURB MACRO MOVES THE COUT CURSOR
+** BACKWARDS BY THE GIVEN NUMBER OF SPACES.
+*
+** USAGE:
+*
+         JSR   ]HOME2
+         _PRN  "CURB MACRO",8D
+         _PRN  "==========",8D8D
+         _PRN  "0123456789"
+         _WAIT
+         CURB  #3
+         _PRN  "--",8D
+         _WAIT
+*
+*``````````````````````````````*
+* CURD MACRO                   *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+** THE CURD MACRO MOVES THE COUT CURSOR
+** DOWNWARDS BY THE GIVEN NUMBER OF SPACES.
+*
+** USAGE:
+*
+         JSR   ]HOME2
+         _PRN  "CURD MACRO",8D
+         _PRN  "==========",8D8D
+         _PRN  "HA"
+         CURD  #2
+         _PRN  "HAA"
+         CURD  #3
+         _PRN  "HAAAA"
+         CURD  #4
+         _PRN  "HAAAAAAAA!"
+         _WAIT
+*
+*``````````````````````````````*
+* CURF                         *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+** THE CURF MACRO MOVES THE COUT CURSOR
+** FORWARD BY THE NUMBER OF GIVEN SPACES.
+*
+** USAGE:
+*
+         JSR   ]HOME2
+         _PRN  "CURF MACRO",8D
+         _PRN  "==========",8D8D
+         _PRN  " ",8D8D8D
+         _PRN  "HEEEEEE"
+         CURF  #3
+         _PRN  "HEEEE"
+         CURF  #2
+         _PRN  "HEE"
+         CURF  #1
+         _PRN  "HE!",8D8D
+         _WAIT
+*
+*``````````````````````````````*
+* CURU                         *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+** THE CURU MACRO MOVES THE COUT CURSOR
+** UP THE NUMBER OF GIVEN SPACES.
+*
+** USAGE:
+*
+         JSR   ]HOME2
+         _PRN  "CURU MACRO",8D
+         _PRN  "==========",8D8D8D8D8D8D8D8D8D8D8D8D8D8D
+         _PRN  "HO"
+         CURU  #2
+         _PRN  "HO HO"
+         CURU  #3
+         _PRN  "HOOO HO HO"
+         CURU  #4
+         _PRN  "HOOOOO!"
+         _WAIT
+*
+*``````````````````````````````*
+* PRN                          *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+** THE PRN MACRO PRINTS A LITERAL STRING
+** TO THE CURSOR POSITION, OR PRINTS A
+** NULL-TERMINATED STRING AT A GIVEN ADDRESS.
+** NOTE THAT A SEPARATE MACRO, SPRN, IS USED
+** FOR PRINTING PRECEDING LENGTH-BYTE STRINGS.
+*
+** USAGE:
+*
+         JSR   ]HOME2
+         PRN   "PRN MACRO",8D
+         PRN   #ESGN
+         PRN   " ",8D8D8D8D8D8D
+         PRN   #MSG1
+         _WAIT
+*
+*``````````````````````````````*
+* SCPOS                        *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+** THE SCPOS MACRO POSITIONS THE COUT CURSOR
+** AT THE GIVEN X,Y COORDINATES.
+*
+** USAGE:
+*
+         JSR   ]HOME2
+         PRN   "SCPOS MACRO",8D
+         PRN   "==========="
+         SCPOS #15;#8
+         PRN   "NEW CURSOR POSITION"
+         _WAIT
+*
+*``````````````````````````````*
+* SETCX                        *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+** THE SETCX MACRO SETS THE X POSITION
+** OF THE CURSOR TO A GIVEN VALUE.
+*
+** USAGE:
+*
+         JSR   ]HOME2
+         PRN   "SETCX MACRO",8D
+         PRN   "==========="
+         PRN   " ",8D8D8D8D
+         SETCX #10
+         PRN   "X POSITION HERE!"
+         _WAIT
+*
+*``````````````````````````````*
+* SETCY                        *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+** THE SETCY MACRO SETS THE Y-POSITION
+** OF THE CURSOR TO A GIVEN VALUE.
+*
+** USAGE:
+*
+         JSR   ]HOME2
+         PRN   "SETCY MACRO",8D
+         PRN   "==========="
+         SETCY #10
+         PRN   "10 LINE DOWN FROM TOP!"
+         _WAIT
+*
+*``````````````````````````````*
+* SPRN                         *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+** THE SPRN MACRO PRINTS A REGULAR STRING
+** THAT HAS A PRECEDING LENGTH-BYTE TO
+** COUT. NOTE THAT THIS ONLY COVERS STRINGS
+** LESS THAN 256 BYTES LONG.
+*
+** USAGE:
+*
+         JSR   ]HOME2
+         PRN   "SPRN MACRO",8D
+         PRN   "==========",8D8D8D
+         SPRN  #STR1
+         _WAIT
+*
+*``````````````````````````````*
+* SPUT                         *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+** THE SPUT MACRO DIRECTLY PLOTS A STRING OF
+** CHARACTERS TO THE SCREEN MEMORY. NOTE THAT
+** THERE IS NO ERROR HANDLING, SO CARE MUST BE
+** TAKEN TO NOT EXCEED THE SCREEN BOUNDARIES.
+** THIS DOES NOT INTERACT WITH COUT.
+*
+** USAGE:
+*
+*
+         JSR   ]HOME2
+         PRN   "SPUT MACRO",8D
+         PRN   "==========",8D8D
+         SPUT  #10;#10;#STR1
+         _WAIT
+*
+*``````````````````````````````*
+* TCIRC                        *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+** THE TCIRC MACRO DRAWS A CIRCLE WITH
+** THE FILL CHARACTER SPECIFIED ONTO THE
+** SCREEN MEMORY. THIS MACRO PLOTS DIRECTLY
+** TO MEMORY, AND THEREFORE IS NOT SUBJECT TO
+** THE WHIMS OF COUT.
+*
+** USAGE:
+*
+         JSR   ]HOME2
+         PRN   "TCIRC MACRO",8D
+         PRN   "===========",8D8D
+         TCIRC #19;#10;#9;#"X"
+         TCIRC #19;#10;#7;#"+"
+         TCIRC #19;#10;#4;#"-"
+         TCIRC #19;#10;#2;#"^"
+         TCIRC #19;#10;#1;#"."
+         _WAIT
+*
+*``````````````````````````````*
+* TCLR                         *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+** THE TCLR MACRO FILLS THE SCREEN MEMORY
+** WITH A GIVEN CHARACTER VALUE. THE DATA
+** STORED IN THE "SCREEN HOLES" IS KEPT
+** INTACT.
+*
+** USAGE:
+*
+         JSR   ]HOME2
+         PRN   "TCLR MACRO",8D
+         PRN   "==========",8D
+         _WAIT
+         TCLR  #"@"
+         _WAIT
+         TCLR  #"%"
+         _WAIT
+         TCLR  #"$"
+         _WAIT
+         TCLR  #"&"
+         _WAIT
+         TCLR  #"!"
+         _WAIT
+         TCLR  #":"
+         _WAIT
+         TCLR  #"'"
+         _WAIT
+         TCLR  #"`"
+         _WAIT
+         TCLR  #","
+         _WAIT
+         TCLR  #"."
+         _WAIT
+*
+*``````````````````````````````*
+* TCTR                         *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+** THE TCTR MACRO CALCULATES THE X POSITION
+** OF A STRING IN RELATION TO THE AVAILABLE
+** LINE LENGTH TO CENTER THE STRING ON THE
+** LINE. THE X POSITION IS PASSED BACK VIA
+** THE [RETURN] LOCATION.
+*
+** USAGE:
+*
+         JSR   ]HOME2
+         PRN   "TCTR MACRO",8D
+         PRN   "==========",8D8D
+         SETCY #12
+         TCTR  CTRSTR;#40
+         SETCX RETURN
+         SPRN  #CTRSTR
+         _WAIT
+*
+*``````````````````````````````*
+* THLIN                        *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+** THE THLIN MACRO DRAWS A HORIZONTAL LINE
+** ON TO SCREEN MEMORY WITH THE GIVEN
+** CHARACTER. THIS DOES NOT INTERACT WITH
+** COUT.
+*
+** USAGE:
+*
+         JSR   ]HOME2
+         PRN   "THLIN MACRO",8D
+         PRN   "===========",8D8D
+         THLIN #5;#35;#6;#"@"
+         THLIN #5;#35;#8;#"#"
+         THLIN #5;#35;#10;#"$"
+         THLIN #5;#35;#12;#"%"
+         THLIN #5;#35;#14;#":"
+         _WAIT
+*
+*``````````````````````````````*
+* TMORE                        *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+** THE TMORE MACRO SCROLLS A ZERO-TERMINATING STRING
+** ON THE SCREEN, WORD-WRAPPING EACH LINE AS IT GOES.
+** THE FIRST PARAMETER IS THE STRING ADDRESS, OR AN
+** INDIRECT ADDRESS. THE SECOND PARAMETER IS THE
+** DESIRED MAXIMUM LINE LENGTH, AND THE THIRD PARAMETER
+** IS THE NUMBER OF LINES TO PRINT BEFORE PAUSING
+** THE SCROLL UNTIL A KEY IS PRESSED.
+*
+** IF THE THIRD PARAMETER (SCROLL) IS #0, THEN SCROLLING
+** IS PAUSED ANY TIME A RETURN CHARACTER IS FOUND (8D).
+** YOU CAN THEN HAVE IT SCROLL A PARAGRAPH AT A TIME BY
+** HAVING A LINE WITH A SPACE FOLLOWED BY #$8D.
+*
+** USAGE:
+*
+         JSR   ]HOME2
+         TMORE #LONGSTR;#39;#15
+         _WAIT
+*
+*``````````````````````````````*
+* TREC                         *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+** THE TREC MACRO CREATES A RECTANGULAR
+** BORDER IN SCREEN MEMORY, INDEPENDENT OF
+** THE STATE OF COUT. NOTE THAT THIS DOES
+** NOT FILL IN THE EMPTY SPACE INSIDE OF THE
+** RECTANGULAR BORDER.
+*
+** USAGE:
+*
+         JSR   ]HOME2
+         PRN   "TREC MACRO",8D
+         PRN   "==========",8D8D
+         TREC  #5;#6;#35;#17;#"@"
+         TREC  #7;#8;#33;#15;#"#"
+         _WAIT
+*
+*``````````````````````````````*
+* TRECF                        *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+** THE TRECF MACRO WRITES A FILLED
+** RECTANGLE TO THE SCREEN MEMORY SPACE.
+** THIS DOES NOT INTERACT WITH COUT.
+*
+** USAGE:
+*
+         JSR   ]HOME2
+         PRN   "TRECF MACRO",8D
+         PRN   "===========",8D8D
+         TRECF #5;#5;#14;#14;#"+"
+         TRECF #16;#5;#25;#14;#":"
+         _WAIT
+*
+*``````````````````````````````*
+* TLINE                        *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+** THE TLINE MACRO CREATES A DIAGONAL
+** LINE STARTING AT AN ORIGIN X,Y
+** POSITION TO A DESTINATION X,Y COORDINATE.
+** THIS PRINTS DIRECTLY TO SCREEN MEMORY,
+** AND DOES NOT INTERACT WITH COUT.
+*
+** USAGE:
+*
+         JSR   ]HOME2
+         PRN   "TLINE MACRO",8D
+         PRN   "===========",8D8D
+         TLINE #5;#5;#15;#10;#"@"
+         TLINE #5;#10;#15;#5;#"#"
+         _WAIT
+*
+*``````````````````````````````*
+* TVLIN                        *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+** THE TVLIN MACRO CREATES A VERTICAL LINE
+** IN SCREEN MEMORY WITH THE GIVEN CHARACTER.
+** THIS DOES NOT INTERACT WITH COUT.
+*
+** USAGE:
+*
+         JSR   ]HOME2
+         PRN   "TVLIN MACRO",8D
+         PRN   "===========",8D8D
+         TVLIN #5;#15;#19;#"#"
+         _WAIT
+*
+*``````````````````````````````*
+* INPUT MACRO EXAMPLES         *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+** THE STDIO LIBRARY INCLUDES MACROS
+** AND SUBROUTINES DEDICATED TO RETRIEVING
+** INPUT DATA FROM THE KEYBOARD, FROM
+** THE SCREEN MEMORY, AND FROM THE
+** PADDLE.
+*
+** - GKEY   : GET KEY FROM KEYBOARD INPUT
+** - INP    : INPUT A STRING FROM KEYBOARD
+** - PBX    : INPUT FROM PADDLE BUTTONS
+** - PDL    : INPUT FROM PADDLE WHEELS
+** - RCPOS  : GET VALUE FROM SCREEN POSITION
+** - WAIT   : WAIT FOR A KEYBOARD KEY PRESS
+*
+*``````````````````````````````*
+* GKEY                         *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+** THE GKEY MACRO WAITS FOR THE USER
+** TO PRESS A KEY ON THE KEYBOARD, THEN
+** RETURNS THE VALUE RECEIVED IN .A.
+*
+** USAGE:
+*
+         JSR   ]HOME2
+         PRN   "GKEY MACRO",8D
+         PRN   "==========",8D8D
          GKEY
-         JSR   HOME
-         PRN   "THE INP MACRO SIMILARLY USES THE",8D
-         PRN   "MONITOR'S INPUT ROUTINE. THIS MEANS",8D
-         PRN   "THAT IT SUFFERS THE SAME PROBLEMS",8D
-         PRN   "AS DOES APPLESOFT BASIC'S INPUT",8D
-         PRN   "COMMAND: COMMAS AND SPECIAL CHARACTERS",8D
-         PRN   "COMPLICATE MATTERS. IN FUTURE PATCHES,",8D
-         PRN   "AN ALTERNATE NON-MONITOR ROUTINE",8D
-         PRN   "WILL BECOME AVAILABLE.",8D8D
-         PRN   "TYPE SOMETHING AND PRESS RETURN:",8D
+         JSR   COUT
+         _WAIT
+*
+*``````````````````````````````*
+* INP                          *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+** THE INP MACRO INPUTS A STRING OF
+** TEXT FROM THE USER VIA THE KEYBOARD,
+** ENDING WHEN THE RETURN KEY IS PRESSED. THE
+** STRING IS THEN STORED IN [RETURN], WITH
+** ITS LENGTH IN THE PRECEDING BYTE KNOWN
+** AS [RETLEN].
+*
+** USAGE:
+*
+         JSR   ]HOME2
+         PRN   "INP MACRO",8D
+         PRN   "=========",8D8D8D
          INP
-         PRN   " ",8D
-         PRN   "YOU CAN THEN PRINT THE STRING TO ",8D
-         PRN   "SCREEN USING THE SPRN MACRO:",8D8D
-         PRN   "YOU TYPED:"
-         SPRN  #RETURN
+         PRN   " ",8D8D8D
+         SPRN  #RETLEN
+         _WAIT
+*
+*``````````````````````````````*
+* PBX                          *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+** THE PBX MACRO READS THE STATE OF
+** THE SPECIFIED PADDLE BUTTON. FOR THE
+** SAKE OF EASE, THE BUTTONS HAVE BEEN
+** GIVEN ALIASES OF PB0 - PB1, WITH THE
+** CORRESPONDING VALUES:
+*
+** - PB0 = $C061
+** - PB1 = $CO62
+** - PB2 = $CO63
+** - PB3 = $CO60
+*
+** NOTE THAT THE OPEN AND CLOSED APPLE KEYS
+** CAN BE READ AS PADDLE BUTTONS, SO A PADDLE
+** IS NOT NECESSARY FOR THE FOLLOWING EXAMPLE.
+*
+** USAGE:
+*
+         JSR   ]HOME2
+         PRN   "PBX MACRO",8D
+         PRN   "=========",8D8D
+         LDX   #1
+:MLP1
+         PBX   PB0
+         CPX   #1
+         BNE   :MLP1
+         PRN   "PB0 PRESSED!",8D8D
+         _WAIT
+*
+*``````````````````````````````*
+* PDL                          *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+** THE PDL MACRO READS THE PADDLE WHEEL
+** AND RETURNS THE VALUE READ FROM IT
+** IN .Y. SINCE WE WON'T ASSUME THE USER
+** HAS A PADDLE HERE, A WORKING EXAMPLE
+** WILL NOT BE GIVEN. HOWEVER, THE MACRO
+** ACCEPTS A SINGLE PARAMETER THAT DENOTES
+** THE PADDLE NUMBER TO READ, AS SUCH:
+*
+** PDL  #0
+*
+*``````````````````````````````*
+* RCPOS                        *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+** THE RCPOS MACRO READS A GIVEN ROW
+** AND COLUMN OF THE SCREEN AND RETURNS
+** THE CHARACTER VALUE IN .A.
+*
+** USAGE:
+*
+         JSR   ]HOME2
+         PRN   "RCPOS MACRO",8D
+         PRN   "===========",8D8D
+         RCPOS #0;#0
+         JSR   COUT
+         _WAIT
+*
+*``````````````````````````````*
+* WAIT                         *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+** THE WAIT MACRO IS FUNCTIONALLY
+** EQUIVALENT TO THE GKEY MACRO, BUT
+** DOES NOT RELY ON THE GETKEY SUBROUTINE.
+*
+** USAGE:
+*
+         JSR   ]HOME2
+         PRN   "WAIT MACRO",8D
+         PRN   "==========",8D8D
          WAIT
-         JSR   HOME
-         PRN   "PADDLE BUTTONS CAN BE READ VIA",8D
-         PRN   "THE PBX MACRO. THE SYNAX IS AS",8D
-         PRN   "FOLLOWS:",8D8D
-         PRN   "   PBX [BUTTON ADDRESS]",8D8D
+         JSR   COUT
          WAIT
-         PRN   "THE HOOKS.STDIO FILE CONTAINS THE",8D
-         PRN   "ADDRESSES FOR THE FOR PADDLE BUTTONS,",8D
-         PRN   "CONVENIENTLY CALLED PB0, PB1, PB2, ",8D
-         PRN   "AND PB3. THUS:",8D8D
+*
+*``````````````````````````````*
+* OTHER STDIO MACROS           *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+** THE STDIO LIBRARY CONTAINS A FEW
+** MACROS THAT CANNOT BE EASILY CATEGORIZED
+** TOGETHER, AND THUS ARE THROWN INTO A
+** MISCELLANEOUS SECTION HERE. THE MACROS
+** ARE:
+*
+** - COL40 : SET SCREEN TO 40-COLUMN MODE
+** - COL80 : SET SCREEN TO 80-COLUMN MODE
+** - DIE80 : KILL 80-COLUMN MODE, FORCING 40
+*
+*``````````````````````````````*
+* COL40                        *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+** THE COL40 MACRO TURNS ON 40-COLUMN
+** MODE. OBVIOUSLY, THIS ONLY HAS A
+** NOTICEABLE EFFECT IF THE USER IS
+** ALREADY IN 80-COLUMN MODE.
+*
+** USAGE:
+*
+         COL40
+*
+*``````````````````````````````*
+* COL80                        *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+** THE COL80 MACRO TURNS ON 80-COLUMN
+** MODE.
+*
+         JSR   ]HOME2
+         COL80
+         PRN   "80 COLUMNS!"
          WAIT
-         PRN   "   PBX #PB0",8D8D
-         PRN   "CHECKS IF PADDLE BUTTON 0 IS PRESSED,",8D
-         PRN   "AND RETURNS 1 IN THE .A REGISTER IF SO.",8D
-         PRN   "OTHERWISE, A ZERO IS RETURNED.",8D8D
-         WAIT
-         PRN   "SINCE THIS REQUIRES SPECIAL HARDWARE,",8D
-         PRN   "WE WON'T BE USING THE MACRO HERE. NOTE",8D
-         PRN   "THAT ON A ][E, //C, AND ][GS, THE OPEN",8D
-         PRN   "APPLE KEY IS MAPPED TO BUTTON ZERO."
-         WAIT
-         JSR   HOME
-         PRN   "LASTLY, THE PREAD MACRO READS THE STATE",8D
-         PRN   "OF THE GIVEN PADDLE'S POTENTIOMETER.",8D
-         PRN   "A VALUE OF 0-255 IS RETURNED IN THE .Y",8D
-         PRN   "REGISTER. SO:",8D8D
-         WAIT
-         PRN   "   PREAD #0",8D8D
-         PRN   "WILL READ THE STATE OF PADDLE 0, WHICH",8D
-         PRN   "IS THE MOST COMMON TO READ. AGAIN,",8D
-         PRN   "DUE TO A NEED FOR SPECIAL HARDWARE, WE",8D
-         PRN   "WON'T BE ILLUSTRATING IT HERE."
-         WAIT
-         JSR   HOME
-         PRN   " ",8D
-         PRN   "THAT'S ALL, FOLKS!",8D8D
+*
+*``````````````````````````````*
+* DIE80                        *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+** THE DIE80 MACRO KILLS 80-COLUMN
+** MODE, RETURNING TO 40-COLUMN MODE
+** BY DEFAULT.
+*
+** USAGE:
+*
+         JSR   ]HOME2
+         DIE80
+         PRN   "BACK TO 40 COLUMNS!"
 *
          JMP   REENTRY
 *
@@ -393,20 +678,40 @@
 *        BOTTOM INCLUDES       *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-         PUT   MIN.LIB.REQUIRED
+         PUT   MIN.LIB.REQUIRED.ASM
 *
 ** INDIVIDUAL SUBROUTINE INCLUDES
 *
 *  STDIO SUBROUTINES
 *
-         PUT   MIN.SUB.XPRINT
-         PUT   MIN.SUB.DPRINT
-         PUT   MIN.SUB.THLINE
-         PUT   MIN.SUB.TVLINE
-         PUT   MIN.SUB.TRECTF
-         PUT   MIN.SUB.TXTPUT
-         PUT   MIN.SUB.TBLINE
-         PUT   MIN.SUB.TCIRCLE
-         PUT   MIN.SUB.SINPUT
-         PUT   MIN.SUB.PRNSTR
+         PUT   MIN.SUB.XPRINT.ASM
+         PUT   MIN.SUB.DPRINT.ASM
+         PUT   MIN.SUB.THLINE.ASM
+         PUT   MIN.SUB.TVLINE.ASM
+         PUT   MIN.SUB.TRECTF.ASM
+         PUT   MIN.SUB.TXTPUT.ASM
+         PUT   MIN.SUB.TBLINE.ASM
+         PUT   MIN.SUB.TCIRCLE.ASM
+         PUT   MIN.SUB.PRNSTR.ASM
+         PUT   MIN.SUB.TXTMORE.ASM
+         PUT   MIN.SUB.TXTCENT.ASM
+         PUT   MIN.SUB.STRPUT.ASM
+         PUT   MIN.SUB.TRECT.ASM
+         PUT   MIN.SUB.TXTCLR.ASM
+         PUT   MIN.SUB.SINPUT.ASM
 *
+ESGN     ASC   "========="
+         HEX   00
+MSG1     ASC   "THIS IS A MESSAGE."
+         HEX   00
+STR1     STR   "THIS IS A STRING."
+CTRSTR   STR   "CENTERED STRING."
+LONGSTR  ASC   "ONE TWO THREE FOUR FIVE SIX SEVEN "
+         ASC   "EIGHT NINE TEN ELEVEN TWELVE THIRTEEN "
+         ASC   "FOURTEEN FIFTEEN SIXTEEN SEVENTEEN "
+         HEX   8D
+         ASC   "EIGHTEEN NINETEEN TWENTY TWENTY-ONE "
+         ASC   "TWENTY-TWO TWENTY-THREE TWENTY-FOUR "
+         ASC   "25 26 27 28 29 30 31 32 33 34 35 36 37 "
+         ASC   "38 39 40"
+         HEX   00

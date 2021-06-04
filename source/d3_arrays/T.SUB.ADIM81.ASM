@@ -2,112 +2,117 @@
 *``````````````````````````````*
 * ADIM81        (NATHAN RIGGS) *
 *                              *
+* DECLARE THE DIMENSIONS OF A  *
+* NEW 8BIT, 1D ARRAY.          *
+*                              *
+*------------------------------*
+* 8-BIT MULTIPLICATION CODE    *
+* ADAPTED FROM WHITE FLAME'S   *
+* WORK ON CODEBASE64. LICENSE  *
+* MAY VARY.                    *
+*------------------------------*
+*                              *
 * INPUT                        *
 *                              *
-*  WPAR1 = ARRAY ADDRESS (2B)  *
+*  WPAR1 = ARRAY ADDRESS       *
 *  WPAR2 = # OF ELEMENTS       *
 *  WPAR3 = LENGTH OF ELEMENTS  *
 *  BPAR1 = FILL VALUE          *
 *                              *
-* OUTPUT                       *
+* DESTROY: NZCIDV              *
+*          ^^^  ^              *
 *                              *
-*  RETURN = TOTAL BYTES USED   *
-*  RETLEN = 2                  *
-*                              *
-* DESTROY: AXYNVBDIZCMS        *
-*          ^^^^^   ^^^         *
-*                              *
-* CYCLES: 176+                 *
-* SIZE: 160 BYTES              *
+* CYCLES: 194+                 *
+* SIZE: 129 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]ADDR    EQU   WPAR1
-]ASIZE   EQU   WPAR2
-]ESIZE   EQU   WPAR3
-]FILL    EQU   BPAR1
+]ADDR    EQU   WPAR1      ; ARRAY ADDRESS
+]ASIZE   EQU   WPAR2      ; NUMBER OF ELEMENTS
+]ESIZE   EQU   WPAR3      ; ELEMENT SIZE, IN BYTES
+]FILL    EQU   BPAR1      ; DEFAULT FILL VALUE
 *
 ]MSIZE   EQU   VARTAB     ; TOTAL BYTES OF ARRAY
 ]ASZBAK  EQU   VARTAB+4   ; ARRAY SIZE BACKUP
 ]ESZBAK  EQU   VARTAB+6   ; ELEMENT SIZE BACKUP
 *
 ADIM81
-         LDA   ]ESIZE
-         STA   ]ESZBAK
-         LDA   ]ASIZE
-         STA   ]ASZBAK
-         LDA   #0
-         STA   ]ASIZE+1
-         STA   ]ASZBAK+1
+         LDA   ]ESIZE     ; {2C2B} LOAD ELEMENT SIZE
+         STA   ]ESZBAK    ; {3C2B} SAVE A BACKUP
+         LDA   ]ASIZE     ; {2C2B} LOAD ARRAY SIZE
+         STA   ]ASZBAK    ; {3C2B} SAVE A BACKUP
+         LDA   #0         ; {2C2B} RESET .A
+         STA   ]ASIZE+1   ; {3C2B} CLEAR ARRAY SIZE HIGH BYTE
+         STA   ]ASZBAK+1  ; {3C2B} CLEAR ARRAY SIZE BACKUP HIGH BYTE
 *
 ** MULTIPLY ARRAY SIZE BY ELEMENT SIZE
 *
-         LDY   #0         ; RESET HIBYTE FOR MULTIPLY
-         TYA              ; RESET LOBYTE FOR MULTIPLY
-         LDY   ]ASIZE+1
-         STY   SCRATCH    ; SAVE HIBYTE IN SCRATCH
-         BEQ   :ENTLP     ; IF ZERO, SKIP TO LOOP
+         LDY   #0         ; {2C2B} RESET HIBYTE FOR MULTIPLY
+         TYA              ; {3C2B} RESET LOBYTE FOR MULTIPLY
+         LDY   ]ASIZE+1   ; {2C2B}
+         STY   SCRATCH    ; {3C2B} SAVE HIBYTE IN SCRATCH
+         BEQ   :ENTLP     ; {3C2B} IF ZERO, SKIP TO LOOP
 :DOADD
-         CLC              ; ADD ASIZE TO LOBYTE
-         ADC   ]ASIZE
-         TAX              ; TEMPORARILY STORE IN .X
-         TYA              ; TRANSFER HIBYTE TO .A
-         ADC   SCRATCH    ; ADD HIBYTE
-         TAY              ; STORE BACK IN .Y
-         TXA              ; LOAD LOBYTE IN .A AGAIN
+         CLC              ; {2C1B} ADD ASIZE TO LOBYTE
+         ADC   ]ASIZE     ; {5C3B}
+         TAX              ; {3C2B} TEMPORARILY STORE IN .X
+         TYA              ; {3C2B} TRANSFER HIBYTE TO .A
+         ADC   SCRATCH    ; {5C3B} ADD HIBYTE
+         TAY              ; {3C2B} STORE BACK IN .Y
+         TXA              ; {3C2B} LOAD LOBYTE IN .A AGAIN
 :LP                       ; LOOP START
-         ASL   ]ASIZE     ; MULTIPLY ASIZE BY 2
-         ROL   SCRATCH    ; MULTIPLY HIBYTE BY 2
+         ASL   ]ASIZE     ; {6C3B} MULTIPLY ASIZE BY 2
+         ROL   SCRATCH    ; {6C3B} MULTIPLY HIBYTE BY 2
 :ENTLP
-         LSR   ]ESIZE     ; DIVIDE ESIZE BY 2
-         BCS   :DOADD     ; IF >= LOBYTE IN .A, ADD AGAIN
-         BNE   :LP        ; OTHERWISE, RELOOP
+         LSR   ]ESIZE     ; {6C3B} DIVIDE ESIZE BY 2
+         BCS   :DOADD     ; {3C2B} IF >= LOBYTE IN .A, ADD AGAIN
+         BNE   :LP        ; {3C2B} OTHERWISE, RELOOP
 *
-         STX   ]MSIZE     ; STORE LOBYTE
-         STY   ]MSIZE+1   ; STORE HIBYTE
-         LDA   ]MSIZE     ; NOW ADD TO BYTES
-         CLC              ; TO MSIZE FOR ARRAY HEADER
-         ADC   #2
-         STA   ]MSIZE     ; STORE LOBYTE
-         LDA   ]MSIZE+1
-         ADC   #0         ; CARRY FOR HIBYTE
-         STA   ]MSIZE+1
+         STX   ]MSIZE     ; {3C2B} STORE LOBYTE
+         STY   ]MSIZE+1   ; {3C2B} STORE HIBYTE
+         LDA   ]MSIZE     ; {2C2B} NOW ADD TO BYTES
+         CLC              ; {2C1B} TO MSIZE FOR ARRAY HEADER
+         ADC   #2         ; {3C2B}
+         STA   ]MSIZE     ; {3C2B} STORE LOBYTE
+         LDA   ]MSIZE+1   ; {2C2B}
+         ADC   #0         ; {3C2B} CARRY FOR HIBYTE
+         STA   ]MSIZE+1   ; {3C2B}
 *
 ** NOW CLEAR MEMORY BLOCKS
 *
-         LDA   ]FILL      ; GET FILL VALUE
-         LDX   ]MSIZE+1   ; X = # O PAGES TO DO
-         BEQ   :PART      ; BRANCH IF HIBYTE = 0
-         LDY   #0         ; RESET INDEX
+         LDA   ]FILL      ; {2C2B} GET FILL VALUE
+         LDX   ]MSIZE+1   ; {2C2B} X = # O PAGES TO DO
+         BEQ   :PART      ; {3C2B} BRANCH IF HIBYTE = 0
+         LDY   #0         ; {2C2B} RESET INDEX
 :FULL
-         STA   (]ADDR),Y  ; FILL CURRENT BYTE
-         INY              ; INCREMENT INDEX
-         BNE   :FULL      ; LOOP UNTIL PAGE DONE
-         INC   ]ADDR+1    ; GO TO NEXT PAGE
-         DEX              ; DECREMENT COUNTER
-         BNE   :FULL      ; LOOP IF PAGES LEFT
+         STA   (]ADDR),Y  ; {3C2B} FILL CURRENT BYTE
+         INY              ; {2C1B} INCREMENT INDEX
+         BNE   :FULL      ; {3C2B} LOOP UNTIL PAGE DONE
+         INC   ]ADDR+1    ; {5C2B} GO TO NEXT PAGE
+         DEX              ; {2C1B} DECREMENT COUNTER
+         BNE   :FULL      ; {3C2B} LOOP IF PAGES LEFT
 :PART
-         LDX   ]MSIZE     ; PARTIAL PAGE BYTES
-         BEQ   :MFEXIT    ; EXIT IF LOBYTE = 0
-         LDY   #0         ; RESENT INDEX
+         LDX   ]MSIZE     ; {2C2B} PARTIAL PAGE BYTES
+         BEQ   :MFEXIT    ; {3C2B} EXIT IF LOBYTE = 0
+         LDY   #0         ; {2C2B} RESENT INDEX
 :PARTLP
-         STA   (]ADDR),Y  ; STORE VAL
-         INY              ; INCREMENT INDEX
-         DEX              ; DECREMENT COUNTER
-         BNE   :PARTLP    ; LOOP UNTIL DONE
+         STA   (]ADDR),Y  ; {3C2B} STORE VAL
+         INY              ; {2C1B} INCREMENT INDEX
+         DEX              ; {2C1B} DECREMENT COUNTER
+         BNE   :PARTLP    ; {3C2B} LOOP UNTIL DONE
 :MFEXIT
-         LDY   #0         ; STORE NUMBER OF ELEMENTS
-         LDA   ]ASZBAK    ; INTO FIRST BYTE OF ARRAY
-         STA   (]ADDR),Y
-         INY
-         LDA   ]ESZBAK    ; STORE ELEMENT SIZE INTO
-         STA   (]ADDR),Y  ; SECOND BYTE OF ARRAY
-         LDX   ]ADDR      ; GET LOBYTE OF ARRAY ADDRESS
-         LDY   ]ADDR+1    ; AND HIBYTE TO RETURN IN .X, .Y
-         LDA   ]ASZBAK    ; RETURN NUMBER OF ELEMENTS IN .A
-         LDA   ]MSIZE     ; STORE TOTAL ARRAY SIZE
-         STA   RETURN     ; IN RETURN
-         LDA   ]MSIZE+1
-         STA   RETURN+1
-         LDA   #2         ; SET RETURN LENGTH TO
-         STA   RETLEN     ; 2 BYTES
-         RTS
+         LDY   #0         ; {2C2B} STORE NUMBER OF ELEMENTS
+         LDA   ]ASZBAK    ; {2C2B} INTO FIRST BYTE OF ARRAY
+         STA   (]ADDR),Y  ; {6C2B}
+         INY              ; {2C1B}
+         LDA   ]ESZBAK    ; {2C2B} STORE ELEMENT SIZE INTO
+         STA   (]ADDR),Y  ; {6C2B} SECOND BYTE OF ARRAY
+         LDX   ]ADDR      ; {2C2B} GET LOBYTE OF ARRAY ADDRESS
+         LDY   ]ADDR+1    ; {2C2B} AND HIBYTE TO RETURN IN .X, .Y
+         LDA   ]ASZBAK    ; {2C2B} RETURN NUMBER OF ELEMENTS IN .A
+         LDA   ]MSIZE     ; {2C2B} STORE TOTAL ARRAY SIZE
+         STA   RETURN     ; {3C2B} IN RETURN
+         LDA   ]MSIZE+1   ; {2C2B}
+         STA   RETURN+1   ; {3C2B}
+         LDA   #2         ; {2C2B} SET RETURN LENGTH TO
+         STA   RETLEN     ; {3C2B} 2 BYTES
+         RTS              ; {6C1B}

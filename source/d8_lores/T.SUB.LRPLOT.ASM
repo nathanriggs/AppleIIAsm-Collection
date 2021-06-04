@@ -1,8 +1,8 @@
 *``````````````````````````````*
 * LRPLOT        (NATHAN RIGGS) *
 *                              *
-* PLOTS A LOEW RESOLUTION      *
-* PIXEL AT THE CIVEN COLOR AND *
+* PLOTS A LOW RESOLUTION       *
+* PIXEL AT THE GIVEN COLOR AND *
 * COORDINATES.                 *
 *                              *
 * INPUT:                       *
@@ -11,17 +11,12 @@
 *  BPAR2 = X COORDINATE        *
 *  BPAR3 = Y COORDINATE        *
 *                              *
-* OUTPUT:                      *
+* DESTROY: NZCIDV              *
+*          ^^^  ^              *
 *                              *
-*  NONE                        *
-*                              *
-* DESTROY: AXYNVBDIZCMS        *
-*          ^^^^^   ^^^         *
-*                              *
-* CYCLES: 295+                 *
-* SIZE: 102 BYTES              *
+* CYCLES: 130+                 *
+* SIZE: 95 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
-*
 *
 ]COLOR   EQU   BPAR1      ; PLOT COLOR
 ]X       EQU   BPAR2      ; X COORDINATE
@@ -31,56 +26,54 @@
 ]PAGEOFF EQU   VARTAB+4   ; PAGE OFFSET
 *
 LRPLOT
-*
-         STY   ]Y         ; Y POSITION PASSED IN .Y
-         STX   ]X         ; X POSITION PASSED IN .X
-         STA   ]COLOR     ; COLOR PASSED IN .A
-         LDA   ]COLOR     ; TAKE THE COLOR SENT
-         ASL              ; AND MOVE IT LEFT 4 BITS
-         ASL              ; TO THE HIGH BYTE
-         ASL
-         ASL
-         CLC              ; CLEAR CARRY
-         ADC   ]COLOR     ; NOW ADD THE LOW BYTE BACK, MEANING
-         STA   ]COLOR     ; THAT THE COLOR WILL BE REPEATING NIBBLES
-         LDA   LWP        ; NOW TEST WHICH PAGE IS THE WORKING
-         CMP   #2         ; PAGE; IF NOT #2, THEN ASSUME PAGE 1
-         BNE   :PG1
-         LDA   #4         ; ADD TO BASE TO PLOT TO PAGE 2
-         STA   ]PAGEOFF   ; STORE AS PAGE OFFSET
-         JMP   :CNT
+         STY   ]Y         ; {3C2B} Y POSITION PASSED IN .Y
+         STX   ]X         ; {3C2B} X POSITION PASSED IN .X
+         STA   ]COLOR     ; {3C2B} COLOR PASSED IN .A
+         LDA   ]COLOR     ; {3C2B} TAKE THE COLOR SENT
+         ASL              ; {2C1B} AND MOVE IT LEFT 4 BITS
+         ASL              ; {2C1B} TO THE HIGH BYTE
+         ASL              ; {2C1B}
+         ASL              ; {2C1B}
+         CLC              ; {2C1B} CLEAR CARRY
+         ADC   ]COLOR     ; {3C2B} NOW ADD LOW BYTE BACK, MEANING
+         STA   ]COLOR     ; {3C2B} THE COLOR WILL REPEAT NIBBLES
+         LDA   LWP        ; {4C3B} TEST WHICH PAGE IS THE WORKING
+         CMP   #2         ; {3C2B} PAGE--IF NOT #2, ASSUME PAGE 1
+         BNE   :PG1       ; {3C2B}
+         LDA   #4         ; {3C2B} ADD TO BASE TO PLOT TO PAGE 2
+         STA   ]PAGEOFF   ; {4C3B} STORE AS PAGE OFFSET
+         JMP   :CNT       ; {3C3B}
 :PG1
-         LDA   #0         ; PAGE 1 HAS NO OFFEST, SO JUST 0
-         STA   ]PAGEOFF
+         LDA   #0         ; {3C2B} PAGE 1 HAS NO OFFSET, SO #0
+         STA   ]PAGEOFF   ; {4C3B}
 :CNT
-         LDA   ]Y         ; GET Y COORDINATE
-         LSR              ; SHIFT BOTTOM BIT TO CARRY
-                          ; BUT WHY?
-         BCC   :EVEN      ; IF CARRY = 0, THEN ROW IS EVEN
-         LDX   #$F0       ; OTHERWISE, IT IS ODD; SO MASK
+         LDA   ]Y         ; {3C2B} GET Y COORDINATE
+         LSR              ; {2C1B} SHIFT BOTTOM BIT TO CARRY
+         BCC   :EVEN      ; {3C2B} IF CARRY = 0, ROW IS EVEN
+         LDX   #$F0       ; {3C2B} ELSE, IT IS ODD; SO MASK
                           ; THE LEFT NIBBLE
-         BCS   :PLOT      ; IF CARRY IS SET, BRANCH TO PLOTTING
+         BCS   :PLOT      ; {3C2B} IF CARRY SET, BR TO PLOTTING
 :EVEN
-         LDX   #$0F       ; EVEN, SO MASK LOW BYTE
+         LDX   #$0F       ; {3C2B} EVEN, SO MASK LOW BYTE
 :PLOT
-         STX   ]MASK      ; STORE THE EVEN OR ODD MASK
-         ASL              ; SHIFT CARRY BACK INTO BYTE
-         TAY              ; HOLD VALUE INTO .Y
-         LDA   LROFF,Y    ; GET LORES MEMORY ADDRESS
-         CLC              ; CLEAR THE CARRY
-         ADC   ]X         ; ADD THE X COORDINATE
-         STA   GBASLO     ; STORE LOW BYTE FOR GBASCALC
-         INY              ; INCREASE Y OFFSET
-         LDA   LROFF,Y ; GET LORESS MEMORY ADDRESS
-         ADC   ]PAGEOFF    ; ADJUST FOR PAGE AND CARRY HIGH
-         STA   GBASHI     ; STORE HIGH BYTE FOR GBASCALC
-         LDY   #0
-         LDA   ]MASK      ; RELOAD THE MASK
-         EOR   #$FF       ; EXCLUSIVE OR THE MASK
-         AND   (GBASLO),Y ; AND THE LOW FOR GBAS
-         STA   ]COLMASK   ; STORE THE COLOR MASK
-         LDA   ]COLOR     ; LOAD THE COLOR
-         AND   ]MASK      ; AND THE MASK
-         ORA   ]COLMASK   ; OR WITH THE COLOR MASK
-         STA   (GBASLO),Y ; STORE INTO GBAS LOW BYTE
-         RTS
+         STX   ]MASK      ; {4C3B} STORE THE EVEN OR ODD MASK
+         ASL              ; {2C1B} SHIFT CARRY BACK INTO BYTE
+         TAY              ; {2C1B} HOLD VALUE INTO .Y
+         LDA   LROFF,Y    ; {5C3B} GET LORES MEMORY ADDRESS
+         CLC              ; {2C1B} CLEAR THE CARRY
+         ADC   ]X         ; {3C2B} ADD THE X COORDINATE
+         STA   GBASLO     ; {4C3B} STORE LOW BYTE FOR GBASCALC
+         INY              ; {2C1B} INCREASE Y OFFSET
+         LDA   LROFF,Y    ; {5C3B} GET LORESS MEMORY ADDRESS
+         ADC   ]PAGEOFF   ; {4C3B} ADJUST FOR PAGE & CARRY HIGH
+         STA   GBASHI     ; {4C3B} STORE HIGH BYTE FOR GBASCALC
+         LDY   #0         ; {3C2B}
+         LDA   ]MASK      ; {4C3B} RELOAD THE MASK
+         EOR   #$FF       ; {2C2B} EXCLUSIVE OR THE MASK
+         AND   (GBASLO),Y ; {6C2B} AND THE LOW FOR GBAS
+         STA   ]COLMASK   ; {4C3B} STORE THE COLOR MASK
+         LDA   ]COLOR     ; {3C2B} LOAD THE COLOR
+         AND   ]MASK      ; {4C3B} AND THE MASK
+         ORA   ]COLMASK   ; {4C3B} OR WITH THE COLOR MASK
+         STA   (GBASLO),Y ; {6C2B} STORE INTO GBAS LOW BYTE
+         RTS              ; {6C1B}

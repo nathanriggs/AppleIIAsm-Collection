@@ -1,78 +1,67 @@
 *``````````````````````````````*
 * RAND16 : 16BIT RANDOM NUMBER *
-*-                            -*
+*                              *
 * GENERATE A 16BIT PSEUDO-     *
 * RANDOM NUMBER AND RETURN IT  *
-* IN Y,X (LOW, HIGH).          *
+* IN A,X (LOW, HIGH).          *
 *                              *
+*------------------------------*
 * ORIGINAL AUTHOR IS WHITE     *
 * FLAME, AS SHARED ON          *
 * CODEBASE64.                  *
-*                              *
-* NOTE: THERE ARE 2048 MAGIC   *
-* NUMBERS THAT COULD BE EOR'D  *
-* TO GENERATE A PSEUDO-RANDOM  *
-* PATTERN THAT DOESN'T REPEAT  *
-* UNTIL 65535 ITERATIONS. TOO  *
-* MANY TO LIST HERE, BUT SOME  *
-* ARE: $002D, $1979, $1B47,    *
-* $41BB, $3D91, $B5E9, $FFEB   *
+*------------------------------*
 *                              *
 * INPUT:                       *
 *                              *
 *  NONE                        *
 *                              *
-* OUTPUT:                      *
+* DESTROY: NZCIDV              *
+*          ^^^  ^              *
 *                              *
-*  .A = RND VAL LOW BYTE       *
-*  .X = RND VAL HIGH BYTE      *
-*  RETURN = RND VALUE (2B)     *
-*                              *
-* DESTROY: AXYNVBDIZCMS        *
-*          ^^^^    ^^^         *
-*                              *
-* CYCLES: 90+                  *
+* CYCLES: 95+                  *
 * SIZE: 60 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]SEED    EQU   WPAR1
+]SEED    EQU   WPAR1      ; SEED FOR PRNG
 *
 RAND16
-         LDA   RNDL       ; GET SEED LOBYTE
-         STA   ]SEED
-         LDA   RNDH       ; GET SEED HIBYTE
-         STA   ]SEED+1
+         LDA   RNDL       ; {3C2B} GET SEED LOBYTE
+         STA   ]SEED      ; {3C2B}
+         LDA   RNDH       ; {3C2B} GET SEED HIBYTE
+         STA   ]SEED+1    ; {3C2B}
 *
-         LDA   ]SEED      ; CHECK IF $0 OR $8000
-         BEQ   :LOW0
+         LDA   ]SEED      ; {3C2B} CHECK IF $0 OR $8000
+         BEQ   :LOW0      ; {3C2B}
 *
 ** DO A NORMAL SHIFT
 *
-         ASL   ]SEED      ; MUTATE
-         LDA   ]SEED+1
-         ROL
-         BCC   :NOEOR     ; IF CARRY CLEAR, EXIT
+         ASL   ]SEED      ; {5C2B} MUTATE
+         LDA   ]SEED+1    ; {3C2B}
+         ROL              ; {2C1B}
+         BCC   :NOEOR     ; {3C2B} IF CARRY CLEAR, EXIT
 :DOEOR                    ; HIGH BYTE IN A
-         EOR   #>$0369    ; EXCLUSIVE OR WITH MAGIC NUMBER
-         STA   ]SEED+1    ; STORE BACK INTO HIBYTE
-         LDA   ]SEED
-         EOR   #<$0369    ; DO THE SAME WITH LOW BYTE
-         STA   ]SEED
-         JMP   :EXIT
+         EOR   ]MAGEOR+1  ; {3C2B} EOR WITH MAGIC NUMBER
+         STA   ]SEED+1    ; {3C2B} STORE BACK INTO HIBYTE
+         LDA   ]SEED      ; {3C2B}
+         EOR   ]MAGEOR    ; {3C2B} DO SAME WITH LOW BYTE
+         STA   ]SEED      ; {3C2B}
+         JMP   :EXIT      ; {3C3B}
 :LOW0
-         LDA   ]SEED+1
-         BEQ   :DOEOR     ; IF HIBYTE IS ALSO 0, APPLY EOR
-         ASL
-         BEQ   :NOEOR     ; IF 00, THEN IT WAS $80
-         BCS   :DOEOR     ; ELSE DO EOR
+         LDA   ]SEED+1    ; {3C2B}
+         BEQ   :DOEOR     ; {3C2B} IF HI ALSO 0, APPLY EOR
+         ASL              ; {2C1B}
+         BEQ   :NOEOR     ; {3C2B} IF 00, THEN IT WAS $80
+         BCS   :DOEOR     ; {3C2B} ELSE DO EOR
 :NOEOR
-         STA   ]SEED+1
+         STA   ]SEED+1    ; {3C2B}
 :EXIT
-         LDX   ]SEED+1    ; VAL HIBYTE IN .X
-         LDY   ]SEED      ; LOBYTE TEMP IN .Y
-         STY   RETURN     ; TRANSFER TO RETURN AREA
-         STX   RETURN+1
-         LDA   #2         ; LENGTH OF RETURN IN BYTES
-         STA   RETLEN
-         TYA              ; TRANSFER LOBYTE TO .A
-         RTS
+         LDX   ]SEED+1    ; {3C2B} VAL HIBYTE IN .X
+         LDY   ]SEED      ; {3C2B} LOBYTE TEMP IN .Y
+         STX   RNDH
+         STY   RNDL
+         STY   RETURN     ; {4C3B} TRANSFER TO RETURN AREA
+         STX   RETURN+1   ; {4C3B}
+         LDA   #2         ; {3C2B} LENGTH OF RETURN IN BYTES
+         STA   RETLEN     ; {4C3B}
+         TYA              ; {2C1B} TRANSFER LOBYTE TO .A
+         RTS              ; {6C1B}

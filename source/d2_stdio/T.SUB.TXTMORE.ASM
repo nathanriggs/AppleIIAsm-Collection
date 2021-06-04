@@ -1,0 +1,277 @@
+*
+*``````````````````````````````*
+* TXTMORE       (NATHAN RIGGS) *
+*  THIS SUBROUTINE PRINTS A    *
+*  NULL-TERMINATED STRING TO   *
+*  THE SCREEN, WRAPPING THE    *
+*  TEXT FOR A GIVEN LENGTH OF  *
+*  EACH LINE. AFTER A GIVEN    *
+*  NUMBER OF LINES ARE         *
+*  PRINTED, SCROLLING PAUSES   *
+*  WHILE THE READER CATCHES    *
+*  UP.                         *
+*                              *
+* INPUT:                       *
+*                              *
+*  WPAR1 = STRING ADDRESS (2B) *
+*  WPAR2 = LINE LENGTH         *
+*  BPAR1 = VERTICAL SCROLL     *
+*          LENGTH TO PAUSE     *
+*                              *
+* DESTROYS: NZCIDV             *
+*           ^^^  ^             *
+*                              *
+* CYCLES: 466+                 *
+* SIZE: 452 BYTES              *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+]ADDR    EQU   WPAR1      ; STRING ADDRESS
+]LEN     EQU   WPAR2      ; MAXIMUM LENGTH OF STRING
+]SCROLL  EQU   BPAR1      ; MAXIMUM LINES BEFORE PAUSING
+*
+]START   EQU   VARTAB     ; STARTING POINT OF CURRENT LINE
+]END     EQU   VARTAB+2   ; ENDING OF CURRENT LINE
+]PTR     EQU   WPAR3      ; POINTER BETWEEN START AND END
+]LAST    EQU   VARTAB+4   ; LOCATION OF NULL TERMINATION
+]LINES   EQU   VARTAB+6   ; LINE COUNTER
+]LSPACE  EQU   VARTAB+8   ; LAST SPACE FOUND
+*
+TXTMORE
+*
+** INIT
+*
+         LDA   ]ADDR      ; {2C2B} GET STRING ADDRESS LOW BYTE
+         STA   ]START     ; {3C2B} STORE AS START ADDRESS LOW BYTE
+         LDA   ]ADDR+1    ; {2C2B} GET STRING ADDRESS HIGH BYTE
+         STA   ]START+1   ; {3C2B} STORE AS START ADDRESS HIGH BYTE
+*
+         LDA   ]ADDR      ; {2C2B} LOAD STRING ADDRESS LOW BYTE
+         CLC              ; {2C1B} CLEAR CARRY
+         ADC   ]LEN       ; {2C2B} ADD LINE LENGTH
+         STA   ]END       ; {3C2B} STORE AS LINE END ADDR LOW BYTE
+         LDA   ]ADDR+1    ; {2C2B} LOAD ADDRESS HIGH BYTE
+         ADC   #0         ; {2C2B} ADD ZERO FOR CARRY
+         STA   ]END+1     ; {2C3B} STORE AS LINE END ADDR HIGH BYTE
+*
+         LDA   #0         ; {2C2B} CLEAR REGISTERS
+         TAY              ; {2C1B}
+         TAX              ; {2C1B}
+*
+** FIRST, CHECK LINE FOR NULL TERMINATION
+*
+:ENTER
+         LDA   ]START     ; {2C2B} FIRST, COPY START INTO
+         STA   ]PTR       ; {3C32} OUR POINTER ADDRESS
+         LDA   ]START+1   ; {2C2B} BOTH LOW BYTE AND HIGH BYTE
+         STA   ]PTR+1     ; {3C2B}
+*
+** CHECK FOR NULL VALUE IN STRING
+**
+** LOOP WILL EXIT ONLY IF #$00 IS FOUND AT POINTER
+** POSITION OR THE POINTER ADDRESS EQUALS THE ENDING ADDRESS
+*
+:NULCHK
+         LDY   #0         ; {2C2B}
+         LDA   (]PTR),Y   ; {6C2B} LOAD CHAR AT CURRENT POINTER
+         CMP   #0         ; {2C2B} COMPARE TO NULL
+         BEQ   :FNDNULL   ; {3C2B} IF NULL THEN GOTO :FNDNULL
+         LDA   ]PTR+1     ; {2C2B} CHECK IF HIGH BYTE OF POINTER IS
+         CMP   ]END+1     ; {2C2B} EQUAL TO HIGH BYTE OF ENDING
+         BNE   :CNTLP1    ; {3C2B} IF NOT, CONTINUE LOOP
+         LDA   ]PTR       ; {2C2B} IF SO, CHECK LOW BYTE OF POINTER
+         CMP   ]END       ; {2C2B} TO SEE IF IT MATCHES END LOW BYTE
+         BEQ   :NULCHKX   ; {3C2B} IF IT DOES, THEN EXIT NULL FINDER
+:CNTLP1
+         LDA   ]PTR       ; {2C2B} NULL NOT FOUND AND LOOP NOT DONE
+         CLC              ; {2C1B} SO ADD ONE TO THE POINTER
+         ADC   #1         ; {2C2B} LOW BYTE
+         STA   ]PTR       ; {3C2B}
+         LDA   ]PTR+1     ; {2C2B} AND ADD CARRY TO THE HIGH BYTE
+         ADC   #0         ; {2C2B} IF NEEDED
+         STA   ]PTR+1     ; {3C2B}
+         JMP   :NULCHK    ; {3C3B} AND CONTINUE LOOP
+*
+** NULL VALUE HAS BEEN FOUND, SO STORE POINTER AND
+** GO TO PRINTING LAST LINE OF THE STRING
+*
+:FNDNULL
+         LDA   ]PTR       ; {2C2B} COPY POINTER ADDRESS LOW BYTE
+         STA   ]LAST      ; {3C2B} TO THE ]LAST VAR FOR FINAL PRINT
+         LDA   ]PTR+1     ; {2C2B} DO THE SAME WITH THE HIGH BYTE
+         STA   ]LAST+1    ; {3C2B}
+         JMP   :PRNLAST   ; {3C3B} JUMP TO FINAL PRINTING
+*
+** END OF CHECKING FOR NULL. NO NULL WAS FOUND
+*
+:NULCHKX
+*
+** NOW FIND THE LAST SPACE BETWEEN ]START POSITION
+** AND THE ]END POSITION BY COUNTING BACKWARDS UNTIL
+** A SPACE IS FOUND
+*
+         LDA   ]END       ; {2C2B} LOAD LAST ADDRESS LOW BYTE
+         STA   ]PTR       ; {3C2B} STORE IN POINTER
+         LDA   ]END+1     ; {2C2B} LOAD THE HIGH BYTE AND
+         STA   ]PTR+1     ; {3C2B} STORE POINTER HIGH BYTE
+*
+:SPCLOOP
+         LDY   #0         ; {2C2B} CLEAR .Y INDEX
+         LDA   (]PTR),Y   ; {6C2B} LOAD CHAR AT CURRENT POINTER
+         CMP   #" " ; {2C2B} COMPARE CHAR TO SPACE
+         BEQ   :FNDSPC    ; {3C2B} IF EQUAL, THEN GOTO :FNDSPC
+         LDA   ]PTR       ; {2C2B} OTHERWISE LOAD POINTER LOW BYTE
+         SEC              ; {2C1B} SET CARRY
+         SBC   #1         ; {2C2B} SUBTRACT 1 FROM ADDRESS
+         STA   ]PTR       ; {3C2B} STORE BACK IN LOW BYTE
+         LDA   ]PTR+1     ; {2C2B} LOAD POINTER HIGH BYTE
+         SBC   #0         ; {2C2B} SUBTRACT CARRY, IF NEEDED
+         STA   ]PTR+1     ; {3C2B} STORE BACK IN HIGH BYTE
+         JMP   :SPCLOOP   ; {3C3B} LOOP UNTIL A SPACE IS FOUND
+*
+** THE LAST SPACE BETWEEN ]START AND ]END HAS BEEN FOUND!
+*
+:FNDSPC
+         LDA   ]PTR       ; {2C2B} LOAD LOW BYTE OF CURRENT PTR
+         STA   ]LSPACE    ; {3C2B} AND STORE INTO LAST SPACE VAR
+         STA   ]END       ; {3C2B}
+         LDA   ]PTR+1     ; {2C2B} AND THEN DO THE SAME FOR THE
+         STA   ]LSPACE+1  ; {3C2B} HIGH BYTE
+         STA   ]END+1     ; {3C2B}
+*
+** RESET POINTER AGAIN
+*
+         LDA   ]START     ; {2C2B} LOAD STARTING POINT
+         STA   ]PTR       ; {3C2B} PACK INTO POINTER ADDRESS
+         LDA   ]START+1   ; {2C2B} BOTH LOW BYTE AND
+         STA   ]PTR+1     ; {3C2B} HIGH BYTE
+*
+** NOW PRINT THE LINE
+*
+:PRNLP                    ; PRINTING LOOP
+         LDA   ]PTR+1     ; {2C2B} LOAD HIGH BYTE OF POINTER
+         CMP   ]LSPACE+1  ; {2C2B} COMPARE TO HIGH BYTE OF LAST SPACE
+         BNE   :PRNLP0    ; {3C2B} IF !=, THEN SKIP TO INNER LOOP
+         LDA   ]PTR       ; {2C2B} IF =, THEN COMPARE LOW BYTES
+         CMP   ]LSPACE    ; {2C2B}
+         BNE   :PRNLP0    ; {3C2B} IF !=, GOTO INNER LOOP
+         LDA   ]LINES     ; {2C2B} OTHERWISE, LOAD CURRENT # OF LINES
+         CLC              ; {2C1B} CLEAR CARRY
+         ADC   #1         ; {3C2B} ADD A LINE
+         STA   ]LINES     ; {3C2B} STORE BACK INTO LINES
+         LDA   ]LINES+1   ; {2C2B} LOAD HIGH BYTE OF LINES
+         ADC   #0         ; {3C2B} ADD CARRY
+         STA   ]LINES+1   ; {3C2B} STORE BACK INTO HIGH BYTE
+         LDA   #$8D       ; {2C2B} LOAD A LINE FEED CHARACTER
+         JSR   COUT       ; {6+C3B} SEND TO COUT (PRESS RETURN)
+         JMP   :XXX       ; {3C3B} SKIP REPRINTING SPACE
+:PRNLP0                   ; INNER PRINT LOOP
+         LDY   #0         ; {2C2B} RESET .Y (JUST IN CASE?)
+         LDA   (]PTR),Y   ; {6C2B} LOAD CHARACTER AT POINTER
+         JSR   COUT       ; {6+C2B} PRINT CHARACTER
+         LDA   (]PTR),Y   ; {2C2B} LOAD AGAIN, JUST IN CASE
+         CMP   #$8D       ; {2C2B} IF CHAR != LINE FEED
+         BNE   :XXX       ; {3C2B} SKIP LINE ADDING
+         LDA   ]LINES     ; {2C2B} ELSE LOAD LINES COUNTER
+         CLC              ; {2C1B} CLEAR CARRY
+         ADC   #1         ; {3C2B} ADD A LINE
+         STA   ]LINES     ; {3C2B} STORE BACK INTO LOW BYTE
+         LDA   ]LINES+1   ; {2C2B} LOAD HIGH BYTE OF LINES
+         ADC   #0         ; {3C2B} ADD CARRY
+         STA   ]LINES+1   ; {3C2B} STORE BACK INTO HIGH BYTE
+         LDA   ]SCROLL    ; {2C2B} LOAD MAX NUMBER OF LINES
+         CMP   #0         ; {2C2B} COMPARE TO 0
+         BNE   :XXX       ; {3C2B} IF MAX != 0, SKIP PAUSING
+:WLP     LDA   ]KYBD      ; {2C2B} CHECK FOR KEYSTROKE
+         BPL   :WLP       ; {3C2B} IF .A HAS CLEAR HIGH BYTE
+         AND   #$7F       ; {2C2B} THEN NOT PRESSED; LOOP UNTIL
+         STA   ]STROBE    ; {3C2B} CLEAR THE KEYBOARD STROBE
+         LDA   #0         ; {2C2B} CLEAR .A
+         STA   ]LINES     ; {3C2B} RESET LINE COUNTER
+         STA   ]LINES+1   ; {3C2B} RESET LINE COUNTER HIGH BYTE
+*
+:XXX
+         LDA   ]PTR+1     ; {2C2B} LOAD POINTER HIGH BYTE
+         CMP   ]END+1     ; {2C2B} COMPARE TO ENDING HIGH BYTE
+         BNE   :CNTPRN    ; {3C2B} IF !=, CONTINUE PRINTING
+         LDA   ]PTR       ; {2C2B} ELSE LOAD POINTER LOW BYTE
+         CMP   ]END       ; {2C2B} COMPARE TO ENDING LOW BYTE
+         BEQ   :PRNLPX    ; {3C2B} IF EQUAL, EXIT PRINTING
+:CNTPRN
+         LDA   ]PTR       ; {2C2B} LOAD POINTER LOW BYTE
+         CLC              ; {2C1B} CLEAR CARRY
+         ADC   #1         ; {3C2B} INCREASE ADDRESS BY ONE
+         STA   ]PTR       ; {3C2B} STORE BACK INTO LOW BYTE
+         LDA   ]PTR+1     ; {2C2B} LOAD POINTER HIGH BYTE
+         ADC   #0         ; {3C2B} ADD THE CARRY
+         STA   ]PTR+1     ; {3C2B} STORE BACK INTO HIGH BYTE
+         JMP   :PRNLP     ; {3C3B} RESTART THE PRINTING LOOP
+*
+** FINISHED PRINTING LINE, SO NOW SWAP POINTER VARIABLES
+** TO MOVE ON TO THE NEXT SECTION
+*
+:PRNLPX                   ; END PRINTING
+         LDA   ]SCROLL    ; {2C2B} LOAD MAX LINES
+         CMP   ]LINES     ; {2C2B} COMPARE TO CURRENT LINES
+         BNE   :SWAPPP    ; {3C2B} IF !=, SKIP WAIT
+:WLP3    LDA   ]KYBD      ; {2C2B} WAIT FOR A KEYPRESS
+         BPL   :WLP3      ; {3C2B}
+         AND   #$7F       ; {2C2B}
+         STA   ]STROBE    ; {3C2B} RESET KEYBOARD STROBE
+         LDA   #0         ; {2C2B} RESET .A
+         STA   ]LINES     ; {3C2B} RESET LINE COUNTER LOW BYTE
+         STA   ]LINES+1   ; {3C2B} RESET LINE COUNTER HIGH BYTE
+:SWAPPP
+         LDA   ]END       ; {2C2B} LOAD ENDING ADDRESS LOW BYTE
+         CLC              ; {2C1B} CLEAR CARRY
+         ADC   #1         ; {3C2B} INCREASE ADDRESS BY ONE
+         STA   ]END       ; {3C2B} STORE BACK INTO LOW BYTE
+         LDA   ]END+1     ; {2C2B} LOAD ENDING HIGH BYTE
+         ADC   #0         ; {3C2B} ADD THE CARRY
+         STA   ]END+1     ; {3C2B} STORE BACK INTO HIGH BYTE
+*
+         LDA   ]END       ; {2C2B} RELOAD ENDING LOW BYTE
+         STA   ]START     ; {3C2B} STORE IN STARTING LOW BYTE
+         LDA   ]END+1     ; {2C2B} RELOAD ENDING HIGH BYTE
+         STA   ]START+1   ; {3C2B} STORE IN STARTING HIGH BYTE
+         LDA   ]END       ; {2C2B} RELOAD ENDING LOW BYTE
+         CLC              ; {2C1B} CLEAR CARRY
+         ADC   ]LEN       ; {3C2B} ADD MAX LENGTH TO ENDING
+         STA   ]END       ; {3C2B} STORE BACK INTO LOW BYTE
+         LDA   ]END+1     ; {2C2B} LOAD ENDING HIGH BYTE
+         ADC   #0         ; {3C2B} ADD THE CARRY
+         STA   ]END+1     ; {3C2B} STORE BACK INTO HIGH BYTE
+         JMP   :ENTER     ; {3C3B} BACK TO BEGINNING OF SUBROUTINE!
+:PRNLAST
+         LDA   ]START     ; {2C2B} LOAD STARTING ADDRESS
+         STA   ]PTR       ; {3C2B} STORE LOW BYTE INTO POINTER LOW
+         LDA   ]START+1   ; {2C2B} LOAD STARTING HIGH BYTE
+         STA   ]PTR+1     ; {3C2B} STORE IN POINTER HIGH BYTE
+:LASTLP
+         LDY   #0         ; {2C2B} CLEAR .Y JUST IN CASE
+         LDA   (]PTR),Y   ; {6C2B}  LOAD CHARACTER
+         JSR   COUT       ; {6+C3B} SEND CHARACTER TO COUT
+         LDA   ]PTR+1     ; {2C2B} LOAD POINTER HIGH BYTE
+         CMP   ]LAST+1    ; {2C2B} COMPARE IT TO NULL POINTER POS
+         BNE   :LASTCNT   ; {3C2B} IF !=, THEN LOOP
+         LDA   ]PTR       ; {2C2B} LOAD POINTER LOW BYTE AGAIN
+         CMP   ]LAST      ; {2C2B} COMPARE IT TO NULL POSITION LOW
+         BEQ   :EXIT      ; {3C2B} IF EQUAL, THEN EXIT
+:LASTCNT
+         LDA   ]PTR       ; {2C2B} OTHERWISE, LOAD POINTER LOW BYTE
+         CLC              ; {2C1B} CLEAR CARRY
+         ADC   #1         ; {3C2B} ADD ONE TO ADDRESS
+         STA   ]PTR       ; {3C2B} STORE LOW BYTE AGAIN
+         LDA   ]PTR+1     ; {2C2B} LOAD POINTER HIGH BYTE
+         ADC   #0         ; {3C2B} ADD THE CARRY
+         STA   ]PTR+1     ; {3C2B} STORE BACK IN POINTER HIGH BYTE
+         JMP   :LASTLP    ; {3C3B} LOOP AGAIN UNTIL LAST IS REACHED
+:EXIT
+         LDA   ]SCROLL    ; {2C2B} LOAD MAX LINES
+         CMP   #0         ; {2C2B} IF = 0, THEN JUST EXIT
+         BEQ   :EXIT2     ; {3C2B}
+:WLPZ    LDA   ]KYBD      ; {2C2B} OTHERWISE, PAUSE FOR KEYPRESS
+         BPL   :WLPZ      ; {3C2B} BEFORE LEAVING SUBROUTINE
+         AND   #$7F       ; {2C1B}
+         STA   ]STROBE    ; {3C2B} CLEAR KEYBOARD STROBE
+:EXIT2
+         RTS              ; {6C1B}

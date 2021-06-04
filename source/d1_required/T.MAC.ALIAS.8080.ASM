@@ -31,7 +31,7 @@
 * CONTACT:   NATHAN.RIGGS@     *
 *            OUTLOOK.COM       *
 *                              *
-* DATE:      29-NOV-2019       *
+* DATE:      11-MAR-2021       *
 * ASSEMBLER: MERLIN 8 PRO      *
 * OS:        DOS 3.3           *
 *                              *
@@ -69,7 +69,7 @@
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 CALL     MAC              ; JMP ALIAS
-         JSR   ]1         ; ++<3B6C>
+         JSR   ]1         ; {3B6C}
          <<<              ; END MACRO
 *
 *``````````````````````````````*
@@ -77,7 +77,7 @@ CALL     MAC              ; JMP ALIAS
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 RET      MAC              ; RTS ALIAS
-         RTS              ; ++<1BC6>
+         RTS              ; {1BC6>
          <<<              ; END MACRO
 *
 *``````````````````````````````*
@@ -85,10 +85,10 @@ RET      MAC              ; RTS ALIAS
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 JA       MAC              ; JMP IF ABOVE
-         BCS   ]ABOVE     ; ++<2B3C>
-         BEQ   ]EXIT      ; ++<2B3C>
-         BCC   ]EXIT      ; ++<2B3C>
-]ABOVE   JMP   ]1         ; ++<3B5C>
+         BCS   ]ABOVE     ; {2B3C}
+         BEQ   ]EXIT      ; {2B3C}
+         BCC   ]EXIT      ; {2B3C}
+]ABOVE   JMP   ]1         ; {3B5C}
 ]EXIT
          <<<
 *
@@ -97,9 +97,9 @@ JA       MAC              ; JMP IF ABOVE
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 JAE      MAC              ; JMP IF ABOVE OR EQUAL
-         BCS   ]ABEQ      ; ++<2B3C>
-         JMP   ]EXIT      ; ++<1B5C>
-]ABEQ    JMP   ]1         ; ++<1B5C>
+         BCS   ]ABEQ      ; {2B3C}
+         JMP   ]EXIT      ; {1B5C}
+]ABEQ    JMP   ]1         ; {1B5C}
 ]EXIT
          <<<
 *
@@ -108,9 +108,9 @@ JAE      MAC              ; JMP IF ABOVE OR EQUAL
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 JB       MAC              ; JMP IF BELOW
-         BCC   ]BELOW     ; ++<2B3C>
-         JMP   ]EXIT      ; ++<1B5C>
-]BELOW   JMP   ]1         ; ++<1B5C>
+         BCC   ]BELOW     ; {2B3C}
+         JMP   ]EXIT      ; {1B5C}
+]BELOW   JMP   ]1         ; {1B5C}
 ]EXIT    <<<
 *
 *``````````````````````````````*
@@ -118,10 +118,10 @@ JB       MAC              ; JMP IF BELOW
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 JBE      MAC              ; JMP IF BELOW OR EQUAL
-         BEQ   ]BELEQ     ; ++<2B3C>
-         BCC   ]BELEQ     ; ++<2B3C>
-         JMP   ]EXIT      ; ++<1B5C>
-]BELEQ   JMP   ]1         ; ++<1B5C>
+         BEQ   ]BELEQ     ; {2B3C}
+         BCC   ]BELEQ     ; {2B3C}
+         JMP   ]EXIT      ; {1B5C}
+]BELEQ   JMP   ]1         ; {1B5C}
 ]EXIT    <<<
 *
 *``````````````````````````````*
@@ -129,7 +129,7 @@ JBE      MAC              ; JMP IF BELOW OR EQUAL
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 JC       MAC              ; JUMP ON CARRY
-         JB    ]1         ++<[4B8C]>
+         JB    ]1         {4B8C}
          <<<
 *
 *``````````````````````````````*
@@ -137,9 +137,9 @@ JC       MAC              ; JUMP ON CARRY
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 JE       MAC              ; JUMP IF EQUAL
-         BEQ   ]EQ        ; ++<2B3C>
-         JMP   ]EXIT      ; ++<1B5C>
-]EQ      JMP   ]1         ; ++<1B5C>
+         BEQ   ]EQ        ; {2B3C}
+         JMP   ]EXIT      ; {1B5C}
+]EQ      JMP   ]1         ; {1B5C}
 ]EXIT    <<<
 *
 *``````````````````````````````*
@@ -147,7 +147,7 @@ JE       MAC              ; JUMP IF EQUAL
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 JG       MAC              ; JUMP IF GREATER THAN
-         JA    ]1         ; ++<[9B11C]>
+         JA    ]1         ; {9B11C}
          <<<
 *
 *``````````````````````````````*
@@ -155,7 +155,7 @@ JG       MAC              ; JUMP IF GREATER THAN
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 JGE      MAC              ; JUMP IF EQUAL OR GREATER
-         JAE   ]1         ; ++<[4B8C]>
+         JAE   ]1         ; {4B8C}
          <<<
 *
 *``````````````````````````````*
@@ -163,7 +163,7 @@ JGE      MAC              ; JUMP IF EQUAL OR GREATER
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 JL       MAC              ; JUMP IF LESS THAN
-         JB    ]1         ; +<[4B8C]>
+         JB    ]1         ; {4B8C}
 ]EXIT    <<<
 *
 *``````````````````````````````*
@@ -171,7 +171,7 @@ JL       MAC              ; JUMP IF LESS THAN
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 JLE      MAC              ; JUMP IF LESS OR EQUAL
-         JBE   ]1         ; ++<[6B11C]>
+         JBE   ]1         ; {6B11C}
          <<<
 *
 *``````````````````````````````*
@@ -179,9 +179,9 @@ JLE      MAC              ; JUMP IF LESS OR EQUAL
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 JNC      MAC              ; JUMP IF NO CARRY
-         BCC   ]CLR       ; ++<2B3C>
-         JMP   ]EXIT      ; ++<1B5C>
-]CLR     JMP   ]1         ; ++<1B5C>
+         BCC   ]CLR       ; {2B3C}
+         JMP   ]EXIT      ; {1B5C}
+]CLR     JMP   ]1         ; {1B5C}
 ]EXIT    <<<
 *
 *``````````````````````````````*
@@ -189,9 +189,9 @@ JNC      MAC              ; JUMP IF NO CARRY
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 JNE      MAC              ; JUMP IF NOT EQUAL
-         BNE   ]NE        ; ++<2B3C>
-         JMP   ]EXIT      ; ++<1B5C>
-]NE      JMP   ]1         ; ++<1B5C>
+         BNE   ]NE        ; {2B3C}
+         JMP   ]EXIT      ; {1B5C}
+]NE      JMP   ]1         ; {1B5C}
 ]EXIT    <<<
 *
 *``````````````````````````````*
@@ -199,9 +199,9 @@ JNE      MAC              ; JUMP IF NOT EQUAL
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 JZ       MAC              ; JUMP IF ZERO
-         BEQ   ]ZERO      ; ++<2B3C>
-         JMP   ]EXIT      ; ++<1B5C>
-]ZERO    JMP   ]1         ; ++<1B5C>
+         BEQ   ]ZERO      ; {2B3C}
+         JMP   ]EXIT      ; {1B5C}
+]ZERO    JMP   ]1         ; {1B5C}
 ]EXIT    <<<
 *
 *``````````````````````````````*
@@ -209,9 +209,9 @@ JZ       MAC              ; JUMP IF ZERO
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 JNZ      MAC              ; JUMP IF NOT ZERO
-         BNE   ]NOTZ      ; ++<2B3C>
-         JMP   ]EXIT      ; ++<1B5C>
-]NOTZ    JMP   ]1         ; ++<1B5C>
+         BNE   ]NOTZ      ; {2B3C}
+         JMP   ]EXIT      ; {1B5C}
+]NOTZ    JMP   ]1         ; {1B5C}
 ]EXIT    <<<
 *
 *``````````````````````````````*
@@ -219,9 +219,9 @@ JNZ      MAC              ; JUMP IF NOT ZERO
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 JS       MAC              ; JUMP IF SIGNED
-         BPL   ]PLUS      ; ++<2B3C>
-         JMP   ]EXIT      ; ++<1B5C>
-]PLUS    JMP   ]1         ; ++<1B5C>
+         BPL   ]PLUS      ; {2B3C}
+         JMP   ]EXIT      ; {1B5C}
+]PLUS    JMP   ]1         ; {1B5C}
 ]EXIT    <<<
 *
 *``````````````````````````````*
@@ -229,9 +229,9 @@ JS       MAC              ; JUMP IF SIGNED
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 JNS      MAC              ; JUMP IF NOT SIGNED
-         BMI   ]MIN       ; ++<2B3C>
-         JMP   ]EXIT      ; ++<1B5C>
-]MIN     JMP   ]1         ; ++<1B5C>
+         BMI   ]MIN       ; {2B3C}
+         JMP   ]EXIT      ; {1B5C}
+]MIN     JMP   ]1         ; {1B5C}
 ]EXIT    <<<
 *
 *``````````````````````````````*
@@ -239,9 +239,9 @@ JNS      MAC              ; JUMP IF NOT SIGNED
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 JO       MAC              ; JUMP IF OVERFLOW
-         BVS   ]OV        ; ++<2B3C>
-         JMP   ]EXIT      ; ++<1B5C>
-]OV      JMP   ]1         ; ++<1B5C>
+         BVS   ]OV        ; {2B3C}
+         JMP   ]EXIT      ; {1B5C}
+]OV      JMP   ]1         ; {1B5C}
 ]EXIT    <<<
 *
 *``````````````````````````````*
@@ -249,9 +249,9 @@ JO       MAC              ; JUMP IF OVERFLOW
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 JNO      MAC              ; JUMP IF NO OVERFLOW
-         BVC   ]NOV       ; ++<2B3C>
-         JMP   ]EXIT      ; ++<1B5C>
-]NOV     JMP   ]1         ; ++<1B5C>
+         BVC   ]NOV       ; {2B3C}
+         JMP   ]EXIT      ; {1B5C}
+]NOV     JMP   ]1         ; {1B5C}
 ]EXIT    <<<
 *
 *``````````````````````````````*
@@ -264,10 +264,10 @@ JNO      MAC              ; JUMP IF NO OVERFLOW
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 ANC      MAC              ; ADD NO CARRY
-         CLC              ; ++<1B2C>
-         LDA   ]1         ; ++<3B4C>
-         ADC   ]2         ; ++<3B4C>
-         CLC              ; ++<1B2C>
+         CLC              ; {1B2C}
+         LDA   ]1         ; {3B4C} {NZ}
+         ADC   ]2         ; {3B4C} {NZCV}
+         CLC              ; {1B2C} {C=0}
          <<<
 *
 *``````````````````````````````*
@@ -280,10 +280,10 @@ ANC      MAC              ; ADD NO CARRY
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 SNC      MAC              ; SUBTRACT NO CARRY
-         SEC              ; ++<1B2C>
-         LDA   ]1         ; ++<3B4C>
-         SBC   ]2         ; ++<3B4C>
-         SEC              ; ++<1B2C>
+         SEC              ; {1B2C} {C=1}
+         LDA   ]1         ; {3B4C} {NZ}
+         SBC   ]2         ; {3B4C} {NZCV}
+         SEC              ; {1B2C} {C=1}
          <<<
 *
 *``````````````````````````````*
@@ -292,10 +292,10 @@ SNC      MAC              ; SUBTRACT NO CARRY
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 PUSHA    MAC              ; PUSH ALL REGISTERS
-         PHP              ; ++<1B3C>
-         PHA              ; ++<1B3C>
-         CPHY             ; ++<6B12C>
-         CPHX             ; ++<6B12C>
+         PHP              ; {1B3C}
+         PHA              ; {1B3C}
+         CPHY             ; {6B12C}
+         CPHX             ; {6B12C}
          <<<
 *
 *``````````````````````````````*
@@ -304,10 +304,10 @@ PUSHA    MAC              ; PUSH ALL REGISTERS
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 PULLA    MAC              ; PULL ALL REGISTERS
-         CPLX             ; ++<11B6C>
-         CPLY             ; ++<11B7C>
-         PLA              ; ++<1B3C>
-         PLP              ; ++<1B3C>
+         CPLX             ; {11B6C}
+         CPLY             ; {11B7C}
+         PLA              ; {1B3C} {NZ}
+         PLP              ; {1B3C} {NZCIDV}
          <<<
 *
 *``````````````````````````````*
@@ -316,5 +316,5 @@ PULLA    MAC              ; PULL ALL REGISTERS
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 POPA     MAC              ; PULL ALL REGISTERS
-         PULLA            ; ++<[24B19C]>
+         PULLA            ; {24B19C}
          <<<

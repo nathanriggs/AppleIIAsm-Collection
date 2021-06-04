@@ -1,0 +1,208 @@
+*
+*``````````````````````````````*
+* DEMO.DOSFM.ASM               *
+*                              *
+* A DEMO FILE FOR THE DOS      *
+* FILE MANAGER MACROS.         *
+*
+* THIS IS CURRENTLY UNFINISHED *
+* AND DOES NOT EVEN REMOTELY   *
+* WORK PROPERLY. IT WILL BE    *
+* INTEGRATED INTO THE REST OF  *
+* THE COLLECTION IN THE NEXT   *
+* REVISION.                    *
+*                              *
+* AUTHOR:    NATHAN RIGGS      *
+* CONTACT:   NATHAN.RIGGS@     *
+*            OUTLOOK.COM       *
+*                              *
+* DATE:      21-APR-2021       *
+* ASSEMBLER: MERLIN 8 PRO      *
+* OS:        DOS 3.3           *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+** ASSEMBLER DIRECTIVES
+*
+         CYC   AVE
+         EXP   OFF
+         TR    ON
+         DSK   CATM
+         OBJ   $BFE0
+         ORG   $6000
+*
+*``````````````````````````````*
+* TOP INCLUDES                 *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+         PUT   MIN.HEAD.REQUIRED.ASM
+         USE   MIN.MAC.REQUIRED.ASM
+         PUT   MIN.HEAD.DOS.ASM
+         USE   MIN.MAC.DOSFM.ASM
+*
+]TRKOFF  EQU   $01        ; TRACK OFFSET IN CAT SECTOR
+]SECOFF  EQU   $02        ; SECTOR OFFSET IN CAT SECTOR
+]HOME    EQU   $FC58      ; CLEAR SCREEN VECTOR
+]ZSLOT   EQU   $06        ; SLOT TO USE
+]ZDRIVE  EQU   $02        ; DRIVE TO USE
+]WORK    EQU   $9000      ; WORK AREA FOR VTOC AND CATSECS
+]DEST    EQU   $8000      ; DESTINATION FOR ALL
+                          ; FILE DESCRIPTION ENTRIES (FDE'S)
+*
+         JMP   _ENDVARS
+*
+FDECOUNT HEX   00         ; NUMBER OF ENTRIES AT THE END
+CURTRK   HEX   00         ; CURRENT TRACK IN LOOP
+CURSEC   HEX   00         ; CURRENT SECTOR IN LOOP
+CURADDR  DA    ]DEST      ; CURRENT WORKING ADDRESS IN
+                          ; THE DESTINATION ADDRESS AREA
+NEWADDR  DA    ]DEST      ; FOR COUNTING THE NUMBER OF ENTRIES
+*
+_ENDVARS
+*
+** RESET ALL VARIABLES
+*
+         LDA   #0
+         TAX
+         TAY
+         STA   FDECOUNT
+         STA   CURTRK
+         STA   CURSEC
+         STA   CURADDR
+         STA   CURADDR+1
+         STA   NEWADDR
+         STA   NEWADDR+1
+*
+** PUT THE VTOC IN THE WORK AREA
+*
+         SRWTS #]ZSLOT;#]ZDRIVE;#0;#$11;#0;#]WORK;#1
+         GRWTS
+*
+** READ THE TRACK AND SECTOR OF FIRST CATALOG SECTOR,
+** THEN PUT THAT FIRST SECTOR INTO THE WORK AREA
+*
+         LDY   #]TRKOFF   ; GET TRACK OFFSET
+         LDA   ]WORK,Y    ; GET NEW TRACK AT OFFSET
+         STA   CURTRK     ; STORE NEW TRACK
+         LDY   #]SECOFF   ; GET SECTOR OFFSET
+         LDA   ]WORK,Y    ; GET NEW SECTOR AT OFFSET
+         STA   CURSEC     ; STORE NEW SECTOR
+*
+         SRWTS #]ZSLOT;#]ZDRIVE;#0;CURTRK;CURSEC;#]WORK;#1
+         GRWTS
+*
+** GET NEXT CURRENT TRACK AND SECTOR AND HOLD IT
+*
+LOOP1
+         LDY   #]TRKOFF   ; GET TRACK OFFSET
+         LDA   ]WORK,Y    ; GET NEW TRACK AT OFFSET
+         STA   CURTRK     ; STORE NEW TRACK
+         LDY   #]SECOFF   ; GET SECTOR OFFSET
+         LDA   ]WORK,Y    ; GET NEW SECTOR AT OFFSET
+         STA   CURSEC     ; STORE NEW SECTOR
+*
+** IF TRACK AND SECTOR ARE NOT #0, COPY THE SEVEN
+** FILE DESCRIPTION ENTRIES (FDE'S) TO THE DESTINATION
+*
+         LDY   #$0A       ; OFFSET TO START OF FDE'S -1
+         LDX   #255
+INLOOP
+         INY
+         INX
+         LDA   ]WORK,Y    ; GET BYTE IN WORK AREA
+         STA   ]DEST,X    ; STORE IN DESTINATION
+         CPY   #$FF       ; IF .Y != LAST BYTE OF FDE,
+         BNE   INLOOP     ; THEN KEEP LOOPING
+*
+** INCREASE THE CURADDR BY #$F4, WHICH IS THE TOTAL
+** BYTE LENGTH OF THE SEVEN DFE'S COMBINED
+*
+         LDA   #$F4 ; LOAD THE TOTAL FDE LENGTH
+         CLC              ; (CLEAR THE CARRY)
+         ADC   CURADDR    ; ADD LOW BYTE OF CURRENT ADDRESS
+         STA   CURADDR    ; STORE BACK IN CURADDR
+         LDA   #0         ; LOAD ZERO
+         ADC   CURADDR+1  ; AND ADD HIGH BYTE FOR CARRY
+         STA   CURADDR+1  ; THEN STORE BACK IN CURADDR+1
+*
+** IF BOTH THE TRACK AND THE SECTOR TO BE JUMPED TO
+** ARE #0, THEN GOTO COUNTIT TO COUNT THE FDE'S
+*
+         LDA   CURSEC     ; IF CURSEC != 0
+         CMP   #0
+         BNE   _NOT0      ; THEN GOTO _NOT0
+         LDA   CURTRK     ; IF CURTRK != 0
+         CMP   #0
+         BNE   _NOT0      ; THEN GOTO _NOT0
+         JMP   COUNTIT    ; OTHERWISE, COUNT FDE'S
+*
+** READ CATALOG SECTOR AT CURTRK AND CURSEC,
+** THEN COPY IT TO THE WORK AREA
+*
+_NOT0
+         SRWTS #]ZSLOT;#]ZDRIVE;#0;CURTRK;CURSEC;#]WORK;#1
+         GRWTS
+*
+** LOOP BACK TO THE NEW SECTOR TO WORK WITH
+*
+*
+** WE ARE NOW DONE COPYING. NEXT, WE NEED TO COUNT
+** THE NUMBER OF FILE DESCRIPTION ENTRIES THAT WERE
+** ^ACTUALLY^ COPIED TO THE DESTINATION.
+*
+COUNTIT
+*
+** CLEAR THE RELEVANT COUNTERS
+*
+         LDA   #0
+         TAX
+         TAY
+*
+** INIT VARIABLES FOR COUNTING LOOP
+*
+         LDA   NEWADDR
+         CLC
+         ADC   #3
+         STA   NEWADDR
+         LDA   #0
+         ADC   NEWADDR+1
+         STA   NEWADDR+1
+         LDA   #0
+         STA   FDECOUNT
+*
+** LOOP TO COUNT NUMBER OF ENTRIES
+*
+CLOOP
+*LDY #0
+*LDA NEWADDR
+*STA ADDR1
+*LDA NEWADDR+1
+*STA ADDR1
+*LDA (ADDR1),Y
+*CMP #0
+*BEQ _QUIT
+*INC FDECOUNT
+*LDA NEWADDR
+*CLC
+*ADC #$22
+*STA NEWADDR
+*LDA #0
+*ADC NEWADDR+1
+*JMP CLOOP
+*
+** EXIT
+*
+_QUIT
+         LDY   FDECOUNT
+         LDA   NEWADDR
+         LDX   #2
+         STX   RETLEN
+         STA   RETURN
+         LDX   NEWADDR+1
+         STX   RETURN+1
+*
+*
+EXIT
+         JMP   $3D0
+*
+         PUT   MIN.LIB.REQUIRED.ASM
+*

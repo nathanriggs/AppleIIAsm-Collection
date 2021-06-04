@@ -13,7 +13,7 @@
 * CONTACT:   NATHAN.RIGGS@     *
 *            OUTLOOK.COM       *
 *                              *
-* DATE:      29-NOV-2019       *
+* DATE:      11-MAR-2021       *
 * ASSEMBLER: MERLIN 8 PRO      *
 * OS:        DOS 3.3           *
 *                              *
@@ -55,7 +55,6 @@
 * GBIT   : GET BIT FROM BYTE   *
 * GRET   : GET RETURN          *
 * MFILL  : FILL MEMORY BLOCK   *
-* MOV    : MOVE SRC TO DEST    *
 * MOVB   : MOVE MEMORY BLOCK   *
 * MSWAP  : SWAP MEMORY BLOCKS  *
 * PEEK   : LOAD .A FROM ADDR   *
@@ -79,11 +78,11 @@
 *
 _AXLIT   MAC              ; CHECK IF LITERAL
          IF    #=]1       ; IF ]1 IS A LITERAL
-         LDX   ]1/$100    ; ++<4C3B> GET HIGH
-         LDA   ]1         ; ++<4C3B> GET LOW
+         LDX   ]1/$100    ; {4C3B} GET HIGH {NZ}
+         LDA   ]1         ; {4C3B} GET LOW {NZ}
          ELSE             ; OTHERWISE, ]1 IS AN ADDR
-         LDX   ]1+1       ; ++<4C3B> SO GET HIGH VALUE
-         LDA   ]1         ; ++<4C3B> THEN LOW VALUE
+         LDX   ]1+1       ; {4C3B} SO GET HIGH VALUE {NZ}
+         LDA   ]1         ; {4C3B} THEN LOW VALUE {NZ}
          FIN              ; END IF
          <<<              ; END MACRO
 *
@@ -108,13 +107,13 @@ _AXLIT   MAC              ; CHECK IF LITERAL
 *
 _AXSTR   MAC              ; CHECK IF STRING
          IF    "=]1 ;...... IF ]1 IS A STRING
-         JMP   __STRCNT2  ; ++<3C3B> SKIP STRING DEC
-]STRTMP  STR   ]1         ; ++<0C1B+> STR DECLARATION
+         JMP   __STRCNT2  ; {3C3B} SKIP STRING DEC
+]STRTMP  STR   ]1         ; {0C1B+} STR DECLARATION
 __STRCNT2                 ; SKIP TO HERE
-         LDX   #>]STRTMP  ; ++<4C3B> GET HIBYTE OF STRING
-         LDA   #<]STRTMP  ; ++<4C3B> GET LO BYTE
+         LDX   #>]STRTMP  ; {4C3B} GET HIBYTE OF STRING {NZ}
+         LDA   #<]STRTMP  ; {4C3B} GET LO BYTE {NZ}
          ELSE             ; OTHERWISE, ]1 IS ADDRESS
-         _AXLIT ]1        ; ++<(8C6B)> TEST OF LITERAL OR NOT
+         _AXLIT ]1        ; {8C6B} TEST OF LITERAL OR NOT
          FIN              ; END IF
          <<<
 *
@@ -136,15 +135,15 @@ __STRCNT2                 ; SKIP TO HERE
 *
 _ISLIT   MAC              ; CHECK IF LITERAL
          IF    #=]1       ; IF ]1 IS A LITERAL
-         LDA   ]1/$100    ; ++<4C3B> GET HIGH BYTE
-         PHA              ; ++<3C1B> PUSH .A TO STACK
-         LDA   ]1         ; ++<4C3B> GET LOW BYTE
-         PHA              ; ++<3C1B> PUSH .A TO STACK
+         LDA   ]1/$100    ; {4C3B} GET HIGH BYTE {NZ}
+         PHA              ; {3C1B} PUSH .A TO STACK
+         LDA   ]1         ; {4C3B} GET LOW BYTE {NZ}
+         PHA              ; {3C1B} PUSH .A TO STACK
          ELSE             ; OTHERWISE, ]1 IS ADDRESS
-         LDA   ]1+1       ; ++<4C3B> SO GET HIGH NIBBLE
-         PHA              ; ++<3C1B> PUSH .A TO STACK
-         LDA   ]1         ; ++<4C3B> THEN GET LOW NIBBLE
-         PHA              ; ++<3C1B> AND PUSH TO STACK
+         LDA   ]1+1       ; {4C3B} SO GET HIGH NIBBLE {NZ}
+         PHA              ; {3C1B} PUSH .A TO STACK
+         LDA   ]1         ; {4C3B} THEN GET LOW NIBBLE {NZ}
+         PHA              ; {3C1B} AND PUSH TO STACK
          FIN              ; END IF
          <<<
 *
@@ -168,15 +167,15 @@ _ISLIT   MAC              ; CHECK IF LITERAL
 *
 _ISSTR   MAC              ; CHECK IF STRING
          IF    "=]1 ;...... IF ]1 IS A STRING
-         JMP   __STRCONT  ; ++<3C3B> KIP STRING DEC
-]STRTMP  STR   ]1         ; ++<0C1+B> DECLARE STRING
+         JMP   __STRCONT  ; {3C3B} KIP STRING DEC
+]STRTMP  STR   ]1         ; {0C1+B} DECLARE STRING
 __STRCONT
-         LDA   #>]STRTMP  ; ++<2C2B> GET HI VAL
-         PHA              ; ++<3C1B> PUSH .A TO STACK
-         LDA   #<]STRTMP  ; ++<2C2B> GET LO 2C,2B
-         PHA              ; ++<3C1B> PUSH .A TO STACK
+         LDA   #>]STRTMP  ; {2C2B} GET HI VAL {NZ}
+         PHA              ; {3C1B} PUSH .A TO STACK
+         LDA   #<]STRTMP  ; {2C2B} GET LO 2C,2B {NZ}
+         PHA              ; {3C1B} PUSH .A TO STACK
          ELSE             ; OTHERIWSE ]1 IS AN ADDRESS
-         _ISLIT ]1        ; ++<[8C6B]> CHECK IF LITERAL
+         _ISLIT ]1        ; {8C6B} CHECK IF LITERAL
          FIN              ; END IF
          <<<
 *
@@ -199,15 +198,15 @@ __STRCONT
 *
 _MLIT    MAC              ; CHECK IF LITERAL
          IF    #=]1       ; IF ]1 IS A LITERAL
-         LDA   ]1/$100    ; ++<4C3B> GET HI NIBBLE
-         STA   ]2+1       ; ++<4C3B> STORE IN ZP
-         LDA   ]1         ; ++<4C3B> THEN GET LO
-         STA   ]2         ; ++<4C3B> STORE IN ZP
+         LDA   ]1/$100    ; {4C3B} GET HI NIBBLE {NZ}
+         STA   ]2+1       ; {4C3B} STORE IN ZP
+         LDA   ]1         ; {4C3B} THEN GET LO {NZ}
+         STA   ]2         ; {4C3B} STORE IN ZP
          ELSE             ; OTHERIWSE ]1 IS ADDRESS
-         LDA   ]1+1       ; ++<4C3B> SO GET HIGH NIB
-         STA   ]2+1       ; ++<4C3B> AND STORE IN ZP
-         LDA   ]1         ; ++<4C3B> THEN GET LOW NIB
-         STA   ]2         ; ++<4C4B> AND STORE IN ZP
+         LDA   ]1+1       ; {4C3B} SO GET HIGH NIB {NZ}
+         STA   ]2+1       ; {4C3B} AND STORE IN ZP
+         LDA   ]1         ; {4C3B} THEN GET LOW NIB {NZ}
+         STA   ]2         ; {4C4B} AND STORE IN ZP
          FIN              ; END IF
          <<<
 *
@@ -232,15 +231,15 @@ _MLIT    MAC              ; CHECK IF LITERAL
 *
 _MSTR    MAC              ; CHECK IF STRING
          IF    "=]1 ;...... IF ]1 IS A STRING
-         JMP   __STRCONT  ; ++<3C3B> SKIP STRING DEC
-]STRTMP  STR   ]1         ; ++<OC1+B> DECLARE STRING
+         JMP   __STRCONT  ; {3C3B} SKIP STRING DEC
+]STRTMP  STR   ]1         ; {OC1+B} DECLARE STRING
 __STRCONT                 ; CONTINUE
-         LDA   #>]STRTMP  ; ++<2C2B> GET HI NIB OF ADDR
-         STA   ]2+1       ; ++<4C3B> STORE IN ZP
-         LDA   #<]STRTMP  ; ++<2C2B> GET LOW NIB
-         STA   ]2         ; ++<4C3B> SPRE ON ZP
+         LDA   #>]STRTMP  ; {2C2B} GET HI NIB OF ADDR {NZ}
+         STA   ]2+1       ; {4C3B} STORE IN ZP
+         LDA   #<]STRTMP  ; {2C2B} GET LOW NIB {NZ}
+         STA   ]2         ; {4C3B} SPRE ON ZP
          ELSE             ; OTHERWISE ]1 IS ADDRESS
-         _ISLIT ]1        ; ++<[8C6B]> CHECK IF LITERAL
+         _MLIT ]1;]2      ; {8C6B} CHECK IF LITERAL
          FIN              ; END IF
          <<<              ; END MACRO
 *
@@ -259,11 +258,11 @@ __STRCONT                 ; CONTINUE
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 _PRN     MAC              ; PRINT STRING
-         STY   SCRATCH    ; ++<3C2B> PRESERVE .Y
-         JSR   __P        ; ++<6C3B[155C+]> PRINT THE STRING
-         ASC   ]1         ; ++<0C1B+> HOLD STRING HERE
-         HEX   00         ; ++<0C1B> KILL STRING PRINT
-         LDY   SCRATCH    ; ++<3C2B> RESTORE .Y
+         STY   SCRATCH    ; {3C2B} PRESERVE .Y
+         JSR   __P        ; {161C3B} PRINT THE STRING {NZCV}
+         ASC   ]1         ; {0C1B+} HOLD STRING HERE
+         HEX   00         ; {0C1B} KILL STRING PRINT
+         LDY   SCRATCH    ; {3C2B} RESTORE .Y {NZ}
          <<<              ; END MACRO
 *
 *``````````````````````````````*
@@ -278,10 +277,10 @@ _PRN     MAC              ; PRINT STRING
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 _WAIT    MAC              ; WAIT FOR KEYPRESS
-]LP      LDA   ]KYBD      ; ++<4C3B> CHECK FOR KEYPRESS
-         BPL   ]LP        ; ++<4C2B> IF NOT, KEEP LOOPING
-         AND   #$7F       ; ++<2C2B> SET HIGH BIT
-         STA   ]STROBE    ; ++<4C3B> RESET KYBD STROBE
+]LP      LDA   ]KYBD      ; {4C3B} CHECK FOR KEYPRESS {NZ}
+         BPL   ]LP        ; {4C2B} IF NOT, KEEP LOOPING
+         AND   #$7F       ; {2C2B} SET HIGH BIT {NZ}
+         STA   ]STROBE    ; {4C3B} RESET KYBD STROBE
          <<<              ; END MACRO
 *
 *``````````````````````````````*
@@ -298,9 +297,9 @@ _WAIT    MAC              ; WAIT FOR KEYPRESS
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 BCCL     MAC              ; LONG BCC
-         BCC   ]TOBCC     ; ++<4C2B> IF CARRY CLEAR, BRANCH
-]NOBCC   JMP   ]EXIT      ; ++<3C3B> OTHER, RETURN
-]TOBCC   JMP   ]1         ; ++<3C3B> JMP TO BCC BRANCH LOC
+         BCC   ]TOBCC     ; {4C2B} IF CARRY CLEAR, BRANCH
+]NOBCC   JMP   ]EXIT      ; {3C3B} OTHER, RETURN
+]TOBCC   JMP   ]1         ; {3C3B} JMP TO BCC BRANCH LOC
 ]EXIT                     ; CARRY WASN'T CLEAR
          <<<              ; END MACRO
 *
@@ -314,9 +313,9 @@ BCCL     MAC              ; LONG BCC
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 BCSL     MAC              ; LONG LCS
-         BCS   ]TOBCS     ; ++<4C2B> IF CARRY SET, THEN BRANCH
-]NOBCS   JMP   ]EXIT      ; ++<3C3B> OTHERWISE, DON'T BRANCH
-]TOBCS   JMP   ]1         ; ++<3C3B> JMP TO BRANCH
+         BCS   ]TOBCS     ; {4C2B} IF CARRY SET, THEN BRANCH
+]NOBCS   JMP   ]EXIT      ; {3C3B} OTHERWISE, DON'T BRANCH
+]TOBCS   JMP   ]1         ; {3C3B} JMP TO BRANCH
 ]EXIT                     ; EXIT LABEL
          <<<              ; END MACRO
 *
@@ -334,14 +333,14 @@ BCSL     MAC              ; LONG LCS
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 BEEP     MAC              ; ROUTINE BEEP
-         STY   SCRATCH    ; ++<3C2B> BACKUP .Y REGISTER
-         LDX   ]1         ; ++<4C3B> LOAD BEEP LENGTH
+         STY   SCRATCH    ; {3C2B} BACKUP .Y REGISTER
+         LDX   ]1         ; {4C3B} LOAD BEEP LENGTH {NZ}
 ]LP1
-         JSR   BELL       ; ++<6C3B[84C]> JSR TO BELL ROUTINE
-         DEX              ; ++<2C1B> DECREASE .X COUNTER
-         CPX   #0         ; ++<2C2B> CMP .X TO ZERO
-         BNE   ]LP1       ; ++<4C2B> IF !=, LOP
-         LDY   SCRATCH    ; ++<3C2B> OTHERWISE, RESTORE .Y
+         JSR   BELL       ; {90C3B} JSR TO BELL ROUTINE
+         DEX              ; {2C1B} DECREASE .X COUNTER {NZ}
+         CPX   #0         ; {2C2B} CMP .X TO ZERO {NZC}
+         BNE   ]LP1       ; {4C2B} IF !=, LOOP
+         LDY   SCRATCH    ; {3C2B} OTHERWISE, RESTORE .Y {NZ}
          <<<              ; END MACRO
 *
 *``````````````````````````````*
@@ -354,9 +353,9 @@ BEEP     MAC              ; ROUTINE BEEP
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 BEQL     MAC              ; LONG BEQ
-         BEQ   ]TOBEQ     ; ++<4C2B> IF CMP EQUAL OR 0, BRANCH
-]NOBEQ   JMP   ]EXIT      ; ++<3C3B> OTHERWISE, SKIP BRANCH
-]TOBEQ   JMP   ]1         ; ++<3C3B> JUMP TO BRANCH
+         BEQ   ]TOBEQ     ; {4C2B} IF CMP EQUAL OR 0, BRANCH
+]NOBEQ   JMP   ]EXIT      ; {3C3B} OTHERWISE, SKIP BRANCH
+]TOBEQ   JMP   ]1         ; {3C3B} JUMP TO BRANCH
 ]EXIT                     ; EXIT LABEL
          <<<              ; END MACRO
 *
@@ -370,9 +369,9 @@ BEQL     MAC              ; LONG BEQ
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 BNEL     MAC              ; LONG BNE
-         BNE   ]TOBNE     ; ++<4C2B> IF CMP != OR !=0, BRANCH
-]NOBNE   JMP   ]EXIT      ; ++<3C3B> OTHERWISE, SKIP BRANCH
-]TOBNE   JMP   ]1         ; ++<3C3B> JUMP TO BRANCH ADDR
+         BNE   ]TOBNE     ; {4C2B} IF CMP != OR !=0, BRANCH
+]NOBNE   JMP   ]EXIT      ; {3C3B} OTHERWISE, SKIP BRANCH
+]TOBNE   JMP   ]1         ; {3C3B} JUMP TO BRANCH ADDR
 ]EXIT                     ; QUITTING LABEL
          <<<              ; END MACRO
 *
@@ -386,9 +385,9 @@ BNEL     MAC              ; LONG BNE
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 BMIL     MAC              ; LONG BMI
-         BMI   ]TOBMI     ; ++<4C2B> IF NEGATIVE SET, BRANCH
-]NOBMI   JMP   ]EXIT      ; ++<3C3B> OTHERWISE, SKIP BRANCH
-]TOBMI   JMP   ]1         ; ++<3C3B> JUMP TO BRANCH ADDRESS
+         BMI   ]TOBMI     ; {4C2B} IF NEGATIVE SET, BRANCH
+]NOBMI   JMP   ]EXIT      ; {3C3B} OTHERWISE, SKIP BRANCH
+]TOBMI   JMP   ]1         ; {3C3B} JUMP TO BRANCH ADDRESS
 ]EXIT                     ; QUIT LABEL
          <<<              ; END MACRO
 *
@@ -402,9 +401,9 @@ BMIL     MAC              ; LONG BMI
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 BPLL     MAC              ; LONG BPL
-         BPL   ]TOBPL     ; ++<4C2B> IF NOT NEGATIVE, BRANCH
-]NOBPL   JMP   ]EXIT      ; ++<3C3B> OTHERWISE, SKIP BRANCH
-]TOBPL   JMP   ]1         ; ++<3C3B> JUMP TO BRANCH ADDRESS
+         BPL   ]TOBPL     ; {4C2B} IF NOT NEGATIVE, BRANCH
+]NOBPL   JMP   ]EXIT      ; {3C3B} OTHERWISE, SKIP BRANCH
+]TOBPL   JMP   ]1         ; {3C3B} JUMP TO BRANCH ADDRESS
 ]EXIT                     ; QUIT
          <<<              ; END MACRO
 *
@@ -419,9 +418,9 @@ BPLL     MAC              ; LONG BPL
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 BVCL     MAC              ; LONG BVC
-         BVC   ]TOBVC     ; ++<4C2B> IF OVERFLOW CLEAR, BRANCH
-]NOBVC   JMP   ]EXIT      ; ++<3C3B> OTHERWISE, SKIP BRANCH
-]TOBVC   JMP   ]1         ; ++<3C3B> JUMP TO BRANCH ADDRESS
+         BVC   ]TOBVC     ; {4C2B} IF OVERFLOW CLEAR, BRANCH
+]NOBVC   JMP   ]EXIT      ; {3C3B} OTHERWISE, SKIP BRANCH
+]TOBVC   JMP   ]1         ; {3C3B} JUMP TO BRANCH ADDRESS
 ]EXIT                     ; QUIT
          <<<              ; END MACRO
 *
@@ -435,9 +434,9 @@ BVCL     MAC              ; LONG BVC
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 BVSL     MAC              ; LONG BVS
-         BVS   ]TOBVS     ; ++<4C2B> OF OVERFLOW SET, BRANCH
-]NOBVS   JMP   ]EXIT      ; ++<3C3B> OTHERWISE, SKIP BRANCH
-]TOBVS   JMP   ]1         ; ++<3C3B> JUMP TO BRANCH ADDRESS
+         BVS   ]TOBVS     ; {4C2B} OF OVERFLOW SET, BRANCH
+]NOBVS   JMP   ]EXIT      ; {3C3B} OTHERWISE, SKIP BRANCH
+]TOBVS   JMP   ]1         ; {3C3B} JUMP TO BRANCH ADDRESS
 ]EXIT                     ; QUIT
          <<<              ; END MACRO
 *
@@ -464,10 +463,10 @@ CBRA     MAC              ; BRANCH ALWAYS
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 CPHX     MAC              ; PUSH .X TO STACK
-         STA   SCRATCH    ; ++<3C2B> BACKUP .A CONTENTS
-         TXA              ; ++<2C1B> TRANSFER .X TO .A
-         PHA              ; ++<3C1B> PUSH .A
-         LDA   SCRATCH    ; ++<3C2B> RESTORE .A CONTENTS
+         STA   SCRATCH    ; {3C2B} BACKUP .A CONTENTS
+         TXA              ; {2C1B} TRANSFER .X TO .A {NZ}
+         PHA              ; {3C1B} PUSH .A
+         LDA   SCRATCH    ; {3C2B} RESTORE .A CONTENTS {NZ}
          <<<              ; END MACRO
 *
 *``````````````````````````````*
@@ -480,10 +479,10 @@ CPHX     MAC              ; PUSH .X TO STACK
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 CPHY     MAC              ; PUSH .Y TO STACK
-         STA   SCRATCH    ; ++<3C2B> BACKUP .A
-         TYA              ; ++<2C1B> TRANSFER .Y TO .A
-         PHA              ; ++<3C1B> PUSH .A TO STACK
-         LDA   SCRATCH    ; ++<3C2B> RESTORE .A CONTENTS
+         STA   SCRATCH    ; {3C2B} BACKUP .A
+         TYA              ; {2C1B} TRANSFER .Y TO .A {NZ}
+         PHA              ; {3C1B} PUSH .A TO STACK
+         LDA   SCRATCH    ; {3C2B} RESTORE .A CONTENTS {NZ}
          <<<              ; END MACRO
 *
 *``````````````````````````````*
@@ -496,10 +495,10 @@ CPHY     MAC              ; PUSH .Y TO STACK
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 CPLX     MAC              ; PULL FROM STACT TO .X
-         STA   SCRATCH    ; ++<3C2B> BACKUP .A
-         PLA              ; ++<3C1B> PULL FROM STACK INTO .A
-         TAX              ; ++<2C1B> TRANSFER .A TO .X
-         LDA   SCRATCH    ; ++<3C2B> RESTORE .A CONTENTS
+         STA   SCRATCH    ; {3C2B} BACKUP .A
+         PLA              ; {3C1B} PULL FROM STACK INTO .A {NZ}
+         TAX              ; {2C1B} TRANSFER .A TO .X {NZ}
+         LDA   SCRATCH    ; {3C2B} RESTORE .A CONTENTS {NZ}
          <<<              ; END MACRO
 *
 *``````````````````````````````*
@@ -512,10 +511,10 @@ CPLX     MAC              ; PULL FROM STACT TO .X
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 CPLY     MAC              ; PULL FROM STACK INTO .Y
-         STA   SCRATCH    ; ++<3C2B> BACKUP .A
-         PLA              ; ++<3C1B> PULL FROM STACK TO .A
-         TAY              ; ++<2C2B> TRANSFER A TO .Y
-         LDA   SCRATCH    ; ++<3C2B> RESTORE .A
+         STA   SCRATCH    ; {3C2B} BACKUP .A
+         PLA              ; {3C1B} PULL FROM STACK TO .A {NZ}
+         TAY              ; {2C2B} TRANSFER A TO .Y {NZ}
+         LDA   SCRATCH    ; {3C2B} RESTORE .A {NZ}
          <<<              ; END MACRO
 *
 *``````````````````````````````*
@@ -528,10 +527,10 @@ CPLY     MAC              ; PULL FROM STACK INTO .Y
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 CTXY     MAC              ; TRANSFER X TO Y
-         STA   SCRATCH    ; ++<3C2B> BACKUP .A
-         TXA              ; ++<2C1B> TRANSFER .X TO .A
-         TAY              ; ++<2C1B> TRNSFER .A TO .Y
-         LDA   SCRATCH    ; ++<3C2B> RESTORE .A
+         STA   SCRATCH    ; {3C2B} BACKUP .A
+         TXA              ; {2C1B} TRANSFER .X TO .A {NZ}
+         TAY              ; {2C1B} TRNSFER .A TO .Y {N}
+         LDA   SCRATCH    ; {3C2B} RESTORE .A {NZ}
          <<<              ; END MACRO
 *
 *``````````````````````````````*
@@ -544,10 +543,10 @@ CTXY     MAC              ; TRANSFER X TO Y
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 CTYX     MAC              ; TRANSFER .Y TO .X
-         STA   SCRATCH    ; ++<3C2B> BACKUP .A
-         TYA              ; ++<2C1B> TRANSFER .Y TO .A
-         TAX              ; ++<2C1B> TRANSFER .A TO .X
-         LDA   SCRATCH    ; ++<3C2B> RESTORE .A
+         STA   SCRATCH    ; {3C2B} BACKUP .A
+         TYA              ; {2C1B} TRANSFER .Y TO .A {NZ}
+         TAX              ; {2C1B} TRANSFER .A TO .X {NZ}
+         LDA   SCRATCH    ; {3C2B} RESTORE .A {NZ}
          <<<              ; END MACRO
 *
 *``````````````````````````````*
@@ -556,17 +555,17 @@ CTYX     MAC              ; TRANSFER .Y TO .X
 * CLEAR THE HIGH NIBBLE OF A   *
 * BYTE IN **.A**.              *
 *                              *
-* CYCLES: 16                   *
+* CYCLES: 10                   *
 * SIZE: 6 BYTES                *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 CLRHI    MAC
 *
-         AND   #$F0       ; CLEAR 4 RIGHT BITS
-         LSR              ; MOVE BITS RIGHT
-         LSR              ; MOVE BITS RIGHT
-         LSR              ; MOVE BITS RIGHT
-         LSR              ; MOVE BITS RIGHT
+         AND   #$F0       ; {2C2B} CLEAR 4 RIGHT BITS {NZ}
+         LSR              ; {2C1B} MOVE BITS RIGHT {ZC,N=0}
+         LSR              ; {2C1B} MOVE BITS RIGHT {ZC,N=0}
+         LSR              ; {2C1B} MOVE BITS RIGHT {ZC,N=0}
+         LSR              ; {2C1B} MOVE BITS RIGHT {ZC,N=0}
          <<<
 *
 *``````````````````````````````*
@@ -583,10 +582,10 @@ CLRHI    MAC
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 DELAY    MAC              ; DELAY FOR MILLISECONDS
-         STY   SCRATCH    ; ++<3C2B> BACKUP .Y
-         LDY   ]1         ; ++<4C3B> # OF MILLISECONDS
-         JSR   DELAYMS    ; ++<6C3B[39C]> DELAY SUBROUTINE
-         LDY   SCRATCH    ; ++<3C2B> RESTORE .Y
+         STY   SCRATCH    ; {3C2B} BACKUP .Y
+         LDY   ]1         ; {4C3B} # OF MILLISECONDS {NZ}
+         JSR   DELAYMS    ; {45C3B} DELAY SUBROUTINE {NZC}
+         LDY   SCRATCH    ; {3C2B} RESTORE .Y {NZ}
          <<<              ; END MACRO
 *
 *``````````````````````````````*
@@ -605,11 +604,11 @@ DELAY    MAC              ; DELAY FOR MILLISECONDS
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 DUMP     MAC              ; DUMP MEMORY CONTENTS
-         _AXLIT ]1        ; ++<[8C,6B]> CHECK LITERAL
-         STY   SCRATCH    ; ++<3C2B> BACKUP .Y
-         LDY   ]2         ; ++<4C3B> LOAD .Y WITH LENGTH
-         JSR   __DUMP     ; ++<6C3B[787C]) DUMP CONTENTS
-         LDY   SCRATCH    ; ++<3C2B> RESTORE .Y
+         _AXLIT ]1        ; {8C6B} CHECK LITERAL
+         STY   SCRATCH    ; {3C2B} BACKUP .Y {NZ}
+         LDY   ]2         ; {4C3B} LOAD .Y WITH LENGTH {NZ}
+         JSR   __DUMP     ; {794C3B} DUMP CONTENTS
+         LDY   SCRATCH    ; {3C2B} RESTORE .Y {NZ}
          <<<              ; END MACRO
 *
 *``````````````````````````````*
@@ -626,12 +625,12 @@ DUMP     MAC              ; DUMP MEMORY CONTENTS
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 GBIT     MAC              ; GET A SINGLE BIT FROM BYTE
-         LDA   ]1         ; ++<3B4C> BYTE TO CHECK
-         AND   ]2         ; ++<3B4C> MASK BIT # REQUESTED VIA HOOK
-         BEQ   ]ZERO      ; ++<2B2C> IF IT'S A MATCH, THEN 0
-         LDA   #1         ; ++<2B2C> OTHERWISE, BIT IS 1
-         JMP   ]EXIT      ; ++<3B3C> GOTO EXIT
-]ZERO    LDA   #0         ; ++<2B2C> BIT IS 0
+         LDA   ]1         ; {3B4C} BYTE TO CHECK {NZ}
+         AND   ]2         ; {3B4C} MASK BIT # REQUESTED VIA HOOK {NZ}
+         BEQ   ]ZERO      ; {2B2C} IF IT'S A MATCH, THEN 0
+         LDA   #1         ; {2B2C} OTHERWISE, BIT IS 1 {NZ}
+         JMP   ]EXIT      ; {3B3C} GOTO EXIT
+]ZERO    LDA   #0         ; {2B2C} BIT IS 0 {NZ}
 ]EXIT    <<<
 *
 *``````````````````````````````*
@@ -648,10 +647,10 @@ GBIT     MAC              ; GET A SINGLE BIT FROM BYTE
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 ERRH     MAC              ; SET ERROR HANDLE
-         STY   SCRATCH    ; ++<3C2B> BACKUP .Y
-         _AXLIT           ; ++<[8C6B]> CHECK IF LITERAL
-         JSR   __ERRH     ; ++<6C3B[53C]> RUN ERROR HANDLE SET
-         LDY   SCRATCH    ; ++<3C2B> RESTORE .Y
+         STY   SCRATCH    ; {3C2B} BACKUP .Y
+         _AXLIT           ; {8C6B} CHECK IF LITERAL
+         JSR   __ERRH     ; {59C3B} RUN ERROR HANDLE SET {NZ}
+         LDY   SCRATCH    ; {3C2B} RESTORE .Y {ZC}
          <<<              ; END MACRO
 *
 *``````````````````````````````*
@@ -669,18 +668,18 @@ ERRH     MAC              ; SET ERROR HANDLE
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 GRET     MAC              ; GET RETURN VALUE
-         STY   SCRATCH    ; ++<3C2B> BACKUP .y
-         _AXLIT ]1        ; ++<8C6B> CHECK LITERAL
-         STA   ADDR1      ; ++<3C2B> LOBYTE PASSED IN .A
-         STX   ADDR1+1    ; ++<3C2B> HIBYTE PASSED IN .X
-         LDY   #255       ; ++<2C2B> RESET COUNTER
+         STY   SCRATCH    ; {3C2B} BACKUP .Y
+         _AXLIT ]1        ; {8C6B} CHECK LITERAL
+         STA   ADDR1      ; {3C2B} LOBYTE PASSED IN .A
+         STX   ADDR1+1    ; {3C2B} HIBYTE PASSED IN .X
+         LDY   #255       ; {2C2B} RESET COUNTER {ZC}
 ]LP
-         INY              ; ++<2C1B> INCREASE COUNTER
-         LDA   RETURN,Y   ; ++<5C3B> LOAD BYTE IN RETURN AT
-         STA   (ADDR1),Y  ; ++<6C2B> COUNTER OFFSET; STORE AT
-         CPY   RETLEN     ; ++<4C3B> NEW LOCATION
-         BNE   ]LP        ; ++<4C2B> IF COUNTER < RETLEN, LOOP
-         LDY   SCRATCH    ; ++<3C2B> RESTORE .Y
+         INY              ; {2C1B} INCREASE COUNTER {ZC}
+         LDA   RETURN,Y   ; {5C3B} LOAD BYTE IN RETURN AT {ZC}
+         STA   (ADDR1),Y  ; {6C2B} COUNTER OFFSET; STORE AT
+         CPY   RETLEN     ; {4C3B} NEW LOCATION {NZC}
+         BNE   ]LP        ; {4C2B} IF COUNTER < RETLEN, LOOP
+         LDY   SCRATCH    ; {3C2B} RESTORE .Y {NZ}
          <<<              ; END MACRO
 *
 *``````````````````````````````*
@@ -700,60 +699,14 @@ GRET     MAC              ; GET RETURN VALUE
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 MFILL    MAC              ; MEMORY FILL
-         STY   SCRATCH    ; ++<3C2B> BACKUP .Y REGISTER
-         _MLIT ]1;WPAR1   ; ++<[16C12B]> CHECK LITERAL OF ]1
-         _MLIT ]2;WPAR2   ; ++<[16C12B]> CHECK LITERAL OF ]2
-         LDA   ]3         ; ++<4C3B> FILL VALUE
-         STA   BPAR1      ; ++<3C2B> STORED IN BPAR1
-         JSR   MEMFILL    ; ++<6C3B[59+]> GOSUB ROUTINE
-         LDY   SCRATCH    ; ++<3C2B> RESTORE .Y
-*
-*``````````````````````````````*
-* MOV                          *
-*                              *
-* COPY SOURCE TO DESTINATION   *
-* ADDRESS OR REGISTER.         *
-*                              *
-* PARAMETERS                   *
-*                              *
-*  ]1 = SOURCE ADD OR REGISTER *
-*  ]2 = DESTINATION ADDR / REG *
-*                              *
-* CYCLES: 267+                 *
-* BYTES: 48                    *
-*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
-*
-MOV      MAC              ; MEMORY MOVE
-         IF    A=]1       ; .A REGISTER SOURCE
-         IF    X=]2
-         TAX
-         ELSE
-         IF    Y=]2
-         TAY
-         ELSE
-         STA   ]2
-         FIN
-         FIN
-         FIN
-         IF    $=]1
-         IF    A=]2
-         LDA   ]1
-         ELSE
-         IF    X=]2
-         LDX   ]1
-         ELSE
-         IF    Y=]2
-         LDY   ]1
-         ELSE
-         STY   SCRATCH
-         LDY   ]1
-         STY   ]2
-         LDY   SCRATCH
-         FIN
-         FIN
-         FIN
-         FIN
-]EXIT    <<<              ; END MACRO
+         STY   SCRATCH    ; {3C2B} BACKUP .Y REGISTER
+         _MLIT ]1;WPAR1   ; {16C12B} CHECK LITERAL OF ]1
+         _MLIT ]2;WPAR2   ; {16C12B} CHECK LITERAL OF ]2
+         LDA   ]3         ; {4C3B} FILL VALUE {NZ}
+         STA   BPAR1      ; {3C2B} STORED IN BPAR1
+         JSR   MEMFILL    ; {6C3B59+} GOSUB ROUTINE
+         LDY   SCRATCH    ; {3C2B} RESTORE .Y {NZ}
+         <<<
 *
 *``````````````````````````````*
 * MOVB                         *
@@ -772,12 +725,12 @@ MOV      MAC              ; MEMORY MOVE
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 MOVB     MAC              ; MEMORY MOVE
-         STY   SCRATCH    ; ++<3C2B> BACKUP .Y
-         _MLIT ]1;WPAR1   ; ++<[16C12B]> CHECK 1ST ADDR AS LITERAL
-         _MLIT ]2;WPAR2   ; ++<[16C12B]> CHECK 2ND ADDR AS LITERAL
-         _MLIT ]3;WPAR3   ; ++<[16C12B]> CHECK 3RD AS LITERAL
-         JSR   MEMMOVE    ; ++<6C3B[207C+]> GOSUB ROUTINE
-         LDY   SCRATCH    ; ++<3C2B> RESTORE .Y
+         STY   SCRATCH    ; {3C2B} BACKUP .Y
+         _MLIT ]1;WPAR1   ; {16C12B} CHECK 1ST ADDR AS LITERAL
+         _MLIT ]2;WPAR2   ; {16C12B} CHECK 2ND ADDR AS LITERAL
+         _MLIT ]3;WPAR3   ; {16C12B} CHECK 3RD AS LITERAL
+         JSR   MEMMOVE    ; {213C3B} GOSUB ROUTINE {NZCV}
+         LDY   SCRATCH    ; {3C2B} RESTORE .Y {NZ}
          <<<              ; END MACRO
 *
 *``````````````````````````````*
@@ -797,13 +750,13 @@ MOVB     MAC              ; MEMORY MOVE
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 MSWAP    MAC              ; MEMORY SWAP
-         STY   SCRATCH    ; ++<3C2B> BACKUP .Y
-         _MLIT ]2;WPAR2   ; ++<[16C12B]> TEST AS LITERAL
-         _MLIT ]1;WPAR1   ; ++<[16C12B]> TEST AS LITERAL
-         LDA   ]3         ; ++<4C3B>
-         STA   BPAR1      ; ++<3C2B> STORE LENGTH IN BYTES
-         JSR   MEMSWAP    ; ++<6C3B[46+]> GOSUB ROUTINE
-         LDY   SCRATCH    ; ++<3C2B> RESTORE .Y
+         STY   SCRATCH    ; {3C2B} BACKUP .Y
+         _MLIT ]2;WPAR2   ; {16C12B} TEST AS LITERAL
+         _MLIT ]1;WPAR1   ; {16C12B} TEST AS LITERAL
+         LDA   ]3         ; {4C3B} {NZ}
+         STA   BPAR1      ; {3C2B} STORE LENGTH IN BYTES
+         JSR   MEMSWAP    ; {6C3B46+} GOSUB ROUTINE {NZC}
+         LDY   SCRATCH    ; {3C2B} RESTORE .Y {NZ}
          <<<              ; END MAC
 *
 *``````````````````````````````*
@@ -811,12 +764,18 @@ MSWAP    MAC              ; MEMORY SWAP
 *                              *
 * LOAD .A WITH VALUE AT ADDR   *
 *                              *
-* CYCLES: 4                    *
-* BYTES: 3                     *
+* CYCLES: 28                   *
+* BYTES: 18                    *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 PEEK     MAC              ; PUT VALUE INTO .A
-         LDA   ]1         ; ++<4C3B> LOAD ADDR AL IN .A
+         STY   SCRATCH    ; {3C2B}
+         _AXLIT ]1        ; {8C6B}
+         STA   ADDR1      ; {3C2B}
+         STX   ADDR1+1    ; {3C2B}
+         LDY   #0         ; {2C2B} {ZC}
+         LDA   (ADDR1),Y  ; {6C2B} {ZC}
+         LDY   SCRATCH    ; {3C2B} {NZ}
          <<<              ; END MACRO
 *
 *``````````````````````````````*
@@ -824,11 +783,30 @@ PEEK     MAC              ; PUT VALUE INTO .A
 *                              *
 * STORE VALUE AT ADDRESS       *
 *                              *
-* CYCLES: 4                    *
-* BYTES: 3                     *
+* CYCLES: 32                   *
+* BYTES: 20                    *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 POKE     MAC              ; STORE .A INTO MEM LOC
-         STA   ]1         ; ++<4C3B> STORE MEM VAL IN .A
+         STY   SCRATCH    ; {3C2B}
+         _AXLIT ]2        ; {8C6B}
+         STA   ADDR1      ; {3C2B}
+         STX   ADDR1+1    ; {3C2B}
+         LDA   ]1         ; {3C2B} {ZC}
+         LDY   #0         ; {3C2B} {ZC}
+         STA   (ADDR1),Y  ; {6C2B} {ZC}
+         LDY   SCRATCH    ; {3C2B} {NZ}
+         <<<              ; END MACRO
+*
+*
+*``````````````````````````````*
+* NEGA                         *
+*                              *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+NEGA     MAC              ; STORE .A INTO MEM LOC
+         EOR   #$FF
+         CLC
+         ADC   #1
          <<<              ; END MACRO
 *

@@ -8,7 +8,7 @@
 * CONTACT:   NATHAN.RIGGS@     *
 *            OUTLOOK.COM       *
 *                              *
-* DATE:      01-OCT-2019       *
+* DATE:      12-MAY-2021       *
 * ASSEMBLER: MERLIN 8 PRO      *
 * OS:        DOS 3.3           *
 *                              *
@@ -49,28 +49,26 @@
 * THIS MEANS THAT ALL COMMANDS *
 * IN THE LORES LIBRARY WILL    *
 * PLOT TO THIS PAGE, NO MATTER *
-* WHICH PAGE IS BEING VIEWD.   *
+* WHICH PAGE IS BEING VIEWED.  *
 *                              *
 * PARAMETERS:                  *
 *                              *
 *  ]1 = PAGE NUMBER            *
 *                              *
-* SAMPLE USAGE:                *
-*                              *
-*  LWORKPG #1                  *
-*                              *
+* CYCLES: 27+                  *
+* SIZE: 20 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 LWORKPG  MAC
-         LDA   ]1         ; LOAD PAGE NUMBER
-         CMP   #2         ; IF IT IS NOT PAGE 2,
-         BNE   ]__P1      ; THEN ASSUME PAGE 1
-         LDA   #2         ; ELSE SET WORKING PAGE
-         STA   LWP        ; TO PAGE 2
-         JMP   ]EXIT
+         LDA   ]1         ; {4C3B} LOAD PAGE NUMBER
+         CMP   #2         ; {3C2B} IF IT IS NOT PAGE 2,
+         BNE   ]__P1      ; {3C2B} THEN ASSUME PAGE 1
+         LDA   #2         ; {3C2B} ELSE SET WORKING PAGE
+         STA   LWP        ; {4C3B} TO PAGE 2
+         JMP   ]EXIT      ; {3C3B}
 ]__P1
-         LDA   #1         ; SET WORKING PAGE TO PAGE 1
-         STA   LWP
+         LDA   #1         ; {3C2B} SET WORKING PAGE TO PAGE 1
+         STA   LWP        ; {4C3B}
 ]EXIT
          <<<
 *
@@ -84,19 +82,18 @@ LWORKPG  MAC
 *                              *
 *  ]1 = PAGE NUMBER            *
 *                              *
-* SAMPLE USAGE:                *
-*                              *
-*  LVIEWPG #1                  *
+* CYCLES: 21+                  *
+* SIZE: 16 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 LVIEWPG  MAC
-         LDA   ]1         ; GET PAGE NUMBER PASSED
-         CMP   #2         ; IF IT ISN'T 2, THEN
-         BNE   ]P1        ; ASSUME VIEWING PAGE 2
-         BIT   VPG2       ; SET VIEWING PAGE TO PAGE 2
-         JMP   ]EXIT
+         LDA   ]1         ; {4C3B} GET PAGE NUMBER PASSED
+         CMP   #2         ; {3C2B} IF IT ISN'T 2, THEN
+         BNE   ]P1        ; {3C2B} ASSUME VIEWING PAGE 2
+         BIT   VPG2       ; {4C3B} SET VIEWING PAGE TO PAGE 2
+         JMP   ]EXIT      ; {3C3B}
 ]P1
-         BIT   VPG1       ; SET VIEW PAGE TO PAGE 1
+         BIT   VPG1       ; {4C3B} SET VIEW PAGE TO PAGE 1
 ]EXIT
          <<<
 *
@@ -110,15 +107,14 @@ LVIEWPG  MAC
 *                              *
 *  NONE                        *
 *                              *
-* SAMPLE USAGE:                *
-*                              *
-*  LRGF                        *
+* CYCLES: 12                   *
+* SIZE: 9 BYTES                *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 LRGF     MAC
-         BIT   LORES
-         BIT   MIXEDOFF
-         BIT   TEXTOFF    ; GRAPHICS SOFT SWITCH
+         BIT   LORES      ; {4C3B}
+         BIT   MIXEDOFF   ; {4C3B}
+         BIT   TEXTOFF    ; {4C3B} GRAPHICS SOFT SWITCH
          <<<
 *
 *``````````````````````````````*
@@ -132,15 +128,14 @@ LRGF     MAC
 *                              *
 *  NONE                        *
 *                              *
-* SAMPLE USAGE:                *
-*                              *
-*  LRGP                        *
+* CYCLES: 12                   *
+* SIZE: 9 BYTES                *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 LRGP     MAC
-         BIT   LORES
-         BIT   MIXEDON
-         BIT   TEXTOFF    ; GRAPHICS SOFT SWITCH
+         BIT   LORES      ; {4C3B}
+         BIT   MIXEDON    ; {4C3B}
+         BIT   TEXTOFF    ; {4C3B} GRAPHICS SOFT SWITCH
          <<<
 *
 *``````````````````````````````*
@@ -154,16 +149,13 @@ LRGP     MAC
 *                              *
 *  ]1 = FILL COLOR             *
 *                              *
-* SAMPLE USAGE:                *
-*                              *
-*  LFCLR #15                   *
+* CYCLES: 135+                 *
+* SIZE: 92 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 LFCLR    MAC
-         STY   SCRATCH
-         LDA   ]1
-         JSR   LRGFCLR
-         LDY   SCRATCH
+         LDA   ]1         ; {4C3B}
+         JSR   LRGFCLR    ; {131C89B}
          <<<
 *
 *``````````````````````````````*
@@ -176,16 +168,13 @@ LFCLR    MAC
 *                              *
 *  ]1 = FILL COLOR             *
 *                              *
-* SAMPLE USAGE:                *
-*                              *
-*  LPCLR #15                   *
+* CYCLES: 147+                 *
+* SIZE: 100 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 LPCLR    MAC
-         STY   SCRATCH
-         LDA   ]1
-         JSR   LRGPCLR
-         LDY   SCRATCH
+         LDA   ]1         ; {4C3B}
+         JSR   LRGPCLR    ; {143C97B}
          <<<
 *
 *``````````````````````````````*
@@ -201,18 +190,15 @@ LPCLR    MAC
 *  ]2 = Y COORDINATE           *
 *  ]3 = COLOR                  *
 *                              *
-* SAMPLE USAGE:                *
-*                              *
-*  LPLOT #10;#10;#]WHITE       *
+* CYCLES: 148+                 *
+* SIZE: 107 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 LPLOT    MAC
-         STY   SCRATCH
-         LDX   ]1
-         LDY   ]2
-         LDA   ]3
-         JSR   LRPLOT
-         LDY   SCRATCH
+         LDX   ]1         ; {4C3B}
+         LDY   ]2         ; {4C3B}
+         LDA   ]3         ; {4C3B}
+         JSR   LRPLOT     ; {136C98B}
          <<<
 *
 *``````````````````````````````*
@@ -230,25 +216,22 @@ LPLOT    MAC
 *  ]4 = Y DESTINATION          *
 *  ]5 = COLOR                  *
 *                              *
-* SAMPLE USAGE:                *
-*                              *
-*  LLINE #1;#1;#10;#12;#5      *
+* CYCLES: 439+                 *
+* SIZE: 177 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 LLINE    MAC
-         STY   SCRATCH
-         LDA   ]1
-         STA   WPAR1
-         LDA   ]2
-         STA   WPAR1+1
-         LDA   ]3
-         STA   WPAR2
-         LDA   ]4
-         STA   WPAR2+1
-         LDA   ]5
-         STA   BPAR1
-         JSR   LRBLINE
-         LDY   SCRATCH
+         LDA   ]1         ; {4C3B}
+         STA   WPAR1      ; {3C2B}
+         LDA   ]2         ; {4C3B}
+         STA   WPAR1+1    ; {3C2B}
+         LDA   ]3         ; {4C3B}
+         STA   WPAR2      ; {3C2B}
+         LDA   ]4         ; {4C3B}
+         STA   WPAR2+1    ; {3C2B}
+         LDA   ]5         ; {4C3B}
+         STA   BPAR1      ; {3C2B}
+         JSR   LRBLINE    ; {400C152B}
          <<<
 *
 *``````````````````````````````*
@@ -267,24 +250,20 @@ LLINE    MAC
 *  ]3 = CIRCLE RADIUS          *
 *  ]4 = COLOR                  *
 *                              *
-* SAMPLE USAGE:                *
-*                              *
-* LCIRC #19;#19;#10;#5         *
-*                              *
+* CYCLES: 2437+                *
+* SIZE: 520 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 LCIRC    MAC
-         STY   SCRATCH
-         LDA   ]1
-         STA   WPAR1
-         LDA   ]2
-         STA   WPAR2
-         LDA   ]3
-         STA   WPAR3
-         LDA   ]4
-         STA   BPAR2
-         JSR   LRCIRCLE
-         LDY   SCRATCH
+         LDA   ]1         ; {4C3B}
+         STA   WPAR1      ; {3C2B}
+         LDA   ]2         ; {4C3B}
+         STA   WPAR2      ; {3C2B}
+         LDA   ]3         ; {4C3B}
+         STA   WPAR3      ; {3C2B}
+         LDA   ]4         ; {4C3B}
+         STA   BPAR2      ; {3C2B}
+         JSR   LRCIRCLE   ; {2410C500B}
          <<<
 *
 *``````````````````````````````*
@@ -301,23 +280,20 @@ LCIRC    MAC
 *  ]3 = X COORDINATE           *
 *  ]4 = COLOR                  *
 *                              *
-* SAMPLE USAGE:                *
-*                              *
-*  LVLIN #0;#10;#19;#6         *
+* CYCLES: 250+                 *
+* SIZE: 164 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 LVLIN    MAC
-         STY   SCRATCH
-         LDA   ]1
-         STA   WPAR1
-         LDA   ]2
-         STA   WPAR1+1
-         LDA   ]3
-         STA   BPAR1
-         LDA   ]4
-         STA   BPAR2
-         JSR   LRVLINE
-         LDY   SCRATCH
+         LDA   ]1         ; {4C3B}
+         STA   WPAR1      ; {3C2B}
+         LDA   ]2         ; {4C3B}
+         STA   WPAR1+1    ; {3C2B}
+         LDA   ]3         ; {4C3B}
+         STA   BPAR1      ; {3C2B}
+         LDA   ]4         ; {4C3B}
+         STA   BPAR2      ; {3C2B}
+         JSR   LRVLINE    ; {222C144B}
          <<<
 *
 *``````````````````````````````*
@@ -335,23 +311,20 @@ LVLIN    MAC
 *  ]3 = Y COORDINATE           *
 *  ]4 = COLOR                  *
 *                              *
-* SAMPLE USAGE:                *
-*                              *
-*  LHLIN #3;#20;#5;#10         *
+* CYCLES: 246+                 *
+* SIZE: 161 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 LHLIN    MAC
-         STY   SCRATCH
-         LDA   ]1
-         STA   WPAR1
-         LDA   ]2
-         STA   WPAR1+1
-         LDA   ]3
-         STA   BPAR1
-         LDA   ]4
-         STA   BPAR2
-         JSR   LRHLINE
-         LDY   SCRATCH
+         LDA   ]1         ; {4C3B}
+         STA   WPAR1      ; {3C2B}
+         LDA   ]2         ; {4C3B}
+         STA   WPAR1+1    ; {3C2B}
+         LDA   ]3         ; {4C3B}
+         STA   BPAR1      ; {3C2B}
+         LDA   ]4         ; {4C3B}
+         STA   BPAR2      ; {3C2B}
+         JSR   LRHLINE    ; {218C141B}
          <<<
 *
 *``````````````````````````````*
@@ -365,19 +338,16 @@ LHLIN    MAC
 *  ]1 = X COORDINATE           *
 *  ]2 = Y COORDINATE           *
 *                              *
-* SAMPLE USAGE:                *
-*                              *
-*  LRGET  #10;#20              *
+* CYCLES: 110+                 *
+* SIZE: 71 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 LRGET    MAC
-         STY   SCRATCH
-         LDA   ]1
-         STA   BPAR1
-         LDA   ]2
-         STA   BPAR2
-         JSR   LRGETPIX
-         LDY   SCRATCH
+         LDA   ]1         ; {4C3B}
+         STA   BPAR1      ; {3C2B}
+         LDA   ]2         ; {4C3B}
+         STA   BPAR2      ; {3C2B}
+         JSR   LRGETPIX   ; {96C61B}
          <<<
 *
 *``````````````````````````````*
@@ -394,23 +364,21 @@ LRGET    MAC
 *  ]3 = ADDRESS OF 3-BYTE CHAR *
 *  ]4 = CHARACTER COLOR        *
 *                              *
-* SAMPLE USAGE:                *
-*                              *
-*  LCHAR #5;#5;LR_A;#15        *
+* CYCLES: 441+                 *
+* SIZE: 439 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 LCHAR    MAC
-         STY   SCRATCH
-         LDA   ]1
-         STA   BPAR1
-         LDA   ]2
-         STA   BPAR2
-         LDA   #>]3
-         STA   WPAR1+1
-         LDA   #<]3
-         STA   WPAR1
-         LDA   ]4
-         STA   BPAR3
-         JSR   LRCHAR
-         LDY   SCRATCH
+         LDA   ]1         ; {4C3B}
+         STA   BPAR1      ; {3C2B}
+         LDA   ]2         ; {4C3B}
+         STA   BPAR2      ; {3C2B}
+*LDA #>]3
+*STA WPAR1+1
+*LDA #<]3
+*STA WPAR1
+         _MLIT ]3;WPAR1   ; {16C12B}
+         LDA   ]4         ; {4C3B}
+         STA   BPAR3      ; {3C2B}
+         JSR   LRCHAR     ; {403C412B}
          <<<

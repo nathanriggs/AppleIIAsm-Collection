@@ -1,0 +1,136 @@
+*``````````````````````````````*
+* LRBLINE       (NATHAN RIGGS) *
+*                              *
+* THIS SUBROUTINE USES THE     *
+* BRESSENHAM LINE ALGORITHM TO *
+* DRAW A DIAGONAL LINE FROM    *
+* PONT X1,Y1 TO X2,Y2 IN THE   *
+* SPECIFIED COLOR.             *
+*                              *
+* INPUT:                       *
+*                              *
+*  WPAR1 = X START POSITION    *
+*  WPAR1+1 = Y START POSITION  *
+*  WPAR2 = X ENDING POINT      *
+*  WPAR2+1 = Y ENDING POINT    *
+*  BPAR1 = COLOR OF LINE       *
+*                              *
+* DESTROY: NZCIDV              *
+*          ^^^  ^              *
+*                              *
+* CYCLES: 400+                 *
+* SIZE: 269 BYTES              *
+*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
+*
+]X1      EQU   WPAR1      ; STARTING X POINT
+]Y1      EQU   WPAR1+1    ; STARTING Y POINT
+]X2      EQU   WPAR2      ; ENDING X POINT
+]Y2      EQU   WPAR2+1    ; ENDING Y POINT
+]COLOR   EQU   BPAR1      ; COLOR OF LINE
+*
+]DX      EQU   VARTAB+9   ; CHANGE IN X
+]DY      EQU   VARTAB+10  ; CHANGE IN Y
+]SX      EQU   VARTAB+11  ; X + OR - STEPPER
+]SY      EQU   VARTAB+12  ; Y + OR - STEPPER
+]ERR     EQU   VARTAB+13  ; ERROR QUOTIENT
+]ERR2    EQU   VARTAB+14  ; BACKUP ERROR
+*
+LRBLINE
+*
+** CHECK IF Y STEP IS POSITIVE OR NEGATIVE
+*
+         LDX   #$FF       ; {3C2B} .X = -1
+         LDA   ]Y1        ; {4C3B} GET Y1 - Y2
+         SEC              ; {2C1B} RESET CARRY
+         SBC   ]Y2        ; {4C3B}
+         BPL   :YSTORE    ; {3C2B} IF POSITIVE, SKIP TO STORE
+         LDX   #1         ; {3C2B} .X = +1
+         EOR   #$FF       ; {2C2B} NEG ACCUMULATOR
+         CLC              ; {2C1B}
+         ADC   #1         ; {3C2B}
+:YSTORE
+         STA   ]DY        ; {4C3B} STORE CHANGE IN Y
+         STX   ]SY        ; {4C3B} STORE + OR - Y STEPPER
+*
+** NOW CHECK POSITIVE OR NEGATIVE X STEP
+*
+         LDX   #$FF       ; {3C2B} .X = -1
+         LDA   ]X1        ; {4C3B} GET X1 - X2
+         SEC              ; {2C1B} RESET CARRY
+         SBC   ]X2        ; {4C3B} SUBTRACT X2
+         BPL   :XSTORE    ; {3C2B} IF POSITIVE, SKIP TO X STORE
+         LDX   #1         ; {3C2B} .X = +1
+         EOR   #$FF       ; {2C2B} NEGATIVE ACCUMULATOR
+         CLC              ; {2C1B}
+         ADC   #1         ; {3C2B}
+:XSTORE
+         STA   ]DX        ; {4C3B} STORE CHANGE IN X
+         STX   ]SX        ; {4C3B} STORE + OR - X STEPPER
+*
+** IF CHANGE IN X IS GREATER THAN CHANGE IN Y,
+** THEN INITIAL ERROR IS THE CHANGE IN X; ELSE,
+** INITIAL ERROR IS THE CHANGE IN Y
+*
+         CMP   ]DY        ; {3C2B} DX IS ALREADY IN .A
+         BEQ   :SKIP      ; {3C2B} IF EQUAL, US CHANGE IN Y
+         BPL   :SKIP2     ; {3C2B} IF >, USE CHANGE IN X
+:SKIP
+         LDA   ]DY        ; {4C3B} GET CHANGE IN Y
+         EOR   #$FF       ; {2C2B} NEGATE
+         CLC              ; {2C1B}
+         ADC   #1         ; {3C2B}
+:SKIP2
+         STA   ]ERR       ; {4C3B} STORE EITHER DX OR DY IN ERR
+         ASL   ]DX        ; {5C2B} DX = DX * 2
+         ASL   ]DY        ; {5C2B} DY = DY * 2
+*
+** NOW LOOP THROUGH EACH POINT ON LINE
+*
+:LP
+*
+** PLOT PIXEL FIRST
+*
+         LDA   ]COLOR     ; {4C3B} .A = COLOR TO PASS
+         LDY   ]Y1        ; {4C3B} .Y = Y POS TO PASS
+         LDX   ]X1        ; {4C3B} .X = X POS TO PASS
+         JSR   LOCPLOT    ; {168C109B} JUMP TO PLOTTING ROUTINE
+*
+** NOW CHECK IF X1 = X2, Y = Y2
+*
+         LDA   ]X1        ; {4C3B} IF X1 != X2 THEN
+         CMP   ]X2        ; {4C3B} KEEP LOOPING
+         BNE   :KEEPGO    ; {3C2B}
+         LDA   ]Y1        ; {4C3B} ELSE, CHECK IF Y1 = Y2
+         CMP   ]Y2        ; {4C3B}
+         BEQ   :EXIT      ; {3C2B} IF EQUAL, EXIT; ELSE, LOOP
+:KEEPGO
+         LDA   ]ERR       ; {4C3B} LOAD ERR AND BACKUP
+         STA   ]ERR2      ; {4C3B} FOR LATER COMPARISON
+         CLC              ; {2C1B} CLEAR CARRY
+         ADC   ]DX        ; {4C3B} ADD CHANGE IN X
+         BMI   :SKIPX     ; {3C2B} IF RESULT IS -, SKIP
+         BEQ   :SKIPX     ; {3C2B} TO CHANGING Y POS
+         LDA   ]ERR       ; {4C3B} RELOAD ERR
+         SEC              ; {2C1B} SET CARRY
+         SBC   ]DY        ; {4C3B} SUBTRACT CHANGE IN Y
+         STA   ]ERR       ; {4C3B} STORE ERROR
+         LDA   ]X1        ; {4C3B} LOAD CURRENT X POSITION
+         CLC              ; {2C1B} CLEAR CARRY
+         ADC   ]SX        ; {4C3B} INCREASE OR DECREASE BY 1
+         STA   ]X1        ; {4C3B} STORE NEW X POSITION
+:SKIPX
+         LDA   ]ERR2      ; {4C3B} LOAD EARLIER ERR
+         CMP   ]DY        ; {4C3B} IF ERR - CHANGE IN Y IS +
+         BPL   :SKIPY     ; {3C2B} SKIP CHANGING Y POS
+         LDA   ]ERR       ; {4C3B} RELOAD ERR
+         CLC              ; {2C1B} CLEAR CARRY
+         ADC   ]DX        ; {4C3B} ADD CHANGE IN X
+         STA   ]ERR       ; {4C3B} STORE NEW ERR
+         LDA   ]Y1        ; {4C3B} LOAD Y POSITION
+         CLC              ; {2C1B} CLEAR CARRY
+         ADC   ]SY        ; {4C3B} INC OR DEC YPOS BY 1
+         STA   ]Y1        ; {4C3B} STORE NEW Y POSITION
+:SKIPY
+         JMP   :LP        ; {3C3B} LOOP LINE DRAWING
+:EXIT
+         RTS              ; {6C1B}

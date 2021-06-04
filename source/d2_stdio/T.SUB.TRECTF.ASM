@@ -14,44 +14,44 @@
 *                              *
 *  FILLED RECTANGLE TO SCREEN  *
 *                              *
-* DESTROY: AXYNVBDIZCMS        *
-*          ^^^^^   ^^^         *
+* DESTROY: NZCIDV              *
+*          ^^^  ^              *
 *                              *
-* CYCLES: 69+                  *
-* SIZE:   74 BYTES             *
+* CYCLES: 127+                 *
+* SIZE:   54 BYTES             *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]X1      EQU   WPAR1      ; 1 BYTE
-]X2      EQU   WPAR1+1    ; 1 BYTE
-]Y1      EQU   WPAR2      ; 1 BYTE
-]Y2      EQU   WPAR2+1    ; 1 BYTE
-]F       EQU   BPAR1      ; 1 BYTE
+]X1      EQU   WPAR1      ; TOP LEFT OF RECTANGLE
+]X2      EQU   WPAR1+1    ; BOTTOM RIGHT OF RECTANGLE
+]Y1      EQU   WPAR2      ; TOP Y POSITION OF RECTANGLE
+]Y2      EQU   WPAR2+1    ; BOTTOM POSITION OF RECTANGLE
+]F       EQU   BPAR1      ; FILL CHARACTER
 *
-]XC      EQU   VARTAB     ; 1 BYTE
-]YC      EQU   VARTAB+1   ; 1 BYTE
+]XC      EQU   VARTAB     ; CHANGE IN X
+]YC      EQU   VARTAB+1   ; CHANGE IN Y
 *
 TRECTF
-         LDA   ]X1
-         STA   ]XC
-         LDA   ]Y1
-         STA   ]YC
+         LDA   ]X1        ; {4C3B} LOAD TOP LEFT X ORIGIN {NZ}
+         STA   ]XC        ; {4C3B} STORE AS INITIAL INDEX
+         LDA   ]Y1        ; {3C2B} LOAD TOP LEFT Y ORIGIN {NZ}
+         STA   ]YC        ; {4C3B} STORE AS INITIAL INDEX
 :LP1                      ; PRINT HORIZONTAL LINE
-         LDA   ]YC
-         LDY   ]XC
-         JSR   GBCALC     ; GET SCREEN MEMORY ADDR
-         LDA   ]F         ; OF CURRENT POSITION
-         STA   (GBPSH),Y  ; PUT CHAR IN LOCATION
-         LDA   ]YC
-         INY              ; INCREASE XPOS
-         STY   ]XC
-         CPY   ]X2        ; IF XPOS < XMAX,
-         BNE   :LP1       ; KEEP PRINTING LINE
+         LDA   ]YC        ; {4C3B} LOAD FIRST Y INDEX {NZ}
+         LDY   ]XC        ; {4C3B} LOAD FIRST X INDEX IN Y {NZ}
+         JSR   GBCALC     ; {43C3B} GET SCREEN MEMORY ADDR {NZCV}
+         LDA   ]F         ; {3C2B} LOAD FILL CHARACTER {NZ}
+         STA   (GBPSH),Y  ; {6C2B} PUT CHAR IN SCREEN MEMORY {NZ}
+         LDA   ]YC        ; {4C3B} LOAD Y INDEX {NZ}
+         INY              ; {2C1B} INCREASE XPOS INDEX {NZ}
+         STY   ]XC        ; {4C3B} STORE NEW X INDEX
+         CPY   ]X2        ; {4C3B} IF XPOS < XMAX, {NZC}
+         BNE   :LP1       ; {3C2B} KEEP PRINTING LINE
 *
-         LDA   ]X1        ; OTHERWISE, RESET XPOS
-         STA   ]XC
-         INC   ]YC        ; AND INCREASE YPOS
-         LDA   ]YC
-         CMP   ]Y2        ; IF YPOS < YMAX
-         BNE   :LP1       ; PRINT HORIZONTAL LINE
+         LDA   ]X1        ; {4C3B} OTHERWISE, RESET XPOS {NZ}
+         STA   ]XC        ; {4C3B} AND STORE IN INDEX
+         INC   ]YC        ; {6C3B} AND INCREASE YPOS {NZ}
+         LDA   ]YC        ; {4C3B} RELOAD Y INDEX {NZ}
+         CMP   ]Y2        ; {4C3B} IF YPOS < YMAX {NZC}
+         BNE   :LP1       ; {3C2B} PRINT HORIZONTAL LINE
 :EXIT
-         RTS
+         RTS              ; {6C1B}

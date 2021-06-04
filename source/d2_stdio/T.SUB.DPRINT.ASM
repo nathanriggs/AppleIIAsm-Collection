@@ -2,34 +2,32 @@
 *``````````````````````````````*
 * DPRINT        (NATHAN RIGGS) *
 *                              *
-* PRINT A ZERO-TERMINATED      *
-* STRING AT A GIVEN ADDRESS.   *
-*                              *
 * INPUT:                       *
 *                              *
 *  WPAR1 = STRING ADDRESS (2B) *
 *                              *
 * OUTPUT:                      *
 *                              *
-*  PRINT STRING TO SCREEN      *
+*  PRINT A ZERO-TERMINATED     *
+*  STRING AT A GIVEN ADDRESS.  *
 *                              *
-* DESTROYS: AXYNVBDIZCMS       *
-*           ^^^^    ^ ^        *
+* DESTROYS: NZCIDV             *
+*           ^^^  ^             *
 *                              *
-* CYCLES: 61+                  *
-* SIZE:   27 BYTES             *
+* CYCLES: 111+                 *
+* SIZE:   12 BYTES             *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]ADDR1   EQU   WPAR1
+]ADDR1   EQU   WPAR1      ; INDIRECT ADDRESS IS PASSED HERE
 *
 DPRINT
 *
-         LDY   #$00       ; RESET COUNTER
+         LDY   #$00       ; {2C2B} RESET COUNTER {NZ}
 :LOOP
-         LDA   (]ADDR1),Y
-         BEQ   :EXIT      ; IF CHAR = $00 THEN EXIT
-         JSR   COUT1      ; OTHERWISE, PRINT CHAR
-         INY              ; INCREAS COUNTER
-         BNE   :LOOP      ; IF COUNTER < 256, LOOP
+         LDA   (]ADDR1),Y ; {6C2B} GET NEXT CHARACTER IN STRING {NZ}
+         BEQ   :EXIT      ; {3C2B} IF CHAR = $00 THEN EXIT
+         JSR   COUT1      ; {89C2B} OTHERWISE, PRINT CHAR {NZCV}
+         INY              ; {2C1B} INCREAS COUNTER {NZ}
+         BNE   :LOOP      ; {3C2B} IF COUNTER < 256, LOOP
 :EXIT
-         RTS
+         RTS              ; {6C1B} RETURN TO CALLING ROUTINE

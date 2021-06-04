@@ -1,18 +1,15 @@
 *``````````````````````````````*
-* MAC.CONVERT                  *
+* MAC.CONVERT.ASM              *
 *                              *
-* THIS IS A MACRO LIBRARY FOR  *
-* COMMON.LIB, AND CAN BE USED  *
-* REGARDLESS OF WHETHER A      *
-* SPECIFIC FUNCTION IS         *
-* INCLUDED AS A PUT IN THE     *
-* MAIN SOURCE.                 *
+* THIS COLLECTION HOLDS MACROS *
+* USED FOR CONVERTING VARIABLE *
+* TYPES.                       *
 *                              *
 * AUTHOR:    NATHAN RIGGS      *
 * CONTACT:   NATHAN.RIGGS@     *
 *            OUTLOOK.COM       *
 *                              *
-* DATE:      25-SEP-2019       *
+* DATE:      13-MAY-2021       *
 * ASSEMBLER: MERLIN 8 PRO      *
 * OS:        DOS 3.3           *
 *                              *
@@ -45,16 +42,13 @@
 *                              *
 *  ]1 = VALUE TO CONVERT       *
 *                              *
-* SAMPLE USAGE:                *
-*                              *
-*  I2STR  #11111               *
+* CYCLES: 290+                 *
+* SIZE: 172 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 I2STR    MAC
-         STY   SCRATCH
-         _MLIT ]1;WPAR1
-         JSR   HEX2INTASC
-         LDY   SCRATCH
+         _MLIT ]1;WPAR1   ; {16C12B}
+         JSR   HEX2INTASC ; {274C160B}
          <<<
 *
 *``````````````````````````````*
@@ -67,16 +61,13 @@ I2STR    MAC
 *                              *
 *  ]1 = STRING OR ITS ADDRESS  *
 *                              *
-* SAMPLE USAGE:                *
-*                              *
-*  STR2I "1024"                *
+* CYCLES: 415+                 *
+* SIZE: 196 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 STR2I    MAC
-         STY   SCRATCH
-         _MSTR ]1;WPAR1
-         JSR   INTASC2HEX
-         LDY   SCRATCH
+         _MSTR ]1;WPAR1   ; {16C12B}
+         JSR   INTASC2HEX ; {399C184B}
          <<<
 *
 *``````````````````````````````*
@@ -90,16 +81,13 @@ STR2I    MAC
 *  ]1 = HEX VALUE TO CONVERT   *
 *       OR THE ADDRESS         *
 *                              *
-* SAMPLE USAGE:                *
-*                              *
-*  H2STR #FF                   *
+* CYCLES: 97+                  *
+* SIZE: 59 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 H2STR    MAC
-         STY   SCRATCH
-         LDA   ]1
-         JSR   HEX2HEXASC
-         LDY   SCRATCH
+         LDA   ]1         ; {4C3B}
+         JSR   HEX2HEXASC ; {93C56B}
          <<<
 *
 *``````````````````````````````*
@@ -112,16 +100,13 @@ H2STR    MAC
 *                              *
 *  ]1 = STRING OR ITS ADDRESS  *
 *                              *
-* SAMPLE USAGE:                *
-*                              *
-*  STR2H "FE"                  *
+* CYCLES: 116+                 *
+* SIZE: 71 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 STR2H    MAC
-         STY   SCRATCH
-         _MSTR ]1;WPAR1
-         JSR   HEXASC2HEX
-         LDY   SCRATCH
+         _MSTR ]1;WPAR1   ; {16C12B}
+         JSR   HEXASC2HEX ; {100C59B}
          <<<
 *
 *``````````````````````````````*
@@ -134,17 +119,14 @@ STR2H    MAC
 *                              *
 *  ]1 = HEX VALUE OR ADDRESS   *
 *                              *
-* SAMPLE USAGE:                *
-*                              *
-*  B2STR #$FE                  *
+* CYCLES: 262+                 *
+* SIZE: 167 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 B2STR    MAC
-         STY   SCRATCH
-         LDA   ]1
-         STA   BPAR1
-         JSR   HEX2BINASC
-         LDY   SCRATCH
+         LDA   ]1         ; {4C3B}
+         STA   BPAR1      ; {3C2B}
+         JSR   HEX2BINASC ; {255C162C}
          <<<
 *
 *``````````````````````````````*
@@ -157,14 +139,11 @@ B2STR    MAC
 *                              *
 *  ]1 = STRING OR ITS ADDRESS  *
 *                              *
-* SAMPLE USAGE:                *
-*                              *
-*  STR2B "00110101"            *
+* CYCLES: 501+                 *
+* SIZE: 331 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 STR2B    MAC
-         STY   SCRATCH
-         _MSTR ]1;WPAR1
-         JSR   BINASC2HEX
-         LDY   SCRATCH
+         _MSTR ]1;WPAR1   ; {16C12B}
+         JSR   BINASC2HEX ; {485C319B}
          <<<
