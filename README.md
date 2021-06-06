@@ -6,6 +6,13 @@ Since this is in flux, you may also find [the previous documentation,v0.5.0, her
 
 # Updates
 
+__03-JUN-2021__
+
+- Updated all disks as part of a small reorganization of the REQUIRED library collection
+- Added High Resolution Graphics Disk
+- Added Apple II Internal Speaker Disk
+- Rewrote all documentation in markdown
+
 __19-JAN-2020__
 
 - **Really** Finished all goals previously made on 17-DEC-2019, and then some
