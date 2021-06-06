@@ -29,7 +29,7 @@
 * CONTACT:   NATHAN.RIGGS@     *
 *            OUTLOOK.COM       *
 *                              *
-* DATE:      07-MAY-2021       *
+* DATE:      05-JUN-2021       *
 * ASSEMBLER: MERLIN PRO 8      *
 * OS:        DOS 3.3           *
 *                              *
@@ -56,7 +56,7 @@
 * RWTS EQUATES                 *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]RWTSPTR EQU   ADDR4      ; WORK POINTER FOR RWTS ROUTINES
+]RWTSPTR EQU   ZPWSYS     ; WORK POINTER FOR RWTS ROUTINES
 ]RWTSRD  EQU   1          ; READ CODE FOR RWTS
 ]RWTSWR  EQU   1          ; WRITE CODE FOR RWTS
 ]LOCRPL  EQU   $3E3       ; LOCATE RWTS PARAMLIST
@@ -178,40 +178,40 @@ MVOL     DFB   $0         ; {0C1B} MASTER VOLUME FOR RWTS
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 _SETRWTS
-         JSR   ]LOCRPL    ; {6C3B} LOCATE RWTS PARAMETER LIST
-         STY   ]RWTSPTR   ; {4C3B} SAVE POINTER LOW AND HIGH
+         JSR   ]LOCRPL    ; {6C3B}   LOCATE RWTS PARAMETER LIST
+         STY   ]RWTSPTR   ; {4C3B}   SAVE POINTER LOW AND HIGH
          STA   ]RWTSPTR+1 ; {4C3B}
-         LDA   MSLOT      ; {4C3B} GET DEFAULT SLOT
-         ASL              ; {2C1B} MULTIPLY BY 16
-         ASL              ; {2C1B} TO GET APPROPRIATE VALUE
+         LDA   MSLOT      ; {4C3B}   GET DEFAULT SLOT
+         ASL              ; {2C1B}   MULTIPLY BY 16
+         ASL              ; {2C1B}   TO GET APPROPRIATE VALUE
          ASL              ; {2C1B}
          ASL              ; {2C1B}
-         LDY   #]RPLSLT   ; {3C2B} LOAD IOB SLOT OFFSET
+         LDY   #]RPLSLT   ; {3C2B}   LOAD IOB SLOT OFFSET
          STA   (]RWTSPTR),Y ; {6C2B} STORE SLOT VAL AT OFFSET
-         LDA   MDRIVE     ; {4C3B} LOAD DEFAULT DRIVE
-         LDY   #]RPLDRV   ; {3C2B} GET IOB DRIVE OFFSET
+         LDA   MDRIVE     ; {4C3B}   LOAD DEFAULT DRIVE
+         LDY   #]RPLDRV   ; {3C2B}   GET IOB DRIVE OFFSET
          STA   (]RWTSPTR),Y ; {6C2B} STORE DRIVE IN IOB
-         LDA   MTRACK     ; {4C3B} GET MASTER TRACK
-         LDY   #]RPLTRK   ; {3C2B} OFFSET IN PARAM LIST
+         LDA   MTRACK     ; {4C3B}   GET MASTER TRACK
+         LDY   #]RPLTRK   ; {3C2B}   OFFSET IN PARAM LIST
          STA   (]RWTSPTR),Y ; {6C2B} STORE TRACK IN IOB
-         LDA   MSECTOR    ; {4C3B} GET MASTER SECTOR
-         CMP   #16        ; {3C2B} BIGGER THAN 16?
-         BCC   :SOK       ; {3C2B} NOPE, IT'S OKAY
-         LDA   #0         ; {3C2B} ELSE YES, SO CLEAR
-         STA   MSECTOR    ; {4C3B} MASTER SECTOR
-:SOK     LDY   #]RPLSEC   ; {3C2B} OFFSET IN PARMLIST
+         LDA   MSECTOR    ; {4C3B}   GET MASTER SECTOR
+         CMP   #16        ; {3C2B}   BIGGER THAN 16?
+         BCC   :SOK       ; {3C2B}   NOPE, IT'S OKAY
+         LDA   #0         ; {3C2B}   ELSE YES, SO CLEAR
+         STA   MSECTOR    ; {4C3B}   MASTER SECTOR
+:SOK     LDY   #]RPLSEC   ; {3C2B}   OFFSET IN PARMLIST
          STA   (]RWTSPTR),Y ; {6C2B} STORE SECTOR IN IOB
-         LDY   #]RPLBUF   ; {3C2B} OFFSET IN PARAMLIST
-         LDA   MBUFFER    ; {4C3B} GET LOW BYTE OF BUFFER ADDR
+         LDY   #]RPLBUF   ; {3C2B}   OFFSET IN PARAMLIST
+         LDA   MBUFFER    ; {4C3B}   GET LOW BYTE OF BUFFER ADDR
          STA   (]RWTSPTR),Y ; {6C2B} STORE LOW BYTE OF BUFF IN IOB
-         INY              ; {2C1B} INCREASE OFFSET
-         LDA   MBUFFER+1  ; {4C3B} GET HIGH BYTE
+         INY              ; {2C1B}   INCREASE OFFSET
+         LDA   MBUFFER+1  ; {4C3B}   GET HIGH BYTE
          STA   (]RWTSPTR),Y ; {6C2B} STORE HIGH BYTE IN IOB
-         LDA   MCMD       ; {4C3B} GET RWTS MASTER COMMAND
-         LDY   #]RPLCMD   ; {3C2B} OFFSET OF PARMLIST
+         LDA   MCMD       ; {4C3B}   GET RWTS MASTER COMMAND
+         LDY   #]RPLCMD   ; {3C2B}   OFFSET OF PARMLIST
          STA   (]RWTSPTR),Y ; {6C2B} STORE COMMAND IN IOB
-         LDA   MVOL       ; {4C3B} GET RWTS MASTER VOLUME
-         LDY   #]RPLVOL   ; {3C2B} OFFSET
+         LDA   MVOL       ; {4C3B}   GET RWTS MASTER VOLUME
+         LDY   #]RPLVOL   ; {3C2B}   OFFSET
          STA   (]RWTSPTR),Y ; {6C2B} STORE VOLUME IN IOB
          RTS              ; {6C1B}
 *
@@ -259,48 +259,48 @@ _FMGETPARM
 _FMBUFFSCAN
 *
          LDA   $3D2       ; {4C3B} LOCATE DOS LOAD POINT
-         STA   ADDR1+1    ; {3C2B} STORE THIS AS FIRST FNAME BUFF
+         STA   ZPWSYS+1   ; {3C2B} STORE THIS AS FIRST FNAME BUFF
          LDY   #0         ; {3C2B} LOW BYTE SHOULD START AT 0
-         STY   ADDR1      ; {3C2B}
+         STY   ZPWSYS     ; {3C2B}
 :GBUF0
-         LDA   (ADDR1),Y  ; {6C2B} LOCATE NEXT DOS BUFFER
+         LDA   (ZPWSYS),Y ; {6C2B} LOCATE NEXT DOS BUFFER
          PHA              ; {3C1B} TEMPORARILY HOLD
          INY              ; {2C1B} INCREASE .Y INDEX
-         LDA   (ADDR1),Y  ; {6C2B} LOAD HIGH BYTE OF ADDRESS
-         STA   ADDR1+1    ; {3C2B} STORE HIGH BYTE IN ZERO PAGE
+         LDA   (ZPWSYS),Y ; {6C2B} LOAD HIGH BYTE OF ADDRESS
+         STA   ZPWSYS+1   ; {3C2B} STORE HIGH BYTE IN ZERO PAGE
          PLA              ; {3C1B} PULL BACK EARLIER VALUE
-         STA   ADDR1      ; {3C2B} STORE AS LOW BYTE ON ZERO
+         STA   ZPWSYS     ; {3C2B} STORE AS LOW BYTE ON ZERO
          BNE   :GBUF      ; {4C3B} FOUND A BUFFER
-         LDA   ADDR1+1    ; {3C2B} ELSE LOAD HIGH BYTE
+         LDA   ZPWSYS+1   ; {3C2B} ELSE LOAD HIGH BYTE
          BEQ   :NBUF      ; {4C3B} IF ZERO, NO BUFFER
 :GBUF
          LDY   #0         ; {3C2B} GET FILENAME FIRST CHAR
-         LDA   (ADDR1),Y  ; {6C2B} FROM THE BUFFER
+         LDA   (ZPWSYS),Y ; {6C2B} FROM THE BUFFER
          BEQ   :GOTBUF    ; {3C2B} IF 0, THEN BUFFER IS UNUSED
          LDY   #36        ; {3C2B} IF NOT, SKIP TO NEXT LINK
          BNE   :GBUF0     ; {3C2B} AND RERUN THE SEARCH LOOP
 :GOTBUF
-         LDA   ADDR1      ; {3C2B} LOAD FNAME BUFFER LOW BYTE
+         LDA   ZPWSYS     ; {3C2B} LOAD FNAME BUFFER LOW BYTE
          STA   ]FNBUF     ; {4C3B} STORE FILENAME BUFFER ADDRESS
-         LDA   ADDR1+1    ; {3C2B} READ THE HIGH BYTE
+         LDA   ZPWSYS+1   ; {3C2B} READ THE HIGH BYTE
          STA   ]FNBUF+1   ; {4C3B} AND STORE AS POINTER ADDRESS
          LDY   #30        ; {3C2B} INDEX TO FILE MANAGER WORKAREA
-         LDA   (ADDR1),Y  ; {6C2B} FOR CONVENIENT STORAGE
+         LDA   (ZPWSYS),Y ; {6C2B} FOR CONVENIENT STORAGE
          STA   ]FWORK     ; {4C3B} STORE WORKAREA POINTER
          INY              ; {2C1B} INCREASE .Y INDEX
-         LDA   (ADDR1),Y  ; {6C2B} LOAD THE HIGH BYTE
+         LDA   (ZPWSYS),Y ; {6C2B} LOAD THE HIGH BYTE
          STA   ]FWORK+1   ; {4C3B} AND HOLD IT IN ]FWORK
          INY              ; {2C1B} POINTER TO T/S LIST SECTOR BUFF
-         LDA   (ADDR1),Y  ; {6C2B} LOAD LOW BYTE OF TS BUFFER
+         LDA   (ZPWSYS),Y ; {6C2B} LOAD LOW BYTE OF TS BUFFER
          STA   ]FTSLS     ; {4C3B} HOLD POINTER IN MEMORY
          INY              ; {2C1B} INCREASE .Y INDEX
-         LDA   (ADDR1),Y  ; {6C2B} LOAD HIGH BYTE
+         LDA   (ZPWSYS),Y ; {6C2B} LOAD HIGH BYTE
          STA   ]FTSLS+1   ; {4C3B} AND HOLD
          INY              ; {6C2B} INC POINTER TO DATA BUFFER
-         LDA   (ADDR1),Y  ; {6C2B} LOAD LOW BYTE OF ADDRESS
+         LDA   (ZPWSYS),Y ; {6C2B} LOAD LOW BYTE OF ADDRESS
          STA   ]FDATA     ; {4C3B} STORE IN MEMORY
          INY              ; {2C1B} INCREASE .Y INDEX
-         LDA   (ADDR1),Y  ; {6C2B} LOAD THE HIGH BYTE
+         LDA   (ZPWSYS),Y ; {6C2B} LOAD THE HIGH BYTE
          STA   ]FDATA+1   ; {4C3B} AND STORE AS WELL
          CLC              ; {2C1B} CLR CARRY TO INDICATE NO ERR
          RTS              ; {6C1B}
@@ -339,33 +339,33 @@ _FMBUFFSCAN
 _SETPBUFFS
 *
          LDA   ]FPARM     ; {4C3B} GET PARAMATER ADDRESS LOW BYTE
-         STA   ADDR1      ; {3C2B} AND HOLD IN ZERO PAGE
+         STA   ZPWSYS     ; {3C2B} AND HOLD IN ZERO PAGE
          LDA   ]FPARM+1   ; {4C3B} LOAD HIGH BYTE
-         STA   ADDR1+1    ; {3C2B} INTO ZERO PAGE TOO
+         STA   ZPWSYS+1   ; {3C2B} INTO ZERO PAGE TOO
          LDY   #$10       ; {3C2B} POINT TO DATA BUFFER POINTER
          LDA   ]FDATA     ; {4C3B} LOAD DATA BUFFER ADDRESS LOW
-         STA   (ADDR1),Y  ; {6C2B} COPY POINTER TO PARAM LOCATION
+         STA   (ZPWSYS),Y ; {6C2B} COPY POINTER TO PARAM LOCATION
          INY              ; {2C1B} INCREASE .Y INDEX
          LDA   ]FDATA+1   ; {4C3B} LOAD DATA BUFFER ADDR HIGH BYTE
-         STA   (ADDR1),Y  ; {6C2B} COPY TO PARAM LOCATION
+         STA   (ZPWSYS),Y ; {6C2B} COPY TO PARAM LOCATION
          LDY   #$08       ; {3C2B} POINT TO FILENAME BUFFER
          LDA   ]FNBUF     ; {4C3B} LOAD FILENAME BUFFER POINTER ADDR
-         STA   (ADDR1),Y  ; {6C2B} AND COPY TO PARAM LOCATION
+         STA   (ZPWSYS),Y ; {6C2B} AND COPY TO PARAM LOCATION
          INY              ; {2C1B} INCREASE .Y POINTER
          LDA   ]FNBUF+1   ; {4C3B} LOAD THE HIGH BYTE
-         STA   (ADDR1),Y  ; {6C2B} AND COPY AS WELL
+         STA   (ZPWSYS),Y ; {6C2B} AND COPY AS WELL
          LDY   #$0E       ; {3C2B} T/S LIST SECTOR BUFFER POINTER
          LDA   ]FTSLS     ; {4C3B} LOAD CURRENT POINTER LOW BYTE
-         STA   (ADDR1),Y  ; {6C2B} AND COPY TO PARAM LOCATION
+         STA   (ZPWSYS),Y ; {6C2B} AND COPY TO PARAM LOCATION
          INY              ; {2C1B} INCREASE .Y INDEX
          LDA   ]FTSLS+1   ; {3C2B} LOAD THE HIGH BYTE
-         STA   (ADDR1),Y  ; {6C2B} AND COPY TO PARAM LOCATION
+         STA   (ZPWSYS),Y ; {6C2B} AND COPY TO PARAM LOCATION
          LDY   #$0C       ; {3C2B} WORKAREA BUFFER OFFSET IN PARAM
          LDA   ]FWORK     ; {4C3B} LOAD CURRENT WORKAREA POINTER
-         STA   (ADDR1),Y  ; {6C2B} COPY TO PARAMETER LIST
+         STA   (ZPWSYS),Y ; {6C2B} COPY TO PARAMETER LIST
          INY              ; {2C1B} INCREASE .Y INDEX
          LDA   ]FWORK+1   ; {4C3B} LOAD HIGH BYTE
-         STA   (ADDR1),Y  ; {6C2B} AND COPY AS WELL
+         STA   (ZPWSYS),Y ; {6C2B} AND COPY AS WELL
 *
          RTS              ; {6C3B}
 *
@@ -392,20 +392,20 @@ _SETPBUFFS
 _NAMESTR
 *
          LDY   #0         ; {3C2B}
-         STA   ADDR1      ; {3C2B} CLEAR OUT ZERO LOCATION
-         STX   ADDR1+1    ; {3C2B}
-         LDA   (ADDR1),Y  ; {6C2B} GET STRING LENGTH
-         STA   BPAR1      ; {3C2B} HOLD TEMP IN ZERO PAGE
+         STA   ZPWSYS     ; {3C2B} CLEAR OUT ZERO LOCATION
+         STX   ZPWSYS+1   ; {3C2B}
+         LDA   (ZPWSYS),Y ; {6C2B} GET STRING LENGTH
+         STA   ZPB1       ; {3C2B} HOLD TEMP IN ZERO PAGE
          LDY   #0         ; {3C2B} RESET .Y INDEX
          LDX   #255       ; {3C2B} SET .X INDEX TO -1
 :_NSLP1
          INX              ; {2C1B} INCREASE .X INDEX
          INY              ; {2C1B} INCREASE .Y INDEX
-         LDA   (ADDR1),Y  ; {6C2B} GET CHARACTER
+         LDA   (ZPWSYS),Y ; {6C2B} GET CHARACTER
          STA   ]FNAME,X   ; {5C3B} STORE AT Y-1 LOC IN HOLD AREA
          CPX   #29        ; {3C2B} COMPARE TO MAX STRING LENGTH
          BEQ   :_NSEXIT   ; {3C2B} IF MAX IS REACHED, EXIT
-         CPY   BPAR1      ; {3C2B} OTHERWISE COMPARE TO STRING LENGTH
+         CPY   ZPB1       ; {3C2B} OTHERWISE COMPARE TO STRING LENGTH
          BNE   :_NSLP1    ; {3C2B} IF NOT EQUAL, RELOOP TO NEXT CHAR
 :_NSLP2
          INX              ; {2C1B} STILL INCREASE .X INDEX
@@ -437,20 +437,20 @@ _NAMESTR
 _NAMESTR2
 *
          LDY   #0         ; {3C2B}
-         STA   ADDR1      ; {3C2B} CLEAR OUT ZERO LOCATION
-         STX   ADDR1+1    ; {3C2B}
-         LDA   (ADDR1),Y  ; {6C3B} GET STRING LENGTH
-         STA   BPAR1      ; {3C2B} HOLD TEMP IN ZERO PAGE
+         STA   ZPWSYS     ; {3C2B} CLEAR OUT ZERO LOCATION
+         STX   ZPWSYS+1   ; {3C2B}
+         LDA   (ZPWSYS),Y ; {6C3B} GET STRING LENGTH
+         STA   ZPB1       ; {3C2B} HOLD TEMP IN ZERO PAGE
          LDY   #0         ; {3C2B} RESET .Y INDEX
          LDX   #255       ; {3C2B} SET .X INDEX TO -1
 :_NSLP1
          INX              ; {2C1B} INCREASE .X INDEX
          INY              ; {2C1B} INCREASE .Y INDEX
-         LDA   (ADDR1),Y  ; {6C2B} GET CHARACTER
+         LDA   (ZPWSYS),Y ; {6C2B} GET CHARACTER
          STA   ]FNAME2,X  ; {5C2B} STORE AT Y-1 LOC IN HOLD AREA
          CPX   #29        ; {3C2B} COMPARE TO MAX STRING LENGTH
          BEQ   :_NSEXIT   ; {3C2B} IF MAX IS REACHED, EXIT
-         CPY   BPAR1      ; {3C2B} OTHERWISE COMPARE TO STRING LENGTH
+         CPY   ZPB1       ; {3C2B} OTHERWISE COMPARE TO STRING LENGTH
          BNE   :_NSLP1    ; {3C2B} IF NOT EQUAL, RELOOP TO NEXT CHAR
 :_NSLP2
          INX              ; {2C1B} STILL INCREASE .X INDEX
@@ -482,14 +482,14 @@ _NAMESTR2
 _FN2BUFF
 *
          LDA   ]FNBUF     ; {4C3B} LOAD FILENAME BUFFER ADDR
-         STA   ADDR2      ; {3C2B} STORE LOW IN ZERO
+         STA   ZPW6       ; {3C2B} STORE LOW IN ZERO
          LDA   ]FNBUF+1   ; {4C3B}
-         STA   ADDR2+1    ; {3C2B} STORE HIGH IN ZERO
+         STA   ZPW6+1     ; {3C2B} STORE HIGH IN ZERO
          LDY   #255       ; {3C2B} SET .Y INDEX TO -1
 :_LPC1
          INY              ; {2C1B} INCREASE .Y INDEX
          LDA   ]FNAME,Y   ; {5C2B} GET CHAR STORED IN NAME AREA
-         STA   (ADDR2),Y  ; {6C2B} STORE IN FILENAME BUFFER
+         STA   (ZPW6),Y   ; {6C2B} STORE IN FILENAME BUFFER
          CPY   #29        ; {2C2B} IS THE END OF STRING REACHED?
          BNE   :_LPC1     ; {3C2B} IF NO, KEEP LOOPING
          RTS              ; {6C1B}
@@ -514,18 +514,18 @@ _FN2BUFF
 _FMNM2
          LDA   #]FNAME2   ; {3C2B}
          LDX   #>]FNAME2  ; {3C2B}
-         STA   ADDR2      ; {3C2B} LOW BYTE OF REC ADDRESS IN .A
-         STX   ADDR2+1    ; {3C2B} HIGH BYTE IN .X
+         STA   ZPW6       ; {3C2B} LOW BYTE OF REC ADDRESS IN .A
+         STX   ZPW6+1     ; {3C2B} HIGH BYTE IN .X
          LDA   ]FPARM     ; {4C3B} LOAD PARAM ADDRESS
-         STA   ADDR1      ; {3C2B} AND HOLD IN ZERO PAGE
+         STA   ZPWSYS     ; {3C2B} AND HOLD IN ZERO PAGE
          LDA   ]FPARM+1   ; {4C3B} ALSO DO FOR HIGH BYTE
-         STA   ADDR1+1    ; {3C2B}
+         STA   ZPWSYS+1   ; {3C2B}
          LDY   #$02       ; {3C2B} OFFSET TO THE RECORD VARIABLE
-         LDA   ADDR2      ; {3C2B} LOAD LOW BYTE
-         STA   (ADDR1),Y  ; {6C2B} AND STORE IN PARAM LIST
+         LDA   ZPW6       ; {3C2B} LOAD LOW BYTE
+         STA   (ZPWSYS),Y ; {6C2B} AND STORE IN PARAM LIST
          INY              ; {2C1B} INCREASE .Y INDEX
-         LDA   ADDR2+1    ; {3C2B} LOAD HIGH BYTE
-         STA   (ADDR1),Y  ; {6C2B} AND STORE IN PARAM LIST
+         LDA   ZPW6+1     ; {3C2B} LOAD HIGH BYTE
+         STA   (ZPWSYS),Y ; {6C2B} AND STORE IN PARAM LIST
          RTS              ; {6C1B}
 *
 *``````````````````````````````*
@@ -546,12 +546,12 @@ _FMNM2
 _BUFFCLEAR
 *
          LDA   ]FNBUF     ; {4C3B} GET FILENAME BUFFER ADDR
-         STA   ADDR2      ; {3C2B} STORE IN ZERO
+         STA   ZPW6       ; {3C2B} STORE IN ZERO
          LDA   ]FNBUF+1   ; {4C3B} DO SAME FOR HIGH BYTE
-         STA   ADDR2+1    ; {3C2B}
+         STA   ZPW6+1     ; {3C2B}
          LDA   #0         ; {3C2B} RESET .A
          TAY              ; {2C1B} AND .Y
-         STA   (ADDR2),Y  ; {6C3B} STORE #00 IN FIRST SPOT
+         STA   (ZPW6),Y   ; {6C3B} STORE #00 IN FIRST SPOT
          RTS              ; {6C1B} TO INDICATE EMPTY BUFFER
 *
 *``````````````````````````````*
@@ -574,14 +574,14 @@ _BUFFCLEAR
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 _FMPSET
-                          ; .Y HOLDS THE OFFSET
+                          ;        .Y HOLDS THE OFFSET
          TAX              ; {2C1B} .A HOLDS THE VALUE
          LDA   ]FPARM     ; {4C3B} LOAD FILE MGR PARAMETER LOW
-         STA   ADDR1      ; {3C2B} HOLD ON ZERO PAGE
+         STA   ZPWSYS     ; {3C2B} HOLD ON ZERO PAGE
          LDA   ]FPARM+1   ; {4C3B} LOAD HIGH BYTE
-         STA   ADDR1+1    ; {3C2B} ONTO ZERO PAGE
+         STA   ZPWSYS+1   ; {3C2B} ONTO ZERO PAGE
          TXA              ; {2C1B} RETURN VALUE BACK TO .A
-         STA   (ADDR1),Y  ; {6C3B} STORE VALUE AT OFFSET IN PARAMS
+         STA   (ZPWSYS),Y ; {6C3B} STORE VALUE AT OFFSET IN PARAMS
          RTS              ; {6C1B}
 *
 *``````````````````````````````*
@@ -605,18 +605,18 @@ _FMPSET
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 _FMPSETA
-                          ; .Y HOLDS THE OFFSET
-         STA   ADDR2      ; {3C2B} .A HOLDS LOW BYTE OF ADDR
-         STX   ADDR2+1    ; {3C2B} .X HOLDS ADDR HIGH BYTE
+                          ;        .Y HOLDS THE OFFSET
+         STA   ZPW6       ; {3C2B} .A HOLDS LOW BYTE OF ADDR
+         STX   ZPW6+1     ; {3C2B} .X HOLDS ADDR HIGH BYTE
          LDA   ]FPARM     ; {4C3B} LOAD FILE MGR PARAMETER LOW
-         STA   ADDR1      ; {3C2B} HOLD ON ZERO PAGE
+         STA   ZPWSYS     ; {3C2B} HOLD ON ZERO PAGE
          LDA   ]FPARM+1   ; {4C3B} LOAD HIGH BYTE
-         STA   ADDR1+1    ; {3C2B} ONTO ZERO PAGE
-         LDA   ADDR2      ; {3C2B}
-         STA   (ADDR1),Y  ; {6C3B} STORE VAL AT OFFSET IN PARAMS
-         LDA   ADDR2+1    ; {3C2B}
+         STA   ZPWSYS+1   ; {3C2B} ONTO ZERO PAGE
+         LDA   ZPW6       ; {3C2B}
+         STA   (ZPWSYS),Y ; {6C3B} STORE VAL AT OFFSET IN PARAMS
+         LDA   ZPW6+1     ; {3C2B}
          INY              ; {2C1B}
-         STA   (ADDR1),Y  ; {6C3B}
+         STA   (ZPWSYS),Y ; {6C3B}
          RTS              ; {6C1B}
 *
 *``````````````````````````````*
@@ -640,12 +640,12 @@ _FMPSETA
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 _FMPGET
-                          ; OFFSET IS PASSED IN .Y
+                          ;        OFFSET IS PASSED IN .Y
          LDA   ]FPARM     ; {4C3B}
-         STA   ADDR1      ; {3C2B}
+         STA   ZPWSYS     ; {3C2B}
          LDA   ]FPARM+1   ; {4C3B}
-         STA   ADDR1+1    ; {3C2B}
-         LDA   (ADDR1),Y  ; {6C3B} VALUE RETURNED IN .A
+         STA   ZPWSYS+1   ; {3C2B}
+         LDA   (ZPWSYS),Y ; {6C3B} VALUE RETURNED IN .A
          RTS              ; {6C1B}
 *
 *``````````````````````````````*
@@ -668,15 +668,15 @@ _FMPGET
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 _FMPGETA
-                          ; OFFSET PASSED IN .Y
+                          ;        OFFSET PASSED IN .Y
          LDA   ]FPARM     ; {4C3B}
-         STA   ADDR1      ; {3C2B}
+         STA   ZPWSYS     ; {3C2B}
          LDA   ]FPARM+1   ; {4C3B}
-         STA   ADDR1+1    ; {3C2B}
-         LDA   (ADDR1),Y  ; {6C3B} GET LOW BYTE
+         STA   ZPWSYS+1   ; {3C2B}
+         LDA   (ZPWSYS),Y ; {6C3B} GET LOW BYTE
          PHA              ; {3C1B} HOLD ON STACK
          INY              ; {2C1B} INCREASE INDEX
-         LDA   (ADDR1),Y  ; {6C3B} GET HIGH BYTE
+         LDA   (ZPWSYS),Y ; {6C3B} GET HIGH BYTE
          TAX              ; {2C1B} PASS BACK IN .X
          PLA              ; {3C1B} PASS LOW IN .A
          RTS              ; {6C1B}

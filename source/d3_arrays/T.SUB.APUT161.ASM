@@ -10,9 +10,9 @@
 *                              *
 * INPUT:                       *
 *                              *
-*  WPAR1 = SOURCE ADDRESS      *
-*  WPAR2 = ARRAY ADDRESS       *
-*  WPAR3 = ELEMENT INDEX       *
+*  ZPW1  = SOURCE ADDRESS      *
+*  ZPW2  = ARRAY ADDRESS       *
+*  ZPW3  = ELEMENT INDEX       *
 *                              *
 * DESTROY: NZCIDV              *
 *          ^^^  ^              *
@@ -21,21 +21,21 @@
 * SIZE: 109 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]ADDRS   EQU   WPAR1      ; SOURCE ADDRESS
-]ADDRD   EQU   WPAR2      ; ARRAY DESTINATION ADDRESS
-]AIDX    EQU   WPAR3      ; ELEMENT INDEX
+]ADDRS   EQU   ZPW1       ; SOURCE ADDRESS
+]ADDRD   EQU   ZPW2       ; ARRAY DESTINATION ADDRESS
+]AIDX    EQU   ZPW3       ; ELEMENT INDEX
 *
-]ESIZE   EQU   VARTAB     ; ELEMENT SIZE
-]ESIZEB  EQU   VARTAB+1   ; ^BACKUP
-]ASIZE   EQU   VARTAB+2   ; NUMBER OF ELEMENTS
-]IDX     EQU   VARTAB+6   ; ANOTHER INDEX
+]ESIZE   EQU   ZPB1       ; ELEMENT SIZE
+]ESIZEB  EQU   ZPB2       ; ^BACKUP
+]ASIZE   EQU   VARTAB     ; NUMBER OF ELEMENTS
+]IDX     EQU   VARTAB+2   ; ANOTHER INDEX
 *
 APUT161
          LDA   ]AIDX      ; {3C2B}
          STA   ]IDX       ; {3C2B}
          LDA   ]AIDX+1    ; {3C2B}
          STA   ]IDX+1     ; {3C2B}
-         STA   SCRATCH    ; {3C2B}
+         STA   ZPB4       ; {3C2B}
          LDY   #0         ; {2C2B} RESET BYTE COUNTER
          LDA   (]ADDRD),Y ; {6C2B} GET NUMBER OF ELEMENTS
          STA   ]ASIZE     ; {3C2B} LOBYTE
@@ -57,12 +57,12 @@ APUT161
          ADC   ]AIDX      ; {4C3B} ADD INDEX LOBYTE
          TAX              ; {2C1B} HOLD IN .X
          TYA              ; {2C1B} LOAD HIBYTE
-         ADC   SCRATCH    ; {4C3B} ADD HIBYTE
+         ADC   ZPB4       ; {4C3B} ADD HIBYTE
          TAY              ; {2C1B} HOLD BACK IN .Y
          TXA              ; {2C1B} RETURN LOBYTE TO .A
 :LPA
          ASL   ]AIDX      ; {6C2B} MULTIPLY INDEX BY 2
-         ROL   SCRATCH    ; {6C2B} ADJUST HIBYTE
+         ROL   ZPB4       ; {6C2B} ADJUST HIBYTE
 :ENTLPA
          LSR   ]ESIZE     ; {6C2B} DIVIDE ELEM LENGTH BY 2
          BCS   :DOADD     ; {3C2B} IF 1 SHIFTED TO CARRY, ADD AGAIN
@@ -72,29 +72,29 @@ APUT161
          CLC              ; {2C1B}
          LDA   #3         ; {2C2B} ADD 3 TO LOBYTE
          ADC   ]IDX       ; {4C3B}
-         STA   ADDR2      ; {3C2B} STORE ON ZERO PAGE
+         STA   ZPW6       ; {3C2B} STORE ON ZERO PAGE
          LDA   ]IDX+1     ; {3C2B} ADJUST HIBYTE
          ADC   #0         ; {4C3B}
-         STA   ADDR2+1    ; {3C2B}
+         STA   ZPW6+1     ; {3C2B}
 *
          CLC              ; {2C1B} CLEAR CARRY
-         LDA   ADDR2      ; {3C2B} ADD ARRAY ADDRESS
+         LDA   ZPW6       ; {3C2B} ADD ARRAY ADDRESS
          ADC   ]ADDRD     ; {4C3B} LOBYTE
-         STA   ADDR2      ; {3C2B} ADD ARRAY ADDRESS
-         LDA   ADDR2+1    ; {3C2B} HIBYTE
+         STA   ZPW6       ; {3C2B} ADD ARRAY ADDRESS
+         LDA   ZPW6+1     ; {3C2B} HIBYTE
          ADC   ]ADDRD+1   ; {4C3B}
-         STA   ADDR2+1    ; {3C2B}
+         STA   ZPW6+1     ; {3C2B}
          LDY   #0         ; {2C2B}
 :LP
 *
 ** OOPS; NEED TO CONVERT THIS TO 16 BITS
 *
          LDA   (]ADDRS),Y ; {6C2B} GET BYTE FROM SOURCE
-         STA   (ADDR2),Y  ; {3C2B} STORE IN ELEMENT
+         STA   (ZPW6),Y   ; {3C2B} STORE IN ELEMENT
          INY              ; {2C1B} INCREMENT BYTE INDEX
          CPY   ]ESIZEB    ; {4C3B} IF INDEX != ELEMENT LENGTH
          BNE   :LP        ; {3C2B} KEEP LOOPING
-         LDY   ADDR2+1    ; {3C2B} HIBYTE OF ELEMENT ADDRESS
-         LDX   ADDR2      ; {3C2B} LOBYTE
+         LDY   ZPW6+1     ; {3C2B} HIBYTE OF ELEMENT ADDRESS
+         LDX   ZPW6       ; {3C2B} LOBYTE
          LDA   ]ESIZEB    ; {3C2B} .A = ELEMENT SIZE
          RTS              ; {6C1B}

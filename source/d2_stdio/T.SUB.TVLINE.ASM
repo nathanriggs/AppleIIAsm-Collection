@@ -4,10 +4,10 @@
 *                              *
 * INPUT:                       *
 *                              *
-*    ]X1 STORED AT WPAR1       *
-*    ]Y1 STORED AT WPAR2       *
-*    ]Y2 STORED AT WPAR2+1     *
-*    ]F STORED AT BPAR1        *
+*    ZPW1 = X POSITION         *
+*    ZPW2 = Y ORIGIN           *
+*    ZPW2+1 = Y DESTINATION    *
+*    ZPB1 = FILL CHARACTER     *
 *                              *
 * OUTPUT: VERT LINE TO SCREEN  *
 *                              *
@@ -18,10 +18,10 @@
 * SIZE:   26 BYTES             *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]X1      EQU   WPAR1      ; X COLUMN OF LINE
-]Y1      EQU   WPAR2      ; Y POSITION ORIGIN
-]Y2      EQU   WPAR2+1    ; Y POSITION DESTINATION
-]F       EQU   BPAR1      ; LINE FILL CHARACTER
+]X1      EQU   ZPW1       ; X COLUMN OF LINE
+]Y1      EQU   ZPW2       ; Y POSITION ORIGIN
+]Y2      EQU   ZPW2+1     ; Y POSITION DESTINATION
+]F       EQU   ZPB1       ; LINE FILL CHARACTER
 *
 TVLINE
 *

@@ -6,7 +6,7 @@
 * CONTACT:   NATHAN.RIGGS@     *
 *            OUTLOOK.COM       *
 *                              *
-* DATE:      03-APR-2021       *
+* DATE:      04-JUN-2021       *
 * ASSEMBLER: MERLIN 8 PRO      *
 * OS:        DOS 3.3           *
 *                              *
@@ -128,13 +128,13 @@ RNDMZ    MAC
          LSR              ; {2C1B}
          TAY              ; {2C1B}
          LDA   #]MAGNUM   ; {3C2B}
-         STA   ADDR1      ; {3C2B}
+         STA   ZPW1       ; {3C2B}
          LDA   #]MAGNUM/$100 ; {3C2B}
-         STA   ADDR1+1    ; {3C2B}
-         LDA   (ADDR1),Y  ; {5C2B}
+         STA   ZPW1+1     ; {3C2B}
+         LDA   (ZPW1),Y   ; {5C2B}
          STA   ]MAGEOR    ; {4C3B}
          INY              ; {2C1B}
-         LDA   (ADDR1),Y  ; {5C2B}
+         LDA   (ZPW1),Y   ; {5C2B}
          STA   ]MAGEOR+1  ; {4C3B}
          <<<
 *

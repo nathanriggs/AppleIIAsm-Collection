@@ -150,12 +150,12 @@ LRGP     MAC
 *  ]1 = FILL COLOR             *
 *                              *
 * CYCLES: 135+                 *
-* SIZE: 92 BYTES               *
+* SIZE: 6 BYTES                *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 LFCLR    MAC
          LDA   ]1         ; {4C3B}
-         JSR   LRGFCLR    ; {131C89B}
+         JSR   LRGFCLR    ; {131C3B}
          <<<
 *
 *``````````````````````````````*
@@ -169,12 +169,12 @@ LFCLR    MAC
 *  ]1 = FILL COLOR             *
 *                              *
 * CYCLES: 147+                 *
-* SIZE: 100 BYTES              *
+* SIZE: 6 BYTES                *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 LPCLR    MAC
          LDA   ]1         ; {4C3B}
-         JSR   LRGPCLR    ; {143C97B}
+         JSR   LRGPCLR    ; {143C3B}
          <<<
 *
 *``````````````````````````````*
@@ -191,14 +191,14 @@ LPCLR    MAC
 *  ]3 = COLOR                  *
 *                              *
 * CYCLES: 148+                 *
-* SIZE: 107 BYTES              *
+* SIZE: 12 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 LPLOT    MAC
          LDX   ]1         ; {4C3B}
          LDY   ]2         ; {4C3B}
          LDA   ]3         ; {4C3B}
-         JSR   LRPLOT     ; {136C98B}
+         JSR   LRPLOT     ; {136C3B}
          <<<
 *
 *``````````````````````````````*
@@ -217,21 +217,21 @@ LPLOT    MAC
 *  ]5 = COLOR                  *
 *                              *
 * CYCLES: 439+                 *
-* SIZE: 177 BYTES              *
+* SIZE: 28 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 LLINE    MAC
          LDA   ]1         ; {4C3B}
-         STA   WPAR1      ; {3C2B}
+         STA   ZPW1       ; {3C2B}
          LDA   ]2         ; {4C3B}
-         STA   WPAR1+1    ; {3C2B}
+         STA   ZPW1+1     ; {3C2B}
          LDA   ]3         ; {4C3B}
-         STA   WPAR2      ; {3C2B}
+         STA   ZPW2       ; {3C2B}
          LDA   ]4         ; {4C3B}
-         STA   WPAR2+1    ; {3C2B}
+         STA   ZPW2+1     ; {3C2B}
          LDA   ]5         ; {4C3B}
-         STA   BPAR1      ; {3C2B}
-         JSR   LRBLINE    ; {400C152B}
+         STA   ZPB1       ; {3C2B}
+         JSR   LRBLINE    ; {400C3B}
          <<<
 *
 *``````````````````````````````*
@@ -251,19 +251,19 @@ LLINE    MAC
 *  ]4 = COLOR                  *
 *                              *
 * CYCLES: 2437+                *
-* SIZE: 520 BYTES              *
+* SIZE: 23 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 LCIRC    MAC
          LDA   ]1         ; {4C3B}
-         STA   WPAR1      ; {3C2B}
+         STA   ZPW1       ; {3C2B}
          LDA   ]2         ; {4C3B}
-         STA   WPAR2      ; {3C2B}
+         STA   ZPW2       ; {3C2B}
          LDA   ]3         ; {4C3B}
-         STA   WPAR3      ; {3C2B}
+         STA   ZPW3       ; {3C2B}
          LDA   ]4         ; {4C3B}
-         STA   BPAR2      ; {3C2B}
-         JSR   LRCIRCLE   ; {2410C500B}
+         STA   ZPB2       ; {3C2B}
+         JSR   LRCIRCLE   ; {2410C3B}
          <<<
 *
 *``````````````````````````````*
@@ -281,19 +281,19 @@ LCIRC    MAC
 *  ]4 = COLOR                  *
 *                              *
 * CYCLES: 250+                 *
-* SIZE: 164 BYTES              *
+* SIZE: 23 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 LVLIN    MAC
          LDA   ]1         ; {4C3B}
-         STA   WPAR1      ; {3C2B}
+         STA   ZPW1       ; {3C2B}
          LDA   ]2         ; {4C3B}
-         STA   WPAR1+1    ; {3C2B}
+         STA   ZPW1+1     ; {3C2B}
          LDA   ]3         ; {4C3B}
-         STA   BPAR1      ; {3C2B}
+         STA   ZPB1       ; {3C2B}
          LDA   ]4         ; {4C3B}
-         STA   BPAR2      ; {3C2B}
-         JSR   LRVLINE    ; {222C144B}
+         STA   ZPB2       ; {3C2B}
+         JSR   LRVLINE    ; {222C3B}
          <<<
 *
 *``````````````````````````````*
@@ -312,19 +312,19 @@ LVLIN    MAC
 *  ]4 = COLOR                  *
 *                              *
 * CYCLES: 246+                 *
-* SIZE: 161 BYTES              *
+* SIZE: 23 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 LHLIN    MAC
          LDA   ]1         ; {4C3B}
-         STA   WPAR1      ; {3C2B}
+         STA   ZPW1       ; {3C2B}
          LDA   ]2         ; {4C3B}
-         STA   WPAR1+1    ; {3C2B}
+         STA   ZPW1+1     ; {3C2B}
          LDA   ]3         ; {4C3B}
-         STA   BPAR1      ; {3C2B}
+         STA   ZPB1       ; {3C2B}
          LDA   ]4         ; {4C3B}
-         STA   BPAR2      ; {3C2B}
-         JSR   LRHLINE    ; {218C141B}
+         STA   ZPB2       ; {3C2B}
+         JSR   LRHLINE    ; {218C3B}
          <<<
 *
 *``````````````````````````````*
@@ -339,15 +339,15 @@ LHLIN    MAC
 *  ]2 = Y COORDINATE           *
 *                              *
 * CYCLES: 110+                 *
-* SIZE: 71 BYTES               *
+* SIZE: 13 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 LRGET    MAC
          LDA   ]1         ; {4C3B}
-         STA   BPAR1      ; {3C2B}
+         STA   ZPB1       ; {3C2B}
          LDA   ]2         ; {4C3B}
-         STA   BPAR2      ; {3C2B}
-         JSR   LRGETPIX   ; {96C61B}
+         STA   ZPB2       ; {3C2B}
+         JSR   LRGETPIX   ; {96C3B}
          <<<
 *
 *``````````````````````````````*
@@ -365,20 +365,16 @@ LRGET    MAC
 *  ]4 = CHARACTER COLOR        *
 *                              *
 * CYCLES: 441+                 *
-* SIZE: 439 BYTES              *
+* SIZE: 30 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 LCHAR    MAC
          LDA   ]1         ; {4C3B}
-         STA   BPAR1      ; {3C2B}
+         STA   ZPB1       ; {3C2B}
          LDA   ]2         ; {4C3B}
-         STA   BPAR2      ; {3C2B}
-*LDA #>]3
-*STA WPAR1+1
-*LDA #<]3
-*STA WPAR1
-         _MLIT ]3;WPAR1   ; {16C12B}
+         STA   ZPB2       ; {3C2B}
+         _MLIT ]3;ZPW1    ; {16C12B}
          LDA   ]4         ; {4C3B}
-         STA   BPAR3      ; {3C2B}
-         JSR   LRCHAR     ; {403C412B}
+         STA   ZPB3       ; {3C2B}
+         JSR   LRCHAR     ; {403C3B}
          <<<

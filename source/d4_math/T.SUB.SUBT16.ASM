@@ -7,8 +7,8 @@
 *                              *
 * INPUT                        *
 *                              *
-*  WPAR1 = MINUEND             *
-*  WPAR2 = SUBTRAHEND          *
+*  ZPW1  = MINUEND             *
+*  ZPW2  = SUBTRAHEND          *
 *                              *
 * DESTROY: NZCIDV              *
 *          ^^^  ^              *
@@ -17,8 +17,8 @@
 * SIZE: 24 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]MINU    EQU   WPAR1      ; MINUEND
-]SUBT    EQU   WPAR2      ; SUBTRAHEND
+]MINU    EQU   ZPW1       ; MINUEND
+]SUBT    EQU   ZPW2       ; SUBTRAHEND
 *
 SUBT16
          LDA   #2         ; {3C2B}

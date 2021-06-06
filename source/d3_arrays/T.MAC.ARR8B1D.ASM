@@ -9,7 +9,7 @@
 * CONTACT:   NATHAN.RIGGS@     *
 *            OUTLOOK.COM       *
 *                              *
-* DATE:      18-MAR-2021       *
+* DATE:      04-JUN-2021       *
 * ASSEMBLER: MERLIN 8 PRO      *
 * OS:        DOS 3.3           *
 *                              *
@@ -42,19 +42,19 @@
 *  ]3 = ELEMENT BYTE LENGTH    *
 *  ]4 = FILL VALUE             *
 *                              *
-* CYCLES: 234+                 *
-* SIZE: 146 BYTES              *
+* CYCLES: 237+                 *
+* SIZE: 30 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 DIM81    MAC
-         _MLIT ]1;WPAR1   ; {16C12B} PARSE IF LITERAL OR NOT
-         LDA   ]2         ; {3C2B} ARRAY LENGTH
-         STA   WPAR2      ; {3C2B}
-         LDA   ]3         ; {3C2B} ELEMENT LENGTH
-         STA   WPAR3      ; {3C2B}
-         LDA   ]4         ; {3C2B}
-         STA   BPAR1      ; {3C2B} FILL VAL
-         JSR   ADIM81     ; {200C132B}
+         _MLIT ]1;ZPW1    ; {16C12B} PARSE IF LITERAL OR NOT
+         LDA   ]2         ; {4C3B}   ARRAY LENGTH
+         STA   ZPW2       ; {3C2B}
+         LDA   ]3         ; {4C3B}   ELEMENT LENGTH
+         STA   ZPW3       ; {3C2B}
+         LDA   ]4         ; {4C3B}
+         STA   ZPB1       ; {3C2B}   FILL VAL
+         JSR   ADIM81     ; {200C3B}
          <<<
 *
 *``````````````````````````````*
@@ -70,14 +70,14 @@ DIM81    MAC
 *  ]1 = ARRAY ADDRESS          *
 *  ]2 = ELEMENT INDEX          *
 *                              *
-* CYCLES: 193+                 *
-* SIZE: 125 BYTES              *
+* CYCLES: 194+                 *
+* SIZE: 12 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 GET81    MAC
          _AXLIT ]1        ; {8C6B} PARSE ADDRESS
-         LDY   ]2         ; {3C2B} ELEMENT INDEX
-         JSR   AGET81     ; {182C117B}
+         LDY   ]2         ; {4C3B} ELEMENT INDEX
+         JSR   AGET81     ; {182C3B}
          <<<
 *
 *``````````````````````````````*
@@ -93,15 +93,15 @@ GET81    MAC
 *  ]2 = ARRAY ADDRESS          *
 *  ]3 = ELEMENT INDEX          *
 *                              *
-* CYCLES: 216+                 *
-* SIZE: 131 BYTES              *
+* CYCLES: 217+                 *
+* SIZE: 32 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 PUT81    MAC
-         _MLIT ]1;WPAR1   ; {16C12B} PARSE SOURCE ADDRESS
-         _MLIT ]2;WPAR2   ; {16C12B} PARSE DEST ADDRESS
-         LDA   ]3         ; {3C2B} DEST INDEX
-         STA   BPAR1      ; {3C2B}
-         JSR   APUT81     ; {178C103B}
+         _MLIT ]1;ZPW1    ; {16C12B} PARSE SOURCE ADDRESS
+         _MLIT ]2;ZPW2    ; {16C12B} PARSE DEST ADDRESS
+         LDA   ]3         ; {4C3B}   DEST INDEX
+         STA   ZPB1       ; {3C2B}
+         JSR   APUT81     ; {178C3B}
          <<<
 *

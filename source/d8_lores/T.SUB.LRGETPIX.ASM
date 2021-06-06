@@ -13,8 +13,8 @@
 *                              *
 * INPUT:                       *
 *                              *
-*  BPAR1 = X COORDINATE        *
-*  BPAR2 = Y COORDINATE        *
+*  ZPB1  = X COORDINATE        *
+*  ZPB2  = Y COORDINATE        *
 *                              *
 * DESTROY: NZCIDV              *
 *          ^^^  ^              *
@@ -23,20 +23,20 @@
 * SIZE: 58 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]HALFX   EQU   VARTAB     ; X COORD / 2 FOR GBASCALC
-]FULLX   EQU   VARTAB+1   ; ORIGINAL X COORD
-]FULLY   EQU   VARTAB+2   ; ORIGINAL Y COORD
-]MASK    EQU   VARTAB+3   ; MASK FOR DETERMINING COLOR CODE
-]FULLCHAR EQU  VARTAB+4   ; THE FULL CHAR A POS HALFX,Y
+]HALFX   EQU   ZPB3       ; X COORD / 2 FOR GBASCALC
+]FULLX   EQU   ZPB4       ; ORIGINAL X COORD
+]FULLY   EQU   ZPW1       ; ORIGINAL Y COORD
+]MASK    EQU   ZPW2       ; MASK FOR DETERMINING COLOR CODE
+]FULLCHAR EQU  ZPW3       ; THE FULL CHAR A POS HALFX,Y
 *
 LRGETPIX
 *
-         LDY   BPAR1      ; {3C2B} LOAD X POSITION
+         LDY   ZPB1       ; {3C2B} LOAD X POSITION
          STY   ]FULLX     ; {4C3B}
          TYA              ; {2C1B} TRANSFER T .A
          ASL              ; {2C1B} SHIFT LEFT TO DIVIDE IN HALF
          STA   ]HALFX     ; {4C3B} STORE AS HALFX
-         LDA   BPAR2      ; {3C2B} GET Y POSITION
+         LDA   ZPB2       ; {3C2B} GET Y POSITION
          STA   ]FULLY     ; {4C3B}
          LDY   ]HALFX     ; {4C3B} LOAD HALF-X POSITION
          LDA   ]FULLY     ; {4C3B} LOAD Y POSITION

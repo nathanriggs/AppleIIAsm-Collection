@@ -9,10 +9,10 @@
 *                              *
 * INPUT:                       *
 *                              *
-*  WPAR1 = X ORIGIN            *
-*  WPAR2 = X DESTINATION (2)   *
-*  BPAR1 = Y POSITION (1)      *
-*  BPAR2 = COLOR (1)           *
+*  ZPW5  = X ORIGIN            *
+*  ZPW6  = X DESTINATION (2)   *
+*  PASSTAB = Y POSITION (1)    *
+*  PASSTAB+2 = COLOR (1)       *
 *                              *
 * DESTROY: NZCIDV              *
 *          ^^^  ^              *
@@ -21,24 +21,12 @@
 * SIZE: 78 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]X1      HEX   0000       ; X ORIGIN
-]X2      HEX   0000       ; X DESTINATION
-]Y       HEX   00         ; Y POSITION (COLUMN)
-]COLOR   HEX   00         ; COLOR CODE
+]X1      EQU   ZPW5       ; X ORIGIN
+]X2      EQU   ZPW6       ; X DESTINATION
+]Y       EQU   PASSTAB    ; Y POSITION (COLUMN)
+]COLOR   EQU   PASSTAB+2  ; COLOR CODE
 *
 HRHLINE
-         LDA   WPAR1      ; {3C2B} SAVE X ORIGIN LOW BYTE
-         STA   ]X1        ; {4C3B}
-         LDA   WPAR1+1    ; {3C2B} SAVE X DESTINATION HIGH BYTE
-         STA   ]X1+1      ; {4C3B}
-         LDA   WPAR2      ; {3C2B} SAVE X DESTINATION LOW BYTE
-         STA   ]X2        ; {4C3B}
-         LDA   WPAR2+1    ; {3C2B} SAVE X DESTINATION HIGH BYTE
-         STA   ]X2+1      ; {4C3B}
-         LDA   BPAR1      ; {3C2B} SAVE Y POSITION
-         STA   ]Y         ; {4C3B}
-         LDA   BPAR2      ; {3C2B} SAVE COLOR
-         STA   ]COLOR     ; {4C3B}
 *
 :LOOP
          HPLOT ]X1;]Y;]COLOR ; {348C14B} PLOT POINT ON LINE

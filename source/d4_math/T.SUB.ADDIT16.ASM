@@ -17,8 +17,8 @@
 * SIZE: 24 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]ADD1    EQU   WPAR1      ; FIRST ARGUMENT
-]ADD2    EQU   WPAR2      ; SECOND ARGUMENT
+]ADD1    EQU   ZPW1       ; FIRST ARGUMENT
+]ADD2    EQU   ZPW2       ; SECOND ARGUMENT
 *
 ADDIT16
          LDA   #2         ; {2C2B} PUT SUMMAND LENGTH

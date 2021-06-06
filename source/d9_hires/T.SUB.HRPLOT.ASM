@@ -9,9 +9,10 @@
 *                              *
 * INPUT:                       *
 *                              *
-*  ADDR3 = X POSITION (2)      *
-*  BPAR2 = Y POSITION          *
-*  BPAR1 = COLOR               *
+*  .Y = Y POSITION             *
+*  .A = X POSITION LOW BYTE    *
+*  .X = X POSITION HIGH BYTE   *
+*  ZPB1  = COLOR               *
 *                              *
 *  DESTROY: NZCIDV             *
 *           ^^^  ^             *
@@ -20,14 +21,13 @@
 * SIZE: 211 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]COLOR   EQU   BPAR1      ; HIRES COLOR CODE
-]X       EQU   ADDR3      ; ORIGINAL X POSITION
-]Y       EQU   BPAR2      ; ORIGINAL Y POSITION
-]RESOFF  EQU   ADDR1      ; DIVISION RESULT OFFSET
-]REMOFF  EQU   ADDR2      ; DIVISION REMAINDER OFFSET
-]PIXEL   EQU   WPAR2      ; BYTE CONTAINING SINGLE PIXEL TO PLOT
-]BYTE    EQU   WPAR2+1    ; BYTE LOCATION TO PLOT AT
-]NEWB    EQU   BPAR3      ; NEW BYTE
+]COLOR   EQU   ZPB1       ; HIRES COLOR CODE
+]X       EQU   ZPW1       ; ORIGINAL X POSITION
+]Y       EQU   ZPB2       ; ORIGINAL Y POSITION
+]RESOFF  EQU   ZPW2       ; DIVISION RESULT OFFSET
+]REMOFF  EQU   ZPW3       ; DIVISION REMAINDER OFFSET
+]PIXEL   EQU   ZPB3       ; BYTE CONTAINING SINGLE PIXEL TO PLOT
+]BYTE    EQU   ZPW4       ; BYTE LOCATION TO PLOT AT
 *
 HRPLOT
 *
@@ -95,3 +95,5 @@ HRPLOT
 :PLOT2
          HBSET ]BYTE;]Y;]NEWB ; {54C37B} NOW PLOT NEW BYTE TO MEMORY
          RTS              ; {6C1B}
+*
+]NEWB    HEX   00

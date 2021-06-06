@@ -28,8 +28,8 @@
 * SIZE: 26 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]CMP1    EQU   WPAR1      ; COMPARISON VAR 1
-]CMP2    EQU   WPAR2      ; COMPARISON VAR 2
+]CMP1    EQU   ZPW1       ; COMPARISON VAR 1
+]CMP2    EQU   ZPW2       ; COMPARISON VAR 2
 *
 COMP16
          LDA   ]CMP1      ; {3C2B} FIRST, COMPARE LOW BYTES

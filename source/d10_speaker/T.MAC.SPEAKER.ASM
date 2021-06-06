@@ -212,10 +212,10 @@ FFWRD    MAC
 REWND    MAC
          LDA   ]1         ; {4C3B}
          ASL              ; {2C1B}
-         STA   SCRATCH    ; {4C3B}
+         STA   ZPB1       ; {4C3B}
          LDA   NOTEP      ; {4C3B}
          SEC              ; {2C1B}
-         SBC   SCRATCH    ; {4C3B}
+         SBC   ZPB1       ; {4C3B}
          STA   NOTEP      ; {4C3B}
          LDA   NOTEP+1    ; {4C3B}
          SBC   #0         ; {3C2B}
@@ -287,11 +287,11 @@ PSONG    MAC
 ]LP1
          PNOTE            ; {172C3B}
          LDA   NOTEP      ; {4C3B}
-         STA   ADDR4      ; {4C3B}
+         STA   ZPWSYS     ; {4C3B}
          LDA   NOTEP+1    ; {4C3B}
-         STA   ADDR4+1    ; {4C3B}
+         STA   ZPWSYS+1   ; {4C3B}
          LDY   #0         ; {3C2B}
-         LDA   (ADDR4),Y  ; {5C3B}
+         LDA   (ZPWSYS),Y ; {5C3B}
          BEQ   ]EXITSONG  ; {3C2B}
          NEXTN            ; {24C17B}
          JMP   ]LP1       ; {3C3B}
@@ -317,10 +317,10 @@ PSONG    MAC
 *
 SFX      MAC
          LDA   ]1         ; {4C3B}
-         STA   BPAR1      ; {3C2B}
+         STA   ZPB1       ; {3C2B}
          LDA   ]2         ; {4C3B}
-         STA   BPAR2      ; {3C2B}
+         STA   ZPB2       ; {3C2B}
          LDA   ]3         ; {4C3B}
-         STA   BPAR3      ; {3C2B}
+         STA   ZPB3       ; {3C2B}
          JSR   SOUNDFX    ; {1941C3B}
          <<<

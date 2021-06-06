@@ -13,11 +13,11 @@
 *                              *
 * INPUT:                       *
 *                              *
-*  WPAR1 = 1ST DIM LENGTH      *
-*  WPAR2 = 2ND DIM LENGTH      *
-*  WPAR3 = ARRAY ADDRESS       *
-*  BPAR1 = ELEMENT LENGTH      *
-*  BPAR2 = FILL VALUE          *
+*  ZPW1  = 1ST DIM LENGTH      *
+*  ZPW2  = 2ND DIM LENGTH      *
+*  ZPW3  = ARRAY ADDRESS       *
+*  ZPB1  = ELEMENT LENGTH      *
+*  ZPB2  = FILL VALUE          *
 *                              *
 * DESTROY: NZCIDV              *
 *          ^^^  ^              *
@@ -26,18 +26,18 @@
 * SIZE: 226 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]AXSIZE  EQU   WPAR1      ; FIRST DIMENSION LENGTH
-]AYSIZE  EQU   WPAR2      ; SECOND DIMENSION LENGTH
-]ELEN    EQU   BPAR1      ; ELEMENT BYTE LENGTH
-]FILL    EQU   BPAR2      ; FILL VALUE
-]ADDR    EQU   WPAR3      ; ARRAY ADDRESS
-]ADDR2   EQU   ADDR1      ; ZERO-PAGE WORKING SPACE
+]AXSIZE  EQU   ZPW1       ; FIRST DIMENSION LENGTH
+]AYSIZE  EQU   ZPW2       ; SECOND DIMENSION LENGTH
+]ELEN    EQU   ZPB1       ; ELEMENT BYTE LENGTH
+]FILL    EQU   ZPB2       ; FILL VALUE
+]ADDR    EQU   ZPW3       ; ARRAY ADDRESS
+]ADDR2   EQU   ZPW4       ; ZERO-PAGE WORKING SPACE
 *
-]PROD    EQU   VARTAB     ; PRODUCT
-]AXBAK   EQU   VARTAB+4   ; X SIZE BACKUP
-]AYBAK   EQU   VARTAB+6   ; Y SIZE BACKUP
-]MLIER   EQU   VARTAB+8   ; MULTIPLIER
-]MCAND   EQU   VARTAB+10  ; MULTIPLICAND
+]PROD    EQU   VARTAB+8   ; PRODUCT
+]AXBAK   EQU   ZPW5       ; X SIZE BACKUP
+]AYBAK   EQU   ZPW6       ; Y SIZE BACKUP
+]MLIER   EQU   VARTAB     ; MULTIPLIER
+]MCAND   EQU   VARTAB+4   ; MULTIPLICAND
 *
 ADIM162
          LDA   ]AYSIZE    ; {3C2B}

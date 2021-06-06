@@ -21,7 +21,7 @@
 * CONTACT:   NATHAN.RIGGS@     *
 *            OUTLOOK.COM       *
 *                              *
-* DATE:      29-MAR-2021       *
+* DATE:      04-JUN-2021       *
 * ASSEMBLER: MERLIN 8 PRO      *
 * OS:        DOS 3.3           *
 *                              *
@@ -76,10 +76,10 @@ M8BY2    MAC
 *
 M8BY3    MAC
          LDA   ]1         ; {4C3B} LOAD NUMBER
-         STA   BPAR1      ; {3C2B} BACKUP IN BPAR1
+         STA   ZPB1       ; {3C2B} BACKUP IN ZPB1
          ASL              ; {2C1B} MUL 1ST ARGUMENT BY 2
          CLC              ; {2C1B} CLEAR CARRY
-         ADC   BPAR1      ; {2C2B} ADD ORIGINAL NUMBER
+         ADC   ZPB1       ; {2C2B} ADD ORIGINAL NUMBER
                           ; ANSWER HELD IN .A REGISTER
          <<<
 *
@@ -122,11 +122,11 @@ M8BY4    MAC
 *
 M8BY5    MAC
          LDA   ]1         ; {4C3B} LOAD NUMBER INTO .A
-         STA   BPAR1      ; {3C2B} STORE ORIG VAL IN BPAR1
+         STA   ZPB1       ; {3C2B} STORE ORIG VAL IN ZPB1
          ASL              ; {2C1B} MULTIPLY BY TWO
          ASL              ; {2C1B} MUL BY TWO (SO, FOUR)
          CLC              ; {2C1B} CLEAR CARRY
-         ADC   BPAR1      ; {2C2B} ADD ORIGINAL VALUE TO NEW
+         ADC   ZPB1       ; {2C2B} ADD ORIGINAL VALUE TO NEW
                           ; ANSWER HELD IN .A
          <<<
 *
@@ -147,16 +147,16 @@ M8BY5    MAC
 *
 M8BY6    MAC
          LDA   ]1         ; {4C3B} LOAD NUMBER INTO .A
-         STA   BPAR1      ; {3C2B} STORE ORIG IN BPAR1
+         STA   ZPB1       ; {3C2B} STORE ORIG IN ZPB1
          ASL              ; {2C1B} MULTIPLY .A BY TWO
          ASL              ; {2C1B} DO AGAIN TO MUL BY FOUR
          TAX              ; {2C1B} TRANSFER ANSWER INTO .X
-         LDA   BPAR1      ; {3C2B} RELOAD ORIGINAL IN .A
+         LDA   ZPB1       ; {3C2B} RELOAD ORIGINAL IN .A
          ASL              ; {2C1B} MULTIPLY BY TWO
-         STA   BPAR1      ; {3C2B} STORE BACK INTO BPAR1
+         STA   ZPB1       ; {3C2B} STORE BACK INTO ZPB1
          TXA              ; {2C1B} TRANSFER .X BACK TO .A
          CLC              ; {2C1B} CLEAR THE CARRY
-         ADC   BPAR1      ; {2C3B} ADD SECOND ARGUMENT ANSWER
+         ADC   ZPB1       ; {2C3B} ADD SECOND ARGUMENT ANSWER
          <<<
 *
 *``````````````````````````````*
@@ -176,18 +176,18 @@ M8BY6    MAC
 *
 M8BY7    MAC
          LDA   ]1         ; {4C3B} LOAD NUMBER INTO .A
-         STA   BPAR1      ; {3C2B} STORE IN ZERO PAGE
+         STA   ZPB1       ; {3C2B} STORE IN ZERO PAGE
          ASL              ; {2C1B} MULTIPLY NUM BY TWO
          ASL              ; {2C1B} AND AGAIN, SO BY FOUR
          CLC              ; {2C1B} CLEAR CARRY
-         ADC   BPAR1      ; {3C2B} ADD ORIGINAL NUMBER TO VALUE
+         ADC   ZPB1       ; {3C2B} ADD ORIGINAL NUMBER TO VALUE
          TAX              ; {2C1B} TEMPORARY TRANSFER TO .X
-         LDA   BPAR1      ; {3C2B} LOAD ORIGINAL NUMBER IN .A
+         LDA   ZPB1       ; {3C2B} LOAD ORIGINAL NUMBER IN .A
          ASL              ; {2C1B} MULTIPLY BY TWO
-         STA   BPAR1      ; {3C2B} STORE IN ZERO PAGE
+         STA   ZPB1       ; {3C2B} STORE IN ZERO PAGE
          TXA              ; {2C1B} TRANSFER .X BACK INTO .A
          CLC              ; {2C1B} CLEAR CARRY
-         ADC   BPAR1      ; {3C2B} ADD OTHER ARGUMENT SAVED IN MEM
+         ADC   ZPB1       ; {3C2B} ADD OTHER ARGUMENT SAVED IN MEM
                           ; ANSWER IS HELD IN .A REGISTER
          <<<
 *
@@ -231,12 +231,12 @@ M8BY8    MAC
 *
 M8BY9    MAC
          LDA   ]1         ; {4C3B} LOAD NUMBER INTO .A
-         STA   BPAR1      ; {3C2B} TEMPORARY HOLD IN ZERO PAGE
+         STA   ZPB1       ; {3C2B} TEMPORARY HOLD IN ZERO PAGE
          ASL              ; {2C1B} MULTIPLY BY 2 (2)
          ASL              ; {2C1B} MULTIPLY BY 2 (4)
          ASL              ; {2C1B} MULTIPLY BY 2 (8)
          CLC              ; {2C1B} CLEAR CARRY
-         ADC   BPAR1      ; {3C2B} ADD ORIGINAL VALUE
+         ADC   ZPB1       ; {3C2B} ADD ORIGINAL VALUE
                           ; ANSWER IS HELD IN .A REGISTER
          <<<
 *
@@ -257,11 +257,11 @@ M8BY9    MAC
 *
 M8BY10   MAC
          LDA   ]1         ; {4C3B} LOAD NUMBER INTO .A
-         STA   BPAR1      ; {3C2B} STORE IT IN ZERO PAGE
+         STA   ZPB1       ; {3C2B} STORE IT IN ZERO PAGE
          ASL              ; {2C1B} MULTIPLY BY TWO (2)
          ASL              ; {2C1B} MULTIPLY BY TWO (4)
          CLC              ; {2C1B} CLEAR CARRY
-         ADC   BPAR1      ; {3C2B} ADD ORIGINAL NUMBER TO VALUE
+         ADC   ZPB1       ; {3C2B} ADD ORIGINAL NUMBER TO VALUE
          ASL              ; {2C1B} AND MULTIPLY TOTAL BY TWO
                           ; ANSWER IS HELD IN .A REGISTER
          <<<

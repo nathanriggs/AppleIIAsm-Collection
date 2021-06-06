@@ -7,7 +7,7 @@
 *                              *
 * INPUT:                       *
 *                              *
-*  BPAR1 = COLOR               *
+*  ZPB1  = COLOR               *
 *                              *
 * DESTROY: NZCIDV              *
 *          ^^^  ^              *
@@ -16,10 +16,10 @@
 * SIZE: 49+                    *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]HRLO    EQU   ADDR1      ; LOW BYTE OF WORKING SCREEN
-]HRHI    EQU   ADDR1+1    ; HIGH BYTE OF WORKING SCREEN
-]MAX     EQU   ADDR2      ; MAX LENGTH OF WORKING SCREEN
-]COLOR   EQU   BPAR1      ; COLOR CODE
+]HRLO    EQU   ZPW1       ; LOW BYTE OF WORKING SCREEN
+]HRHI    EQU   ZPW1+1     ; HIGH BYTE OF WORKING SCREEN
+]MAX     EQU   ZPW2       ; MAX LENGTH OF WORKING SCREEN
+]COLOR   EQU   ZPB1       ; COLOR CODE
 *
 HCLEAR
          LDA   #$00       ; {3C2B} CLEAR OUT THE ACCUMULATOR

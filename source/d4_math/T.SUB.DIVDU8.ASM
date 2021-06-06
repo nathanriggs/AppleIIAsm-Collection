@@ -16,16 +16,16 @@
 * SIZE: 34 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]DVEND   EQU   WPAR1      ; DIVIDEND
-]DVSOR   EQU   WPAR2      ; DIVISOR
+]DVEND   EQU   ZPW1       ; DIVIDEND
+]DVSOR   EQU   ZPW2       ; DIVISOR
 *
 DIVDU8
          STX   ]DVEND     ; {3C2B} .X HOLDS DIVIDEND
          STA   ]DVSOR     ; {3C2B} .A HOLDS DIVISOR
          LDA   #$00       ; {3C2B} CLEAR ACCUMULATOR
          LDX   #8         ; {3C2B} COUNTER
-         ASL   ]DVSOR     ; {5C2B} SHIFT LEFT DIVISOR
-:L1      ROL              ; {2C1B} ROTATE LEFT .A
+         ASL   ]DVSOR     ; {5C2B} MUL DIVISOR BY 2
+:L1      ROL              ; {2C1B} (HIGH BYTE TOO)
          CMP   ]DVEND     ; {3C2B} COMPARE TO DIVIDEND
          BCC   :L2        ; {3C2B} IF NEXT BIT = 0, BRANCH :L2
          SBC   ]DVEND     ; {3C2B} OTHERWISE, SUBTRACT DIVIDEND

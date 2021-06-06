@@ -17,9 +17,9 @@
 *                              *
 * INPUT:                       *
 *                              *
-*  BPAR1 = EFFECT NUMBER       *
-*  BPAR2 = VARIABLE ONE        *
-*  BLAR3 = VARIABLE TWO        *
+*  ZPB1  = EFFECT NUMBER       *
+*  ZPB2  = VARIABLE ONE        *
+*  ZPB3  = VARIABLE TWO        *
 *                              *
 * DESTROY: NZCIDV              *
 *          ^^^  ^              *
@@ -28,21 +28,21 @@
 * SIZE: 287 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]CNTR    EQU   BPAR2      ; MACHINE GUN BURSTS
-]PWDTH   EQU   BPAR3      ; SWOOP PULSE WIDTH--40,80,128,160
-]PCNT    EQU   BPAR2      ; SWOOP PULSE COUNT--1
-]PSTEP   EQU   BPAR2      ; WORM STEP--1,77,129,179
-]WWDTH   EQU   BPAR3      ; WORM PULSE WIDTH--176,88
-]PLIMIT  EQU   BPAR4      ; PULSE LIMIT
-]F1      EQU   BPAR2      ; ALERT FIRST FREQUENCY
-]F2      EQU   BPAR3      ; ALERT 2ND FREQUENCY
+]CNTR    EQU   ZPB2       ; MACHINE GUN BURSTS
+]PWDTH   EQU   ZPB3       ; SWOOP PULSE WIDTH--40,80,128,160
+]PCNT    EQU   ZPB2       ; SWOOP PULSE COUNT--1
+]PSTEP   EQU   ZPB2       ; WORM STEP--1,77,129,179
+]WWDTH   EQU   ZPB3       ; WORM PULSE WIDTH--176,88
+]PLIMIT  EQU   ZPB4       ; PULSE LIMIT
+]F1      EQU   ZPB2       ; ALERT FIRST FREQUENCY
+]F2      EQU   ZPB3       ; ALERT 2ND FREQUENCY
 *
 ]DUR     DFB   #08        ; {0C1B} ALERT DURATION
 ]WT      DFB   #10        ; {0C1B} ALERT REST PERIOD
 *
 SOUNDFX
 *
-         LDA   BPAR1      ; {3C2B}
+         LDA   ZPB1       ; {3C2B}
          CMP   #0         ; {3C2B}
          BEQ   :MGUN      ; {3C2B}
          CMP   #1         ; {3C2B}

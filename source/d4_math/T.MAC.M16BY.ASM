@@ -24,7 +24,7 @@
 * CONTACT:   NATHAN.RIGGS@     *
 *            OUTLOOK.COM       *
 *                              *
-* DATE:      25-MAR-2021       *
+* DATE:      04-JUN-2021       *
 * ASSEMBLER: MERLIN 8 PRO      *
 * OS:        DOS 3.3           *
 *                              *
@@ -59,11 +59,11 @@
 MBY2     MAC
          LDA   ]1         ; {4C3B} LOAD LOW BYTE IN .A
          ASL              ; {2C1B} MULTIPLY IT BY TWO
-         STA   WPAR1      ; {3C2B} STORE ON ZERO PAGE
+         STA   ZPW1       ; {3C2B} STORE ON ZERO PAGE
          LDA   ]1+1       ; {4C3B} LOAD NUMBER HIGH BYTE
          ROL              ; {2C1B} ADJUST FOR CARRY AND MULTIPLY
          TAX              ; {2C1B} TRANSFER HIGH BYTE TO .X REGISTER
-         LDA   WPAR1      ; {3C2B} HOLD LOW BYTE IN .A
+         LDA   ZPW1       ; {3C2B} HOLD LOW BYTE IN .A
          <<<
 *
 *``````````````````````````````*
@@ -84,21 +84,21 @@ MBY2     MAC
 *
 MBY3     MAC
          LDA   ]1         ; {4C3B} LOAD NUMBER LOW BYTE
-         STA   WPAR1      ; {3C2B} STORE IT ON ZERO PAGE
+         STA   ZPW1       ; {3C2B} STORE IT ON ZERO PAGE
          ASL              ; {2C1B} NOW MULTIPLY BY TWO
-         STA   WPAR2      ; {3C2B} STORE IN 2ND ZERO PAGE LOC
+         STA   ZPW2       ; {3C2B} STORE IN 2ND ZERO PAGE LOC
          LDA   ]1+1       ; {4C3B} GET NUMBER HIGH BYTE
-         STA   WPAR1+1    ; {3C2B} STORE HIGH BYTE ON ZERO PAGE
+         STA   ZPW1+1     ; {3C2B} STORE HIGH BYTE ON ZERO PAGE
          ROL              ; {2C1B} ADJUST FOR CARRY AND MULTIPLY
-         STA   WPAR2+1    ; {3C2B} STORE HIGH BYTE IN 2ND LOCATION
-         LDA   WPAR1      ; {4C3B} LOAD ORIGINAL NUMBER IN .A
+         STA   ZPW2+1     ; {3C2B} STORE HIGH BYTE IN 2ND LOCATION
+         LDA   ZPW1       ; {4C3B} LOAD ORIGINAL NUMBER IN .A
          CLC              ; {2C2B} CLEAR CARRY
-         ADC   WPAR2      ; {3C2B} ADD SECOND NUMBER TO ORIGINAL
-         STA   WPAR1      ; {3C2B} STORE LOW BYTE IN ZERO PAGE
-         LDA   WPAR1+1    ; {3C2B} LOAD NUMBER HIGH BYTE IN .A
-         ADC   WPAR2+1    ; {3C2B} ADD 2ND VALUE HIGH BYTE TO IT
+         ADC   ZPW2       ; {3C2B} ADD SECOND NUMBER TO ORIGINAL
+         STA   ZPW1       ; {3C2B} STORE LOW BYTE IN ZERO PAGE
+         LDA   ZPW1+1     ; {3C2B} LOAD NUMBER HIGH BYTE IN .A
+         ADC   ZPW2+1     ; {3C2B} ADD 2ND VALUE HIGH BYTE TO IT
          TAX              ; {2C1B} TRANSFER NEW HIGH BYTE TO .X
-         LDA   WPAR1      ; {3C2B} RELOAD LOW BYTE IN .A
+         LDA   ZPW1       ; {3C2B} RELOAD LOW BYTE IN .A
          <<<
 *
 *``````````````````````````````*
@@ -118,17 +118,17 @@ MBY3     MAC
 MBY4     MAC
          LDA   ]1         ; {4C3B} LOAD NUMBER LOW BYTE TO .A
          ASL              ; {2C1B} MULTIPLY BY TWO
-         STA   BPAR1      ; {3C2B} STORE LOW BYTE TO ZERO PAGE
+         STA   ZPB1       ; {3C2B} STORE LOW BYTE TO ZERO PAGE
          LDA   ]1+1       ; {4C3B} LOAD NUMBER HIGH BYTE
          ROL              ; {2C1B} ADJUST FOR CARRY AND MUL
          TAX              ; {2C1B} TRANSFER HIGH BYTE TO .X
-         LDA   BPAR1      ; {4C3B} RELOAD LOW BYTE
+         LDA   ZPB1       ; {4C3B} RELOAD LOW BYTE
          ASL              ; {2C1B} MULTIPLY AGAIN
-         STA   BPAR1      ; {4C3B} STORE BACK ON ZERO PAGE
+         STA   ZPB1       ; {4C3B} STORE BACK ON ZERO PAGE
          TXA              ; {2C1B} TRANSFER HIGH BYTE BACK TO .A
          ROL              ; {2C1B} ADJUST FOR CARRY AND MULTIPLY
          TAX              ; {2C1B} TRANSFER HIGH BYTE BACK TO .X
-         LDA   BPAR1      ; {4C3B} RELOAD LOW BYTE IN .A
+         LDA   ZPB1       ; {4C3B} RELOAD LOW BYTE IN .A
          <<<
 *
 *``````````````````````````````*
@@ -150,20 +150,20 @@ MBY4     MAC
 MBY5     MAC
          LDA   ]1         ; {4C3B} LOAD NUMBER LOW BYTE
          ASL              ; {2C1B} MULTIPLY BY TWO
-         STA   WPAR1      ; {3C2B} STORE ON ZERO PAGE
+         STA   ZPW1       ; {3C2B} STORE ON ZERO PAGE
          LDA   ]1+1       ; {4C3B} LOAD NUMBER HIGH BYTE
          ROL              ; {2C1B} APPLY CARRY AND MULTIPLY
-         STA   WPAR1+1    ; {3C2B} STORE ON ZERO PAGE
-         ASL   WPAR1      ; {2C1B} MULTIPLY LOW BYTE BY TWO AGAIN
-         ROL   WPAR1+1    ; {2C1B} AND HIGH BYTE AGAIN
-         LDA   WPAR1      ; {4C3B} LOAD LOW BYTE INTO .A
+         STA   ZPW1+1     ; {3C2B} STORE ON ZERO PAGE
+         ASL   ZPW1       ; {2C1B} MULTIPLY LOW BYTE BY TWO AGAIN
+         ROL   ZPW1+1     ; {2C1B} AND HIGH BYTE AGAIN
+         LDA   ZPW1       ; {4C3B} LOAD LOW BYTE INTO .A
          CLC              ; {2C1B} CLEAR THE CARRY
          ADC   ]1         ; {3C2B} ADD ORIGINAL VALUE
-         STA   WPAR1      ; {3C2B} STORE ON ZERO PAGE
-         LDA   WPAR1+1    ; {3C2B} LOAD HIGH BYTE IN .A
+         STA   ZPW1       ; {3C2B} STORE ON ZERO PAGE
+         LDA   ZPW1+1     ; {3C2B} LOAD HIGH BYTE IN .A
          ADC   ]1+1       ; {4C3B} ADD ORIGINAL HIGH BYTE
          TAX              ; {2C1B} TRANSFER HIGH BYTE TO .X
-         LDA   WPAR1      ; {3C2B} LOAD LOW BYTE BACK IN .A
+         LDA   ZPW1       ; {3C2B} LOAD LOW BYTE BACK IN .A
          <<<
 *
 *``````````````````````````````*
@@ -185,24 +185,24 @@ MBY5     MAC
 MBY6     MAC
          LDA   ]1         ; {4C3B} LOAD NUMBER LOW BYTE
          ASL              ; {2C1B} MULTIPLY BY TWO
-         STA   WPAR1      ; {3C2B} STORE ON ZERO PAGE
+         STA   ZPW1       ; {3C2B} STORE ON ZERO PAGE
          LDA   ]1+1       ; {4C3B} LOAD HIGH BYTE
          ROL              ; {2C1B} ADJUST CARRY AND MULTIPLY
-         STA   WPAR1+1    ; {3C2B} STORE ON ZERO PAGE
-         LDA   WPAR1      ; {3C2B} RELOAD LOW BYTE IN .A
+         STA   ZPW1+1     ; {3C2B} STORE ON ZERO PAGE
+         LDA   ZPW1       ; {3C2B} RELOAD LOW BYTE IN .A
          CLC              ; {2C1B} CLEAR THE CARRY
          ADC   ]1         ; {4C3B} ADD ORIGINAL LOW BYTE
-         STA   WPAR1      ; {3C2B} STORE BACK ON ZERO PAGE
-         LDA   WPAR1+1    ; {3C2B} LOAD HIGH BYTE AGAIN
+         STA   ZPW1       ; {3C2B} STORE BACK ON ZERO PAGE
+         LDA   ZPW1+1     ; {3C2B} LOAD HIGH BYTE AGAIN
          ADC   ]1+1       ; {4C3B} ADD ORIGINAL HIGH BYTE
-         STA   WPAR1+1    ; {3C2B} STORE ON ZERO PAGE
-         LDA   WPAR1      ; {3C2B} LOAD LOW BYTE AGAIN
+         STA   ZPW1+1     ; {3C2B} STORE ON ZERO PAGE
+         LDA   ZPW1       ; {3C2B} LOAD LOW BYTE AGAIN
          ASL              ; {2C1B} MULTIPLY BY TWO
-         STA   WPAR1      ; {3C2B} STORE ON ZERO PAGE
-         LDA   WPAR1+1    ; {3C2B} LOAD HIGH BYTE
+         STA   ZPW1       ; {3C2B} STORE ON ZERO PAGE
+         LDA   ZPW1+1     ; {3C2B} LOAD HIGH BYTE
          ROL              ; {2C1B} APPLY CARRY AND MULTIPLY
          TAX              ; {2C1B} HOLD HIGH BYTE IN .X
-         LDA   WPAR1      ; {3C2B} RELOAD LOW BYTE IN .A
+         LDA   ZPW1       ; {3C2B} RELOAD LOW BYTE IN .A
          <<<
 *
 *``````````````````````````````*
@@ -224,29 +224,29 @@ MBY6     MAC
 MBY7     MAC
          LDA   ]1         ; {4C3B} LOAD NUMBER LOW BYTE IN .A
          ASL              ; {2C1B} MULTIPLY BY TWO
-         STA   WPAR1      ; {3C2B} STORE IN ZERO PAGE
-         STA   WPAR2      ; {3C2B} STORE IN 2ND ZP LOCATION
+         STA   ZPW1       ; {3C2B} STORE IN ZERO PAGE
+         STA   ZPW2       ; {3C2B} STORE IN 2ND ZP LOCATION
          LDA   ]1+1       ; {4C3B} LOAD NUMBER HIGH BYTE
          ROL              ; {2C1B} APPLY CARRY AND MULTIPLY
-         STA   WPAR1+1    ; {3C2B} STORE IN 1ST ZP HIGH BYTE LOC
-         STA   WPAR2+1    ; {3C2B} STORE IN 2ND ZP HIGH BYTE LOC
-         ASL   WPAR1      ; {2C1B} MULTIPLY 1ST LOC BY TWO
-         ROL   WPAR1+1    ; {2C1B} ALSO HIGH BYTE
+         STA   ZPW1+1     ; {3C2B} STORE IN 1ST ZP HIGH BYTE LOC
+         STA   ZPW2+1     ; {3C2B} STORE IN 2ND ZP HIGH BYTE LOC
+         ASL   ZPW1       ; {2C1B} MULTIPLY 1ST LOC BY TWO
+         ROL   ZPW1+1     ; {2C1B} ALSO HIGH BYTE
          LDA   ]1         ; {4C3B} LOAD ORIGINAL NUMBER
          CLC              ; {2C1B} CLEAR CARRY
-         ADC   WPAR1      ; {3C2B} ADD FIRST LOC TO NUMBER LOW BYTE
-         STA   WPAR1      ; {3C2B} STORE IN 1ST LOC
+         ADC   ZPW1       ; {3C2B} ADD FIRST LOC TO NUMBER LOW BYTE
+         STA   ZPW1       ; {3C2B} STORE IN 1ST LOC
          LDA   ]1+1       ; {4C3B} LOAD NUMBER HIGH BYTE
-         ADC   WPAR1+1    ; {3C2B} ADD 1ST LOC HIGH BYTE
-         STA   WPAR1+1    ; {3C2B} AND STORE IN 1ST LOC
-         LDA   WPAR1      ; {3C2B} RELOAD NEW LOW BYTE
+         ADC   ZPW1+1     ; {3C2B} ADD 1ST LOC HIGH BYTE
+         STA   ZPW1+1     ; {3C2B} AND STORE IN 1ST LOC
+         LDA   ZPW1       ; {3C2B} RELOAD NEW LOW BYTE
          CLC              ; {2C1B} CLEAR CARRY
-         ADC   WPAR2      ; {3C2B} ADD SECOND LOC LOW BYTE
-         STA   WPAR1      ; {3C2B} STORE IN 1ST LOC LOW BYTE
-         LDA   WPAR1+1    ; {3C2B} LOAD 1ST LOC HIGH BYTE
-         ADC   WPAR2+1    ; {3C2B} ADD 2ND LOC HIGH BYTE
+         ADC   ZPW2       ; {3C2B} ADD SECOND LOC LOW BYTE
+         STA   ZPW1       ; {3C2B} STORE IN 1ST LOC LOW BYTE
+         LDA   ZPW1+1     ; {3C2B} LOAD 1ST LOC HIGH BYTE
+         ADC   ZPW2+1     ; {3C2B} ADD 2ND LOC HIGH BYTE
          TAX              ; {2C1B} HOLD FINAL HIGH BYTE IN .X
-         LDA   WPAR1      ; {3C2B} HOLD FINAL LOW BYTE IN .A
+         LDA   ZPW1       ; {3C2B} HOLD FINAL LOW BYTE IN .A
          <<<
 *
 *``````````````````````````````*
@@ -266,17 +266,17 @@ MBY7     MAC
 MBY8     MAC
          LDA   ]1         ; {4C3B} LOAD NUMBER LOW BYTE
          ASL              ; {2C1B} MULTIPLY BY TWO
-         STA   WPAR1      ; {3C2B} STORE IN ZP LOC
+         STA   ZPW1       ; {3C2B} STORE IN ZP LOC
          LDA   ]1+1       ; {4C3B} LOAD NUMBER HIGH BYTE
          ROL              ; {2C1B} APPLY CARRY AND MUL BY 2
-         STA   WPAR1+1    ; {3C2B} STORE IN ZP LOC
-         ASL   WPAR1      ; {2C1B} MULTIPLY LOW BYTE BY 2
-         ROL   WPAR1+1    ; {2C1B} APPLY CARRY, MUL HIGH BY 2
-         ASL   WPAR1      ; {2C1B} MUL LOW BYTE BY 2
-         LDA   WPAR1+1    ; {3C2B} LOAD HIGH BYTE IN .A
+         STA   ZPW1+1     ; {3C2B} STORE IN ZP LOC
+         ASL   ZPW1       ; {2C1B} MULTIPLY LOW BYTE BY 2
+         ROL   ZPW1+1     ; {2C1B} APPLY CARRY, MUL HIGH BY 2
+         ASL   ZPW1       ; {2C1B} MUL LOW BYTE BY 2
+         LDA   ZPW1+1     ; {3C2B} LOAD HIGH BYTE IN .A
          ROL              ; {2C1B} APPLY CARRY AND MUL BY 2
          TAX              ; {2C1B} HOLD HIGH BYTE IN .X
-         LDA   WPAR1      ; {3C2B} HOLD LOW BYTE IN .A
+         LDA   ZPW1       ; {3C2B} HOLD LOW BYTE IN .A
          <<<
 *
 *``````````````````````````````*
@@ -298,22 +298,22 @@ MBY8     MAC
 MBY9     MAC
          LDA   ]1         ; {4C3B} LOAD NUMBER LOW BYTE
          ASL              ; {2C1B} MULTIPLY BY TWO
-         STA   WPAR1      ; {3C2B} STORE ON ZERO PAGE
+         STA   ZPW1       ; {3C2B} STORE ON ZERO PAGE
          LDA   ]1+1       ; {4C3B} LOAD NUMBER HIGH BYTE
          ROL              ; {2C1B} APPLY CARRY AND MUL BY 2
-         STA   WPAR1+1    ; {3C2B} STORE ON ZP
-         ASL   WPAR1      ; {5C2B} MUL LOW BYTE BY 2
-         ROL   WPAR1+1    ; {5C2B} CARRY AND MUL HIGH BY 2
-         ASL   WPAR1      ; {5C2B} MUL LOW BY 2
-         ROL   WPAR1+1    ; {5C2B} CARRY AND MUL HIGH BY 2
-         LDA   WPAR1      ; {3C2B} LOAD LOW BYTE
+         STA   ZPW1+1     ; {3C2B} STORE ON ZP
+         ASL   ZPW1       ; {5C2B} MUL LOW BYTE BY 2
+         ROL   ZPW1+1     ; {5C2B} CARRY AND MUL HIGH BY 2
+         ASL   ZPW1       ; {5C2B} MUL LOW BY 2
+         ROL   ZPW1+1     ; {5C2B} CARRY AND MUL HIGH BY 2
+         LDA   ZPW1       ; {3C2B} LOAD LOW BYTE
          CLC              ; {2C1B} CLEAR CARRY
          ADC   ]1         ; {4C3B} ADD ORIGINAL VALUE
-         STA   WPAR1      ; {3C2B} STORE ON ZP
-         LDA   WPAR1+1    ; {3C2B} LOAD HIGH BYTE
+         STA   ZPW1       ; {3C2B} STORE ON ZP
+         LDA   ZPW1+1     ; {3C2B} LOAD HIGH BYTE
          ADC   ]1+1       ; {4C3B} ADD ORIGINAL HIGH BYTE
          TAX              ; {2C1B} HOLD FINAL HIGH BYTE IN .X
-         LDA   WPAR1      ; {3C2B} HOLD FINAL LOW BYTE IN .A
+         LDA   ZPW1       ; {3C2B} HOLD FINAL LOW BYTE IN .A
          <<<
 *
 *``````````````````````````````*
@@ -335,24 +335,24 @@ MBY9     MAC
 MBY10    MAC
          LDA   ]1         ; {4C3B} LOAD NUMBER LOW BYTE
          ASL              ; {2C1B} MUL LOW BYTE BY 2
-         STA   WPAR1      ; {3C2B} STORE ON ZERO PAGE
+         STA   ZPW1       ; {3C2B} STORE ON ZERO PAGE
          LDA   ]1+1       ; {4C3B} LOAD NUMBER HIGH BYTE
          ROL              ; {2C1B} APPLY CARRY AND MUL BY 2
-         STA   WPAR1+1    ; {3C2B} STORE ON ZERO PAGE
-         ASL   WPAR1      ; {5C2B} MUL LOW BY 2
-         ROL   WPAR1+1    ; {5C2B} CARRY AND MUL HIGH BY 2
+         STA   ZPW1+1     ; {3C2B} STORE ON ZERO PAGE
+         ASL   ZPW1       ; {5C2B} MUL LOW BY 2
+         ROL   ZPW1+1     ; {5C2B} CARRY AND MUL HIGH BY 2
          LDA   ]1         ; {4C3B} LOAD ORIGINAL LOW BYTE
          CLC              ; {2C1B} CLEAR CARRY
-         ADC   WPAR1      ; {3C2B} ADD ZP LOW BYTE
-         STA   WPAR1      ; {3C2B} STORE BACK ON ZP
+         ADC   ZPW1       ; {3C2B} ADD ZP LOW BYTE
+         STA   ZPW1       ; {3C2B} STORE BACK ON ZP
          LDA   ]1+1       ; {4C3B} LOAD ORIGINAL HIGH BYTE
-         ADC   WPAR1+1    ; {3C2B} ADD ZP HIGH BYTE
-         STA   WPAR1+1    ; {3C2B} STORE BACK ON ZP
-         ASL   WPAR1      ; {5C2B} MULTIPLY NEW VAL LOW BY 2
-         LDA   WPAR1+1    ; {3C2B} LOAD HIGH BYTE IN .A
+         ADC   ZPW1+1     ; {3C2B} ADD ZP HIGH BYTE
+         STA   ZPW1+1     ; {3C2B} STORE BACK ON ZP
+         ASL   ZPW1       ; {5C2B} MULTIPLY NEW VAL LOW BY 2
+         LDA   ZPW1+1     ; {3C2B} LOAD HIGH BYTE IN .A
          ROL              ; {2C1B} CARRY AND MUL HIGH BY 2
          TAX              ; {2C1B} HOLD FINAL HIGH BYTE IN .X
-         LDA   WPAR1      ; {3C2B} HOLD FINAL LOW BYTE IN .A
+         LDA   ZPW1       ; {3C2B} HOLD FINAL LOW BYTE IN .A
          <<<
 *
 *``````````````````````````````*
@@ -374,42 +374,42 @@ MBY10    MAC
 MBY1H    MAC
          LDA   ]1         ; {4C3B} LOAD NUMBER INTO .A
          ASL              ; {2C1B} MUL LOW BYTE BY 2
-         STA   WPAR2      ; {3C2B} STORE IN ZP LOC 1
+         STA   ZPW2       ; {3C2B} STORE IN ZP LOC 1
          LDA   ]1+1       ; {4C3B} LOAD NUMBER HIGH BYTE
          ROL              ; {2C1B} CARRY AND MUL BY 2
-         STA   WPAR2+1    ; {3C2B} STORE IN ZP LOC 1
-         ASL   WPAR2      ; {5C2B} MUL ZP LOW BYTE BY 2
-         ROL   WPAR2+1    ; {5C2B} CARRY AND MUL ZP HIGH BY 2
-         ASL   WPAR2      ; {5C2B} MUL LOW BY 2
-         ROL   WPAR2+1    ; {5C2B} MUL HIGH BY 2
-         LDA   WPAR2      ; {3C2B} LOAD LOW BYTE IN .A
+         STA   ZPW2+1     ; {3C2B} STORE IN ZP LOC 1
+         ASL   ZPW2       ; {5C2B} MUL ZP LOW BYTE BY 2
+         ROL   ZPW2+1     ; {5C2B} CARRY AND MUL ZP HIGH BY 2
+         ASL   ZPW2       ; {5C2B} MUL LOW BY 2
+         ROL   ZPW2+1     ; {5C2B} MUL HIGH BY 2
+         LDA   ZPW2       ; {3C2B} LOAD LOW BYTE IN .A
          ASL              ; {2C1B} MULTIPLY BY TWO
-         STA   WPAR1      ; {3C2B} STORE IN 2ND ZP LOC
-         LDA   WPAR2+1    ; {3C2B} LOAD HIGH BYTE IN .A
+         STA   ZPW1       ; {3C2B} STORE IN 2ND ZP LOC
+         LDA   ZPW2+1     ; {3C2B} LOAD HIGH BYTE IN .A
          ROL              ; {2C1B} CARRY AND MUL BY 2
-         STA   WPAR1+1    ; {3C2B} STORE IN 2ND ZP LOC
+         STA   ZPW1+1     ; {3C2B} STORE IN 2ND ZP LOC
          LDA   ]1         ; {4C3B} LOAD ORIGINAL VALUE
          CLC              ; {2C1B} CLEAR CARRY
-         ADC   WPAR1      ; {3C2B} ADD LOW BYTE ZP LOC 1
-         STA   WPAR1      ; {3C2B} STORE AT ZP LOC 1
+         ADC   ZPW1       ; {3C2B} ADD LOW BYTE ZP LOC 1
+         STA   ZPW1       ; {3C2B} STORE AT ZP LOC 1
          LDA   ]1+1       ; {4C3B} LOAD ORIGINAL HIGH BYTE
-         ADC   WPAR1+1    ; {3C2B} ADD ZP LOC HIGH
-         STA   WPAR1+1    ; {3C2B} STORE BACK AT ZP LOC 1 HIGH
-         LDA   WPAR1      ; {3C2B} LOAD LOC 1 LOW BYTE IN .A
+         ADC   ZPW1+1     ; {3C2B} ADD ZP LOC HIGH
+         STA   ZPW1+1     ; {3C2B} STORE BACK AT ZP LOC 1 HIGH
+         LDA   ZPW1       ; {3C2B} LOAD LOC 1 LOW BYTE IN .A
          CLC              ; {2C1B} CLEAR CARRY
-         ADC   WPAR2      ; {3C2B} ADD 2ND ZP LOC LOW BYTE
-         STA   WPAR1      ; {3C2B} STORE IN LOC 1 LOW
-         LDA   WPAR1+1    ; {3C2B} LOAD ZP LOC 1 HIGH BYTE
-         ADC   WPAR2+1    ; {3C2B} ADD 2ND LOC HIGH BYTE
-         STA   WPAR1+1    ; {3C2B} STORE BACK IN ZP LOC 1 HIGH
-         ASL   WPAR1      ; {5C2B} MULTIPLY THAT VALUE LOW BY 2
-         ROL   WPAR1+1    ; {5C2B} CARRY AND MUL HIGH BY 2
-         LDA   WPAR1      ; {3C2B} LOAD LOW BYTE IN .A
+         ADC   ZPW2       ; {3C2B} ADD 2ND ZP LOC LOW BYTE
+         STA   ZPW1       ; {3C2B} STORE IN LOC 1 LOW
+         LDA   ZPW1+1     ; {3C2B} LOAD ZP LOC 1 HIGH BYTE
+         ADC   ZPW2+1     ; {3C2B} ADD 2ND LOC HIGH BYTE
+         STA   ZPW1+1     ; {3C2B} STORE BACK IN ZP LOC 1 HIGH
+         ASL   ZPW1       ; {5C2B} MULTIPLY THAT VALUE LOW BY 2
+         ROL   ZPW1+1     ; {5C2B} CARRY AND MUL HIGH BY 2
+         LDA   ZPW1       ; {3C2B} LOAD LOW BYTE IN .A
          ASL              ; {2C1B} MULTIPLY AGAIN BY TWO
-         STA   WPAR1      ; {3C2B} STORE IN ZP LOC 1 LOW
-         LDA   WPAR1+1    ; {3C2B} LOAD HIGH BYTE IN .A
+         STA   ZPW1       ; {3C2B} STORE IN ZP LOC 1 LOW
+         LDA   ZPW1+1     ; {3C2B} LOAD HIGH BYTE IN .A
          ROL              ; {2C1B} CARRY AND MUL HIGH BY 2
          TAX              ; {2C1B} HOLD FINAL HIGH BYTE IN .X
-         LDA   WPAR1      ; {3C2B} HOLD FINAL LOW BYTE IN .A
+         LDA   ZPW1       ; {3C2B} HOLD FINAL LOW BYTE IN .A
          <<<
 *

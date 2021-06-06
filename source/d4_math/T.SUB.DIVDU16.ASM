@@ -19,10 +19,10 @@
 * SIZE: 54 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]DVEND   EQU   WPAR1      ; DIVIDEND
-]DVSOR   EQU   WPAR2      ; DIVISOR
-]REM     EQU   WPAR3      ; REMAINDER
-]RESULT  EQU   WPAR1      ; DIVISION RESULT
+]DVEND   EQU   ZPW1       ; DIVIDEND
+]DVSOR   EQU   ZPW2       ; DIVISOR
+]REM     EQU   ZPW3       ; REMAINDER
+]RESULT  EQU   ZPW4       ; DIVISION RESULT
 *
 DIVDU16
          LDA   #0         ; {4C3B} RESET REMAINDER

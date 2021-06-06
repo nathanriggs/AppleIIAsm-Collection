@@ -9,7 +9,7 @@
 * CONTACT:   NATHAN.RIGGS@     *
 *            OUTLOOK.COM       *
 *                              *
-* DATE:      11-APR-2021       *
+* DATE:      04-JUN-2021       *
 * ASSEMBLER: MERLIN 8 PRO      *
 * OS:        DOS 3.3           *
 *                              *
@@ -52,15 +52,13 @@
 *  ]2 = 2ND STRING TO COMPARE  *
 *                              *
 * CYCLES: 110+                 *
-* SIZE: 67 BYTES               *
+* SIZE: 31 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 SCMP     MAC
-         STY   SCRATCH    ; {3C2B} BACKUP .Y REGISTER
-         _MSTR ]1;WPAR1   ; {15C14B}
-         _MSTR ]2;WPAR2   ; {15C14B}
-         JSR   STRCMP     ; {74C26B}
-         LDY   SCRATCH    ; {3C2B} RELOAD .Y
+         _MSTR ]1;ZPW1    ; {15C14B}
+         _MSTR ]2;ZPW2    ; {15C14B}
+         JSR   STRCMP     ; {74C3B}
          <<<
 *
 *``````````````````````````````*
@@ -74,15 +72,13 @@ SCMP     MAC
 *  ]2 = SECOND STRING          *
 *                              *
 * CYCLES: 170+                 *
-* SIZE: 113 BYTES              *
+* SIZE: 31 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 SCAT     MAC
-         STY   SCRATCH    ; {3C2B} BACKUP .Y
-         _MSTR ]1;WPAR1   ; {15C14B}
-         _MSTR ]2;WPAR2   ; {15C14B}
-         JSR   STRCAT     ; {134C81B}
-         LDY   SCRATCH    ; {3C2B} RESTORE .Y
+         _MSTR ]1;ZPW1    ; {15C14B}
+         _MSTR ]2;ZPW2    ; {15C14B}
+         JSR   STRCAT     ; {134C3B}
          <<<
 *
 *``````````````````````````````*
@@ -96,14 +92,14 @@ SCAT     MAC
 *  ]2 = DELIMITER              *
 *                              *
 * CYCLES: 123+                 *
-* SIZE: 80 BYTES               *
+* SIZE: 22 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 STRIM    MAC
-         _MSTR ]1;WPAR1   ; {15C14B}
+         _MSTR ]1;ZPW1    ; {15C14B}
          LDA   ]2         ; {4C3B}
-         STA   WPAR2      ; {3C2B}
-         JSR   STRTRIM    ; {101C61B}
+         STA   ZPW2       ; {3C2B}
+         JSR   STRTRIM    ; {101C3B}
          <<<
 *
 *``````````````````````````````*
@@ -117,12 +113,12 @@ STRIM    MAC
 *  ]1 = STRING ADDRESS         *
 *                              *
 * CYCLES: 114+                 *
-* SIZE: 64 BYTES               *
+* SIZE: 17 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 STRUP    MAC
-         _MSTR ]1;WPAR1   ; {15C14B}
-         JSR   STRUPPER   ; {99C50B}
+         _MSTR ]1;ZPW1    ; {15C14B}
+         JSR   STRUPPER   ; {99C3B}
          <<<
 *
 *``````````````````````````````*
@@ -136,12 +132,12 @@ STRUP    MAC
 *  ]1 = STRING ADDRESS         *
 *                              *
 * CYCLES: 113+                 *
-* SIZE: 64 BYTES               *
+* SIZE: 17 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 STRLO    MAC
-         _MSTR ]1;WPAR1   ; {15C14B}
-         JSR   STRLOWER   ; {98C50B}
+         _MSTR ]1;ZPW1    ; {15C14B}
+         JSR   STRLOWER   ; {98C3B}
          <<<
 *
 *``````````````````````````````*
@@ -156,12 +152,12 @@ STRLO    MAC
 *  ]1 = STRING ADDRESS         *
 *                              *
 * CYCLES: 192+                 *
-* SIZE: 117 BYTES              *
+* SIZE: 17 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 SCAP     MAC
-         _MSTR ]1;WPAR1   ; {15C14B}
-         JSR   STRCAP     ; {177C103B}
+         _MSTR ]1;ZPW1    ; {15C14B}
+         JSR   STRCAP     ; {177C3B}
          <<<
 *
 *``````````````````````````````*
@@ -173,10 +169,10 @@ SCAP     MAC
 *  ]1 = STRING ADDRESS         *
 *                              *
 * CYCLES: 70+                  *
-* SIZE: 41 BYTES               *
+* SIZE: 16 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 SREV     MAC
-         _MSTR ]1;WPAR1   ; {14C13B}
-         JSR   STRREV     ; {56C28B}
+         _MSTR ]1;ZPW1    ; {14C13B}
+         JSR   STRREV     ; {56C3B}
          <<<

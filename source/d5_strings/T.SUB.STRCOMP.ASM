@@ -19,8 +19,8 @@
 *                              *
 * INPUT:                       *
 *                              *
-*  WPAR1 = 1ST STRING ADDRESS  *
-*  WPAR2 = 2ND STRING ADDRESS  *
+*  ZPW1 = 1ST STRING ADDRESS   *
+*  ZPW2 = 2ND STRING ADDRESS   *
 *                              *
 * DESTROY: NZCIDV              *
 *          ^^^  ^              *
@@ -29,8 +29,8 @@
 * SIZE: 32 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]STR1    EQU   WPAR1      ; ZP POINTER TO 1ST STRING
-]STR2    EQU   WPAR2      ; ZP POINTER TO 2ND STRING
+]STR1    EQU   ZPW1       ; ZP POINTER TO 1ST STRING
+]STR2    EQU   ZPW2       ; ZP POINTER TO 2ND STRING
 *
 STRCMP
 *

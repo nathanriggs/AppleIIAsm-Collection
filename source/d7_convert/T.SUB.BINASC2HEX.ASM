@@ -8,7 +8,7 @@
 *                              *
 * INPUT:                       *
 *                              *
-*  WPAR1 = STRING ADDRESS PTR  *
+*  ZPW1  = STRING ADDRESS PTR  *
 *                              *
 * DESTROY: NZCIDV              *
 *          ^^^  ^              *
@@ -17,10 +17,10 @@
 * SIZE: 329 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]HIGH    EQU   VARTAB
-]LOW     EQU   VARTAB+2
-]NIB     EQU   VARTAB+4
-]STR     EQU   WPAR1
+]HIGH    EQU   ZPW2
+]LOW     EQU   ZPW3
+]NIB     EQU   ZPW4
+]STR     EQU   ZPW1
 *
 BINASC2HEX
 *

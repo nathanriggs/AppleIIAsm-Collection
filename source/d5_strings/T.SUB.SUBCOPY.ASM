@@ -6,9 +6,9 @@
 *                              *
 * INPUT:                       *
 *                              *
-*  BPAR1 = SUBSTRING LENGTH    *
-*  BPAR2 = SUBSTRING INDEX     *
-*  WPAR1 = SOURCE STRING ADDR  *
+*  ZPB1  = SUBSTRING LENGTH    *
+*  ZPB2  = SUBSTRING INDEX     *
+*  ZPW1  = SOURCE STRING ADDR  *
 *                              *
 * DESTROY: NZCIDV              *
 *          ^^^  ^              *
@@ -17,9 +17,9 @@
 * SIZE: 25 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]SUBLEN  EQU   BPAR1      ; SUBSTRING LENGTH
-]SUBIND  EQU   BPAR2      ; SUBSTRING INDEX
-]STR     EQU   WPAR1      ; SOURCE STRING
+]SUBLEN  EQU   ZPB1       ; SUBSTRING LENGTH
+]SUBIND  EQU   ZPB2       ; SUBSTRING INDEX
+]STR     EQU   ZPW1       ; SOURCE STRING
 *
 SUBCOPY
          LDY   ]SUBIND    ; {3C2B} STARTING COPY INDEX

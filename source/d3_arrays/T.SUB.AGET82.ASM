@@ -17,9 +17,9 @@
 *                              *
 * INPUT:                       *
 *                              *
-*  WPAR1 = ARRAY ADDRESS       *
-*  BPAR1 = 1ST DIM INDEX       *
-*  BPAR2 = 2ND DIM INDEX       *
+*  ZPW1  = ARRAY ADDRESS       *
+*  ZPB1  = 1ST DIM INDEX       *
+*  ZPB2  = 2ND DIM INDEX       *
 *                              *
 * DESTROY: NZCIDV              *
 *          ^^^  ^              *
@@ -28,17 +28,17 @@
 * SIZE: 189 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]ADDR    EQU   WPAR1      ; ARRAY ADDRESS
-]XIDX    EQU   BPAR1      ; 1ST DIMENSION INDEX
-]YIDX    EQU   BPAR2      ; 2ND DIMENSION INDEX
+]ADDR    EQU   ZPW1       ; ARRAY ADDRESS
+]XIDX    EQU   ZPB1       ; 1ST DIMENSION INDEX
+]YIDX    EQU   ZPB2       ; 2ND DIMENSION INDEX
 *
-]XLEN    EQU   VARTAB+0   ; X DIMENSION LENGTH
-]YLEN    EQU   VARTAB+2   ; Y DIMENSION LENGTH
-]PROD    EQU   VARTAB+4   ; PRODUCT
-]MLIER   EQU   VARTAB+8   ; MULTIPLIER
-]MCAND   EQU   VARTAB+10  ; MULTIPLICAND
-]ELEN    EQU   VARTAB+12  ; ELEMENT LENGTH
-]PBAK    EQU   VARTAB+14  ; PRODUCT BACKUP
+]XLEN    EQU   ZPW2       ; X DIMENSION LENGTH
+]YLEN    EQU   ZPW3       ; Y DIMENSION LENGTH
+]PROD    EQU   VARTAB     ; PRODUCT
+]MLIER   EQU   ZPW4       ; MULTIPLIER
+]MCAND   EQU   ZPW5       ; MULTIPLICAND
+]ELEN    EQU   ZPW6       ; ELEMENT LENGTH
+]PBAK    EQU   VARTAB+4   ; PRODUCT BACKUP
 *
 AGET82
          LDY   #0         ; {2C2B} RESET INDEX
@@ -55,19 +55,19 @@ AGET82
 *
          LDA   #0         ; {2C2B} RESET LOBYTE
          TAY              ; {2C1B} RESET HIBYTE
-         STY   SCRATCH    ; {3C2B} SAVE HIBYTE IN SCRATCH
+         STY   ZPB4       ; {3C2B} SAVE HIBYTE IN ZPB4
          BEQ   :ENTLP     ; {3C2B} IF ZERO, SKIP TO LOOP
 :DOADD
          CLC              ; {2C1B} CLEAR CARRY FLAG
          ADC   ]YIDX      ; {4C3B} ADD Y-INDEX
          TAX              ; {2C1B} TEMPORARILY STORE IN .X
          TYA              ; {2C1B} LOAD HIBYTE TO .A
-         ADC   SCRATCH    ; {4C3B} ADD HIBYTE
+         ADC   ZPB4       ; {4C3B} ADD HIBYTE
          TAY              ; {2C1B} TRANSFER BACK INTO .Y
          TXA              ; {2C1B} RELOAD LOBYTE
 :LP
          ASL   ]YIDX      ; {6C3B} MULTIPLY Y-INDEX BY 2
-         ROL   SCRATCH    ; {6C3B} DEAL WITH HIBYTE
+         ROL   ZPB4       ; {6C3B} DEAL WITH HIBYTE
 :ENTLP
          LSR   ]YLEN      ; {6C3B} DIVIDE Y-LENGTH BY 2
          BCS   :DOADD     ; {3C2B} IF >= LOBYTE IN .A, ADD AGAIN

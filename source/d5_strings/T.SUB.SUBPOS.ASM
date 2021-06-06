@@ -9,8 +9,8 @@
 *                              *
 * INPUT:                       *
 *                              *
-*  WPAR1 = SUBSTRING (ADDRESS) *
-*  WPAR2 = STRING ADDRESS      *
+*  ZPW1  = SUBSTRING (ADDRESS) *
+*  ZPW2  = STRING ADDRESS      *
 *                              *
 * DESTROYS: NZCIDV             *
 *           ^^^  ^             *
@@ -19,14 +19,14 @@
 * SIZE: 107 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]STRIND  EQU   VARTAB     ; STRING INDEX
-]SUBIND  EQU   VARTAB+1   ; SUBSTRING INDEX
-]CNT     EQU   VARTAB+2   ; COUNTER
-]STRLEN  EQU   VARTAB+3   ; STRING LENGTH
-]SUBLEN  EQU   VARTAB+4   ; SUBSTRING LENGTH
-]SIDX    EQU   VARTAB+6   ; STRING INDEX
-]SUB     EQU   WPAR1      ; ZP SUBSTRING ADDR PTR
-]STR     EQU   WPAR2      ; ZP STRING ADDR POINTER
+]STRIND  EQU   ZPB1       ; STRING INDEX
+]SUBIND  EQU   ZPB2       ; SUBSTRING INDEX
+]CNT     EQU   ZPB3       ; COUNTER
+]STRLEN  EQU   ZPB4       ; STRING LENGTH
+]SUBLEN  EQU   ZPW3       ; SUBSTRING LENGTH
+]SIDX    EQU   ZPW4       ; STRING INDEX
+]SUB     EQU   ZPW1       ; ZP SUBSTRING ADDR PTR
+]STR     EQU   ZPW2       ; ZP STRING ADDR POINTER
 *
 SUBPOS
          LDY   #0         ; {3C2B} RESET INDEX COUNTER

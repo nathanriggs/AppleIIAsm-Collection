@@ -9,7 +9,7 @@
 * CONTACT:   NATHAN.RIGGS@     *
 *            OUTLOOK.COM       *
 *                              *
-* DATE:      11-MAR-2021       *
+* DATE:      04-JUN-2021       *
 * ASSEMBLER: MERLIN 8 PRO      *
 * OS:        DOS 3.3           *
 *                              *
@@ -37,11 +37,11 @@
 *  NONE                        *
 *                              *
 * CYCLES: 64+                  *
-* SIZE: 41 BYTES               *
+* SIZE: 3 BYTES                *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 INP      MAC
-         JSR   SINPUT     ; {64C41B}
+         JSR   SINPUT     ; {64C3B}
          <<<
 *
 *``````````````````````````````*
@@ -54,14 +54,14 @@ INP      MAC
 *                              *
 *  NONE                        *
 *                              *
-* CYCLES: 11+                  *
-* SIZE: 7 BYTES                *
+* CYCLES: 13+                  *
+* SIZE: 8 BYTES                *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 GKEY     MAC
          JSR   GETKEY     ; {6+C3B} MONITOR GET SUBROUTINE
-         LDY   #0         ; {2C2B}
-         STY   STROBE     ; {3C2B} RESET KBD STROBE
+         LDY   #0         ; {3C2B}
+         STY   STROBE     ; {4C3B}  RESET KBD STROBE
          <<<
 *
 *``````````````````````````````*
@@ -75,12 +75,12 @@ GKEY     MAC
 *                              *
 *   ]1 = PADDLE # TO READ      *
 *                              *
-* CYCLES: 8+                   *
-* SIZE: 5 BYTES                *
+* CYCLES: 10+                  *
+* SIZE: 6 BYTES                *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-PDL      MAC              ; GET PADDLE VALUE
-         LDX   ]1         ; {2C2B} READ PADDLE # ]1 (USUALLY 0)
+PDL      MAC
+         LDX   ]1         ; {4C3B}  READ PADDLE # ]1 (USUALLY 0)
          JSR   PREAD      ; {6+C3B} PADDLE READING STORED IN Y
          <<<
 *
@@ -97,15 +97,15 @@ PDL      MAC              ; GET PADDLE VALUE
 *  PB0: $C061   PB1: $C062     *
 *  PB2: $C063   PB4: $C060     *
 *                              *
-* CYCLES: 8+                   *
-* SIZE: 8 BYTES                *
+* CYCLES: 13+                  *
+* SIZE: 9 BYTES                *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 PBX      MAC
-         LDX   #1         ; {2C2B}
-         LDA   ]1         ; {2C2B} IF BTN = PUSHED
-         BMI   EXIT       ; {2C2B} IF HIBYTE SET, BUTTON PUSHED
-         LDX   #0         ; {2C2B} OTHERWISE, BUTTON NOT PUSHED
+         LDX   #1         ; {3C2B}
+         LDA   ]1         ; {4C3B} IF BTN = PUSHED
+         BMI   EXIT       ; {3C2B} IF HIBYTE SET, BUTTON PUSHED
+         LDX   #0         ; {3C2B} OTHERWISE, BUTTON NOT PUSHED
 EXIT
          <<<
 *
@@ -120,13 +120,13 @@ EXIT
 *                              *
 *  NONE                        *
 *                              *
-* CYCLES: 9                    *
-* SIZE: 8 BYTES                *
+* CYCLES: 13                   *
+* SIZE: 9 BYTES                *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 WAIT     MAC
-]WTLP    LDA   KYBD       ; {2C2B} READ KEYBOARD BUFFER
-         BPL   ]WTLP      ; {2C2B} IF 0, KEEP LOOPING
+]WTLP    LDA   KYBD       ; {4C3B} READ KEYBOARD BUFFER
+         BPL   ]WTLP      ; {3C2B} IF 0, KEEP LOOPING
          AND   #$7F       ; {2C2B} OTHERWISE, SET HI BIT
-         STA   STROBE     ; {3C2B} CLEAR STROBE
+         STA   STROBE     ; {4C2B} CLEAR STROBE
          <<<

@@ -7,10 +7,10 @@
 *                              *
 * INPUT:                       *
 *                              *
-*  WPAR1 = SOURCE ADDRESS      *
-*  WPAR2 = ARRAY ADDRESS       *
-*  BPAR1 = 1ST DIM INDEX       *
-*  BPAR2 = 2ND DIM INDEX       *
+*  ZPW1  = SOURCE ADDRESS      *
+*  ZPW2  = ARRAY ADDRESS       *
+*  ZPB1  = 1ST DIM INDEX       *
+*  ZPB2  = 2ND DIM INDEX       *
 *                              *
 * DESTROY: NZCIDV              *
 *          ^^^  ^              *
@@ -19,18 +19,18 @@
 * SIZE: 188 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]ADDRS   EQU   WPAR1      ; SOURCE ADDRESS
-]ADDRD   EQU   WPAR2      ; ARRAY ADDRESS
-]XIDX    EQU   BPAR1      ; X INDEX
-]YIDX    EQU   BPAR2      ; Y INDEX
+]ADDRS   EQU   ZPW1       ; SOURCE ADDRESS
+]ADDRD   EQU   ZPW2       ; ARRAY ADDRESS
+]XIDX    EQU   ZPB1       ; X INDEX
+]YIDX    EQU   ZPB2       ; Y INDEX
 *
-]ESIZE   EQU   VARTAB     ; ELEMENT LENGTH
-]MCAND   EQU   VARTAB+1   ; MULTIPLICAND
-]MLIER   EQU   VARTAB+3   ; MULTIPLIER
-]PROD    EQU   VARTAB+5   ; PRODUCT
-]XLEN    EQU   VARTAB+9   ; ARRAY X-LENGTH
-]YLEN    EQU   VARTAB+13  ; ARRAY Y-LENGTH
-]PBAK    EQU   VARTAB+15  ; PRODUCT BACKUP
+]ESIZE   EQU   ZPB3       ; ELEMENT LENGTH
+]MCAND   EQU   ZPW3       ; MULTIPLICAND
+]MLIER   EQU   ZPW4       ; MULTIPLIER
+]PROD    EQU   VARTAB     ; PRODUCT
+]XLEN    EQU   ZPW5       ; ARRAY X-LENGTH
+]YLEN    EQU   VARTAB+4   ; ARRAY Y-LENGTH
+]PBAK    EQU   VARTAB+8   ; PRODUCT BACKUP
 *
 APUT82
          LDY   #0         ; {2C2B} RESET INDEX
@@ -47,19 +47,19 @@ APUT82
 *
          LDA   #0         ; {2C2B} RESET LOBYTE
          TAY              ; {2C1B} RESET HIBYTE
-         STY   SCRATCH    ; {3C2B} SAVE HIBYTE IN SCRATCH
+         STY   ZPB4       ; {3C2B} SAVE HIBYTE IN ZPB4
          BEQ   :ENTLP     ; {3C2B} IF ZERO, SKIP TO LOOP
 :DOADD
          CLC              ; {2C1B} CLEAR CARRY FLAG
          ADC   ]YIDX      ; {4C3B} ADD Y-INDEX
          TAX              ; {2C1B} STORE IN .X
          TYA              ; {2C1B} LOAD HIBYTE
-         ADC   SCRATCH    ; {4C3B} ADD HIBYTE
+         ADC   ZPB4       ; {4C3B} ADD HIBYTE
          TAY              ; {2C1B} STORE IN .Y
          TXA              ; {2C1B} RELOAD LOBYTE
 :LP
          ASL   ]YIDX      ; {6C3B} MULTIPLY Y-INDEX BY 2
-         ROL   SCRATCH    ; {6C3B} DEAL WITH HIBYTE
+         ROL   ZPB4       ; {6C3B} DEAL WITH HIBYTE
 :ENTLP
          LSR   ]YLEN      ; {6C3B} DIVIDE Y-LENGTH BY 2
          BCS   :DOADD     ; {3C2B} IF >= LOBYTE, ADD AGAIN
@@ -128,19 +128,19 @@ APUT82
          STA   ]PROD+1    ; {3C2B} STORE HIBYTE
          LDX   ]PROD      ; {3C2B} PUT ELEMENT ADDRESS LOBYTE IN .X
          LDY   ]PROD+1    ; {3C2B} PUT HIBYTE IN Y
-         STX   ADDR2      ; {3C2B} STORE IN ZERO PAGE
-         STY   ADDR2+1    ; {3C2B}
+         STX   ZPW6       ; {3C2B} STORE IN ZERO PAGE
+         STY   ZPW6+1     ; {3C2B}
          LDY   #0         ; {2C2B} RESET INDEX
 *
 ** COPY FROM SRC ADDR TO DEST ADDR
 *
 :CLP
          LDA   (]ADDRS),Y ; {6C2B} GET BYTE FROM SOURCE
-         STA   (ADDR2),Y  ; {3C2B} STORE IN ELEMENT
+         STA   (ZPW6),Y   ; {3C2B} STORE IN ELEMENT
          INY              ; {2C1B} INCREASE INDEX
          CPY   ]ESIZE     ; {4C3B} IF < ELEMENT SIZE,
          BNE   :CLP       ; {3C2B} CONTINUE COPYING
-         LDX   ADDR2      ; {3C2B} PUT ELEMENT LOBYTE IN .X
-         LDY   ADDR2+1    ; {3C2B} PUT HIBYTE IN .Y
+         LDX   ZPW6       ; {3C2B} PUT ELEMENT LOBYTE IN .X
+         LDY   ZPW6+1     ; {3C2B} PUT HIBYTE IN .Y
          LDA   ]ESIZE     ; {3C2B} PUT ELEMENT SIZE IN .A
          RTS              ; {6C1B}

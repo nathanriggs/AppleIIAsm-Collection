@@ -3,7 +3,7 @@
 *                              *
 * INPUT:                       *
 *                              *
-*  BPAR1 = HEX BYTE TO CONVERT *
+*  ZPB1  = HEX BYTE TO CONVERT *
 *                              *
 * DESTROY: NZCIDV              *
 *          ^^^  ^              *
@@ -29,9 +29,9 @@
          ASC   "1110" ; E {0C4B}
          ASC   "1111" ; F {0C4B}
 *
-]LEFT    EQU   VARTAB     ; LEFT NIBBLE
-]RIGHT   EQU   VARTAB+2   ; RIGHT NIBBLE
-]HBYTE   EQU   BPAR1      ; HEX BYTE
+]LEFT    EQU   ZPW1       ; LEFT NIBBLE
+]RIGHT   EQU   ZPW2       ; RIGHT NIBBLE
+]HBYTE   EQU   ZPB1       ; HEX BYTE
 *
 HEX2BINASC
 *

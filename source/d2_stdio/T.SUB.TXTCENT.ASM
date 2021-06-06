@@ -4,8 +4,8 @@
 *                              *
 * INPUT:                       *
 *                              *
-*  WPAR1 = STRING LENGTH       *
-*  WPAR1+1 = LINE LENGTH       *
+*  ZPW1 = STRING LENGTH        *
+*  ZPW1+1 = LINE LENGTH        *
 *                              *
 * DESTROYS: NZCIDV             *
 *           ^^^  ^             *
@@ -14,8 +14,8 @@
 * SIZE: 16 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]SLEN    EQU   WPAR1      ; STRING LENGTH
-]LNLEN   EQU   WPAR1+1    ; LINE LENGTH
+]SLEN    EQU   ZPW1       ; STRING LENGTH
+]LNLEN   EQU   ZPW1+1     ; LINE LENGTH
 *
 TXTCENT
 *

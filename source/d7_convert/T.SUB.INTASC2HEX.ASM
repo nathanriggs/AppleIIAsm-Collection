@@ -3,7 +3,7 @@
 *                              *
 * INPUT:                       *
 *                              *
-*  WPAR1 = STRING ADDRESS      *
+*  ZPW1  = STRING ADDRESS      *
 *                              *
 * DESTROYS: NZCIDV             *
 *           ^^^  ^             *
@@ -12,10 +12,10 @@
 * SIZE: 181 SIZE               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]NACCUM  EQU   VARTAB
-]SIGN    EQU   VARTAB+4
-]NINDEX  EQU   VARTAB+6
-]STR     EQU   WPAR1
+]NACCUM  EQU   ZPW2
+]SIGN    EQU   ZPW3
+]NINDEX  EQU   ZPW4
+]STR     EQU   ZPW1
 *
 INTASC2HEX
 *

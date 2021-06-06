@@ -28,7 +28,7 @@
 * CONTACT:   NATHAN.RIGGS@     *
 *            OUTLOOK.COM       *
 *                              *
-* DATE:      20-APR-2021       *
+* DATE:      05-JUN-2021       *
 * ASSEMBLER: MERLIN 8 PRO      *
 * OS:        DOS 3.3           *
 *                              *
@@ -61,20 +61,20 @@
 *  ]1 = SLOT                   *
 *  ]2 = DRIVE                  *
 *                              *
-* CYCLES: 657+                 *
-* SIZE: 348 BYTES              *
+* CYCLES: 587+                 *
+* SIZE: 317 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 FCAT     MAC
 *
          FMFIL #]FC_CAT;]1;]2;#0;#0 ; {603C303B} SET CMD SLOT DRIVE
 *
-         LDX   #1         ; {3C2B} DON'T CREATE NEW FILE
-         JSR   ]FMRUN     ; {6C3B} RUN THE FILE MANAGER
-         LDY   #]P_RETC   ; {3C2B} SET INDEX TO RETURN CODE
-         JSR   _FMPGET    ; {32C17B} GET RETURN CODE FROM PARAMS
-         TAX              ; {2C1B} HOLD CODE IN .X
-         JSR   _BUFFCLEAR ; {37C20B} CLEAR THE FILE BUFF FOR USE
+         LDX   #1         ; {3C2B}   DON'T CREATE NEW FILE
+         JSR   ]FMRUN     ; {6C3B}   RUN THE FILE MANAGER
+         LDY   #]P_RETC   ; {3C2B}   SET INDEX TO RETURN CODE
+         JSR   _FMPGET    ; {32C3B}  GET RETURN CODE FROM PARAMS
+         TAX              ; {2C1B}   HOLD CODE IN .X
+         JSR   _BUFFCLEAR ; {37C3B}  CLEAR THE FILE BUFF FOR USE
          <<<
 *
 *``````````````````````````````*
@@ -88,21 +88,21 @@ FCAT     MAC
 *  ]2 = SLOT                   *
 *  ]3 = DRIVE                  *
 *                              *
-* CYCLES: 629+                 *
-* SIZE: 353 BYTES              *
+* CYCLES: 692+                 *
+* SIZE: 322 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 FULCK    MAC
 *
          FMFIL #]FC_UNLK;]2;]3;#0;#0 ; {603C303B}
 *
-         FMNAM ]1         ; {4C3B} SET FILENAME
-         LDX   #1         ; {4C3B} DON'T CREATE A NEW FILE
-         JSR   ]FMRUN     ; {6C3B} RUN FILE MANAGER
-         LDY   #]P_RETC   ; {4C3B} SET INDEX TO RETURN CODE
-         JSR   _FMPGET    ; {32C17B} GET RETURN CODE FROM PARAMS
-         TAX              ; {2C1B} HOLD IN .X
-         JSR _BUFFCLEAR   ; {37C20B} CLEAR FILE BUFF FOR USE
+         FMNAM ]1         ; {4C3B}   SET FILENAME
+         LDX   #1         ; {4C3B}   DON'T CREATE A NEW FILE
+         JSR   ]FMRUN     ; {6C3B}   RUN FILE MANAGER
+         LDY   #]P_RETC   ; {4C3B}   SET INDEX TO RETURN CODE
+         JSR   _FMPGET    ; {32C3B}  GET RETURN CODE FROM PARAMS
+         TAX              ; {2C1B}   HOLD IN .X
+         JSR _BUFFCLEAR   ; {37C3B}  CLEAR FILE BUFF FOR USE
          <<<
 *
 *
@@ -117,8 +117,8 @@ FULCK    MAC
 *  ]2 = SLOT                   *
 *  ]3 = DRIVE                  *
 *                              *
-* CYCLES: 172+                 *
-* SIZE: 116 BYTES              *
+* CYCLES: 770+                 *
+* SIZE: 324 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 FLOCK    MAC
@@ -126,13 +126,13 @@ FLOCK    MAC
 *
          FMFIL #]FC_LOCK;]2;]3;#0;#0 ; {603C303B}
 *
-         FMNAM ]1         ; {117C70B} SET FILENAME
-         LDX   #1         ; {4C3B} DON'T CREATE A NEW FILE
-         JSR   ]FMRUN     ; {6C3B} RUN FILE MANAGER
-         LDY   #]P_RETC   ; {3C2B} SET INDEX TO RETURN CODE
-         JSR   _FMPGET    ; {32C17B} GET RETURN CODE FROM PARAMS
-         TAX              ; {2C1B} HOLD IN .X
-         JSR _BUFFCLEAR   ; {37C20B} CLEAR FILE BUFF FOR USE
+         FMNAM ]1         ; {117C6B}  SET FILENAME
+         LDX   #1         ; {4C3B}    DON'T CREATE A NEW FILE
+         JSR   ]FMRUN     ; {6C3B}    RUN FILE MANAGER
+         LDY   #]P_RETC   ; {3C2B}    SET INDEX TO RETURN CODE
+         JSR   _FMPGET    ; {32C3B}   GET RETURN CODE FROM PARAMS
+         TAX              ; {2C1B}    HOLD IN .X
+         JSR _BUFFCLEAR   ; {37C3B}   CLEAR FILE BUFF FOR USE
          <<<
 *
 *``````````````````````````````*
@@ -147,20 +147,20 @@ FLOCK    MAC
 *  ]3 = DRIVE                  *
 *                              *
 * CYCLES: 791+                 *
-* SIZE: 412 BYTES              *
+* SIZE: 323 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 FDEL     MAC
 *
          FMFIL #]FC_DEL;]2;]3;#0;#0 ; {603C303B}
 *
-         FMNAM ]1         ; {117C70B} SET FILE NAME
-         LDX   #1         ; {3C2B} DON'T CREATE NEW FILE
-         JSR   ]FMRUN     ; {6C3B} RUN FILE MANAGER
-         LDY   #]P_RETC   ; {3C2B} SET INDEX TO RETURN CODE
-         JSR   _FMPGET    ; {26C14B} GET CODE FROM PARAMS
-         TAX              ; {2C1B} HOLD IN .X
-         JSR   _BUFFCLEAR ; {31C17B} CLEAR FILE BUFF FOR USE
+         FMNAM ]1         ; {117C6B}  SET FILE NAME
+         LDX   #1         ; {3C2B}    DON'T CREATE NEW FILE
+         JSR   ]FMRUN     ; {6C3B}    RUN FILE MANAGER
+         LDY   #]P_RETC   ; {3C2B}    SET INDEX TO RETURN CODE
+         JSR   _FMPGET    ; {26C3B}   GET CODE FROM PARAMS
+         TAX              ; {2C1B}    HOLD IN .X
+         JSR   _BUFFCLEAR ; {31C3B}   CLEAR FILE BUFF FOR USE
          <<<
 *
 *``````````````````````````````*
@@ -175,20 +175,20 @@ FDEL     MAC
 *  ]3 = DRIVE                  *
 *                              *
 * CYCLES: 791+                 *
-* SIZE: 411 BYTES              *
+* SIZE: 323 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 FVFY     MAC
 *
          FMFIL #]FC_VFY;]2;]3;#0;#0 ; {603C303B}
 *
-         FMNAM ]1         ; {117C70B} SET FILE NAME
-         LDX   #1         ; {3C2B} DON'T CREATE A NEW FILE
-         JSR   ]FMRUN     ; {6C3B} RUN THE FILE MANAGER
-         LDY   #]P_RETC   ; {3C2B} SET INDEX TO RETURN CODE
-         JSR   _FMPGET    ; {26C14B} GET CODE FROM PARAMETERS
-         TAX              ; {2C1B} HOLD IN .X
-         JSR   _BUFFCLEAR ; {31C17B} CLEAR FILE BUFF FOR USE
+         FMNAM ]1         ; {117C6B}  SET FILE NAME
+         LDX   #1         ; {3C2B}    DON'T CREATE A NEW FILE
+         JSR   ]FMRUN     ; {6C3B}    RUN THE FILE MANAGER
+         LDY   #]P_RETC   ; {3C2B}    SET INDEX TO RETURN CODE
+         JSR   _FMPGET    ; {26C3B}   GET CODE FROM PARAMETERS
+         TAX              ; {2C1B}    HOLD IN .X
+         JSR   _BUFFCLEAR ; {31C3B}   CLEAR FILE BUFF FOR USE
          <<<
 *
 *``````````````````````````````*
@@ -203,20 +203,20 @@ FVFY     MAC
 *  ]3 = DRIVE                  *
 *                              *
 * CYCLES: 797+                 *
-* SIZE: 415 BYTES              *
+* SIZE: 323 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 FCLOS    MAC
 *
          FMFIL #]FC_CLOS;]2;]3;#0;#0 ; {603C303B}
 *
-         FMNAM ]1         ; {117C70B} SET FILENAME
-         LDX   #1         ; {3C2B} DON'T CREATE NEW FILE
-         JSR   ]FMRUN     ; {6C3B} RUN FILE MANAGER
-         LDY   #]P_RETC   ; {3C2B} SET INDEX TO RETURN CODE
-         JSR   _FMPGET    ; {32C17B} GET RETURN CODE
-         TAX              ; {2C1B} AND HOLD IN .X
-         JSR   _BUFFCLEAR ; {31C17B} CLEAR FILE BUFF FOR USE
+         FMNAM ]1         ; {117C6B}  SET FILENAME
+         LDX   #1         ; {3C2B}    DON'T CREATE NEW FILE
+         JSR   ]FMRUN     ; {6C3B}    RUN FILE MANAGER
+         LDY   #]P_RETC   ; {3C2B}    SET INDEX TO RETURN CODE
+         JSR   _FMPGET    ; {32C3B}   GET RETURN CODE
+         TAX              ; {2C1B}    AND HOLD IN .X
+         JSR   _BUFFCLEAR ; {31C3B}   CLEAR FILE BUFF FOR USE
          <<<
 *
 *``````````````````````````````*
@@ -232,23 +232,23 @@ FCLOS    MAC
 *  ]4 = DRIVE                  *
 *                              *
 * CYCLES: 927+                 *
-* SIZE: 578 BYTES              *
+* SIZE: 335 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 FRENM    MAC
 *
          FMFIL #]FC_REN;]3;]4;#0;#0 ; {603C303B}
 *
-         FMNAM ]1         ; {117C70B} SET FILENAME
+         FMNAM ]1         ; {117C6B}  SET FILENAME
          _AXLIT ]2        ; {8C6B}
-         JSR   _NAMESTR2  ; {64C42B} COPY TO 2ND FILENAME BUFF
-         JSR _FMNM2       ; {64C42B} SET ADDRESS IN PARAMS
-         LDX   #1         ; {3C2B} DON'T CREATE NEW FILE
-         JSR   ]FMRUN     ; {6C3B} RUN FILE MANAGER
-         LDY   #]P_RETC   ; {3C2B} SET INDEX TO RETURN CODE
-         JSR   _FMPGET    ; {26C14B} GET RETURN CODE
-         TAX              ; {2C1B} AND HOLD IN .X
-         JSR   _BUFFCLEAR ; {31C17B} CLEAR FILE BUFFER FOR USE
+         JSR   _NAMESTR2  ; {64C3B}  COPY TO 2ND FILENAME BUFF
+         JSR _FMNM2       ; {64C3B}  SET ADDRESS IN PARAMS
+         LDX   #1         ; {3C2B}   DON'T CREATE NEW FILE
+         JSR   ]FMRUN     ; {6C3B}   RUN FILE MANAGER
+         LDY   #]P_RETC   ; {3C2B}   SET INDEX TO RETURN CODE
+         JSR   _FMPGET    ; {26C3B}  GET RETURN CODE
+         TAX              ; {2C1B}   AND HOLD IN .X
+         JSR   _BUFFCLEAR ; {31C3B}  CLEAR FILE BUFFER FOR USE
          <<<
 *
 *``````````````````````````````*
@@ -266,23 +266,23 @@ FRENM    MAC
 *  ]6 = FILE TYPE              *
 *                              *
 * CYCLES: 828+                 *
-* SIZE: 433 BYTES              *
+* SIZE: 331 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 FOPEN    MAC
 *
          FMFIL #]FC_OPEN;]2;]3;]4;]5 ; {603C303B}
 *
-         LDA   ]6         ; {4C3B} FILE TYPE IF NEW FILE
-         LDY   #]P_TYPE   ; {3C2B} SET TYPE FOR WRITING
-         JSR   _FMPSET    ; {30C16B}
-         FMNAM ]1         ; {117C70B} SET THE FILENAME
-         LDX   #0         ; {3C2B} NEW FILE ON OPEN
-         JSR   ]FMRUN     ; {6C3B} RUN FILE MANAGER
-         LDY   #]P_RETC   ; {3C2B} SET INDEX TO RETURN CODE OFFSET
-         JSR   _FMPGET    ; {26C14B} GET RETURN CODE
-         TAX              ; {2C1B} HOLD IT IN .X
-         JSR   _BUFFCLEAR ; {31C17B} CLEAR FILE BUFFER FOR USE
+         LDA   ]6         ; {4C3B}    FILE TYPE IF NEW FILE
+         LDY   #]P_TYPE   ; {3C2B}    SET TYPE FOR WRITING
+         JSR   _FMPSET    ; {30C3B}
+         FMNAM ]1         ; {117C6B}  SET THE FILENAME
+         LDX   #0         ; {3C2B}    NEW FILE ON OPEN
+         JSR   ]FMRUN     ; {6C3B}    RUN FILE MANAGER
+         LDY   #]P_RETC   ; {3C2B}    SET INDEX TO RETURN CODE OFFSET
+         JSR   _FMPGET    ; {26C3B}   GET RETURN CODE
+         TAX              ; {2C1B}    HOLD IT IN .X
+         JSR   _BUFFCLEAR ; {31C3B}   CLEAR FILE BUFFER FOR USE
          <<<
 *
 *
@@ -315,19 +315,19 @@ FOPEN    MAC
 *           ^^^  ^             *
 *                              *
 * CYCLES: 3768+                *
-* SIZE: 2735 BYTES             *
+* SIZE: 42 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 BLOAD    MAC
-         _MLIT ]1;WPAR1   ; {16C12B} PARSE STRING ADDRESS
-         _MLIT ]2;WPAR2   ; {16C12B} PARSE LOAD ADDRESS
-         LDA   ]3         ; {4C3B} LOAD SLOT
-         STA   BPAR1      ; {3C2B} AND STORE ON ZERO
-         LDA   ]4         ; {4C3B} LOAD DRIVE
-         STA   BPAR2      ; {3C2B} AND STORE ON ZERO
-         LDA   ]5         ; {4C3B} LOAD VOLUME
-         STA   BPAR3      ; {3C2B} AND STORE ON ZERO
-         JSR   FBLOAD     ; {3715C2696B} RUN FBLOAD SUBROUTINE
+         _MLIT ]1;ZPW1    ; {16C12B} PARSE STRING ADDRESS
+         _MLIT ]2;ZPW2    ; {16C12B} PARSE LOAD ADDRESS
+         LDA   ]3         ; {4C3B}   LOAD SLOT
+         STA   ZPB1       ; {3C2B}   AND STORE ON ZERO
+         LDA   ]4         ; {4C3B}   LOAD DRIVE
+         STA   ZPB2       ; {3C2B}   AND STORE ON ZERO
+         LDA   ]5         ; {4C3B}   LOAD VOLUME
+         STA   ZPB3       ; {3C2B}   AND STORE ON ZERO
+         JSR   FBLOAD     ; {3715C3B} RUN FBLOAD SUBROUTINE
          <<<
 *
 *``````````````````````````````*
@@ -355,18 +355,18 @@ BLOAD    MAC
 *           ^^^  ^             *
 *                              *
 * CYCLES: 5300+                *
-* SIZE: 2758 BYTES             *
+* SIZE: 53 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 BSAVE    MAC
-         _MLIT ]1;WPAR1   ; {16C12B} PARSE STRING ADDRESS
-         _MLIT ]2;WPAR2   ; {16C12B} PARSE LOAD ADDRESS
-         _MLIT ]3;WPAR3   ; {16C12B}
-         LDA   ]4         ; {4C3B} LOAD SLOT
-         STA   BPAR1      ; {3C2B} AND STORE ON ZERO
-         LDA   ]5         ; {4C3B} LOAD DRIVE
-         STA   BPAR2      ; {3C2B} AND STORE ON ZERO
-         LDA   ]6         ; {4C3B} LOAD VOLUME
-         STA   BPAR3      ; {3C2B} AND STORE ON ZERO
-         JSR   FBSAVE     ; {5231C2707B} RUN FBLOAD SUBROUTINE
+         _MLIT ]1;ZPW1    ; {16C12B} PARSE STRING ADDRESS
+         _MLIT ]2;ZPW2    ; {16C12B} PARSE LOAD ADDRESS
+         _MLIT ]3;ZPW3    ; {16C12B}
+         LDA   ]4         ; {4C3B}   LOAD SLOT
+         STA   ZPB1       ; {3C2B}   AND STORE ON ZERO
+         LDA   ]5         ; {4C3B}   LOAD DRIVE
+         STA   ZPB2       ; {3C2B}   AND STORE ON ZERO
+         LDA   ]6         ; {4C3B}   LOAD VOLUME
+         STA   ZPB3       ; {3C2B}   AND STORE ON ZERO
+         JSR   FBSAVE     ; {5231C3B} RUN FBLOAD SUBROUTINE
          <<<

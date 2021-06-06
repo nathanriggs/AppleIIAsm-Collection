@@ -25,13 +25,13 @@
 * NOVICE, EVEN THOUGH THEY     *
 * LOOK SIMPLE ENOUGH.          *
 *                              *
-* AUTHOR:    NATHAN RIGGS      *
+* AUTHOR:   THE INTERNET       *
 * (COPIED FROM OMEGAMATRIX)    *
 *                              *
 * CONTACT:   NATHAN.RIGGS@     *
 *            OUTLOOK.COM       *
 *                              *
-* DATE:      29-MAR-2021       *
+* DATE:      04-JUN-2021       *
 * ASSEMBLER: MERLIN 8 PRO      *
 * OS:        DOS 3.3           *
 *                              *
@@ -84,14 +84,14 @@ D8BY2    MAC
 D8BY3    MAC
          LDA   ]1         ; {4C3B}
          CLC              ; {2C2B} CLEAR THE CARRY
-         STA   BPAR1      ; {3C2B} STORE ORIG NUM IN Z PAGE
+         STA   ZPB1       ; {3C2B} STORE ORIG NUM IN Z PAGE
          LSR              ; {2C1B} DIVIDE .A BY TWO
          ADC   #21        ; {2C2B} ADD 21 AS A CORRECTION
          LSR              ; {2C1B} DIVIDE .A BY TWO
-         ADC   BPAR1      ; {3C2B} ADD ORIGINAL VALUE TO NEW
+         ADC   ZPB1       ; {3C2B} ADD ORIGINAL VALUE TO NEW
          ROR              ; {2C1B} ROTATE A TO NEXT BIT
          LSR              ; {2C1B} SHIFT RIGHT TO DIVIDE BY 2
-         ADC   BPAR1      ; {3C2B} ADD ORIGINAL VALUE
+         ADC   ZPB1       ; {3C2B} ADD ORIGINAL VALUE
          ROR              ; {2C1B} ROTATE .A TO NEXT BIT
          LSR              ; {2C1B} DIVIDE BY 2
          <<<
@@ -130,16 +130,16 @@ D8BY4    MAC
 *
 D8BY5    MAC
          LDA   ]1         ; {4C3B}
-         STA   BPAR1      ; {3C2B} STORE ORIG ON ZERO PAGE
+         STA   ZPB1       ; {3C2B} STORE ORIG ON ZERO PAGE
          LSR              ; {2C1B} DIVIDE BY TWO
          ADC   #13        ; {2C2B} ADD 13 AS A CORRECTIVE
-         ADC   BPAR1      ; {3C2B} ADD ORIGINAL
+         ADC   ZPB1       ; {3C2B} ADD ORIGINAL
          ROR              ; {2C1B} ROTATE BITS RIGHT
          LSR              ; {2C1B} DIVIDE BY TWO
          LSR              ; {2C1B} DIVIDE BY TWO
-         ADC   BPAR1      ; {3C2B} ADD ORIGINAL
+         ADC   ZPB1       ; {3C2B} ADD ORIGINAL
          ROR              ; {2C1B} ROTATE BITS RIGHT
-         ADC   BPAR1      ; {3C2B} ADD ORIGINAL VALUE
+         ADC   ZPB1       ; {3C2B} ADD ORIGINAL VALUE
          ROR              ; {2C1B} ROTATE BITS RIGHT
          LSR              ; {2C1B} DIVIDE BY TWO
          LSR              ; {2C1B} DIVIDE BY TWO
@@ -162,16 +162,16 @@ D8BY6    MAC
          LDA   ]1         ; {4C3B}
          CLC              ; {2C1B}
          LSR              ; {2C1B} DIVIDE .A BY TWO
-         STA   BPAR1      ; {3C2B} STORE IN ZERO PAGE
+         STA   ZPB1       ; {3C2B} STORE IN ZERO PAGE
          LSR              ; {2C1B} DIVIDE AGAIN
          LSR              ; {2C1B} DIVIDE AGAIN
-         ADC   BPAR1      ; {3C2B} ADD VALUE/2
+         ADC   ZPB1       ; {3C2B} ADD VALUE/2
          ROR              ; {2C1B} ROTATE BITS RIGHT
          LSR              ; {2C1B} DIVIDE BY TWO
-         ADC   BPAR1      ; {3C2B} ADD VALUE/2
+         ADC   ZPB1       ; {3C2B} ADD VALUE/2
          ROR              ; {2C1B} ROTATE RIGHT
          LSR              ; {2C1B} DIVIDE BY TWO
-         ADC   BPAR1      ; {3C2B} ADD VALUE/2
+         ADC   ZPB1       ; {3C2B} ADD VALUE/2
          ROR              ; {2C1B} ROTATE BITS RIGHT
          LSR              ; {2C1B} DIVIDE BY TWO
          <<<
@@ -192,15 +192,15 @@ D8BY6    MAC
 D8BY7    MAC
          LDA   ]1         ; {4C3B}
          CLC              ; {2C1B} CLEAR CARRY
-         STA   BPAR1      ; {3C2B} STORE NUMBER IN ZERO PAGE
+         STA   ZPB1       ; {3C2B} STORE NUMBER IN ZERO PAGE
          LSR              ; {2C1B} DIVIDE .A BY TWO
          LSR              ; {2C1B} AGAIN
          LSR              ; {2C1B} AGAIN
-         ADC   BPAR1      ; {3C2B} ADD ORIGINAL NUMBER
+         ADC   ZPB1       ; {3C2B} ADD ORIGINAL NUMBER
          ROR              ; {2C1B} ROTATE BITS RIGHT
          LSR              ; {2C1B} DIVIDE BY TWO
          LSR              ; {2C1B} DIVIDE BY TWO
-         ADC   BPAR1      ; {3C2B} ADD ORIGINAL NUMBER
+         ADC   ZPB1       ; {3C2B} ADD ORIGINAL NUMBER
          ROR              ; {2C1B} ROTATE BITS RIGHT
          LSR              ; {2C1B} DIVIDE BY TWO
          LSR              ; {2C1B} DIVIDE BY TWO
@@ -242,15 +242,15 @@ D8BY8    MAC
 D8BY9    MAC
          LDA   ]1         ; {4C3B}
          CLC              ; {2C1B} CLEAR CARRY
-         STA   BPAR1      ; {3C2B} STORE .A IN ZERO PAGE
+         STA   ZPB1       ; {3C2B} STORE .A IN ZERO PAGE
          LSR              ; {2C1B} DIVIDE .A BY TWO
          LSR              ; {2C1B} AGAIN
          LSR              ; {2C1B} AGAIN
-         ADC   BPAR1      ; {3C2B} ADD ORIGINAL NUMBER
+         ADC   ZPB1       ; {3C2B} ADD ORIGINAL NUMBER
          ROR              ; {2C1B} ROTATE BITS RIGHT
-         ADC   BPAR1      ; {3C2B} ADD ORIGINAL NUMBER
+         ADC   ZPB1       ; {3C2B} ADD ORIGINAL NUMBER
          ROR              ; {2C1B} ROTATE BITS RIGHT
-         ADC   BPAR1      ; {3C2B} ADD ORIGINAL NUMBER
+         ADC   ZPB1       ; {3C2B} ADD ORIGINAL NUMBER
          ROR              ; {2C1B} ROTATE BITS RIGHT
          LSR              ; {2C1B} DIVIDE BY TWO
          LSR              ; {2C1B} DIVIDE BY TWO
@@ -274,15 +274,15 @@ D8BY10   MAC
          CLC              ; {2C1B} CLEAR CARRY
          LDA   ]1         ; {4C3B}
          LSR              ; {2C1B} DIVIDE .A BY TWO
-         STA   BPAR1      ; {3C2B} STORE IN ZERO PAGE
+         STA   ZPB1       ; {3C2B} STORE IN ZERO PAGE
          LSR              ; {2C1B} DIVIDE .A BY TWO
-         ADC   BPAR1      ; {3C2B} ADD ORIGINAL/2
+         ADC   ZPB1       ; {3C2B} ADD ORIGINAL/2
          ROR              ; {2C1B} ROTATE BITS RIGHT
          LSR              ; {2C1B} DIVIDE BY TWO
          LSR              ; {2C1B} DIVIDE BY TWO
-         ADC   BPAR1      ; {3C2B} ADD ORIGINAL/2
+         ADC   ZPB1       ; {3C2B} ADD ORIGINAL/2
          ROR              ; {2C1B} ROTATE BITS RIGHT
-         ADC   BPAR1      ; {3C2B} ADD ORIGINAL/2
+         ADC   ZPB1       ; {3C2B} ADD ORIGINAL/2
          ROR              ; {2C1B} ROTATE BITS RIGHT
          LSR              ; {2C1B} DIVIDE BY TWO
          LSR              ; {2C1B} DIVIDE BY TWO

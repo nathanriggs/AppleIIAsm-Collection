@@ -14,11 +14,11 @@
 *                              *
 * INPUT:                       *
 *                              *
-*  WPAR1 = ARRAY ADDRESS       *
-*  WPAR2 = 1ST DIM LENGTH      *
-*  WPAR3 = 2ND DIM LENGTH      *
-*  BPAR1 = FILL VALUE          *
-*  BPAR2 = ELEMENT LENGTH      *
+*  ZPW1  = ARRAY ADDRESS       *
+*  ZPW2  = 1ST DIM LENGTH      *
+*  ZPW3  = 2ND DIM LENGTH      *
+*  ZPB1  = FILL VALUE          *
+*  ZPB2  = ELEMENT LENGTH      *
 *                              *
 * DESTROY: NZCIDV              *
 *          ^^^  ^              *
@@ -27,17 +27,17 @@
 * SIZE: 197 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]ADDR    EQU   WPAR1      ; ARRAY ADDRESS
-]AXSIZE  EQU   WPAR2      ; FIRST DIM # OF ELEMENTS
-]AYSIZE  EQU   WPAR3      ; SECOND DIM # OF ELEMENTS
-]FILL    EQU   BPAR1      ; FILL VALUE
-]ESIZE   EQU   BPAR2      ; ELEMENT SIZE
+]ADDR    EQU   ZPW1       ; ARRAY ADDRESS
+]AXSIZE  EQU   ZPW2       ; FIRST DIM # OF ELEMENTS
+]AYSIZE  EQU   ZPW3       ; SECOND DIM # OF ELEMENTS
+]FILL    EQU   ZPB1       ; FILL VALUE
+]ESIZE   EQU   ZPB2       ; ELEMENT SIZE
 *
 ]PROD    EQU   VARTAB     ; PRODUCT
-]AXBAK   EQU   VARTAB+4   ; ARRAY X SIZE BACKUP
-]AYBAK   EQU   VARTAB+5   ; ARRAY Y SIZE BACKUP
-]MLIER   EQU   VARTAB+6   ; MULTIPLIER
-]MCAND   EQU   VARTAB+8   ; MULTIPLICAND, ELEMENT SIZE
+]AXBAK   EQU   ZPW4       ; ARRAY X SIZE BACKUP
+]AYBAK   EQU   ZPW5       ; ARRAY Y SIZE BACKUP
+]MLIER   EQU   ZPW6       ; MULTIPLIER
+]MCAND   EQU   VARTAB+4   ; MULTIPLICAND, ELEMENT SIZE
 *
 ADIM82
          LDA   ]ESIZE     ; {2C2B} ELEMENT LENGTH
@@ -52,19 +52,19 @@ ADIM82
 ** MULTIPLY X AND Y
 *
          TAY              ; {2C1B} AND LOBYTE
-         STY   SCRATCH    ; {3C2B}
+         STY   ZPB4       ; {3C2B}
          BEQ   :ENTLP     ; {3C2B} IF ZERO, SKIP TO LOOP
 :DOADD
          CLC              ; {2C1B} CLEAR CARRY FLAG
          ADC   ]AXSIZE    ; {5C3B} ADD X LENGTH
          TAX              ; {2C1B} TEMPORARILY STORE IN .X
          TYA              ; {2C1B} TRANSFER HIBYTE TO .A
-         ADC   SCRATCH    ; {5C3B} ADD HIBYTE
+         ADC   ZPB4       ; {5C3B} ADD HIBYTE
          TAY              ; {2C1B} STORE BACK IN .Y
          TXA              ; {2C1B} RELOAD LOBYTE INTO .A
 :LP
          ASL   ]AXSIZE    ; {6C3B} MULTIPLY X LENGTH BY 2
-         ROL   SCRATCH    ; {6C3B} ADJUST HIBYTE
+         ROL   ZPB4       ; {6C3B} ADJUST HIBYTE
 :ENTLP
          LSR   ]AYSIZE    ; {6C3B} DIVIDE Y LENGTH BY 2
          BCS   :DOADD     ; {3C2B} IF >= LOBYTE IN .A,

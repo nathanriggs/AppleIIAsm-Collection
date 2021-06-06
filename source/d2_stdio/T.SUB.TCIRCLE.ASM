@@ -4,10 +4,10 @@
 *                              *
 * INPUT:                       *
 *                              *
-*  WPAR1 = X CENTER POS        *
-*  WPAR2 = Y CENTER POS        *
-*  BPAR1 = RADIUS              *
-*  BPAR2 = FILL CHARACTER      *
+*  ZPW1  = X CENTER POS        *
+*  ZPW2  = Y CENTER POS        *
+*  ZPB1  = RADIUS              *
+*  ZPB2  = FILL CHARACTER      *
 *                              *
 * OUTPUT:                      *
 *                              *
@@ -36,19 +36,19 @@
 * BELOW.                       *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]XC      EQU   WPAR1      ; X CENTER POSITION
-]YC      EQU   WPAR2      ; Y CENTER POSITION
-]R       EQU   BPAR1      ; RADIUS
-]F       EQU   BPAR2      ; FILL CHAR
+]XC      EQU   ZPW1       ; X CENTER POSITION
+]YC      EQU   ZPW2       ; Y CENTER POSITION
+]R       EQU   ZPB1       ; RADIUS
+]F       EQU   ZPB2       ; FILL CHAR
 *
-]Y       EQU   VARTAB     ; CENTER YPOS
-]X       EQU   VARTAB+1   ; CENTER XPOS
-]DY      EQU   VARTAB+2   ; CHANGE IN Y
-]DX      EQU   VARTAB+4   ; CHANGE IN X
-]ERR     EQU   VARTAB+6   ; ERROR VALUE
-]DIAM    EQU   VARTAB+8   ; DIAMETER
-]XT      EQU   VARTAB+10  ; INVERTED X VALUE
-]YT      EQU   VARTAB+12  ; INVERTED Y VALUE
+]Y       EQU   ZPW3       ; CENTER YPOS
+]X       EQU   ZPW3+1     ; CENTER XPOS
+]DY      EQU   ZPW4       ; CHANGE IN Y
+]DX      EQU   ZPW4+1     ; CHANGE IN X
+]ERR     EQU   ZPW5       ; ERROR VALUE
+]DIAM    EQU   ZPW5+1     ; DIAMETER
+]XT      EQU   ZPW6       ; INVERTED X VALUE
+]YT      EQU   ZPW6+1     ; INVERTED Y VALUE
 *
 ********************************
 *                              *

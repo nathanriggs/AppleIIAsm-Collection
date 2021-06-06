@@ -9,10 +9,10 @@
 *                              *
 * INPUT:                       *
 *                              *
-*  WPAR1 = X ORIGIN            *
-*  WPAR1+1 = X DESTINATION     *
-*  BPAR1 = Y POSITION          *
-*  BPAR2 = COLOR               *
+*  ZPW1  = X ORIGIN            *
+*  ZPW1+1  = X DESTINATION     *
+*  ZPB1  = Y POSITION          *
+*  ZPB2  = COLOR               *
 *                              *
 * DESTROY: NZCIDV              *
 *          ^^^  ^              *
@@ -21,12 +21,12 @@
 * SIZE: 141 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]X1      EQU   WPAR1      ; X COORD SOURCE
-]X2      EQU   WPAR1+1    ; X COORD DESTINATION
-]Y1      EQU   BPAR1      ; STATIC Y POSITION
-]COLOR   EQU   BPAR2      ; LINE COLOR
-]X       EQU   VARTAB     ; WORKING X VALUE
-]Y       EQU   VARTAB+1   ; WORKING Y VALUE
+]X1      EQU   ZPW1       ; X COORD SOURCE
+]X2      EQU   ZPW1+1     ; X COORD DESTINATION
+]Y1      EQU   ZPB1       ; STATIC Y POSITION
+]COLOR   EQU   ZPB2       ; LINE COLOR
+]X       EQU   ZPW2       ; WORKING X VALUE
+]Y       EQU   ZPW3       ; WORKING Y VALUE
 *
 LRHLINE
 *

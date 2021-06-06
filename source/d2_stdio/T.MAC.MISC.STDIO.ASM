@@ -9,7 +9,7 @@
 * CONTACT:   NATHAN.RIGGS@     *
 *            OUTLOOK.COM       *
 *                              *
-* DATE:      11-MAR-2021       *
+* DATE:      04-JUN-2021       *
 * ASSEMBLER: MERLIN 8 PRO      *
 * OS:        DOS 3.3           *
 *                              *
@@ -35,13 +35,13 @@
 *                              *
 *  NONE                        *
 *                              *
-* CYCLES: 8+                   *
+* CYCLES: 9+                   *
 * SIZE: 5 BYTES                *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 DIE80    MAC
-         LDA   #21        ; {2C2B} CTRL-U CHARACTER
-         JSR   COUT       ; {6+C3B} SEND TO SCREEN
+         LDA   #21        ; {3C2B} CTRL-U CHARACTER
+         JSR   COUT       ; {6C3B} SEND TO SCREEN
          <<<
 *
 *``````````````````````````````*
@@ -53,13 +53,13 @@ DIE80    MAC
 *                              *
 *  NONE                        *
 *                              *
-* CYCLES: 8+                   *
+* CYCLES: 9+                   *
 * SIZE: 5 BYTES                *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 COL80    MAC
-         LDA   #18        ; {2C2B} CTRL-R CHARACTER
-         JSR   COUT       ; {6+C3B} SEND TO SCREEN
+         LDA   #18        ; {3C2B} CTRL-R CHARACTER
+         JSR   COUT       ; {6C3B} SEND TO SCREEN
          <<<
 *
 *``````````````````````````````*
@@ -71,13 +71,13 @@ COL80    MAC
 *                              *
 *  NONE                        *
 *                              *
-* CYCLES: 8+                   *
+* CYCLES: 9+                   *
 * SIZE: 5 BYTES                *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 COL40    MAC
-         LDA   #17        ; {2C2B} CTRL-Q CHARACTER
-         JSR   COUT       ; {6+C3B} SEND TO SCREEN
+         LDA   #17        ; {3C2B} CTRL-Q CHARACTER
+         JSR   COUT       ; {6C3B} SEND TO SCREEN
          <<<
 *
 *``````````````````````````````*
@@ -95,14 +95,14 @@ COL40    MAC
 *  ]1 = STRING LENGTH          *
 *  ]2 = LINE LENGTH            *
 *                              *
-* CYCLES: 47+                  *
-* SIZE: 27 BYTES               *
+* CYCLES: 51+                  *
+* SIZE: 13 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 TCTR     MAC
-         LDA   ]1         ; {2C2B} LOAD STRING LENGTH
-         STA   WPAR1      ; {3C2B} PASS VIA ZERO PAGE
-         LDA   ]2         ; {2C2B} LOAD LINE LENGTH
-         STA   WPAR1+1    ; {3C2B} PASS VIA ZERO PAGE
-         JSR   TXTCENT    ; {37C19B} CALL TXTCENT SUBROUTINE
+         LDA   ]1         ; {4C3B} LOAD STRING LENGTH
+         STA   ZPW1       ; {3C2B} PASS VIA ZERO PAGE
+         LDA   ]2         ; {4C3B} LOAD LINE LENGTH
+         STA   ZPW1+1     ; {3C2B} PASS VIA ZERO PAGE
+         JSR   TXTCENT    ; {37C3B} CALL TXTCENT SUBROUTINE
          <<<

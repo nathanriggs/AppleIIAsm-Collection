@@ -14,10 +14,10 @@
 *                              *
 * INPUT                        *
 *                              *
-*  WPAR1 = ARRAY ADDRESS       *
-*  WPAR2 = # OF ELEMENTS       *
-*  WPAR3 = LENGTH OF ELEMENTS  *
-*  BPAR1 = FILL VALUE          *
+*  ZPW1  = ARRAY ADDRESS       *
+*  ZPW2  = # OF ELEMENTS       *
+*  ZPW3  = LENGTH OF ELEMENTS  *
+*  ZPB1  = FILL VALUE          *
 *                              *
 * DESTROY: NZCIDV              *
 *          ^^^  ^              *
@@ -26,14 +26,14 @@
 * SIZE: 129 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]ADDR    EQU   WPAR1      ; ARRAY ADDRESS
-]ASIZE   EQU   WPAR2      ; NUMBER OF ELEMENTS
-]ESIZE   EQU   WPAR3      ; ELEMENT SIZE, IN BYTES
-]FILL    EQU   BPAR1      ; DEFAULT FILL VALUE
+]ADDR    EQU   ZPW1       ; ARRAY ADDRESS
+]ASIZE   EQU   ZPW2       ; NUMBER OF ELEMENTS
+]ESIZE   EQU   ZPW3       ; ELEMENT SIZE, IN BYTES
+]FILL    EQU   ZPB1       ; DEFAULT FILL VALUE
 *
-]MSIZE   EQU   VARTAB     ; TOTAL BYTES OF ARRAY
-]ASZBAK  EQU   VARTAB+4   ; ARRAY SIZE BACKUP
-]ESZBAK  EQU   VARTAB+6   ; ELEMENT SIZE BACKUP
+]MSIZE   EQU   ZPW4       ; TOTAL BYTES OF ARRAY
+]ASZBAK  EQU   ZPW5       ; ARRAY SIZE BACKUP
+]ESZBAK  EQU   ZPW6       ; ELEMENT SIZE BACKUP
 *
 ADIM81
          LDA   ]ESIZE     ; {2C2B} LOAD ELEMENT SIZE
@@ -49,19 +49,19 @@ ADIM81
          LDY   #0         ; {2C2B} RESET HIBYTE FOR MULTIPLY
          TYA              ; {3C2B} RESET LOBYTE FOR MULTIPLY
          LDY   ]ASIZE+1   ; {2C2B}
-         STY   SCRATCH    ; {3C2B} SAVE HIBYTE IN SCRATCH
+         STY   ZPB4       ; {3C2B} SAVE HIBYTE IN ZPB4
          BEQ   :ENTLP     ; {3C2B} IF ZERO, SKIP TO LOOP
 :DOADD
          CLC              ; {2C1B} ADD ASIZE TO LOBYTE
          ADC   ]ASIZE     ; {5C3B}
          TAX              ; {3C2B} TEMPORARILY STORE IN .X
          TYA              ; {3C2B} TRANSFER HIBYTE TO .A
-         ADC   SCRATCH    ; {5C3B} ADD HIBYTE
+         ADC   ZPB4       ; {5C3B} ADD HIBYTE
          TAY              ; {3C2B} STORE BACK IN .Y
          TXA              ; {3C2B} LOAD LOBYTE IN .A AGAIN
-:LP                       ; LOOP START
+:LP                       ;        LOOP START
          ASL   ]ASIZE     ; {6C3B} MULTIPLY ASIZE BY 2
-         ROL   SCRATCH    ; {6C3B} MULTIPLY HIBYTE BY 2
+         ROL   ZPB4       ; {6C3B} MULTIPLY HIBYTE BY 2
 :ENTLP
          LSR   ]ESIZE     ; {6C3B} DIVIDE ESIZE BY 2
          BCS   :DOADD     ; {3C2B} IF >= LOBYTE IN .A, ADD AGAIN

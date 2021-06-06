@@ -15,10 +15,10 @@
 *                              *
 * INPUT:                       *
 *                              *
-*  WPAR1 = SOURCE ADDRESS      *
-*  WPAR2 = ARRAY ADDRESS       *
-*  WPAR3 = 1ST DIM INDEX       *
-*  ADDR1 = 2ND DIM INDEX       *
+*  ZPW1  = SOURCE ADDRESS      *
+*  ZPW2  = ARRAY ADDRESS       *
+*  ZPW3  = 1ST DIM INDEX       *
+*  ZPW4  = 2ND DIM INDEX       *
 *                              *
 * DESTROY: NZCIDV              *
 *          ^^^  ^              *
@@ -27,17 +27,17 @@
 * SIZE: 220 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]ADDRS   EQU   WPAR1      ; VALUE SOURCE ADDRESS
-]ADDRD   EQU   WPAR2      ; ARRAY ADDRESS
-]XIDX    EQU   WPAR3      ; FIRST DIMENSION INDEX
-]YIDX    EQU   ADDR1      ; SECOND DIMENSION INDEX
+]ADDRS   EQU   ZPW1       ; VALUE SOURCE ADDRESS
+]ADDRD   EQU   ZPW2       ; ARRAY ADDRESS
+]XIDX    EQU   ZPW3        ; FIRST DIMENSION INDEX
+]YIDX    EQU   ZPW4       ; SECOND DIMENSION INDEX
 *
-]ESIZE   EQU   VARTAB     ; ELEMENT LENGTH
-]MCAND   EQU   VARTAB+6   ; MULTIPLICAND
-]MLIER   EQU   VARTAB+8   ; MULTIPLIER
-]PBAK    EQU   VARTAB+10  ; PRODUCT BACKUP
-]XLEN    EQU   VARTAB+12  ; X-DIMENSION LENGTH
-]YLEN    EQU   VARTAB+14  ; Y-DIMENSION LENGTH
+]ESIZE   EQU   ZPB1       ; ELEMENT LENGTH
+]MCAND   EQU   ZPW5       ; MULTIPLICAND
+]MLIER   EQU   VARTAB     ; MULTIPLIER
+]PBAK    EQU   VARTAB+4   ; PRODUCT BACKUP
+]XLEN    EQU   VARTAB+8   ; X-DIMENSION LENGTH
+]YLEN    EQU   VARTAB+12  ; Y-DIMENSION LENGTH
 ]PROD    EQU   VARTAB+16  ; PRODUCT OF MULTIPLICATION
 *
 APUT162
@@ -153,18 +153,18 @@ APUT162
          CLC              ; {2C1B} CLEAR CARRY
          LDA   ]PROD      ; {3C2B} ADD ARRAY ADDRESS
          ADC   ]ADDRD     ; {4C3B} TO PRODUCT TO GET
-         STA   ADDR2      ; {3C2B} ELEMENT ADDRESS; STORE
+         STA   ZPW6       ; {3C2B} ELEMENT ADDRESS; STORE
          LDA   ]PROD+1    ; {3C2B} ADDRESS ON ZERO PAGE
          ADC   ]ADDRD+1   ; {4C3B}
-         STA   ADDR2+1    ; {3C2B}
+         STA   ZPW6+1     ; {3C2B}
          LDY   #0         ; {2C2B} RESET BYTE INDEX
 :CLP
          LDA   (]ADDRS),Y ; {6C2B} LOAD BYTE FROM SOURCE
-         STA   (ADDR2),Y  ; {6C2B} STORE AT ELEMENT ADDRESS
+         STA   (ZPW6),Y   ; {6C2B} STORE AT ELEMENT ADDRESS
          INY              ; {2C1B} INCREASE BYTE INDEX
          CPY   ]ESIZE     ; {4C3B} IF != ELEMENT LENGTH, LOOP
          BNE   :CLP       ; {3C2B}
-         LDY   ADDR2+1    ; {3C2B} .Y = ELEMENT ADDRESS HIBYTE
-         LDX   ADDR2      ; {3C2B} .X = ELEMENT ADDRESS LOBYTE
+         LDY   ZPW6+1     ; {3C2B} .Y = ELEMENT ADDRESS HIBYTE
+         LDX   ZPW6       ; {3C2B} .X = ELEMENT ADDRESS LOBYTE
          LDA   ]ESIZE     ; {3C2B} .A = ELEMENT LENGTH
          RTS              ; {6C1B}

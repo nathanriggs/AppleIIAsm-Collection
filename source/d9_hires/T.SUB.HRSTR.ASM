@@ -8,10 +8,10 @@
 *                              *
 * INPUT:                       *
 *                              *
-*  ADDR3 = X POSITION (2)      *
-*  BPAR4 = Y POSITION (1)      *
-*  WPAR3 = STRING ADDRESS (2)  *
-*  BPAR3 = CHARSET OFFSET (1)  *
+*  ZPW1  = X POSITION (2)      *
+*  ZPB1  = Y POSITION (1)      *
+*  ZPW4  = STRING ADDRESS (2)  *
+*  ZPB2  = CHARSET OFFSET (1)  *
 *                              *
 * DESTROYS: NZCIDV             *
 *           ^^^  ^             *
@@ -20,47 +20,28 @@
 * SIZE: 639 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]STRX    HEX   0000       ; {0C2B} X POSITION (0..39)
-]STRY    HEX   0000       ; {0C2B} Y POSITION (0..191)
-]STR     HEX   0000       ; {0C2B} STRING ADDRESS
+]STRX    EQU   ZPW1       ; {0C2B} X POSITION (0..39)
+]STRY    EQU   ZPB1       ; {0C2B} Y POSITION (0..191)
+]STR     EQU   ZPW2       ; {0C2B} STRING ADDRESS
 ]TBL     HEX   0000       ; {0C2B} CHAR TABLE ADDRESS
-]ADDR    HEX   0000       ; {0C2B} CHARACTER ADDRESS
+]ADDR    EQU   ZPW4       ; {0C2B} CHARACTER ADDRESS
 ]CHAR    HEX   0000       ; {0C2B} CHARACTGER OFFSET
 ]PRNBYTE HEX   0000       ; {0C2B} BYTE TO PLOT TO SCREEN
-]STROFF  HEX   00         ; {0C1B} STRING OFFSET
-]LEN     HEX   00         ; {0C1B} STRING LENGTH
-]XCOUNT  HEX   00         ; {0C1B} STRING COUNTER
-]BCOUNT  HEX   00         ; {0C1B} BYTE COUNTER
-]YSUM    HEX   00         ; {0C1B} Y POSITION SUM
+]STROFF  EQU   ZPB2       ; {0C1B} STRING OFFSET
+]LEN     HEX   0000       ; {0C1B} STRING LENGTH
+]XCOUNT  HEX   0000       ; {0C1B} STRING COUNTER
+]BCOUNT  HEX   0000       ; {0C1B} BYTE COUNTER
+]YSUM    HEX   0000       ; {0C1B} Y POSITION SUM
 *
 HRSTR
-*
-         LDA   ADDR3      ; {3C2B} X POSITION LOW BYTE
-         STA   ]STRX      ; {4C3B}
-         LDA   ADDR3+1    ; {3C2B} X POSITION HIGH BYTE
-         STA   ]STRX+1    ; {4C3B}
-         LDA   BPAR4      ; {3C2B} Y POSITION
-         STA   ]STRY      ; {4C3B}
-         LDA   #0         ; {3C2B} Y POS HIGH BYTE
-         STA   ]STRY+1    ; {4C3B}
-         LDA   WPAR3      ; {3C2B} STRING ADDRESS LOW
-         STA   ]STR       ; {4C3B}
-         LDA   WPAR3+1    ; {3C2B} STRING ADDRESS HIGH
-         STA   ]STR+1     ; {4C3B}
-         LDA   BPAR3      ; {3C2B} STRING OFFSET
-         STA   ]STROFF    ; {4C3B}
 *
          LDA   #0         ; {3C2B}
          STA   ]LEN       ; {4C3B}
          STA   ]XCOUNT    ; {4C3B}
          STA   ]BCOUNT    ; {4C3B}
 *
-         LDA   ]STR       ; {4C3B} ; GETE STRING LENGTH
-         STA   ADDR3      ; {3C2B}
-         LDA   ]STR+1     ; {4C3B}
-         STA   ADDR3+1    ; {3C2B}
          LDY   #0         ; {3C2B}
-         LDA   (ADDR3),Y  ; {5C3B}
+         LDA   (]STR),Y   ; {5C3B}
          STA   ]LEN       ; {4C3B}
 *
 :LOOP
@@ -72,11 +53,7 @@ HRSTR
 :CONT
          INC   ]XCOUNT    ; {5C3B} INCREMENT STRING CHAR POS
          LDY   ]XCOUNT    ; {4C3B}
-         LDA   ]STR       ; {4C3B}
-         STA   ADDR3      ; {3C2B}
-         LDA   ]STR+1     ; {4C3B}
-         STA   ADDR3+1    ; {3C2B}
-         LDA   (ADDR3),Y  ; {5C3B} GET NEXT CHAR IN STRING
+         LDA   (]STR),Y   ; {5C3B} GET NEXT CHAR IN STRING
          SEC              ; {2C1B}
          SBC   ]STROFF    ; {4C3B} SUBTRACT OFFSET, NORMALLY #$A0
          STA   ]CHAR      ; {4C3B} STORE CHARACTER OFFSET
@@ -98,14 +75,9 @@ HRSTR
          ADC   #>HRCTBL   ; {4C3B}
          STA   ]ADDR+1    ; {4C3B}
 *
-         LDA   ]ADDR      ; {4C3B}
-         STA   ADDR3      ; {3C2B}
-         LDA   ]ADDR+1    ; {4C3B}
-         STA   ADDR3+1    ; {3C2B}
-*
          LDY   #0         ; {3C2B} RESET BYTE COUNTER
          STY   ]BCOUNT    ; {4C3B}
-         LDA   (ADDR3),Y  ; {5C3B} LOAD BYTE TO PLOT
+         LDA   (]ADDR),Y  ; {5C3B} LOAD BYTE TO PLOT
          STA   ]PRNBYTE   ; {4C3B}
          LDA   ]BCOUNT    ; {4C3B}
          CLC              ; {2C1B} NOW GET Y POS OFFSET
@@ -115,7 +87,7 @@ HRSTR
 *
          INC   ]BCOUNT    ; {5C3B} INCREMENT BYTE COUNTER
          LDY   ]BCOUNT    ; {4C3B}
-         LDA   (ADDR3),Y  ; {5C3B} LOAD BYTE TO PRINT
+         LDA   (]ADDR),Y  ; {5C3B} LOAD BYTE TO PRINT
          STA   ]PRNBYTE   ; {4C3B}
          TYA              ; {2C1B} NOW GET Y OFFSET
          CLC              ; {2C1B}
@@ -125,7 +97,7 @@ HRSTR
 *
          INC   ]BCOUNT    ; {5C3B}
          LDY   ]BCOUNT    ; {4C3B}
-         LDA   (ADDR3),Y  ; {5C3B}
+         LDA   (]ADDR),Y  ; {5C3B}
          STA   ]PRNBYTE   ; {4C3B}
          TYA              ; {2C1B}
          CLC              ; {2C1B}
@@ -135,7 +107,7 @@ HRSTR
 *
          INC   ]BCOUNT    ; {5C3B}
          LDY   ]BCOUNT    ; {4C3B}
-         LDA   (ADDR3),Y  ; {5C3B}
+         LDA   (]ADDR),Y  ; {5C3B}
          STA   ]PRNBYTE   ; {4C3B}
          TYA              ; {2C1B}
          CLC              ; {2C1B}
@@ -145,7 +117,7 @@ HRSTR
 *
          INC   ]BCOUNT    ; {5C3B}
          LDY   ]BCOUNT    ; {4C3B}
-         LDA   (ADDR3),Y  ; {5C3B}
+         LDA   (]ADDR),Y  ; {5C3B}
          STA   ]PRNBYTE   ; {4C3B}
          TYA              ; {2C1B}
          CLC              ; {2C1B}
@@ -155,7 +127,7 @@ HRSTR
 *
          INC   ]BCOUNT    ; {5C3B}
          LDY   ]BCOUNT    ; {4C3B}
-         LDA   (ADDR3),Y  ; {5C3B}
+         LDA   (]ADDR),Y  ; {5C3B}
          STA   ]PRNBYTE   ; {4C3B}
          TYA              ; {2C1B}
          CLC              ; {2C1B}
@@ -165,7 +137,7 @@ HRSTR
 *
          INC   ]BCOUNT    ; {5C3B}
          LDY   ]BCOUNT    ; {4C3B}
-         LDA   (ADDR3),Y  ; {5C3B}
+         LDA   (]ADDR),Y  ; {5C3B}
          STA   ]PRNBYTE   ; {4C3B}
          TYA              ; {2C1B}
          CLC              ; {2C1B}
@@ -175,7 +147,7 @@ HRSTR
 *
          INC   ]BCOUNT    ; {5C3B}
          LDY   ]BCOUNT    ; {4C3B}
-         LDA   (ADDR3),Y  ; {5C3B}
+         LDA   (]ADDR),Y  ; {5C3B}
          STA   ]PRNBYTE   ; {4C3B}
          TYA              ; {2C1B}
          CLC              ; {2C1B}

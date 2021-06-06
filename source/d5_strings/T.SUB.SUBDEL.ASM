@@ -6,9 +6,9 @@
 *                              *
 * INPUT:                       *
 *                              *
-*  WPAR1 = STRING ADDRESS      *
-*  BPAR2 = SUBSTRING INDEX     *
-*  BPAR1 = SUBSTRING LENGTH    *
+*  ZPW1  = STRING ADDRESS      *
+*  ZPB2  = SUBSTRING INDEX     *
+*  ZPB1  = SUBSTRING LENGTH    *
 *                              *
 * DESTROY: NZCIDV              *
 *          ^^^  ^              *
@@ -17,9 +17,9 @@
 * SIZE: 53 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]SUBLEN  EQU   BPAR1
-]SUBIND  EQU   BPAR2
-]STR     EQU   WPAR1
+]SUBLEN  EQU   ZPB1
+]SUBIND  EQU   ZPB2
+]STR     EQU   ZPW1
 *
 SUBDEL
          DEC   ]SUBIND    ; {5C2B}

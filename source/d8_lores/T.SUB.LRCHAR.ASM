@@ -11,9 +11,10 @@
 *                              *
 * INPUT:                       *
 *                              *
-* BPAR1 = X POSITION OF CHAR   *
-* BPAR2 = Y POSITION OF CHAR   *
-* WPAR1 = ADDRESS OF CHAR DEF  *
+* ZPB1  = X POSITION OF CHAR   *
+* ZPB2  = Y POSITION OF CHAR   *
+* ZPW1  = ADDRESS OF CHAR DEF  *
+* ZPB3  = COLOR                *
 *                              *
 * DESTROY: NZCIDV              *
 *          ^^^  ^              *
@@ -22,16 +23,16 @@
 * SIZE: 409 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]ORGX    EQU   BPAR1      ; X POSITION OF CHAR
-]ORGY    EQU   BPAR2      ; Y POSITION OF CHAR
-]CADDR   EQU   WPAR1      ; ADDRESS OF 3-BYTE CHAR DEFINITION
+]ORGX    EQU   ZPB1       ; X POSITION OF CHAR
+]ORGY    EQU   ZPB2       ; Y POSITION OF CHAR
+]CADDR   EQU   ZPW1       ; ADDRESS OF 3-BYTE CHAR DEFINITION
 ]CBYTE1  EQU   VARTAB     ; COPY OF 1ST BYTE
 ]CBYTE2  EQU   VARTAB+1   ; COPY OF SECOND
 ]CBYTE3  EQU   VARTAB+2   ; COPY OF THIRD
-]CX      EQU   ADDR1      ; PLOTTING X POSITION
-]CY      EQU   ADDR2      ; PLOTTING Y POSITION
+]CX      EQU   ZPW2       ; PLOTTING X POSITION
+]CY      EQU   ZPW3       ; PLOTTING Y POSITION
 ]CNT     EQU   VARTAB+5   ; COUNTER
-]COLOR   EQU   BPAR3      ; CHARACTER COLOR
+]COLOR   EQU   ZPB3       ; CHARACTER COLOR
 ]TMPBYTE EQU   VARTAB+11  ; WORKING BYTE TO READ
 ]OFFSET  EQU   VARTAB+12  ; CHARACTER BYTE OFFSET
 ]NIBBLE  EQU   VARTAB+13  ; FLAG TO INDICATE 1ST OR 2ND NIBBLE

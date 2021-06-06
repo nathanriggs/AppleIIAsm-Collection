@@ -9,7 +9,7 @@
 * CONTACT:   NATHAN.RIGGS@     *
 *            OUTLOOK.COM       *
 *                              *
-* DATE:      12-APR-2021       *
+* DATE:      04-JUN-2021       *
 * ASSEMBLER: MERLIN 8 PRO      *
 * OS:        DOS 3.3           *
 *                              *
@@ -44,13 +44,13 @@
 *  ]2 = SUBSTRING              *
 *                              *
 * CYCLES: 205+                 *
-* SIZE: 136 BYTES              *
+* SIZE: 20 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 SPOS     MAC
-         _MSTR ]1;WPAR2   ; {14C13B}
-         _MSTR ]2;WPAR1   ; {14C13B}
-         JSR   SUBPOS     ; {177C110B}
+         _MSTR ]1;ZPW2    ; {14C13B}
+         _MSTR ]2;ZPW1    ; {14C13B}
+         JSR   SUBPOS     ; {177C3B}
          <<<
 *
 *``````````````````````````````*
@@ -65,16 +65,16 @@ SPOS     MAC
 *  ]3 = SUBSTRING LENGTH       *
 *                              *
 * CYCLES: 91+                  *
-* SIZE: 71 BYTES               *
+* SIZE: 26 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 SCPY     MAC
-         _MSTR ]1;WPAR1   ; {14C13B}
+         _MSTR ]1;ZPW1    ; {14C13B}
          LDA   ]2         ; {4C3B}
-         STA   BPAR2      ; {3C2B}
+         STA   ZPB2       ; {3C2B}
          LDA   ]3         ; {4C3B}
-         STA   BPAR1      ; {3C2B}
-         JSR   SUBCOPY    ; {63C48B}
+         STA   ZPB1       ; {3C2B}
+         JSR   SUBCOPY    ; {63C3B}
          <<<
 *
 *``````````````````````````````*
@@ -89,16 +89,16 @@ SCPY     MAC
 *  ]3 = SUBSTRING LENGTH       *
 *                              *
 * CYCLES: 135+                 *
-* SIZE: 79 BYTES               *
+* SIZE: 26 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 SDEL     MAC
-         _MSTR ]1;WPAR1   ; {14C13B}
+         _MSTR ]1;ZPW1    ; {14C13B}
          LDA   ]2         ; {4C3B}
-         STA   BPAR2      ; {3C2B}
+         STA   ZPB2       ; {3C2B}
          LDA   ]3         ; {4C3B}
-         STA   BPAR1      ; {3C2B}
-         JSR   SUBDEL     ; {107C56B}
+         STA   ZPB1       ; {3C2B}
+         JSR   SUBDEL     ; {107C3B}
          <<<
 *
 *``````````````````````````````*
@@ -113,15 +113,15 @@ SDEL     MAC
 *  ]3 = SUBSTRING INDEX        *
 *                              *
 * CYCLES: 177+                 *
-* SIZE: 111 BYTES              *
+* SIZE: 34 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 SINS     MAC
-         _MSTR ]1;WPAR2   ; {14C13B}
-         _MSTR ]2;WPAR1   ; {14C13B}
+         _MSTR ]1;ZPW2    ; {14C13B}
+         _MSTR ]2;ZPW1    ; {14C13B}
          LDA   ]3         ; {4C3B}
-         STA   BPAR1      ; {3C2B}
-         JSR   SUBINS     ; {142C82B}
+         STA   ZPB1       ; {3C2B}
+         JSR   SUBINS     ; {142C3B}
          <<<
 *
 *``````````````````````````````*
@@ -139,16 +139,16 @@ SINS     MAC
 *  ]3 = ARGUMENT NUMBER        *
 *                              *
 * CYCLES: 182+                 *
-* SIZE: 118 BYTES              *
+* SIZE: 26 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 STOK     MAC
-         _MLIT ]1;WPAR1   ; {14C13B}
+         _MLIT ]1;ZPW1    ; {14C13B}
          LDA   ]2         ; {4C3B}
-         STA   WPAR2      ; {3C2B}
+         STA   ZPW2       ; {3C2B}
          LDA   ]3         ; {4C3B}
-         STA   BPAR2      ; {3C2B}
-         JSR   SUBTOK     ; {154C95B}
+         STA   ZPB2       ; {3C2B}
+         JSR   SUBTOK     ; {154C3B}
          <<<
 *
 *``````````````````````````````*
@@ -161,12 +161,12 @@ STOK     MAC
 *  ]2 = DELIMITER / TOKEN      *
 *                              *
 * CYCLES: 88+                  *
-* SIZE: 57 BYTES               *
+* SIZE: 21 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 SCNT     MAC
-         _MSTR ]1;WPAR1   ; {14C13B}
+         _MSTR ]1;ZPW1    ; {14C13B}
          LDA   ]2         ; {4C3B}
-         STA   WPAR2      ; {3C2B}
-         JSR   SUBCHARCNT ; {67C39B}
+         STA   ZPW2       ; {3C2B}
+         JSR   SUBCHARCNT ; {67C3B}
          <<<

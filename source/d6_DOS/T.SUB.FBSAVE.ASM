@@ -15,12 +15,12 @@
 *                              *
 * INPUT                        *
 *                              *
-*  WPAR1 = FILENAME STR ADDR   *
-*  WPAR2 = LOAD ADDRESS        *
-*  WPAR3 = RANGE LENGTH        *
-*  BPAR1 = SLOT                *
-*  BPAR2 = DRIVE               *
-*  BPAR3 = VOLUME              *
+*  ZPW1  = FILENAME STR ADDR   *
+*  ZPW2  = LOAD ADDRESS        *
+*  ZPW3  = RANGE LENGTH        *
+*  ZPB1  = SLOT                *
+*  ZPB2  = DRIVE               *
+*  ZPB3  = VOLUME              *
 *                              *
 * DESTROY: NZCIDV              *
 *          ^^^  ^              *
@@ -29,12 +29,12 @@
 * SIZE: 2707 BYTES             *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]FNSTR   EQU   WPAR1
-]LDADDR  EQU   WPAR2
-]FLEN    EQU   WPAR3
-]SLOT    EQU   BPAR1
-]DRIVE   EQU   BPAR2
-]VOL     EQU   BPAR3
+]FNSTR   EQU   ZPW1
+]LDADDR  EQU   ZPW2
+]FLEN    EQU   ZPW3
+]SLOT    EQU   ZPB1
+]DRIVE   EQU   ZPB2
+]VOL     EQU   ZPB3
 *
 FBSAVE
 *

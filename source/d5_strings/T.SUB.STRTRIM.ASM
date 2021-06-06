@@ -8,8 +8,8 @@
 *                              *
 * INPUT:                       *
 *                              *
-*  WPAR1 = STRING ADDRESS      *
-*  WPAR2 = DELIMITER           *
+*  ZPW1  = STRING ADDRESS      *
+*  ZPW2  = DELIMITER           *
 *                              *
 * DESTROY: NZCIDV              *
 *          ^^^  ^              *
@@ -18,10 +18,10 @@
 * SIZE: 58 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]STR     EQU   WPAR1      ; STRING ADDRESS
-]DELIM   EQU   WPAR2      ; DELIMITER
-]RET     EQU   WPAR3      ; RETURN AREA
-]LEN     EQU   BPAR1      ; STRING LENGTH
+]STR     EQU   ZPW1       ; STRING ADDRESS
+]DELIM   EQU   ZPW2       ; DELIMITER
+]RET     EQU   ZPW3       ; RETURN AREA
+]LEN     EQU   ZPB1       ; STRING LENGTH
 *
 STRTRIM
          LDY   #0         ; {3C2B} RESET .Y COUNTER

@@ -6,7 +6,7 @@
 *                              *
 * INPUT:                       *
 *                              *
-*  WPAR1 = HEX TO CONVERT      *
+*  ZPW1  = HEX TO CONVERT      *
 *                              *
 * DESTROYS: NZCIDV             *
 *           ^^^  ^             *
@@ -15,9 +15,9 @@
 * SIZE: 157                    *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]NGFLAG  EQU   VARTAB     ; NEGATIVE FLAG
-]VALSTR  EQU   WPAR1      ; HEXADECIMAL TO CONVERT
-]MOD10   EQU   VARTAB+2   ; VALUE MODULUS 10
+]NGFLAG  EQU   ZPW2       ; NEGATIVE FLAG
+]VALSTR  EQU   ZPW1       ; HEXADECIMAL TO CONVERT
+]MOD10   EQU   ZPW3       ; VALUE MODULUS 10
 *
 HEX2INTASC
 *

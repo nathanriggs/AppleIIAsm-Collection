@@ -9,11 +9,11 @@
 *                              *
 * INPUT:                       *
 *                              *
-*  WPAR1 = X START POSITION    *
-*  WPAR1+1 = Y START POSITION  *
-*  WPAR2 = X ENDING POINT      *
-*  WPAR2+1 = Y ENDING POINT    *
-*  BPAR1 = COLOR OF LINE       *
+*  ZPW1  = X START POSITION    *
+*  ZPW1+1  = Y START POSITION  *
+*  ZPW2  = X ENDING POINT      *
+*  ZPW2+1  = Y ENDING POINT    *
+*  ZPB1  = COLOR OF LINE       *
 *                              *
 * DESTROY: NZCIDV              *
 *          ^^^  ^              *
@@ -22,18 +22,18 @@
 * SIZE: 152 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]X0      EQU   WPAR1      ; STARTING X POINT
-]Y0      EQU   WPAR1+1    ; STARTING Y POINT
-]X1      EQU   WPAR2      ; ENDING X POINT
-]Y1      EQU   WPAR2+1    ; ENDING Y POINT
-]COLOR   EQU   BPAR1      ; COLOR OF LINE
+]X0      EQU   ZPW1       ; STARTING X POINT
+]Y0      EQU   ZPW1+1     ; STARTING Y POINT
+]X1      EQU   ZPW2       ; ENDING X POINT
+]Y1      EQU   ZPW2+1     ; ENDING Y POINT
+]COLOR   EQU   ZPB1       ; COLOR OF LINE
 *
-]DX      EQU   ADDR1      ; CHANGE IN X
-]DY      EQU   ADDR1+1    ; CHANGE IN Y
-]SX      EQU   ADDR2      ; X POSITION STEP
-]SY      EQU   ADDR2+1    ; Y POSITION STEP
-]ERR     EQU   ADDR3      ; SLOPE ERROR
-]ERRX2   EQU   ADDR3+1    ; COMPARISON COPY OF ]ERR
+]DX      EQU   ZPW3       ; CHANGE IN X
+]DY      EQU   ZPW3+1     ; CHANGE IN Y
+]SX      EQU   ZPW4       ; X POSITION STEP
+]SY      EQU   ZPW4+1     ; Y POSITION STEP
+]ERR     EQU   ZPW5       ; SLOPE ERROR
+]ERRX2   EQU   ZPW5+1     ; COMPARISON COPY OF ]ERR
 *
 LRBLINE
 *

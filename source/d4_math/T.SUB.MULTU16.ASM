@@ -10,8 +10,8 @@
 *                              *
 * INPUT:                       *
 *                              *
-*  WPAR1 = MULTIPLICAND        *
-*  WPAR2 = MULTIPLIER          *
+*  ZPW1  = MULTIPLICAND        *
+*  ZPW2  = MULTIPLIER          *
 *                              *
 * DESTROY: NZCIDV              *
 *          ^^^  ^              *
@@ -20,9 +20,9 @@
 * SIZE: 64 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]MCAND   EQU   WPAR1      ; MULTIPLICAND
-]MLIER   EQU   WPAR2      ; MULTIPLIER
-]HPROD   EQU   WPAR3      ; HIGH BYTES OF PRODUCT
+]MCAND   EQU   ZPW1       ; MULTIPLICAND
+]MLIER   EQU   ZPW2       ; MULTIPLIER
+]HPROD   EQU   ZPW3       ; HIGH BYTES OF PRODUCT
 *
 MULTU16
          LDA   #0         ; {3C2B} ZERO OUT TOP TWO

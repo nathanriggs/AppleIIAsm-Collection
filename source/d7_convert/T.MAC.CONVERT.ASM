@@ -9,7 +9,7 @@
 * CONTACT:   NATHAN.RIGGS@     *
 *            OUTLOOK.COM       *
 *                              *
-* DATE:      13-MAY-2021       *
+* DATE:      05-JUN-2021       *
 * ASSEMBLER: MERLIN 8 PRO      *
 * OS:        DOS 3.3           *
 *                              *
@@ -43,12 +43,12 @@
 *  ]1 = VALUE TO CONVERT       *
 *                              *
 * CYCLES: 290+                 *
-* SIZE: 172 BYTES              *
+* SIZE: 15 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 I2STR    MAC
-         _MLIT ]1;WPAR1   ; {16C12B}
-         JSR   HEX2INTASC ; {274C160B}
+         _MLIT ]1;ZPW1    ; {16C12B}
+         JSR   HEX2INTASC ; {274C3B}
          <<<
 *
 *``````````````````````````````*
@@ -62,12 +62,12 @@ I2STR    MAC
 *  ]1 = STRING OR ITS ADDRESS  *
 *                              *
 * CYCLES: 415+                 *
-* SIZE: 196 BYTES              *
+* SIZE: 15 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 STR2I    MAC
-         _MSTR ]1;WPAR1   ; {16C12B}
-         JSR   INTASC2HEX ; {399C184B}
+         _MSTR ]1;ZPW1    ; {16C12B}
+         JSR   INTASC2HEX ; {399C3B}
          <<<
 *
 *``````````````````````````````*
@@ -82,12 +82,12 @@ STR2I    MAC
 *       OR THE ADDRESS         *
 *                              *
 * CYCLES: 97+                  *
-* SIZE: 59 BYTES               *
+* SIZE: 6 BYTES                *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 H2STR    MAC
          LDA   ]1         ; {4C3B}
-         JSR   HEX2HEXASC ; {93C56B}
+         JSR   HEX2HEXASC ; {93C3B}
          <<<
 *
 *``````````````````````````````*
@@ -101,12 +101,12 @@ H2STR    MAC
 *  ]1 = STRING OR ITS ADDRESS  *
 *                              *
 * CYCLES: 116+                 *
-* SIZE: 71 BYTES               *
+* SIZE: 15 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 STR2H    MAC
-         _MSTR ]1;WPAR1   ; {16C12B}
-         JSR   HEXASC2HEX ; {100C59B}
+         _MSTR ]1;ZPW1    ; {16C12B}
+         JSR   HEXASC2HEX ; {100C3B}
          <<<
 *
 *``````````````````````````````*
@@ -120,13 +120,13 @@ STR2H    MAC
 *  ]1 = HEX VALUE OR ADDRESS   *
 *                              *
 * CYCLES: 262+                 *
-* SIZE: 167 BYTES              *
+* SIZE: 8 BYTES                *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 B2STR    MAC
          LDA   ]1         ; {4C3B}
-         STA   BPAR1      ; {3C2B}
-         JSR   HEX2BINASC ; {255C162C}
+         STA   ZPB1       ; {3C2B}
+         JSR   HEX2BINASC ; {255C3B}
          <<<
 *
 *``````````````````````````````*
@@ -140,10 +140,10 @@ B2STR    MAC
 *  ]1 = STRING OR ITS ADDRESS  *
 *                              *
 * CYCLES: 501+                 *
-* SIZE: 331 BYTES              *
+* SIZE: 15 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 STR2B    MAC
-         _MSTR ]1;WPAR1   ; {16C12B}
-         JSR   BINASC2HEX ; {485C319B}
+         _MSTR ]1;ZPW1    ; {16C12B}
+         JSR   BINASC2HEX ; {485C3B}
          <<<

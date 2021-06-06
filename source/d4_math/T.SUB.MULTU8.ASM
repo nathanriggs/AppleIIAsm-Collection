@@ -6,8 +6,8 @@
 *                              *
 * INPUT:                       *
 *                              *
-*  WPAR1 = MULTIPLIER          *
-*  WPAR2 = MULTIPLICAND        *
+*  ZPW1  = MULTIPLIER          *
+*  ZPW2  = MULTIPLICAND        *
 *                              *
 * DESTROY: NZCIDV              *
 *          ^^^  ^              *
@@ -16,8 +16,8 @@
 * SIZE: 47 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]MUL1    EQU   WPAR1      ; MULTIPLIER
-]MUL2    EQU   WPAR2      ; MULTIPLICAND
+]MUL1    EQU   ZPW1       ; MULTIPLIER
+]MUL2    EQU   ZPW2       ; MULTIPLICAND
 *
 MULTU8
          STA   ]MUL1      ; {3C2B}

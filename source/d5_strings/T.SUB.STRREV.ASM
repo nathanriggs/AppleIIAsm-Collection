@@ -5,7 +5,7 @@
 *                              *
 * INPUT:                       *
 *                              *
-*  WPAR1 = STRING ADDRESS      *
+*  ZPW1  = STRING ADDRESS      *
 *                              *
 * DESTROY: NZCIDV              *
 *          ^^^  ^              *
@@ -14,9 +14,9 @@
 * SIZE: 25 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]STR     EQU   WPAR1      ; STRING ADDRESS
+]STR     EQU   ZPW1       ; STRING ADDRESS
 ]REV     EQU   RETLEN     ; REVERSE STRING ADDRESS
-]LEN     EQU   BPAR1      ; STRING LENGTH
+]LEN     EQU   ZPB1       ; STRING LENGTH
 *
 STRREV
          LDY   #0         ; {3C2B} CLEAR .Y REGISTER

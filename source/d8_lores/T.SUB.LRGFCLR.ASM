@@ -17,7 +17,7 @@
 * SIZE: 86 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]C       EQU   VARTAB     ; TEMPORARY COLOR STORAGE
+]C       EQU   ZPB1       ; TEMPORARY COLOR STORAGE
 *
 LRGFCLR
          STA   ]C         ; {4C3B} STORE COLOR

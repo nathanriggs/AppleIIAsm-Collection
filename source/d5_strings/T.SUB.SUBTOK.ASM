@@ -9,9 +9,9 @@
 *                              *
 * INPUT:                       *
 *                              *
-*  WPAR1 = STRING ADDRESS      *
-*  WPAR2 = DELIMITER           *
-*  BPAR2 = ARGUMENT INDEX      *
+*  ZPW1  = STRING ADDRESS      *
+*  ZPW2  = DELIMITER           *
+*  ZPB2  = ARGUMENT INDEX      *
 *                              *
 * DESTROY: NZCIDV              *
 *          ^^^  ^              *
@@ -20,15 +20,15 @@
 * SIZE: 92 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]STR     EQU   WPAR1      ; STRING ADDRESS
-]DELIM   EQU   WPAR2      ; DELIMITER
-]LEN     EQU   BPAR1      ; STRING LENGTH
-]ARG     EQU   BPAR2      ; ARGUMENT NUMBER
-]START   EQU   VARTAB     ; START POS OF ARGUMENT
-]END     EQU   VARTAB+2   ; END POS OF ARGUMENT
-]COUNT   EQU   VARTAB+4   ; ARGUMENT COUNTER
-]XFLAG   EQU   VARTAB+6   ; LOOP EXIT FLAG
-]FOUND   EQU   VARTAB+8   ; ARGUMENT FOUND FLAG
+]STR     EQU   ZPW1       ; STRING ADDRESS
+]DELIM   EQU   ZPW2       ; DELIMITER
+]LEN     EQU   ZPB1       ; STRING LENGTH
+]ARG     EQU   ZPB2       ; ARGUMENT NUMBER
+]START   EQU   ZPW3       ; START POS OF ARGUMENT
+]END     EQU   ZPW4       ; END POS OF ARGUMENT
+]COUNT   EQU   ZPW5       ; ARGUMENT COUNTER
+]XFLAG   EQU   ZPB3       ; LOOP EXIT FLAG
+]FOUND   EQU   ZPW6       ; ARGUMENT FOUND FLAG
 *
 SUBTOK
          LDY   #0         ; {3C2B} CLEAR .Y REGISTER

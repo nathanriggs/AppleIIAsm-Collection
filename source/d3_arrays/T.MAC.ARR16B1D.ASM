@@ -9,7 +9,7 @@
 * CONTACT:   NATHAN.RIGGS@     *
 *            OUTLOOK.COM       *
 *                              *
-* DATE:      18-MAR-2021       *
+* DATE:      04-JUN-2021       *
 * ASSEMBLER: MERLIN 8 PRO      *
 * OS:        DOS 3.3           *
 *                              *
@@ -42,17 +42,17 @@
 *  ]4 = ARRAY FILL VALUE       *
 *                              *
 * CYCLES: 271+                 *
-* SIZE: 165 BYTES              *
+* SIZE: 35 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 DIM161   MAC
-         _MLIT ]1;WPAR1   ; {16C12B} PARSE ARRAY ADDRESS
-         _MLIT ]2;WPAR2   ; {16C12B} PARSE BYTE LENGTH
-         LDA   ]3         ; {3C2B} ELEMENT LENGTH
-         STA   WPAR3      ; {3C2B}
-         LDA   ]4         ; {3C2B} FILL VALUE
-         STA   BPAR1      ; {3C2B}
-         JSR   ADIM161    ; {227C133B}
+         _MLIT ]1;ZPW1    ; {16C12B} PARSE ARRAY ADDRESS
+         _MLIT ]2;ZPW2    ; {16C12B} PARSE BYTE LENGTH
+         LDA   ]3         ; {3C2B}   ELEMENT LENGTH
+         STA   ZPW3       ; {3C2B}
+         LDA   ]4         ; {3C2B}   FILL VALUE
+         STA   ZPB1       ; {3C2B}
+         JSR   ADIM161    ; {227C3B}
          <<<
 *
 *``````````````````````````````*
@@ -69,14 +69,14 @@ DIM161   MAC
 *  ]3 = ELEMENT INDEX          *
 *                              *
 * CYCLES: 238+                 *
-* SIZE: 148 BYTES              *
+* SIZE: 39 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 PUT161   MAC
-         _MLIT ]1;WPAR1   ; {16C12B} PARSE SOURCE ADDRESS
-         _MLIT ]2;WPAR2   ; {16C12B} PARSE ARRAY ADDRESS
-         _MLIT ]3;WPAR3   ; {16C12B} PARSE INDEX
-         JSR   APUT161    ; {190C112B}
+         _MLIT ]1;ZPW1    ; {16C12B} PARSE SOURCE ADDRESS
+         _MLIT ]2;ZPW2    ; {16C12B} PARSE ARRAY ADDRESS
+         _MLIT ]3;ZPW3    ; {16C12B} PARSE INDEX
+         JSR   APUT161    ; {190C3B}
          <<<
 *
 *``````````````````````````````*
@@ -92,12 +92,12 @@ PUT161   MAC
 *  ]2 = ARRAY ADDRESS          *
 *                              *
 * CYCLES: 223+                 *
-* SIZE: 130 BYTES              *
+* SIZE: 27 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 GET161   MAC
-         _MLIT ]1;WPAR1   ; {16C12B} PARSE SOURCE ADDRESS
-         _MLIT ]2;WPAR2   ; {16C12B} PARSE INDEX
-         JSR   AGET161    ; {191C116B}
+         _MLIT ]1;ZPW1    ; {16C12B} PARSE SOURCE ADDRESS
+         _MLIT ]2;ZPW2    ; {16C12B} PARSE INDEX
+         JSR   AGET161    ; {191C03B}
          <<<
 *

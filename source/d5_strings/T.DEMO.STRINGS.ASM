@@ -9,7 +9,7 @@
 * CONTACT:   NATHAN.RIGGS@     *
 *            OUTLOOK.COM       *
 *                              *
-* DATE:      12-APR-2021       *
+* DATE:      04-JUN-2021       *
 * ASSEMBLER: MERLIN 8 PRO      *
 * OS:        DOS 3.3           *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
@@ -206,14 +206,14 @@
 ]STRLEN  HEX   0000
 ]COUT1   EQU   $FDF0
 _PS
-         STA   ADDR1
-         STX   ADDR1+1
+         STA   ZPWSYS
+         STX   ZPWSYS+1
          LDY   #0
-         LDA   (ADDR1),Y
+         LDA   (ZPWSYS),Y
          STA   ]STRLEN
 :_LP
          INY
-         LDA   (ADDR1),Y
+         LDA   (ZPWSYS),Y
          JSR   ]COUT1
          CPY   ]STRLEN
          BNE   :_LP

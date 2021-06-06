@@ -14,9 +14,9 @@
 *                              *
 * INPUT:                       *
 *                              *
-*  WPAR1 = ARRAY ADDRESS       *
-*  WPAR2 = 1ST DIM INDEX       *
-*  WPAR3 = 2ND DIM INDEX       *
+*  ZPW1  = ARRAY ADDRESS       *
+*  ZPW2  = 1ST DIM INDEX       *
+*  ZPW3  = 2ND DIM INDEX       *
 *                              *
 * DESTROY: NZCIDV              *
 *          ^^^  ^              *
@@ -25,17 +25,17 @@
 * SIZE: 224 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]ADDR    EQU   WPAR1      ; ARRAY ADDRESS
-]XIDX    EQU   WPAR2      ; FIRST DIMENSION LENGTH
-]YIDX    EQU   WPAR3      ; SECOND DIMENSION LENGTH
+]ADDR    EQU   ZPW1       ; ARRAY ADDRESS
+]XIDX    EQU   ZPW2       ; FIRST DIMENSION LENGTH
+]YIDX    EQU   ZPW3       ; SECOND DIMENSION LENGTH
 *
-]ESIZE   EQU   VARTAB     ; ELEMENT LENGTH
-]MCAND   EQU   VARTAB+2   ; MULTIPLICAND
-]MLIER   EQU   VARTAB+4   ; MULTIPLIER
-]PROD    EQU   VARTAB+6   ; PRODUCT
-]PBAK    EQU   VARTAB+10  ; ^BACKUP
-]XLEN    EQU   VARTAB+12  ; X-DIM LENGTH
-]YLEN    EQU   VARTAB+14  ; Y-DIM LENGTH
+]ESIZE   EQU   ZPW4       ; ELEMENT LENGTH
+]MCAND   EQU   ZPW5       ; MULTIPLICAND
+]MLIER   EQU   VARTAB+12  ; MULTIPLIER
+]PROD    EQU   VARTAB     ; PRODUCT
+]PBAK    EQU   VARTAB+4   ; ^BACKUP
+]XLEN    EQU   VARTAB+8   ; X-DIM LENGTH
+]YLEN    EQU   VARTAB+10  ; Y-DIM LENGTH
 *
 AGET162
          LDY   #4         ; {2C2B} READ BYTE 4 FROM HEADER
@@ -108,7 +108,7 @@ AGET162
          STA   ]PROD      ; {3C2B} CLEAR ALL PRODUCT BYTES
          STA   ]PROD+1    ; {3C2B}
          STA   ]PROD+2    ; {3C2B}
-         STA   ]PROD+3;   ; {3C2B}
+         STA   ]PROD+3    ; {3C2B}
          LDX   #$10       ; {2C2B} LOAD #16 IN COUNTER
 :SHIFTR  LSR   ]MLIER+1   ; {6C2B} DIVIDE MULTIPLIER HIBYTE BY 2
          ROR   ]MLIER     ; {6C2B} ADJUST LOBYTE
@@ -151,22 +151,22 @@ AGET162
          CLC              ; {2C1B} CLEAR CARRY
          LDA   ]PROD      ; {3C2B} ADD PRODUCT TO ARRAY
          ADC   ]ADDR      ; {4C3B} ADDRESS, LOBYTES
-         STA   ADDR2      ; {3C2B} STORE IN ZERO PAGE
+         STA   ZPW6       ; {3C2B} STORE IN ZERO PAGE
          LDA   ]PROD+1    ; {3C2B} DO THE SAME WITH HIBYTES
          ADC   ]ADDR+1    ; {4C3B}
-         STA   ADDR2+1    ; {3C2B}
+         STA   ZPW6+1     ; {3C2B}
          LDY   #0         ; {2C2B} RESET BYTE INDEX
 *
 ** COPY FROM SRC ADDR TO DEST ADDR
 *
 :CLP
-         LDA   (ADDR2),Y  ; {6C2B} LOAD BYTE FROM ELEMENT
+         LDA   (ZPW6),Y   ; {6C2B} LOAD BYTE FROM ELEMENT
          STA   RETURN,Y   ; {5C3B} AND STORE IN RETURN
          INY              ; {2C1B} INCREMENT BYTE COUNTER
          CPY   ]ESIZE     ; {4C3B} IF != ELEMENT LENGTH,
          BNE   :CLP       ; {3C2B} CONTINUE LOOPING
          LDA   ]ESIZE     ; {3C2B} .A = ELEMENT SIZE
          STA   RETLEN     ; {3C2B} ALSO IN RETLEN
-         LDY   ADDR2+1    ; {3C2B} .Y = ELEMENT ADDRESS HIBYTE
-         LDX   ADDR2      ; {3C2B} .X = ELEMENT ADDRESS LOBYTE
+         LDY   ZPW6+1     ; {3C2B} .Y = ELEMENT ADDRESS HIBYTE
+         LDX   ZPW6       ; {3C2B} .X = ELEMENT ADDRESS LOBYTE
          RTS              ; {6C1B}

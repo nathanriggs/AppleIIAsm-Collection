@@ -7,8 +7,8 @@
 *                              *
 * INPUT:                       *
 *                              *
-*  WPAR1 = STRING ADDRESS      *
-*  WPAR2 = CHARACTER TO FIND   *
+*  ZPW1  = STRING ADDRESS      *
+*  ZPW2  = CHARACTER TO FIND   *
 *                              *
 * DESTROYS: NZCIDV             *
 *           ^^^  ^             *
@@ -17,9 +17,9 @@
 * SIZE: 36 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]STR     EQU   WPAR1      ; STRING ADDRESS
-]CHAR    EQU   WPAR2      ; TOKEN TO FIND
-]LEN     EQU   BPAR2      ; LENGTH OF STRING
+]STR     EQU   ZPW1       ; STRING ADDRESS
+]CHAR    EQU   ZPW2       ; TOKEN TO FIND
+]LEN     EQU   ZPB2       ; LENGTH OF STRING
 *
 SUBCHARCNT
          LDA   #0         ; {3C2B} CLEAR OUT .A REGISTER

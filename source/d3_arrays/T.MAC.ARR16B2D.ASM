@@ -9,7 +9,7 @@
 * CONTACT:   NATHAN.RIGGS@     *
 *            OUTLOOK.COM       *
 *                              *
-* DATE:      18-MAR-2021       *
+* DATE:      04-JUN-2021       *
 * ASSEMBLER: MERLIN 8 PRO      *
 * OS:        DOS 3.3           *
 *                              *
@@ -42,19 +42,19 @@
 *  ]4 = ELEMENT SIZE           *
 *  ]5 = FILL VALUE             *
 *                              *
-* CYCLES: 464+                 *
-* SIZE: 373 BYTES              *
+* CYCLES: 466+                 *
+* SIZE: 49 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 DIM162   MAC
-         _MLIT ]1;WPAR3   ; {16C12B} PARSE ARRAY ADDRESS
-         _MLIT ]2;WPAR1   ; {16C12B} PARSE X DIMENSION
-         _MLIT ]3;WPAR2   ; {16C12B} PARSE Y DIMENSION
-         LDA   ]4         ; {3C2B} ELEMENT LENGTH
-         STA   BPAR1      ; {3C2B}
-         LDA   ]5         ; {3C2B} FILL VAL
-         STA   BPAR2      ; {3C2B}
-         JSR   ADIM162    ; {404C229B}
+         _MLIT ]1;ZPW3    ; {16C12B} PARSE ARRAY ADDRESS
+         _MLIT ]2;ZPW1    ; {16C12B} PARSE X DIMENSION
+         _MLIT ]3;ZPW2    ; {16C12B} PARSE Y DIMENSION
+         LDA   ]4         ; {4C3B}   ELEMENT LENGTH
+         STA   ZPB1       ; {3C2B}
+         LDA   ]5         ; {4C3B}   FILL VAL
+         STA   ZPB2       ; {3C2B}
+         JSR   ADIM162    ; {404C3B}
          <<<
 *
 *``````````````````````````````*
@@ -72,15 +72,15 @@ DIM162   MAC
 *  ]4 = Y INDEX                *
 *                              *
 * CYCLES: 448+                 *
-* SIZE: 271 BYTES              *
+* SIZE: 51 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 PUT162   MAC
-         _MLIT ]1;WPAR1   ; {16C12B} PARSE SOURCE ADDRESS
-         _MLIT ]2;WPAR2   ; {16C12B} PARSE ARRAY ADDRESS
-         _MLIT ]3;WPAR3   ; {16C12B} PARSE X INDEX
-         _MLIT ]4;ADDR1   ; {16C12B} PARSE Y INDEX
-         JSR   APUT162    ; {384C223B}
+         _MLIT ]1;ZPW1    ; {16C12B} PARSE SOURCE ADDRESS
+         _MLIT ]2;ZPW2    ; {16C12B} PARSE ARRAY ADDRESS
+         _MLIT ]3;ZPW3    ; {16C12B} PARSE X INDEX
+         _MLIT ]4;ZPW4    ; {16C12B} PARSE Y INDEX
+         JSR   APUT162    ; {384C3B}
          <<<
 *
 *``````````````````````````````*
@@ -97,13 +97,13 @@ PUT162   MAC
 *  ]3 = Y INDEX                *
 *                              *
 * CYCLES: 436+                 *
-* SIZE: 263 BYTES              *
+* SIZE: 39 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 GET162   MAC
-         _MLIT ]1;WPAR1   ; {16C12B} PARSE ARAY ADDRESS
-         _MLIT ]2;WPAR2   ; {16C12B} PARSE X INDEX
-         _MLIT ]3;WPAR3   ; {16C12B} PARSE Y INDEX
-         JSR   AGET162    ; {388C227B}
+         _MLIT ]1;ZPW1    ; {16C12B} PARSE ARAY ADDRESS
+         _MLIT ]2;ZPW2    ; {16C12B} PARSE X INDEX
+         _MLIT ]3;ZPW3    ; {16C12B} PARSE Y INDEX
+         JSR   AGET162    ; {388C3B}
          <<<
 *

@@ -9,7 +9,7 @@
 *                              *
 * INPUT:                       *
 *                              *
-*  WPAR1 = STRING ADDRESS      *
+*  ZPW1  = STRING ADDRESS      *
 *                              *
 * DESTROY: NZCIDV              *
 *          ^^^  ^              *
@@ -18,9 +18,9 @@
 * SIZE: 100 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]STR     EQU   WPAR1      ; STRING ADDRESS
-]LEN     EQU   BPAR1      ; STRING LENGTH
-]FLAG    EQU   WPAR2      ; CAPITALIZATION FLAG
+]STR     EQU   ZPW1       ; STRING ADDRESS
+]LEN     EQU   ZPB1       ; STRING LENGTH
+]FLAG    EQU   ZPW2       ; CAPITALIZATION FLAG
 *
 STRCAP
 *

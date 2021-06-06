@@ -18,20 +18,13 @@
 * DEALS WITH ALL DIAGONAL      *
 * LINES WILL BE PROVIDED.      *
 *                              *
-* NOTE THAT USING THE ZERO     *
-* PAGE FOR VARIABLE SPACE WILL *
-* BE USED IN THE FUTURE. IT IS *
-* NOT CURRENTLY IN USE DUE TO  *
-* CONFLICTS WITH OTHER         *
-* SUBROUTINES.                 *
-*                              *
 * INPUT:                       *
 *                              *
-*  WPAR1 = X ORIGIN (2)        *
-*  ADDR1 = Y ORIGIN (1)        *
-*  WPAR3 = X DESTINATION (2)   *
-*  ADDR1+1 = Y DESTINATION (1) *
-*  BPAR1 = COLOR (1)           *
+*  ZPW5  = X ORIGIN (2)        *
+*  PASSTAB = Y ORIGIN (1)      *
+*  ZPW6  = X DESTINATION (2)   *
+*  PASSTAB+2 = Y DEST   (1)    *
+*  ZPB1  = COLOR (1)           *
 *                              *
 * DESTROYS: NZCIDV             *
 *           ^^^  ^             *
@@ -40,36 +33,21 @@
 * SIZE: 489 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]X0      HEX   0000       ; {0C2B} X ORIGIN
-]X1      HEX   0000       ; {0C2B} X DESTINATION
-]Y0      HEX   0000       ; {0C2B} Y ORIGIN
-]Y1      HEX   0000       ; {0C2B} Y DESTINATION
+]X0      EQU   ZPW5       ; {0C2B} X ORIGIN
+]X1      EQU   ZPW6       ; {0C2B} X DESTINATION
+]Y0      EQU   PASSTAB    ; {0C2B} Y ORIGIN
+]Y1      EQU   PASSTAB+2  ; {0C2B} Y DESTINATION
 ]DX      HEX   0000       ; {0C2B} CHANGE IN X
 ]DY      HEX   0000       ; {0C2B} CHANGE IN Y
 ]ERR     HEX   0000       ; {0C2B} LINE ERROR
-]ERRX2   HEX   0000       ; {0C2B} ERROR * 2
-]TEMP    HEX   0000       ; {0C2B} TEMP STORAGE
-]SX      HEX   00         ; {0C1B} SLOPE X
-]SY      HEX   00         ; {0C1B} SLOPE Y
-]COLOR   EQU   BPAR1      ; COLOR PASSED TO HPLOT IN BPAR1
+]ERRX2   HEX   0000
+]TEMP    HEX   0000
+]SX      HEX   00
+]SY      HEX   00
+]COLOR   EQU   ZPB1
 *
 HRBLINE
 *
-** GET PARAMETERS
-*
-:GETPARM
-         LDA   WPAR1      ; {3C2B} GET ]X0
-         STA   ]X0        ; {4C3B}
-         LDA   WPAR1+1    ; {3C2B}
-         STA   ]X0+1      ; {4C3B}
-         LDA   ADDR1      ; {3C2B} GET ]Y0
-         STA   ]Y0        ; {4C3B}
-         LDA   WPAR3      ; {3C2B} GET ]X1
-         STA   ]X1        ; {4C3B}
-         LDA   WPAR3+1    ; {3C2B}
-         STA   ]X1+1      ; {4C3B}
-         LDA   ADDR1+1    ; {3C2B} GET ]Y1
-         STA   ]Y1        ; {4C3B}
          LDA   #0         ; {3C2B}
          STA   ]Y0+1      ; {4C3B}
          STA   ]Y1+1      ; {4C3B}

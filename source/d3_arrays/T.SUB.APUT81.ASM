@@ -15,9 +15,9 @@
 *                              *
 * INPUT:                       *
 *                              *
-*  WPAR1 = SOURCE ADDRESS      *
-*  WPAR2 = DESTINATION ADDRESS *
-*  BPAR1 = ARRAY INDEX         *
+*  ZPW1  = SOURCE ADDRESS      *
+*  ZPW2  = DESTINATION ADDRESS *
+*  ZPB1  = ARRAY INDEX         *
 *                              *
 * DESTROY: NZCIDV              *
 *          ^^^  ^              *
@@ -26,16 +26,16 @@
 * SIZE: 100 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]ADDRS   EQU   WPAR1      ; SOURCE ADDRESS
-]ADDRD   EQU   WPAR2      ; DESTINATION
-]AIDX    EQU   BPAR1      ; ARRAY INDEX
-]SCRATCH EQU   ADDR1      ; ZEROED HIBYTE
+]ADDRS   EQU   ZPW1       ; SOURCE ADDRESS
+]ADDRD   EQU   ZPW2       ; DESTINATION
+]AIDX    EQU   ZPB1       ; ARRAY INDEX
+]SCRATCH EQU   ZPW3       ; ZEROED HIBYTE
 *
-]ESIZE   EQU   VARTAB     ; ELEMENT SIZE
-]ESIZEBK EQU   VARTAB+1   ; ^BACKUP
-]ASIZE   EQU   VARTAB+2   ; # OF ELEMENTS
-]IDX     EQU   VARTAB+5   ; INDEX
-]RES     EQU   VARTAB+7   ; MULTIPLICATION RESULT
+]ESIZE   EQU   ZPB2       ; ELEMENT SIZE
+]ESIZEBK EQU   ZPB3       ; ^BACKUP
+]ASIZE   EQU   ZPW4       ; # OF ELEMENTS
+]IDX     EQU   ZPW5       ; INDEX
+]RES     EQU   ZPW6       ; MULTIPLICATION RESULT
 *
 APUT81
          LDA   ]AIDX      ; {2C2B} STORE IN 2 LOCATIONS

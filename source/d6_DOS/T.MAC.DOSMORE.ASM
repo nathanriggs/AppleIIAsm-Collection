@@ -48,13 +48,13 @@ DVER     MAC
          CLC              ; {2C1B} CLEAR CARRY FLAG
          LDA   #0         ; {3C2B} CLEAR ACCUMULATOR
          ADC   #$BE       ; {2C2B} ADD #$16BE TO DOS LOAD POINT
-         STA   ADDR1      ; {3C2B} STORE LOW BYTE
+         STA   ZPWSYS     ; {3C2B} STORE LOW BYTE
          LDA   $3D2       ; {4C3B} LOAD DOS LOADING POINT
          ADC   #$16       ; {2C2B} ADD OFFSET
-         STA   ADDR1+1    ; {3C2B} STORE HIGH BYTE
+         STA   ZPWSYS+1   ; {3C2B} STORE HIGH BYTE
          LDY   #0         ; {3C2B} SET INDEX TO 0
-         LDA   (ADDR1),Y  ; {6C2B} RETURNS #2 OR #3 FOR
-                          ; THE DOS VERSION IN .A
+         LDA   (ZPWSYS),Y ; {6C2B} RETURNS #2 OR #3 FOR
+                          ;        THE DOS VERSION IN .A
          <<<
 *
 *``````````````````````````````*
@@ -112,7 +112,7 @@ DOSIN    MAC
 *
 ABAS     MAC
          LDA   #$4C       ; {4C3B} CODE FOR APPLESOFT
-                          ; #$20 IS FOR INTEGER BASIC
+                          ;        #$20 IS FOR INTEGER BASIC
          CMP   $E000      ; {4C3B} CORRECT BASIC ALREADY THERE?
          BEQ   ]APPLES    ; {3C2B} YES, GOTO RETURN CARRY
          STA   $C080      ; {4C3B} NOW IS IT THERE?
@@ -121,7 +121,7 @@ ABAS     MAC
          STA   $C081      ; {4C3B} STILL NO, TRY ROM CARD
          CMP   $E000      ; {4C3B} THERE NOW?
          BEQ   ]APPLES    ; {3C2B} YEP, GOTO RETURN CARRY
-                          ; NOPE, DON'T RETURN CARRY
+                          ;        NOPE, DON'T RETURN CARRY
          CLC              ; {2C1B}
          JMP   ]EXIT      ; {3C3B}
 ]APPLES
@@ -157,7 +157,7 @@ IBEX     MAC
          JMP   ]EXIT      ; {3C3B} AND EXIT
 ]NO
          CLC              ; {2C1B} NOT RUNNING, SO CLEAR CARRY
-]EXIT                     ; AND EXIT
+]EXIT                     ;        AND EXIT
          <<<
 *
 *``````````````````````````````*

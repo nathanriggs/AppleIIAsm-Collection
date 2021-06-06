@@ -6,7 +6,7 @@
 * CONTACT:   NATHAN.RIGGS@     *
 *            OUTLOOK.COM       *
 *                              *
-* DATE:      01-APR-2021       *
+* DATE:      04-JUN-2021       *
 * ASSEMBLER: MERLIN 8 PRO      *
 * OS:        DOS 3.3           *
 *                              *
@@ -43,8 +43,8 @@
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 ADD16    MAC
-         _MLIT ]1;WPAR1   ; {16C12B}
-         _MLIT ]2;WPAR2   ; {16C12B}
+         _MLIT ]1;ZPW1    ; {16C12B}
+         _MLIT ]2;ZPW2    ; {16C12B}
          JSR   ADDIT16    ; {46C27B}
          <<<
 *
@@ -65,8 +65,8 @@ ADD16    MAC
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 SUB16    MAC
-         _MLIT ]1;WPAR1   ; {16C12B}
-         _MLIT ]2;WPAR2   ; {16C12B}
+         _MLIT ]1;ZPW1    ; {16C12B}
+         _MLIT ]2;ZPW2    ; {16C12B}
          JSR   SUBT16     ; {47C27B}
          <<<
 *
@@ -87,8 +87,8 @@ SUB16    MAC
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 MUL16    MAC
-         _MLIT ]1;WPAR1   ; {16C12B}
-         _MLIT ]2;WPAR2   ; {16C12B}
+         _MLIT ]1;ZPW1    ; {16C12B}
+         _MLIT ]2;ZPW2    ; {16C12B}
          JSR   MULTU16    ; {112C67B}
          <<<
 *
@@ -109,8 +109,8 @@ MUL16    MAC
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 DIV16    MAC
-         _MLIT ]1;WPAR1   ; {16C12B}
-         _MLIT ]2;WPAR2   ; {16C12B}
+         _MLIT ]1;ZPW1    ; {16C12B}
+         _MLIT ]2;ZPW2    ; {16C12B}
          JSR   DIVDU16    ; {101C57B} UNSIGNED
          FIN
          <<<
@@ -132,7 +132,7 @@ DIV16    MAC
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 CMP16    MAC
-         _MLIT ]1;WPAR1   ; {16C12B}
-         _MLIT ]2;WPAR2   ; {16C12B}
+         _MLIT ]1;ZPW1    ; {16C12B}
+         _MLIT ]2;ZPW2    ; {16C12B}
          JSR   COMP16     ; {59C29B}
          <<<

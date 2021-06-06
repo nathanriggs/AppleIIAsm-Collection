@@ -9,7 +9,7 @@
 * CONTACT:   NATHAN.RIGGS@     *
 *            OUTLOOK.COM       *
 *                              *
-* DATE:      11-MAR-2021       *
+* DATE:      04-JUN-2021       *
 * ASSEMBLER: MERLIN 8 PRO      *
 * OS:        DOS 3.3           *
 *                              *
@@ -47,18 +47,18 @@
 *  ]1 = STRING OR ADDRESS      *
 *                              *
 * CYCLES: 159+ OR 127+         *
-* BYTES: 34+ OR 24+            *
+* BYTES: 2+ OR 15              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 PRN      MAC
-         IF    ",]1 ;       {0C0B} IF PARAM IS A STRING
-         JSR   XPRINT     ; {159C31B} GOSUB TO STACK PRINT ROUTINE
-         ASC   ]1         ; {0C1B} PUT STRING HERE FOR STACK
-         HEX   00         ; {0C1B} PRINT TO ACCESS; TERMINATE STRING
-         ELSE             ; {0C0B} OTHERWISE, PARAM IS AN ADDRESS
-         _MLIT ]1;WPAR1   ; {16C12B} SO PARSE ADDRESS FOR DIRECT OR
-         JSR   DPRINT     ; {111C12B} INDIRECT PASSING, THEN GOSUB
-         FIN              ; REGULAR PRINT ROUTINE
+         IF    ",]1 ;     ; {0C0B}    IF PARAM IS A STRING
+         JSR   XPRINT     ; {159C0B}  GOSUB TO STACK PRINT ROUTINE
+         ASC   ]1         ; {0C1B}    PUT STRING HERE FOR STACK
+         HEX   00         ; {0C1B}    PRINT TO ACCESS; TERMINATE
+         ELSE             ; {0C0B}    OTHERWISE, PARAM IS AN ADDRESS
+         _MLIT ]1;ZPW1    ; {16C12B}  SO PARSE ADDRESS FOR DIRECT OR
+         JSR   DPRINT     ; {111C3B}  INDIRECT PASSING, THEN GOSUB
+         FIN              ;           REGULAR PRINT ROUTINE
          <<<
 *
 *``````````````````````````````*
@@ -73,12 +73,12 @@ PRN      MAC
 *  ]1 = STRING ADDRESS         *
 *                              *
 * CYCLES: 147+                 *
-* SIZE: 35 BYTES               *
+* SIZE: 9 BYTES                *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 SPRN     MAC
-         _AXLIT ]1        ; {8C6B} PARSE INTO REGISTERS
-         JSR   PRNSTR     ; {139C29B} EXECUTE PRNSTR ROUTINE
+         _AXLIT ]1        ; {8C6B}   PARSE INTO REGISTERS
+         JSR   PRNSTR     ; {139C3B} EXECUTE PRNSTR ROUTINE
          <<<
 *
 *``````````````````````````````*
@@ -91,16 +91,16 @@ SPRN     MAC
 *  ]1 = X POSITION             *
 *  ]2 = Y POSITION             *
 *                              *
-* CYCLES: 10+                  *
-* SIZE: 8 BYTES                *
+* CYCLES: 20+                  *
+* SIZE: 13 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 SCPOS    MAC
-         LDX   ]1         ; {2C2B} HORIZONTAL POSITION
+         LDX   ]1         ; {4C3B} HORIZONTAL POSITION
          STX   CURSH      ; {3C2B}
-         LDX   ]2         ; {2C2B} VERTICAL POSITION
+         LDX   ]2         ; {4C3B} VERTICAL POSITION
          STX   CURSV      ; {3C2B}
-         JSR   VTAB       ; {????} EXECUTE VTAB ROUTINE
+         JSR   VTAB       ; {6C3B} EXECUTE VTAB ROUTINE
          <<<
 *
 *``````````````````````````````*
@@ -112,14 +112,14 @@ SCPOS    MAC
 *                              *
 *  ]1 = X POSITION             *
 *                              *
-* CYCLES: 4+                   *
-* SIZE: 5                      *
+* CYCLES: 13+                  *
+* SIZE: 8 BYTES                *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 SETCX    MAC
-         LDX   ]1         ; {2C2B} GET HORIZONTAL POS
-         STX   CURSH      ; {2C3B} AND STORE IN CURSH
-         JSR   VTAB       ; {????} CALL VTAB ROUTINE
+         LDX   ]1         ; {4C3B} GET HORIZONTAL POS
+         STX   CURSH      ; {3C2B} AND STORE IN CURSH
+         JSR   VTAB       ; {6C3B} CALL VTAB ROUTINE
          <<<
 *
 *``````````````````````````````*
@@ -131,14 +131,14 @@ SETCX    MAC
 *                              *
 *  ]1 = Y POSITION             *
 *                              *
-* CYCLES: 4+                   *
-* SIZE: 5+                     *
+* CYCLES: 13+                  *
+* SIZE: 8 BYTES                *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 SETCY    MAC
-         LDY   ]1         ; {2C2B} VERTICAL POSITION
-         STY   CURSV      ; {2C3B} INTO CURSV LOCATION
-         JSR   VTAB       ; {????} CALL VTAB ROUTINE
+         LDY   ]1         ; {4C3B} VERTICAL POSITION
+         STY   CURSV      ; {3C2B} INTO CURSV LOCATION
+         JSR   VTAB       ; {6C3B} CALL VTAB ROUTINE
          <<<
 *
 *``````````````````````````````*
@@ -151,16 +151,16 @@ SETCY    MAC
 *                              *
 *  ]1 = # OF SPACES TO MOVE    *
 *                              *
-* CYCLES: 10+                  *
-* SIZE: 7+ BYTES               *
+* CYCLES: 18+                  *
+* SIZE: 11 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 CURF     MAC
-         LDA   ]1         ; {2C2B} SPACES TO ADD TO
+         LDA   ]1         ; {4C3B} SPACES TO ADD TO
          CLC              ; {2C1B} CURRENT POSITION
          ADC   CURSH      ; {3C2B} ADD CURRENT POSITION
          STA   CURSH      ; {3C2B} STORE NEW IN CURSH
-         JSR   VTAB       ; {????} CALL VTAB ROUTINE
+         JSR   VTAB       ; {6C3B} CALL VTAB ROUTINE
          <<<
 *
 *``````````````````````````````*
@@ -173,16 +173,16 @@ CURF     MAC
 *                              *
 *  ]1 = # OF SPACES TO MOVE    *
 *                              *
-* CYCLES: 10+                  *
-* SIZE: 7 BYTES                *
+* CYCLES: 17+                  *
+* SIZE: 10 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 CURB     MAC
-         LDA   CURSH      ; {2C2B} GET CURRENT CURSOR XPOS
+         LDA   CURSH      ; {3C2B} GET CURRENT CURSOR XPOS
          SEC              ; {2C1B} SET CARRY
          SBC   ]1         ; {3C2B} SUBTRACT # OF SPACES PASSED
          STA   CURSH      ; {3C2B} AND STORE BACK IN CURSH
-         JSR   VTAB       ; {????} EXEC VTAB SUBROUTINE
+         JSR   VTAB       ; {6C3B} EXEC VTAB SUBROUTINE
          <<<
 *
 *``````````````````````````````*
@@ -195,16 +195,16 @@ CURB     MAC
 *                              *
 *  ]1 = # OF SPACES TO GO UP   *
 *                              *
-* CYCLES: 10+                  *
-* SIZE: 7 BYTES                *
+* CYCLES: 17+                  *
+* SIZE: 10 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 CURU     MAC
-         LDA   CURSV      ; {2C2B} GET CURRENT YPOS
+         LDA   CURSV      ; {3C2B} GET CURRENT YPOS
          SEC              ; {2C1B} SET CARRY
          SBC   ]1         ; {3C2B} SUBTRACT GIVEN PARAM
          STA   CURSV      ; {3C2B} AND STORE BACK IN CURSV
-         JSR   VTAB       ; {????} VTAB MONITOR ROUTINE
+         JSR   VTAB       ; {6C3B} VTAB MONITOR ROUTINE
          <<<
 *
 *``````````````````````````````*
@@ -217,16 +217,16 @@ CURU     MAC
 *                              *
 *   ]1 = # OF SPACES TO MOVE   *
 *                              *
-* CYCLES: 9+                   *
-* SIZE: 8 BYTES                *
+* CYCLES: 17+                  *
+* SIZE: 10 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 CURD     MAC
-         LDA   CURSV      ; {2C2B} GET CURRENT YPOS
+         LDA   CURSV      ; {3C2B} GET CURRENT YPOS
          CLC              ; {2C1B} CLEAR CARRY
          ADC   ]1         ; {3C2B} ADD GIVEN PARAMETER
-         STA   CURSV      ; {2C3B} STORE BACK IN CURSV
-         JSR   VTAB       ; {????} EXEC VTAB SUBROUTINE
+         STA   CURSV      ; {3C2B} STORE BACK IN CURSV
+         JSR   VTAB       ; {6C3B} EXEC VTAB SUBROUTINE
          <<<
 *
 *``````````````````````````````*
@@ -246,15 +246,15 @@ CURD     MAC
 *  ]3 = LINE PAUSE INTERVAL,   *
 *       EVERY NEWLINE IF = 0   *
 *                              *
-* CYCLES: 482+                 *
-* SIZE: 472 BYTES              *
+* CYCLES: 496+                 *
+* SIZE: 22 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 TMORE    MAC
-         _MLIT ]1;WPAR1   ; {16C12B} PARSE ADDR TO ZERO PAGE
-         LDA   ]2         ; {2C2B} LOAD MAX LENGTH
-         STA   WPAR2      ; {3C2B} STORE IN ZERO PAGE
-         LDA   ]3         ; {2C2B} LOAD LINE INTERVAL
-         STA   BPAR1      ; {3C2B} STORE IN ZERO PAGE
-         JSR   TXTMORE    ; {????} CALL TXTMORE SUBROUTINE
+         _MLIT ]1;ZPW1    ; {16C12B} PARSE ADDR TO ZERO PAGE
+         LDA   ]2         ; {4C3B}  LOAD MAX LENGTH
+         STA   ZPW2       ; {3C2B}  STORE IN ZERO PAGE
+         LDA   ]3         ; {4C3B}  LOAD LINE INTERVAL
+         STA   ZPB1       ; {3C2B}  STORE IN ZERO PAGE
+         JSR   TXTMORE    ; {466C0B} CALL TXTMORE SUBROUTINE
          <<<

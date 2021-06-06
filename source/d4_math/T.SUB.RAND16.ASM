@@ -22,7 +22,7 @@
 * SIZE: 60 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]SEED    EQU   WPAR1      ; SEED FOR PRNG
+]SEED    EQU   ZPW1       ; SEED FOR PRNG
 *
 RAND16
          LDA   RNDL       ; {3C2B} GET SEED LOBYTE

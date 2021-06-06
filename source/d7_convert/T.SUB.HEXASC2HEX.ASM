@@ -3,7 +3,7 @@
 *                              *
 * INPUT:                       *
 *                              *
-*  WPAR1 = HEX STRING ADDRESS  *
+*  ZPW1  = HEX STRING ADDRESS  *
 *                              *
 * DESTROYS: NZCIDV             *
 *           ^^^  ^             *
@@ -12,9 +12,9 @@
 * SIZE: 56 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]HI      EQU   VARTAB     ; HIGH BYTE
-]LO      EQU   VARTAB+2   ; LOW BYTE
-]STR     EQU   WPAR1      ; ADDR OF STRING TO CONVERT
+]HI      EQU   ZPW2       ; HIGH BYTE
+]LO      EQU   ZPW3       ; LOW BYTE
+]STR     EQU   ZPW1       ; ADDR OF STRING TO CONVERT
 *
 HEXASC2HEX
          LDY   #1         ; {3C2B} GET FIRST HEX CHARACTER

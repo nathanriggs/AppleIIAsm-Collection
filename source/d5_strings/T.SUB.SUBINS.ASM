@@ -6,9 +6,9 @@
 *                              *
 * INPUT:                       *
 *                              *
-*  WPAR1 = SUBSTRING ADDRESS   *
-*  WPAR2 = STRING ADDRESS      *
-*  BPAR1 = INSERTION INDEX     *
+*  ZPW1  = SUBSTRING ADDRESS   *
+*  ZPW2  = STRING ADDRESS      *
+*  ZPB1  = INSERTION INDEX     *
 *                              *
 * DESTROY: NZCIDV              *
 *          ^^^  ^              *
@@ -17,12 +17,12 @@
 * SIZE: 79 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]SUB     EQU   WPAR1      ; SUBSTRING ADDRESS
-]STR     EQU   WPAR2      ; STRING ADDRESS
-]INDEX   EQU   BPAR1      ; STRING INDEX
-]OLDIND  EQU   VARTAB     ; OLD INDEX
-]TMP     EQU   VARTAB+2   ; TEMPORARY VARIABLE
-]SUBLEN  EQU   VARTAB+4   ; SUBSTRING LENGTH
+]SUB     EQU   ZPW1       ; SUBSTRING ADDRESS
+]STR     EQU   ZPW2       ; STRING ADDRESS
+]INDEX   EQU   ZPB1       ; STRING INDEX
+]OLDIND  EQU   ZPW3       ; OLD INDEX
+]TMP     EQU   ZPW4       ; TEMPORARY VARIABLE
+]SUBLEN  EQU   ZPW5       ; SUBSTRING LENGTH
 *
 SUBINS
          DEC   ]INDEX     ; {5C2B}

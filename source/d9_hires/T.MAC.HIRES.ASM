@@ -13,7 +13,7 @@
 * CONTACT:    NATHAN.RIGGS@    *
 *             OUTLOOK.COM      *
 *                              *
-* DATE:       30-MAY-2001      *
+* DATE:       05-JUN-2001      *
 * ASSEMBLER:  MERLIN 8 PRO     *
 * OS:         DOS 3.3          *
 *                              *
@@ -73,18 +73,18 @@ HBSET    MAC
          LDY   ]1         ; {4C3B} HORIZONTAL BYTE NUMBER
          LDX   ]2         ; {4C3B} VERTICAL LINE NUMBER
          LDA   HGRHI,X    ; {5C3B} GET LINE ADDRESS
-         STA   WPAR1+1    ; {4C3B}
+         STA   ZPWSYS+1   ; {4C3B}
          LDA   HGRLO,X    ; {5C3B}
-         STA   WPAR1      ; {3C2B}
+         STA   ZPWSYS     ; {3C2B}
          LDA   HOFFSET    ; {4C3B} IS THERE A PAGE OFFSET?
          CMP   #0         ; {3C2B} NO, SO SKIP TO PLOT
          BEQ   ]BLOT      ; {3C2B}
          CLC              ; {2C1B} ELSE ADD PAGE OFFSET
-         ADC   WPAR1+1    ; {4C3B}
-         STA   WPAR1+1    ; {4C3B}
+         ADC   ZPWSYS+1   ; {4C3B}
+         STA   ZPWSYS+1   ; {4C3B}
 ]BLOT
          LDA   ]3         ; {4C3B}
-         STA   (WPAR1),Y  ; {5C3B} PLOT TO MEMORY
+         STA   (ZPWSYS),Y ; {5C3B} PLOT TO MEMORY
          <<<
 *
 *``````````````````````````````*
@@ -106,17 +106,17 @@ HBGET    MAC
          LDY   ]1         ; {4C3B} HORIZONTAL BYTE NUMBER
          LDX   ]2         ; {4C3B} VERTICAL LINE NUMBER
          LDA   HGRHI,X    ; {5C3B} GET LINE ADDRESS
-         STA   WPAR1+1    ; {4C3B}
+         STA   ZPWSYS+1   ; {4C3B}
          LDA   HGRLO,X    ; {5C3B}
-         STA   WPAR1      ; {4C3B}
+         STA   ZPWSYS     ; {4C3B}
          LDA   HOFFSET    ; {4C3B} IS THERE A PAGE OFFSET?
          CMP   #0         ; {3C2B} NO, SO SKIP TO GET BYTE
          BEQ   ]BGET      ; {3C2B} ELSE ADD OFFSET FIRST
          CLC              ; {2C1B}
-         ADC   WPAR1+1    ; {3C2B}
-         STA   WPAR1+1    ; {3C2B}
+         ADC   ZPWSYS+1   ; {3C2B}
+         STA   ZPWSYS+1   ; {3C2B}
 ]BGET
-         LDA   (WPAR1),Y  ; {5C3B} RETURN BYTE IN .A
+         LDA   (ZPWSYS),Y ; {5C3B} RETURN BYTE IN .A
          <<<
 *
 *``````````````````````````````*
@@ -188,7 +188,7 @@ HWORKPG  MAC
 HPLOT    MAC
          LDY   ]2         ; {4C3B}
          LDA   ]3         ; {4C3B} COLOR CODE
-         STA   BPAR1      ; {3C2B}
+         STA   ZPB1       ; {3C2B}
          _AXLIT ]1        ; {8C6B}
          JSR   HRPLOT     ; {329C214B}
          <<<
@@ -209,7 +209,7 @@ HPLOT    MAC
 *
 HCLR     MAC
          LDA   ]1         ; {4C3B}
-         STA   BPAR1      ; {3C2B}
+         STA   ZPB1       ; {3C2B}
          JSR   HCLEAR     ; {89C0B}
          <<<
 *
@@ -231,12 +231,12 @@ HCLR     MAC
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 HLIN     MAC
-         _MLIT ]1;WPAR1   ; {16C12B}
-         _MLIT ]2;WPAR2   ; {16C12B}
+         _MLIT ]1;ZPW5    ; {16C12B}
+         _MLIT ]2;ZPW6    ; {16C12B}
          LDA   ]3         ; {4C3B}
-         STA   BPAR1      ; {3C2B}
+         STA   PASSTAB    ; {3C2B}
          LDA   ]4         ; {4C3B}
-         STA   BPAR2      ; {3C2B}
+         STA   PASSTAB+2  ; {3C2B}
          JSR   HRHLINE    ; {448C0B}
          <<<
 *
@@ -256,12 +256,12 @@ HLIN     MAC
 *
 VLIN     MAC
          LDA   ]1         ; {4C3B}
-         STA   WPAR1      ; {3C2B}
+         STA   ZPW5       ; {3C2B}
          LDA   ]2         ; {4C3B}
-         STA   WPAR1+1    ; {3C2B}
-         _MLIT ]3;WPAR2   ; {16C12B}
+         STA   ZPW5+1     ; {3C2B}
+         _MLIT ]3;ZPW6    ; {16C12B}
          LDA   ]4         ; {4C3B}
-         STA   BPAR2      ; {3C2B}
+         STA   ZPB1       ; {3C2B}
          JSR   HRVLINE    ; {412C3B}
          <<<
 *
@@ -284,14 +284,14 @@ VLIN     MAC
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 LINE     MAC
-         _MLIT ]1;WPAR1   ; {16C12B}
+         _MLIT ]1;ZPW5    ; {16C12B}
          LDA   ]2         ; {4C3B}
-         STA   ADDR1      ; {3C2B}
-         _MLIT ]3;WPAR3   ; {16C12B}
+         STA   PASSTAB    ; {3C2B}
+         _MLIT ]3;ZPW6    ; {16C12B}
          LDA   ]4         ; {4C3B}
-         STA   ADDR1+1    ; {3C2B}
+         STA   PASSTAB+2  ; {3C2B}
          LDA   ]5         ; {4C3B}
-         STA   BPAR1      ; {3C2B}
+         STA   ZPB1       ; {3C2B}
          JSR   HRBLINE    ; {788C3B}
          <<<
 *
@@ -341,11 +341,11 @@ HCHAR    MAC
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 HSTR     MAC
-         _MLIT ]1;ADDR3   ; {16C12B}
+         _MLIT ]1;ZPW1    ; {16C12B}
          LDA   ]2         ; {4C3B}
-         STA   BPAR4      ; {3C2B}
-         _MSTR ]3;WPAR3   ; {16C12B}
+         STA   ZPB1       ; {3C2B}
+         _MSTR ]3;ZPW2    ; {16C12B}
          LDA   ]4         ; {4C3B}
-         STA   BPAR3      ; {3C2B}
+         STA   ZPB2       ; {3C2B}
          JSR   HRSTR      ; {721C3B}
          <<<

@@ -9,7 +9,7 @@
 * CONTACT:   NATHAN.RIGGS@     *
 *            OUTLOOK.COM       *
 *                              *
-* DATE:      11-MAR-2021       *
+* DATE:      04-JUN-2021       *
 * ASSEMBLER: MERLIN 8 PRO      *
 * OS:        DOS 3.3           *
 *                              *
@@ -74,20 +74,20 @@ RCPOS    MAC
 *  ]3 = X POSITION OF LINE     *
 *  ]4 = FILL CHARACTER         *
 *                              *
-* CYCLES: 104+                 *
-* SIZE: 45 BYTES               *
+* CYCLES: 111+                 *
+* SIZE: 23 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 TVLIN    MAC
-         LDA   ]1         ; {2C2B} Y-COORDINATE ORIGIN
-         STA   WPAR2      ; {3C2B} PASS VIA ZERO PAGE
-         LDA   ]2         ; {2C2B} Y-COORDINATE DESTINATION
-         STA   WPAR2+1    ; {3C2B} PASS VIA ZERO PAGE
-         LDA   ]3         ; {2C2B} X-COORDINATE OF LINE
-         STA   WPAR1      ; {3C2B} PASS VIA ZERO PAGE
-         LDA   ]4         ; {3C2B} CHARACTER TO PLOT
-         STA   BPAR1      ; {3C2B} PASS VIA ZERO PAGE
-         JSR   TVLINE     ; {83C29B} CALL TVLINE SUBROUTINE
+         LDA   ]1         ; {4C3B}   Y-COORDINATE ORIGIN
+         STA   ZPW2       ; {3C2B}   PASS VIA ZERO PAGE
+         LDA   ]2         ; {4C3B}   Y-COORDINATE DESTINATION
+         STA   ZPW2+1     ; {3C2B}   PASS VIA ZERO PAGE
+         LDA   ]3         ; {4C3B}   X-COORDINATE OF LINE
+         STA   ZPW1       ; {3C2B}   PASS VIA ZERO PAGE
+         LDA   ]4         ; {4C3B}   CHARACTER TO PLOT
+         STA   ZPB1       ; {3C2B}   PASS VIA ZERO PAGE
+         JSR   TVLINE     ; {83C3B}  CALL TVLINE SUBROUTINE
          <<<
 *
 *``````````````````````````````*
@@ -103,20 +103,20 @@ TVLIN    MAC
 *  ]3 = Y POSITION OF LINE     *
 *  ]4 = FILL CHARACTER         *
 *                              *
-* CYCLES: 107+                 *
-* SIZE: 38 BYTES               *
+* CYCLES: 115+                 *
+* SIZE: 23 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 THLIN    MAC
-         LDA   ]1         ; {2C2B} X-COORDINATE ORIGIN
-         STA   WPAR1      ; {3C2B} PASS VIA ZERO PAGE
-         LDA   ]2         ; {2C2B} X-COORDINATE DESTINATION
-         STA   WPAR1+1    ; {3C2B} PASS VIA ZERO PAGE
-         LDA   ]3         ; {2C2B} Y-COORDINATE OF LINE
-         STA   BPAR1      ; {3C2B} PASS VIA ZERO PAGE
-         LDA   ]4         ; {2C2B} CHARACTER TO FILL
-         STA   BPAR2      ; {3C2B} PASS VIA ZERO PAGE
-         JSR   THLINE     ; {87C22B} CALL THLINE SUBROUTINE
+         LDA   ]1         ; {4C3B}   X-COORDINATE ORIGIN
+         STA   ZPW1       ; {3C2B}   PASS VIA ZERO PAGE
+         LDA   ]2         ; {4C3B}   X-COORDINATE DESTINATION
+         STA   ZPW1+1     ; {3C2B}   PASS VIA ZERO PAGE
+         LDA   ]3         ; {4C3B}   Y-COORDINATE OF LINE
+         STA   ZPB1       ; {3C2B}   PASS VIA ZERO PAGE
+         LDA   ]4         ; {4C3B}   CHARACTER TO FILL
+         STA   ZPB2       ; {3C2B}   PASS VIA ZERO PAGE
+         JSR   THLINE     ; {87C3B}  CALL THLINE SUBROUTINE
          <<<
 *
 *``````````````````````````````*
@@ -133,22 +133,22 @@ THLIN    MAC
 *  ]4 = VERT END POSITION      *
 *  ]5 = FILL CHARACTER         *
 *                              *
-* CYCLES: 157+                 *
-* SIZE: 77 BYTES               *
+* CYCLES: 168+                 *
+* SIZE: 28 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 TRECF    MAC
-         LDA   ]1         ; {2C2B} X-COORDINATE ORIGIN
-         STA   WPAR1      ; {3C2B} PASS VIA ZERO PAGE
-         LDA   ]2         ; {2C2B} Y-COORDINATE ORIGIN
-         STA   WPAR2      ; {3C2B} PASS VIA ZERO PAGE
-         LDA   ]3         ; {2C2B} X-COORDINATE DESTINATION
-         STA   WPAR1+1    ; {3C2B} PASS VIA ZERO PAGE
-         LDA   ]4         ; {2C2B} Y-COORDINATE DESTINATION
-         STA   WPAR2+1    ; {2C2B} PASS VIA ZERO PAGE
-         LDA   ]5         ; {2C2B} CHARACTER TO PLOT
-         STA   BPAR1      ; {3C2B} PASS VIA ZERO PAGE
-         JSR   TRECTF     ; {133C57B} CALL TRECTF SUBROUTINE
+         LDA   ]1         ; {4C3B}   X-COORDINATE ORIGIN
+         STA   ZPW1       ; {3C2B}   PASS VIA ZERO PAGE
+         LDA   ]2         ; {4C3B}   Y-COORDINATE ORIGIN
+         STA   ZPW2       ; {3C2B}   PASS VIA ZERO PAGE
+         LDA   ]3         ; {4C3B}   X-COORDINATE DESTINATION
+         STA   ZPW1+1     ; {3C2B}   PASS VIA ZERO PAGE
+         LDA   ]4         ; {4C3B}   Y-COORDINATE DESTINATION
+         STA   ZPW2+1     ; {3C2B}   PASS VIA ZERO PAGE
+         LDA   ]5         ; {4C3B}   CHARACTER TO PLOT
+         STA   ZPB1       ; {3C2B}   PASS VIA ZERO PAGE
+         JSR   TRECTF     ; {133C3B} CALL TRECTF SUBROUTINE
          <<<
 *
 *``````````````````````````````*
@@ -164,15 +164,15 @@ TRECF    MAC
 *  ]2 = Y POSITION             *
 *  ]3 = CHARACTER TO PLOT      *
 *                              *
-* CYCLES: 91+                  *
-* SIZE: 31 BYTES               *
+* CYCLES: 97+                  *
+* SIZE: 12 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 CPUT     MAC
-         LDX   ]1         ; {2C2B} CARRY X-COORD IN .X
-         LDY   ]2         ; {2C2B} CARRY Y-COORD IN .Y
-         LDA   ]3         ; {2C2B} CARRY FILL CHAR IN .A
-         JSR   TXTPUT     ; {85C25B} CALL TXTPUT SUBROUTINE
+         LDX   ]1         ; {4C3B}   CARRY X-COORD IN .X
+         LDY   ]2         ; {4C3B}   CARRY Y-COORD IN .Y
+         LDA   ]3         ; {4C3B}   CARRY FILL CHAR IN .A
+         JSR   TXTPUT     ; {85C3B}  CALL TXTPUT SUBROUTINE
          <<<
 *
 *``````````````````````````````*
@@ -190,22 +190,22 @@ CPUT     MAC
 *  ]4 = Y-DESTINATION          *
 *  ]5 = FILL CHARACTER         *
 *                              *
-* CYCLES: 411+                 *
-* SIZE: 187 BYTES              *
+* CYCLES: 321+                 *
+* SIZE: 28 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 TLINE    MAC
-         LDA   ]1         ; {2C2B} LOAD X-ORIGIN
-         STA   WPAR1      ; {3C2B} PASS VIA ZERO PAGE
-         LDA   ]2         ; {2C2B} LOAD Y-ORIGIN
-         STA   WPAR1+1    ; {3C2B} PASS VIA ZERO PAGE
-         LDA   ]3         ; {2C2B} LOAD X-DESTINATION
-         STA   WPAR2      ; {3C2B} PASS VIA ZERO PAGE
-         LDA   ]4         ; {2C2B} LOAD Y-DESTINATION
-         STA   WPAR2+1    ; {3C2B} PASS VIA ZERO PAGE
-         LDA   ]5         ; {2C2B} LOAD FILL CHARACTER
-         STA   BPAR1      ; {3C2B} PASS VIA ZERO PAGE
-         JSR   TBLINE     ; {286C167B} CALL TBLINE SUBROUTINE
+         LDA   ]1         ; {4C3B}   LOAD X-ORIGIN
+         STA   ZPW1       ; {3C2B}   PASS VIA ZERO PAGE
+         LDA   ]2         ; {4C3B}   LOAD Y-ORIGIN
+         STA   ZPW1+1     ; {3C2B}   PASS VIA ZERO PAGE
+         LDA   ]3         ; {4C3B}   LOAD X-DESTINATION
+         STA   ZPW2       ; {3C2B}   PASS VIA ZERO PAGE
+         LDA   ]4         ; {4C3B}   LOAD Y-DESTINATION
+         STA   ZPW2+1     ; {3C2B}   PASS VIA ZERO PAGE
+         LDA   ]5         ; {4C3B}   LOAD FILL CHARACTER
+         STA   ZPB1       ; {3C2B}   PASS VIA ZERO PAGE
+         JSR   TBLINE     ; {286C3B} CALL TBLINE SUBROUTINE
          <<<
 *
 *``````````````````````````````*
@@ -222,20 +222,20 @@ TLINE    MAC
 *  ]3 = RADIUS                 *
 *  ]4 = FILL CHARACTER         *
 *                              *
-* CYCLES: 627+                 *
-* SIZE: 290 BYTES              *
+* CYCLES: 635+                 *
+* SIZE: 23 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 TCIRC    MAC
-         LDA   ]1         ; {2C2B} LOAD CENTER X-COORD
-         STA   WPAR1      ; {3C2B} PASS VIA ZERO PAGE
-         LDA   ]2         ; {2C2B} LOAD CENTER Y-COORD
-         STA   WPAR2      ; {3C2B} PASS VIA ZERO PAGE
-         LDA   ]3         ; {2C2B} LOAD RADIUS
-         STA   BPAR1      ; {3C2B} PASS VIA ZERO PAGE
-         LDA   ]4         ; {2C2B} LOAD FILL CHARACTER
-         STA   BPAR2      ; {3C2B} PASS VIA ZERO PAGE
-         JSR   TCIRCLE    ; {607C374B} CALL TCIRCLE SUBROUTINE
+         LDA   ]1         ; {4C3B}   LOAD CENTER X-COORD
+         STA   ZPW1       ; {3C2B}   PASS VIA ZERO PAGE
+         LDA   ]2         ; {4C3B}   LOAD CENTER Y-COORD
+         STA   ZPW2       ; {3C2B}   PASS VIA ZERO PAGE
+         LDA   ]3         ; {4C3B}   LOAD RADIUS
+         STA   ZPB1       ; {3C2B}   PASS VIA ZERO PAGE
+         LDA   ]4         ; {4C3B}   LOAD FILL CHARACTER
+         STA   ZPB2       ; {3C2B}   PASS VIA ZERO PAGE
+         JSR   TCIRCLE    ; {607C3B} CALL TCIRCLE SUBROUTINE
          <<<
 *
 *``````````````````````````````*
@@ -255,22 +255,22 @@ TCIRC    MAC
 *  ]4 = Y DESTINATION          *
 *  ]5 = BORDER CHARACTER       *
 *                              *
-* CYCLES: 362+                 *
-* SIZE: 115 BYTES              *
+* CYCLES: 373+                 *
+* SIZE: 28 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 TREC     MAC
-         LDA   ]1         ; {2C2B} LOAD X-ORIGIN
-         STA   WPAR1      ; {3C2B} PASS VIA ZERO PAGE
-         LDA   ]2         ; {2C2B} LOAD Y-ORIGIN
-         STA   WPAR1+1    ; {3C2B} PASS VIA ZERO PAGE
-         LDA   ]3         ; {2C2B} LOAD X-DESTINATION
-         STA   WPAR2      ; {3C2B} PASS VIA ZERO PAGE
-         LDA   ]4         ; {2C2B} LOAD Y-DESTINATION
-         STA   WPAR2+1    ; {2C2B} PASS VIA ZERO PAGE
-         LDA   ]5         ; {2C2B} LOAD FILL CHARACTER
-         STA   BPAR1      ; {3C2B} PASS VIA ZERO PAGE
-         JSR   TRECT      ; {338C95B} CALL TRECT SUBROUTINE
+         LDA   ]1         ; {4C3B}   LOAD X-ORIGIN
+         STA   ZPW1       ; {3C2B}   PASS VIA ZERO PAGE
+         LDA   ]2         ; {4C3B}   LOAD Y-ORIGIN
+         STA   ZPW1+1     ; {3C2B}   PASS VIA ZERO PAGE
+         LDA   ]3         ; {4C3B}   LOAD X-DESTINATION
+         STA   ZPW2       ; {3C2B}   PASS VIA ZERO PAGE
+         LDA   ]4         ; {4C3B}   LOAD Y-DESTINATION
+         STA   ZPW2+1     ; {3C2B}   PASS VIA ZERO PAGE
+         LDA   ]5         ; {4C3B}   LOAD FILL CHARACTER
+         STA   ZPB1       ; {3C2B}   PASS VIA ZERO PAGE
+         JSR   TRECT      ; {338C3B} CALL TRECT SUBROUTINE
          <<<
 *
 *``````````````````````````````*
@@ -287,17 +287,17 @@ TREC     MAC
 *  ]3 = ADDRESS OF STRING      *
 *       TO PRINT ON SCREEN     *
 *                              *
-* CYCLES: 124+                 *
-* SIZE: 50 BYTES               *
+* CYCLES: 128+                 *
+* SIZE: 25 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 SPUT     MAC
-         LDA   ]1         ; {2C2B} GET X COORDINATE
-         STA   WPAR1      ; {3C2B} PASS VIA ZERO PAGE
-         LDA   ]2         ; {2C2B} GET Y COORDINATE
-         STA   WPAR1+1    ; {3C2B} PASS VIA ZERO PAGE
-         _MLIT ]3;WPAR2   ; {16C12B} PARSE STRING ADDRESS
-         JSR   STRPUT     ; {98C30B} CALL STRPUT SUBROUTINE
+         LDA   ]1         ; {4C3B}   GET X COORDINATE
+         STA   ZPW1       ; {3C2B}   PASS VIA ZERO PAGE
+         LDA   ]2         ; {4C3B}   GET Y COORDINATE
+         STA   ZPW1+1     ; {3C2B}   PASS VIA ZERO PAGE
+         _MLIT ]3;ZPW2    ; {16C12B} PARSE STRING ADDRESS
+         JSR   STRPUT     ; {98C3B}  CALL STRPUT SUBROUTINE
          <<<
 *
 *``````````````````````````````*
@@ -311,11 +311,11 @@ SPUT     MAC
 *                              *
 *  ]1 = FILL CHARACTER         *
 *                              *
-* CYCLES: 50+                  *
-* SIZE: 42 BYTES               *
+* CYCLES: 52+                  *
+* SIZE: 6 BYTES                *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 TCLR     MAC
-         LDA   ]1         ; {2C2B} LOAD FILL CHARACTER
-         JSR   TXTCLR     ; {48C40B} CALL TXTCLR SUBROUTINE
+         LDA   ]1         ; {4C3B}   LOAD FILL CHARACTER
+         JSR   TXTCLR     ; {48C3B}  CALL TXTCLR SUBROUTINE
          <<<

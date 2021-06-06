@@ -9,7 +9,7 @@
 * CONTACT:   NATHAN.RIGGS@     *
 *            OUTLOOK.COM       *
 *                              *
-* DATE:      18-MAR-2021       *
+* DATE:      04-JUN-2021       *
 * ASSEMBLER: MERLIN 8 PRO      *
 * OS:        DOS 3.3           *
 *                              *
@@ -42,21 +42,21 @@
 *  ]4 = ELEMENT SIZE           *
 *  ]5 = FILL VALUE             *
 *                              *
-* CYCLES: 355+                 *
-* SIZE: 228 BYTES              *
+* CYCLES: 359+                 *
+* SIZE: 35 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 DIM82    MAC
-         _MLIT ]1;WPAR1   ; {16C12B} PARSE ARRAY ADDRESS
-         LDA   ]2         ; {3C2B} X DIM
-         STA   WPAR2      ; {3C2B}
-         LDA   ]3         ; {3C2B} Y DIM
-         STA   WPAR3      ; {3C2B}
-         LDA   ]4         ; {3C2B} ELEMENT LENGTH
-         STA   BPAR2      ; {3C2B}
-         LDA   ]5         ; {3C2B} FILL VAL
-         STA   BPAR1      ; {3C2B}
-         JSR   ADIM82     ; {315C200B}
+         _MLIT ]1;ZPW1    ; {16C12B} PARSE ARRAY ADDRESS
+         LDA   ]2         ; {4C3B}   X DIM
+         STA   ZPW2       ; {3C2B}
+         LDA   ]3         ; {4C3B}   Y DIM
+         STA   ZPW3       ; {3C2B}
+         LDA   ]4         ; {4C3B}   ELEMENT LENGTH
+         STA   ZPB2       ; {3C2B}
+         LDA   ]5         ; {4C3B}   FILL VAL
+         STA   ZPB1       ; {3C2B}
+         JSR   ADIM82     ; {315C3B}
          <<<
 *
 *``````````````````````````````*
@@ -72,17 +72,17 @@ DIM82    MAC
 *  ]2 = X INDEX                *
 *  ]3 = Y INDEX                *
 *                              *
-* CYCLES: 340+                 *
-* SIZE: 222 BYTES              *
+* CYCLES: 342+                 *
+* SIZE: 25 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 GET82    MAC
-         _MLIT ]1;WPAR1   ; {16C12B}
-         LDA   ]2         ; {3C2B} X INDEX
-         STA   BPAR1      ; {3C2B}
-         LDA   ]3         ; {3C2B} Y INDEX
-         STA   BPAR2      ; {3C2B}
-         JSR   AGET82     ; {312C192B}
+         _MLIT ]1;ZPW1    ; {16C12B}
+         LDA   ]2         ; {4C3B}   X INDEX
+         STA   ZPB1       ; {3C2B}
+         LDA   ]3         ; {4C3B}   Y INDEX
+         STA   ZPB2       ; {3C2B}
+         JSR   AGET82     ; {312C3B}
          <<<
 *
 *``````````````````````````````*
@@ -99,17 +99,17 @@ GET82    MAC
 *  ]3 = ELEMENT X INDEX        *
 *  ]4 = Y INDEX                *
 *                              *
-* CYCLES: 352+                 *
-* SIZE: 223 BYTES              *
+* CYCLES: 354+                 *
+* SIZE: 37 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
 PUT82    MAC
-         _MLIT ]1;WPAR1   ; {16C12B} PARSE SOURCE ADDRESS
-         _MLIT ]2;WPAR2   ; {16C12B} PARSE DEST ADDRESS
-         LDA   ]3         ; {3C2B} X INDEX
-         STA   BPAR1      ; {3C2B}
-         LDA   ]4         ; {3C2B} Y INDEX
-         STA   BPAR2      ; {3C2B}
-         JSR   APUT82     ; {308C191B}
+         _MLIT ]1;ZPW1    ; {16C12B} PARSE SOURCE ADDRESS
+         _MLIT ]2;ZPW2    ; {16C12B} PARSE DEST ADDRESS
+         LDA   ]3         ; {4C3B}   X INDEX
+         STA   ZPB1       ; {3C2B}
+         LDA   ]4         ; {4C3B} Y INDEX
+         STA   ZPB2       ; {3C2B}
+         JSR   APUT82     ; {308C3B}
          <<<
 *

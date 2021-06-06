@@ -4,11 +4,11 @@
 *                              *
 * INPUT:                       *
 *                              *
-*  ]X0 = X ORIGIN              *
-*  ]X1 = X DESTINATION         *
-*  ]Y0 = Y ORIGIN              *
-*  ]Y1 = Y DESTINATION         *
-*  ]F  = LINE FILL CHARACTER   *
+*  ZPW1 = X ORIGIN             *
+*  ZPW2 = X DESTINATION        *
+*  ZPW1+1 = Y ORIGIN           *
+*  ZPW2+1 = Y DESTINATION      *
+*  ZPB1 = LINE FILL CHAR       *
 *                              *
 * OUTPUT:                      *
 *                              *
@@ -23,18 +23,18 @@
 * SIZE: 178 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]X0      EQU   WPAR1      ; XPOS ORIGIN PASSED VIA ZP
-]X1      EQU   WPAR2      ; XPOS DEST PASSED VIA ZP
-]Y0      EQU   WPAR1+1    ; YPOS ORIGIN PASSED VIA ZP
-]Y1      EQU   WPAR2+1    ; YPOS DEST PASSED VIA ZP
-]F       EQU   BPAR1      ; FILL VALUE
+]X0      EQU   ZPW1       ; XPOS ORIGIN PASSED VIA ZP
+]X1      EQU   ZPW2       ; XPOS DEST PASSED VIA ZP
+]Y0      EQU   ZPW1+1     ; YPOS ORIGIN PASSED VIA ZP
+]Y1      EQU   ZPW2+1     ; YPOS DEST PASSED VIA ZP
+]F       EQU   ZPB1       ; FILL VALUE
 *
-]DX      EQU   ADDR1      ; CHANGE IN X
-]DY      EQU   ADDR1+1    ; CHANGE IN Y
-]SX      EQU   ADDR2      ; X POSITION STEP
-]SY      EQU   ADDR2+1    ; Y POSITION STEP
-]ERR     EQU   ADDR3      ; SLOPE ERROR
-]ERRX2   EQU   ADDR3+1    ; COMPARISON COPY OF ]ERR
+]DX      EQU   ZPW3       ; CHANGE IN X
+]DY      EQU   ZPW3+1     ; CHANGE IN Y
+]SX      EQU   ZPW4       ; X POSITION STEP
+]SY      EQU   ZPW4+1     ; Y POSITION STEP
+]ERR     EQU   ZPW5       ; SLOPE ERROR
+]ERRX2   EQU   ZPW5+1     ; COMPARISON COPY OF ]ERR
 *
 TBLINE
          LDA   ]X1        ; {3C2B} SUBTRACT X0 FROM X1

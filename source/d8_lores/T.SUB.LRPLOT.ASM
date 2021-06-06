@@ -7,9 +7,9 @@
 *                              *
 * INPUT:                       *
 *                              *
-*  BPAR1 = COLOR               *
-*  BPAR2 = X COORDINATE        *
-*  BPAR3 = Y COORDINATE        *
+*  ZPW1  = COLOR               *
+*  ZPW2  = X COORDINATE        *
+*  ZPW3  = Y COORDINATE        *
 *                              *
 * DESTROY: NZCIDV              *
 *          ^^^  ^              *
@@ -18,12 +18,12 @@
 * SIZE: 95 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]COLOR   EQU   BPAR1      ; PLOT COLOR
-]X       EQU   BPAR2      ; X COORDINATE
-]Y       EQU   BPAR3      ; Y COORDINATE
-]MASK    EQU   VARTAB     ; MASK FOR ISOLATING NIBBLE
-]COLMASK EQU   VARTAB+2   ; COLOR MASK
-]PAGEOFF EQU   VARTAB+4   ; PAGE OFFSET
+]COLOR   EQU   ZPB1       ; PLOT COLOR
+]X       EQU   ZPB2       ; X COORDINATE
+]Y       EQU   ZPB3       ; Y COORDINATE
+]MASK    EQU   ZPW1       ; MASK FOR ISOLATING NIBBLE
+]COLMASK EQU   ZPW2       ; COLOR MASK
+]PAGEOFF EQU   ZPW3       ; PAGE OFFSET
 *
 LRPLOT
          STY   ]Y         ; {3C2B} Y POSITION PASSED IN .Y

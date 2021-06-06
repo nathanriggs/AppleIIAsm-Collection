@@ -12,10 +12,10 @@
 *                              *
 * INPUT:                       *
 *                              *
-*  WPAR1 = ARRAY ADDRESS       *
-*  WPAR2 = # OF ELEMENTS       *
-*  WPAR3 = ELEMENT LENGTH      *
-*  BPAR1 = FILL VALUE          *
+*  ZPW1  = ARRAY ADDRESS       *
+*  ZPW2  = # OF ELEMENTS       *
+*  ZPW3  = ELEMENT LENGTH      *
+*  ZPB1  = FILL VALUE          *
 *                              *
 * DESTROY: NZCIDV              *
 *          ^^^  ^              *
@@ -24,14 +24,14 @@
 * SIZE: 130 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]ADDRD   EQU   WPAR1      ; ARRAY ADDRESS
-]ASIZE   EQU   WPAR2      ; # OF ELEMENTS
-]ESIZE   EQU   WPAR3      ; ELEMENT BYTE LENGTH
-]FILL    EQU   BPAR1      ; FILL VALUE
+]ADDRD   EQU   ZPW1       ; ARRAY ADDRESS
+]ASIZE   EQU   ZPW2       ; # OF ELEMENTS
+]ESIZE   EQU   ZPW3       ; ELEMENT BYTE LENGTH
+]FILL    EQU   ZPB1       ; FILL VALUE
 *
-]MSIZE   EQU   VARTAB     ; TOTAL ARRAY BYTES
-]ASZBAK  EQU   VARTAB+4   ; BACKUP OF ELEMENT #
-]ESZBAK  EQU   VARTAB+7   ; BACKUP
+]MSIZE   EQU   ZPW4       ; TOTAL ARRAY BYTES
+]ASZBAK  EQU   ZPW5       ; BACKUP OF ELEMENT #
+]ESZBAK  EQU   VARTAB     ; BACKUP
 *
 ADIM161
          LDA   ]ESIZE     ; {3C2B} ELEMENT SIZE
@@ -40,11 +40,11 @@ ADIM161
          STA   ]ASZBAK    ; {3C2B} ARRAY SIZE BACKUP
          LDA   ]ASIZE+1   ; {3C2B}
          STA   ]ASZBAK+1  ; {3C2B} BACKUP
-         STA   SCRATCH    ; {3C2B} HIBYTE FOR MULTIPLICATION
+         STA   ZPB4       ; {3C2B} HIBYTE FOR MULTIPLICATION
          LDA   ]ADDRD     ; {3C2B}
-         STA   ADDR2      ; {3C2B}
+         STA   ZPW6       ; {3C2B}
          LDA   ]ADDRD+1   ; {3C2B}
-         STA   ADDR2+1    ; {3C2B}
+         STA   ZPW6+1     ; {3C2B}
          LDY   #0         ; {2C2B} CLEAR INDEX
          LDA   #0         ; {2C2B} CLEAR ACCUMULATOR
          BEQ   :ENTLP     ; {3C2B} IF 0, SKIP TO LOOP
@@ -56,12 +56,12 @@ ADIM161
          ADC   ]ASIZE     ; {4C3B} ADD ARRAY SIZE
          TAX              ; {2C1B} HOLD IN .X
          TYA              ; {2C1B} LOAD HIBYTE
-         ADC   SCRATCH    ; {4C3B} ADD HIBYTE
+         ADC   ZPB4       ; {4C3B} ADD HIBYTE
          TAY              ; {2C1B} HOLD IN .Y
          TXA              ; {2C1B} RELOAD LOBYTE
 :LP
          ASL   ]ASIZE     ; {6C3B} MULTIPLY ARRAY SIZE BY 2
-         ROL   SCRATCH    ; {6C3B} ADJUST HIBYTE
+         ROL   ZPB4       ; {6C3B} ADJUST HIBYTE
 :ENTLP
          LSR   ]ESIZE     ; {6C3B} DIVIDE ELEMENT SIZE BY 2
          BCS   :DOADD     ; {3C2B} IF >= LOBYTE IN .A,
@@ -99,13 +99,13 @@ ADIM161
 :MFEXIT
          LDY   #0         ; {2C2B} RESET INDEX
          LDA   ]ASZBAK    ; {3C2B} STORE ARRAY SIZE IN HEADER
-         STA   (ADDR2),Y  ; {6C2B}
+         STA   (ZPW6),Y   ; {6C2B}
          INY              ; {2C1B} INCREASE INDEX
          LDA   ]ASZBAK+1  ; {3C2B} STORE ARRAY SIZE HIBYTE
-         STA   (ADDR2),Y  ; {6C2B}
+         STA   (ZPW6),Y   ; {6C2B}
          INY              ; {2C1B} INCREMENT INDEX
          LDA   ]ESZBAK    ; {3C2B} STORE ELEMENT SIZE
-         STA   (ADDR2),Y  ; {6C2B} IN HEADER
+         STA   (ZPW6),Y   ; {6C2B} IN HEADER
          LDX   ]ADDRD     ; {3C2B} .X HOLDS ARRAY ADDRESS LOBYTE
          LDY   ]ADDRD+1   ; {3C2B} .Y HOLDS HIBYTE
          LDA   ]MSIZE     ; {3C2B} STORE TOTAL ARRAY SIZE

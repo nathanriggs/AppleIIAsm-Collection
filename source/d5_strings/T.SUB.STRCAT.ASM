@@ -13,8 +13,8 @@
 *                              *
 * INPUT:                       *
 *                              *
-*  WPAR1 = 1ST STRING ADDRESS  *
-*  WPAR2 = 2ND STRING ADDRESS  *
+*  ZPW1  = 1ST STRING ADDRESS  *
+*  ZPW2  = 2ND STRING ADDRESS  *
 *                              *
 * DESTROY: NZCIDV              *
 *          ^^^  ^              *
@@ -23,11 +23,11 @@
 * SIZE: 78 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]S1LEN   EQU   VARTAB+1   ; FIRST STRING LENGTH
-]S2LEN   EQU   VARTAB+3   ; SECOND STRING LENGTH
-]INDEX   EQU   WPAR3      ; ADDRESS TO PLACE 2ND STRING
-]STR2    EQU   WPAR2      ; POINTER TO 2ND STRING
-]STR1    EQU   WPAR1      ; POINTER TO 1ST STRING
+]S1LEN   EQU   ZPW4       ; FIRST STRING LENGTH
+]S2LEN   EQU   ZPW5       ; SECOND STRING LENGTH
+]INDEX   EQU   ZPW3       ; ADDRESS TO PLACE 2ND STRING
+]STR2    EQU   ZPW2       ; POINTER TO 2ND STRING
+]STR1    EQU   ZPW1       ; POINTER TO 1ST STRING
 *
 STRCAT
 *

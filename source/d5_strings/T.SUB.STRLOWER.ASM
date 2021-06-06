@@ -8,7 +8,7 @@
 *                              *
 * INPUT:                       *
 *                              *
-*  WPAR1 = STRING ADDRESS      *
+*  ZPW1  = STRING ADDRESS      *
 *                              *
 * DESTROY: NZCIDV              *
 *          ^^^  ^              *
@@ -17,9 +17,9 @@
 * SIZE: 47 BYTES               *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]STR     EQU   WPAR1      ; STRING ADDRESS
-]LEN     EQU   BPAR1      ; STRING LENGTH
-]RET     EQU   WPAR2      ; REUTURN ADDRESS
+]STR     EQU   ZPW1       ; STRING ADDRESS
+]LEN     EQU   ZPB1       ; STRING LENGTH
+]RET     EQU   ZPW2       ; RETURN ADDRESS
 *
 STRLOWER
 *

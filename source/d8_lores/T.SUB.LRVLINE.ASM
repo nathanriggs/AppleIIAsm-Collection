@@ -6,10 +6,10 @@
 *                              *
 * INPUT:                       *
 *                              *
-*  WPAR1 = Y COORDINATE ORIGIN *
-*  WPAR1+1 = Y DESTINATION     *
-*  BPAR1 = X POSITION          *
-*  BPAR2 = COLOR TO PLOT       *
+*  ZPW1  = Y COORDINATE ORIGIN *
+*  ZPW1+1  = Y DESTINATION     *
+*  ZPB1  = X POSITION          *
+*  ZPB2  = COLOR TO PLOT       *
 *                              *
 * OUTPUT:                      *
 *                              *
@@ -22,12 +22,12 @@
 * SIZE: 141 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]Y1      EQU   WPAR1      ; Y COORDINATE ORIGIN
-]Y2      EQU   WPAR1+1    ; Y COORDINATE DESTINATION
-]X1      EQU   BPAR1      ; X COORDINATE
-]COLOR   EQU   BPAR2      ; COLOR OF LINE
-]X       EQU   VARTAB+6   ; WORKING XPOS
-]Y       EQU   VARTAB+8   ; WORKING YPOS
+]Y1      EQU   ZPW1       ; Y COORDINATE ORIGIN
+]Y2      EQU   ZPW1+1     ; Y COORDINATE DESTINATION
+]X1      EQU   ZPB1       ; X COORDINATE
+]COLOR   EQU   ZPB2       ; COLOR OF LINE
+]X       EQU   ZPW2       ; WORKING XPOS
+]Y       EQU   ZPW3       ; WORKING YPOS
 *
 LRVLINE
          INC   ]Y2

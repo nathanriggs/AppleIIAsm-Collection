@@ -8,35 +8,35 @@
 *                              *
 * INPUT:                       *
 *                              *
-*  WPAR1 = CIRCLE X CENTER     *
-*  WPAR2 = CIRCLE Y CENTER     *
-*  WPAR3 = CIRCLE RADIUS       *
-*  BPAR1 = CIRCLE COLOR        *
+*  ZPW1  = CIRCLE X CENTER     *
+*  ZPW2  = CIRCLE Y CENTER     *
+*  ZPW3  = CIRCLE RADIUS       *
+*  ZPB1  = CIRCLE COLOR        *
 *                              *
 * OUTPUT:                      *
 *                              *
 *  NONE                        *
 *                              *
-* DESTROY: AXYNVBDIZCMS        *
-*          ^^^^^   ^^^         *
+* DESTROY: NZCIDV              *
+*          ^^^  ^              *
 *                              *
 * CYCLES: 2404+                *
 * SIZE: 457 BYTES              *
 *,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*
 *
-]XC      EQU   WPAR1      ; CIRCLE X CENTER
-]YC      EQU   WPAR2      ; CIRCLE Y CENTER
-]R       EQU   WPAR3      ; RADIUS
-]COLOR   EQU   BPAR2      ; COLOR
+]XC      EQU   ZPW1       ; CIRCLE X CENTER
+]YC      EQU   ZPW2       ; CIRCLE Y CENTER
+]R       EQU   ZPW3       ; RADIUS
+]COLOR   EQU   ZPB2       ; COLOR
 *
-]YY      EQU   VARTAB+5   ; WORKING Y POSITION
-]XX      EQU   VARTAB+7   ; WORKING X POSITION
-]DX      EQU   VARTAB+9   ; CHANGE IN X
-]DY      EQU   VARTAB+11  ; CHANGE IN Y
-]ERR     EQU   VARTAB+13  ; ERROR POSSIBILITY
-]DIAM    EQU   VARTAB+15  ; CIRCLE DIAMETER
-]XT      EQU   VARTAB+17  ; NEGATIVE OF X
-]YT      EQU   VARTAB+19  ; NEGATIVE OF Y
+]YY      EQU   ZPW4       ; WORKING Y POSITION
+]XX      EQU   ZPW5       ; WORKING X POSITION
+]DX      EQU   ZPW6       ; CHANGE IN X
+]DY      EQU   VARTAB     ; CHANGE IN Y
+]ERR     EQU   VARTAB+2   ; ERROR POSSIBILITY
+]DIAM    EQU   VARTAB+4   ; CIRCLE DIAMETER
+]XT      EQU   VARTAB+6   ; NEGATIVE OF X
+]YT      EQU   VARTAB+8   ; NEGATIVE OF Y
 *
 LRCIRCLE
 *
