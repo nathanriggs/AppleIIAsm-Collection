@@ -6,6 +6,29 @@ Since this is in flux, you may also find [the previous documentation,v0.5.0, her
 
 # Updates
 
+__05-jun-2021
+
+_TODO FOR NEXT REVISION (v6.1.0)_
+
+- add page flipping to stdio, which requires adding to each subroutine
+- fix 8-bit bresenham in stdio and lores
+- reorganize mac files on stdio
+- delete pct,gcf,lcm in math collection
+- add modulus subroutines/macros to math
+- add/fix memory catalog subroutine/macro in DOS
+- change dos fmfil, etc. to be subroutines to decrease bytes
+- fix 16bit bresenham in hires
+- add bresenham circle routine to hires
+- add rect, frect routines to hires
+- add signed macros to math collection
+- add floating point examples to math collection, if room exists
+- revise all documentation to reflect changes (also previous changes)
+
+__05-JUN-2021__
+
+- Updated all required collection macros and subroutines on every disk
+- Revised all subroutines and macros to fit with new zero page names
+
 __03-JUN-2021__
 
 - Updated all disks as part of a small reorganization of the REQUIRED library collection
