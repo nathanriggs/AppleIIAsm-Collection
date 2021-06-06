@@ -6,7 +6,7 @@ Since this is in flux, you may also find [the previous documentation,v0.5.0, her
 
 # Updates
 
-__05-jun-2021
+__05-jun-2021__
 
 _TODO FOR NEXT REVISION (v6.1.0)_
 
