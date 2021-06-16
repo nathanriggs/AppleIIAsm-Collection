@@ -10,18 +10,18 @@ __05-jun-2021__
 
 _TODO FOR NEXT REVISION (v6.1.0)_
 
-- add page flipping to stdio, which requires adding to each subroutine
-- fix 8-bit bresenham in stdio and lores
-- reorganize mac files on stdio
-- delete pct,gcf,lcm in math collection
-- add modulus subroutines/macros to math
+- <s>add page flipping to stdio, which requires adding to each subroutine</s>
+- fix 8-bit bresenham in <s>stdio and</s> lores
+- <s>reorganize mac files on stdio</s>
+- <s>delete pct,gcf,lcm in math collection</s>
+- <s>add modulus subroutines/macros to math</s>
 - add/fix memory catalog subroutine/macro in DOS
 - change dos fmfil, etc. to be subroutines to decrease bytes
 - fix 16bit bresenham in hires
 - add bresenham circle routine to hires
 - add rect, frect routines to hires
-- add signed macros to math collection
-- add floating point examples to math collection, if room exists
+- <s>add signed macros to math collection</s>
+- <s>add floating point examples to math collection, if room exists</s>
 - revise all documentation to reflect changes (also previous changes)
 
 __05-JUN-2021__
