@@ -6,6 +6,10 @@ Since this is in flux, you may also find [the previous documentation,v0.5.0, her
 
 # Updates
 
+__15-jun-2022__
+
+Wow! It's been a year since any updates. Life happened. But I am currently working on v7.0.0 of the library. This will be incompatible with all past versions, but if you only used macros, and didn't call the subroutines yourself, the changes should be minimal. You should expect the first round of changes to update by the end of the month, which will mostly consist of rewritten required routines. Then, we'll resume the running TODO lists.
+
 __05-jun-2021__
 
 _TODO FOR NEXT REVISION (v6.1.0)_
