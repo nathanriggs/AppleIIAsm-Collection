@@ -6,6 +6,12 @@ Since this is in flux, you may also find [the previous documentation,v0.5.0, her
 
 # Updates
 
+__02-aug-2022__
+
+I am currently in the process of redesigning how the entire library works, so updates on this won't be piecemeal again until that is finished; if not, the library as a whole would not work together until the updates are finished. A lot of the documentation is changing, and I'm additionally rewriting and optimizing a lot of code. Of particular note is that the next version of the library will not force you to use the RETURN memory location for passing back data from subroutines, and switching every case of passing addresses via the registers to hold high bytes in .A instead of .X (to keep in line with standard practice of the day).
+
+I don't have a 100% clear finish date, but the updates are substantial so don't expect anything within a couple of months. In the meantime, if you would like to contribute, please fork this instead of contributing here until the update is done.
+
 __15-jun-2022__
 
 Wow! It's been a year since any updates. Life happened. But I am currently working on v0.7.0 of the library. This will be incompatible with all past versions, but if you only used macros, and didn't call the subroutines yourself, the changes should be minimal. You should expect the first round of changes to update by the end of the month, which will mostly consist of rewritten required routines. Then, we'll resume the running TODO lists.
